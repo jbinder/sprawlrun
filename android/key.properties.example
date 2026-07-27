@@ -1,0 +1,20 @@
+# Copy to android/key.properties and fill in. That file is gitignored and must
+# never be committed — it is the only thing standing between your signing key
+# and anyone who can read the repository.
+#
+# Generate a key with:
+#
+#   keytool -genkey -v -keystore ~/keys/sprawlrun-release.jks \
+#     -alias sprawlrun -keyalg RSA -keysize 4096 -validity 10000 \
+#     -dname "CN=SPRAWL//RUN, O=SPRAWL//RUN, C=AT"
+#
+# Back up the .jks file and its password. Android refuses any update signed with
+# a different key, so losing either means users must uninstall to move to a new
+# release — taking their run history with it.
+
+storeFile=/absolute/path/to/sprawlrun-release.jks
+storePassword=
+keyAlias=sprawlrun
+# Optional. Omit and the store password is reused, which is what keytool does
+# by default unless you passed -keypass.
+keyPassword=

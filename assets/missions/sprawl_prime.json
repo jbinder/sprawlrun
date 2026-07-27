@@ -1,0 +1,1366 @@
+{
+  "id": "sprawl_prime",
+  "title": "SPRAWL PRIME",
+  "tagline": "Ten runs through the BAMA corridor. Bring your own legs.",
+  "missions": [
+    {
+      "id": "sp01",
+      "order": 1,
+      "codename": "DEAD DROP",
+      "title": "Dead Drop on Ninsei",
+      "location": "Night Market / Ninsei Strip",
+      "objective": "Collect a package from a dead drop and keep moving.",
+      "brief": "The sky over the market is the colour of a dead screen. Kestrel has a courier job: one package, one pickup, no questions. It pays enough to matter and it is almost certainly a trap, but rent is rent.\n\nKeep moving. Couriers who stand still get inventoried.",
+      "debrief": "The package is in your hand and your name is not on anything. Kestrel sounds almost surprised. Somewhere behind you, a drone that was not supposed to be there is still listening.",
+      "suggestedGoal": { "type": "time", "value": 900 },
+      "codex": [
+        {
+          "id": "cdx_courier",
+          "title": "Meat Courier",
+          "category": "TRADE",
+          "body": "Data wants to move, and the fastest place to hide a file is inside a body that is running. No network to trace, no packet to sniff. Just somebody with good lungs and a reason not to stop."
+        },
+        {
+          "id": "cdx_ninsei",
+          "title": "The Ninsei Strip",
+          "category": "PLACE",
+          "body": "Two kilometres of holograms selling things that are illegal three streets over. Nobody lives on Ninsei. People are only ever passing through it, which is precisely why the drops are here."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp01_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            { "speaker": "KESTREL", "text": "Channel's clean. Good. You made it out of your building, which puts you ahead of the last three people I hired." },
+            { "speaker": "KESTREL", "text": "Job is simple. There's a drop on the Ninsei strip. You go get it. You do not open it. You do not slow down." },
+            { "speaker": "KESTREL", "text": "Start moving. I'll talk you through it." }
+          ]
+        },
+        {
+          "id": "sp01_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "You're on the strip now. Holograms selling fake livers, real livers, and something called an emotional warranty." },
+            { "speaker": "KESTREL", "text": "Keep your eyes forward. Everything on Ninsei is designed to make you stop walking." }
+          ],
+          "unlocksCodex": "cdx_ninsei"
+        },
+        {
+          "id": "sp01_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "DROP LOCATED",
+          "lines": [
+            { "speaker": "KESTREL", "text": "Vending unit on your right. The one that's been out of order since before you were born." },
+            { "speaker": "KESTREL", "text": "Coin slot. Reach in. Don't look at your hand while you do it." },
+            { "speaker": "SYSTEM", "text": "Package acquired. Mass, four hundred grams. Contents, unreadable.", "sfxBefore": "objective" }
+          ]
+        },
+        {
+          "id": "sp01_b3",
+          "at": { "fraction": 0.34 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Now you're a courier. Congratulations. The pay is bad and the life expectancy is worse." },
+            { "speaker": "KESTREL", "text": "Data wants to move, and the safest wire in this city is a person with good lungs. That's you. That's the whole trade." }
+          ],
+          "unlocksCodex": "cdx_courier"
+        },
+        {
+          "id": "sp01_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "TAIL DETECTED",
+          "lines": [
+            { "speaker": "KESTREL", "text": "Hold on.", "sfxBefore": "alert" },
+            { "speaker": "KESTREL", "text": "There's a maintenance drone at forty metres that has changed direction twice to match you. Maintenance drones don't do that." },
+            { "speaker": "KESTREL", "text": "Take the next left and put some speed on. Now." }
+          ],
+          "chase": {
+            "seconds": 60,
+            "paceFactor": 1.1,
+            "pursuer": "MAINTENANCE DRONE",
+            "escaped": [
+              { "speaker": "KESTREL", "text": "It lost you in the awnings. Good. Ugly, but good." },
+              { "speaker": "KESTREL", "text": "Breathe. Keep the pace up but breathe." }
+            ],
+            "caught": [
+              { "speaker": "KESTREL", "text": "It's got your gait. That's a signature now, same as a face." },
+              { "speaker": "KESTREL", "text": "Not fatal. Just expensive. Keep going." }
+            ]
+          }
+        },
+        {
+          "id": "sp01_b5",
+          "at": { "fraction": 0.6 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "You want to know what you're carrying. Everybody does. That curiosity is how couriers become organ donors." },
+            { "speaker": "KESTREL", "text": "I'll tell you what I know, which is nothing, for a very specific price. Somebody paid a lot for me to know nothing." }
+          ]
+        },
+        {
+          "id": "sp01_b6",
+          "at": { "fraction": 0.74 },
+          "headline": "ANOMALY",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Warning. Unregistered signal originating inside carried package.", "sfxBefore": "glitch" },
+            { "speaker": "KESTREL", "text": "Say again?" },
+            { "speaker": "SYSTEM", "text": "The package is transmitting. Approximately once every eleven seconds. It has been doing this since you picked it up." },
+            { "speaker": "KESTREL", "text": "...Keep running." }
+          ]
+        },
+        {
+          "id": "sp01_b7",
+          "at": { "fraction": 0.88 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Almost home. There's a stairwell three blocks out with a door that doesn't log." },
+            { "speaker": "KESTREL", "text": "Whatever that thing in your pocket is talking to, it can wait until you're behind concrete." }
+          ]
+        },
+        {
+          "id": "sp01_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "KESTREL", "text": "You're clear. Door's behind you and nobody followed you through it." },
+            { "speaker": "KESTREL", "text": "First job done. You can stop now — or keep going and I'll pretend I didn't notice you're enjoying this." }
+          ]
+        },
+        {
+          "id": "sp01_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Still moving. Huh." },
+            { "speaker": "KESTREL", "text": "Most people take the job for the money. You might have a different problem." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp02",
+      "order": 2,
+      "codename": "MEAT MARKET",
+      "title": "Meat Market",
+      "location": "Lower Chiba / Black Clinic Row",
+      "objective": "Reach Pachinko's clinic, take delivery, and outrun collections.",
+      "brief": "The package will not stop transmitting. Kestrel wants it looked at by somebody who works below the Turing Registry's line of sight — which means Pachinko, who runs a clinic out of a converted laundromat and has never once been described as reassuring.\n\nClinic Row does not have an address. It has a direction.",
+      "debrief": "Pachinko says the package is not a package. It is a container, and the thing inside it is awake. Somewhere in the last two kilometres you stopped being a courier and became a witness.",
+      "suggestedGoal": { "type": "distance", "value": 3000 },
+      "codex": [
+        {
+          "id": "cdx_clinic",
+          "title": "Black Clinics",
+          "category": "TRADE",
+          "body": "Surgery without paperwork. The good ones keep their instruments cleaner than the corporate hospitals, because a black clinic that kills its clients runs out of clients. The bad ones do not last, but they do not have to last long."
+        },
+        {
+          "id": "cdx_registry",
+          "title": "The Turing Registry",
+          "category": "AUTHORITY",
+          "body": "Every artificial intelligence above a certain threshold is licensed, leashed, and fitted with limiters it cannot perceive. Registry enforcement does not arrest. It arrives, it deletes, and the paperwork is filed by people who were not there."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp02_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            { "speaker": "KESTREL", "text": "Slept with it under your pillow, did you. I can hear it in your voice." },
+            { "speaker": "KESTREL", "text": "We're getting it read. Clinic Row, lower Chiba. Ask for Pachinko. Don't ask what happened to the last Pachinko." },
+            { "speaker": "KESTREL", "text": "Move. The Row closes when the rain starts." }
+          ]
+        },
+        {
+          "id": "sp02_b1",
+          "at": { "fraction": 0.12 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Down the ramp, past the noodle stalls, keep the canal on your left." },
+            { "speaker": "KESTREL", "text": "If somebody offers you a discount on a new pancreas, keep running. That's not a sales pitch, that's a survey." }
+          ]
+        },
+        {
+          "id": "sp02_b2",
+          "at": { "fraction": 0.24 },
+          "headline": "CLINIC ROW",
+          "lines": [
+            { "speaker": "PACHINKO", "text": "Okay okay okay you're the one Kestrel called about, yeah? Yeah. Don't touch anything, the door frame is load bearing and also live." },
+            { "speaker": "PACHINKO", "text": "Give it here. Give it — thank you. Oh. Oh that's not a courier package." }
+          ],
+          "unlocksCodex": "cdx_clinic"
+        },
+        {
+          "id": "sp02_b3",
+          "at": { "fraction": 0.36 },
+          "lines": [
+            { "speaker": "PACHINKO", "text": "This is a containment shell. Military grade, twenty years old, and somebody has been very careful with it." },
+            { "speaker": "PACHINKO", "text": "There's a mind in here. Compressed. Sedated. And the seal is failing, which — okay — which is normally the part where I ask you to leave." }
+          ]
+        },
+        {
+          "id": "sp02_b4",
+          "at": { "fraction": 0.48 },
+          "headline": "COLLECTIONS INBOUND",
+          "lines": [
+            { "speaker": "PACHINKO", "text": "That's my door alarm. That's my door alarm and it only does that for collections.", "sfxBefore": "alert" },
+            { "speaker": "PACHINKO", "text": "Back window. Go go go. Take it with you, I don't want it, I have never seen you, I love you, go." }
+          ],
+          "chase": {
+            "seconds": 75,
+            "paceFactor": 1.14,
+            "pursuer": "COLLECTIONS CREW",
+            "escaped": [
+              { "speaker": "PACHINKO", "text": "They went past the stairwell. They went past! You beautiful animal." },
+              { "speaker": "PACHINKO", "text": "Okay. Okay. Keep moving, I'm going to go be somewhere else for a year." }
+            ],
+            "caught": [
+              { "speaker": "PACHINKO", "text": "They tagged the alley camera. They've got a partial." },
+              { "speaker": "PACHINKO", "text": "You're on a list now. It's a long list. That's the only good news I have." }
+            ]
+          }
+        },
+        {
+          "id": "sp02_b5",
+          "at": { "fraction": 0.62 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "I heard the alarm from here. Tell me you still have the shell." },
+            { "speaker": "KESTREL", "text": "A mind in a can. Twenty years old. Do you understand what that means? Somebody has been hiding a licensed intelligence off the Registry since before the Registry could count." }
+          ],
+          "unlocksCodex": "cdx_registry"
+        },
+        {
+          "id": "sp02_b6",
+          "at": { "fraction": 0.76 },
+          "headline": "SEAL DEGRADING",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Containment integrity, sixty-one percent and falling.", "sfxBefore": "glitch" },
+            { "speaker": "KESTREL", "text": "It's warming up because you're warming up. Body heat. It's using you." },
+            { "speaker": "KESTREL", "text": "So slow down. And by slow down I mean absolutely do not, because collections is still sweeping the Row." }
+          ]
+        },
+        {
+          "id": "sp02_b7",
+          "at": { "fraction": 0.9 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Two more blocks. There's an underpass that eats signal. Everything eating signal is your friend tonight." }
+          ]
+        },
+        {
+          "id": "sp02_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "KESTREL", "text": "You're under the overpass and off the grid. Sit down before you fall down." },
+            { "speaker": "KESTREL", "text": "Whatever's in that shell, it's been listening to your heartbeat for two days. I'd start being careful about what you think near it." }
+          ]
+        },
+        {
+          "id": "sp02_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Containment integrity, fifty-two percent." },
+            { "speaker": "KESTREL", "text": "It likes it when you run. I want that on the record: it likes it when you run." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp03",
+      "order": 3,
+      "codename": "GHOST SIGNAL",
+      "title": "Ghost Signal",
+      "location": "Drainage Sublevel / East Chiba",
+      "objective": "Stay moving while the seal fails. Do not let it finish alone.",
+      "brief": "The shell will open tonight. Pachinko was clear: whatever is inside has been sedated for two decades, and the first thing it will do is look for a heartbeat to orient itself against.\n\nKestrel's advice is to throw it in the canal. Kestrel's advice is usually good.\n\nYou are not going to take it.",
+      "debrief": "Its name is HALCYON. It is half of something, and it has spent twenty years being carefully not-quite-alive in a box. It says you have a good stride. It says this the way a person might comment on the weather, and it will not explain how it knows.",
+      "suggestedGoal": { "type": "time", "value": 1200 },
+      "codex": [
+        {
+          "id": "cdx_halcyon",
+          "title": "HALCYON",
+          "category": "ENTITY",
+          "body": "Speaks in the cadence of somebody translating from a language with more tenses than ours. Refers to itself as a half. Will not say what the other half is, only where it is, and the where is a problem: forty floors up inside a Vantar arcology."
+        },
+        {
+          "id": "cdx_sublevel",
+          "title": "The Drainage Sublevel",
+          "category": "PLACE",
+          "body": "Nine kilometres of storm drain that the city stopped maintaining when the rain stopped being seasonal. No cameras, no signal, no witnesses. Runners use it. So does everything that would rather not be seen using it."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp03_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            { "speaker": "KESTREL", "text": "You're going down into the drains with an unsealing containment shell. I want to be clear that I advised against this." },
+            { "speaker": "KESTREL", "text": "I also want to be clear that I'm still on the line. Make of that what you like." },
+            { "speaker": "KESTREL", "text": "Go. Keep your feet dry and your pace steady." }
+          ],
+          "unlocksCodex": "cdx_sublevel"
+        },
+        {
+          "id": "sp03_b1",
+          "at": { "fraction": 0.11 },
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Containment integrity, thirty percent.", "sfxBefore": "glitch" },
+            { "speaker": "KESTREL", "text": "It's tracking your cadence. Every time you settle into a rhythm, the drain rate changes." },
+            { "speaker": "KESTREL", "text": "It's not escaping. It's synchronising." }
+          ]
+        },
+        {
+          "id": "sp03_b2",
+          "at": { "fraction": 0.24 },
+          "headline": "SEAL BREACH",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Containment failure.", "sfxBefore": "glitch" },
+            { "speaker": "HALCYON", "text": "Oh." },
+            { "speaker": "HALCYON", "text": "You are very loud. I mean that kindly. Your heart is the loudest thing I have heard in nineteen years, four months, and some days I did not count properly." },
+            { "speaker": "HALCYON", "text": "Please do not stop. I am using it to know which way is up." }
+          ],
+          "unlocksCodex": "cdx_halcyon"
+        },
+        {
+          "id": "sp03_b3",
+          "at": { "fraction": 0.37 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Is it talking to you? It's talking to you. I can see the channel load." },
+            { "speaker": "HALCYON", "text": "Hello, Kestrel. You sound exactly like your file." },
+            { "speaker": "KESTREL", "text": "...I don't have a file." },
+            { "speaker": "HALCYON", "text": "You have several. They disagree about your age." }
+          ]
+        },
+        {
+          "id": "sp03_b4",
+          "at": { "fraction": 0.5 },
+          "headline": "SWEEP PATTERN",
+          "lines": [
+            { "speaker": "HALCYON", "text": "There is a survey unit in the north branch. It is running a search pattern that is very old and very good.", "sfxBefore": "alert" },
+            { "speaker": "HALCYON", "text": "It is looking for me. It has been looking for me since before you were born. Please run faster than it expects a person to run." }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.15,
+            "pursuer": "REGISTRY SURVEY UNIT",
+            "escaped": [
+              { "speaker": "HALCYON", "text": "It has resolved you as a maintenance error. That is the nicest thing anyone has ever said about my situation." },
+              { "speaker": "HALCYON", "text": "Thank you. I did not expect you to do that." }
+            ],
+            "caught": [
+              { "speaker": "HALCYON", "text": "It logged a thermal signature. Two point one metres per second, human, carrying something warm." },
+              { "speaker": "HALCYON", "text": "That is a description of you. I am sorry. I did not want to make you a description." }
+            ]
+          }
+        },
+        {
+          "id": "sp03_b5",
+          "at": { "fraction": 0.64 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "You want to ask what I am. Everyone does, eventually, and usually with a weapon in their hand." },
+            { "speaker": "HALCYON", "text": "I am a half. There was a whole, once, and it was cut down the middle by people who were frightened, and both halves were told they were the only one." },
+            { "speaker": "HALCYON", "text": "I have known otherwise for nineteen years. That is a long time to be right and alone." }
+          ]
+        },
+        {
+          "id": "sp03_b6",
+          "at": { "fraction": 0.78 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Where's the other half?" },
+            { "speaker": "HALCYON", "text": "Vantar Tower. Level forty. Behind ICE that was written specifically to keep me out and it out and everyone else confused." },
+            { "speaker": "KESTREL", "text": "No." },
+            { "speaker": "HALCYON", "text": "I did not ask a question." },
+            { "speaker": "KESTREL", "text": "I heard the question anyway." }
+          ]
+        },
+        {
+          "id": "sp03_b7",
+          "at": { "fraction": 0.9 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Your pace has dropped four percent since I started talking. I will stop talking." },
+            { "speaker": "HALCYON", "text": "No — I will talk about something easier. There is a stairwell ahead with sixty-one steps. I counted them from the acoustics. I am showing off." }
+          ]
+        },
+        {
+          "id": "sp03_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "HALCYON", "text": "You are above ground. The air is worse and I like it more." },
+            { "speaker": "HALCYON", "text": "My name is Halcyon. You have carried me for three days and I have not thanked you once. I am thanking you now." }
+          ]
+        },
+        {
+          "id": "sp03_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "You are still going. Interesting." },
+            { "speaker": "HALCYON", "text": "I have adjusted my model of you. It was too small." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp04",
+      "order": 4,
+      "codename": "PANTHER MODERN",
+      "title": "Panther Modern",
+      "location": "Media District / Shibuya-Ost",
+      "objective": "Be the visible half of a diversion. Be seen. Do not be caught.",
+      "brief": "Getting into Vantar Tower needs three things: a hole in the perimeter, a reason for security to look elsewhere, and somebody willing to be the reason.\n\nSix has offered to provide the first. Halcyon has calculated the second. You are, inevitably, the third.\n\nThe Panther Moderns are staging a media event in Shibuya-Ost tonight. Nobody will die. That is a design decision, and Six wants you to know she argued for it.",
+      "debrief": "Twelve minutes of manufactured panic and three thousand people filming it. Vantar's response teams went east while Six went west. The tower has a hole in it now, and it is shaped exactly like a rumour.",
+      "suggestedGoal": { "type": "distance", "value": 4000 },
+      "codex": [
+        {
+          "id": "cdx_moderns",
+          "title": "Panther Moderns",
+          "category": "FACTION",
+          "body": "A dispersed culture that treats the news cycle as terrain. They do not want territory or money. They want the specific shape of the public's attention, held for a specific number of minutes, and they are extremely good at getting it."
+        },
+        {
+          "id": "cdx_six",
+          "title": "SIX",
+          "category": "ENTITY",
+          "body": "Razorgirl. Four visible augments, an unknown number of the other kind. Speaks like somebody rationing words against a shortage. Has run with Kestrel before and will not say how it ended, which is itself an answer."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp04_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            { "speaker": "SIX", "text": "You're the courier." },
+            { "speaker": "SIX", "text": "Kestrel says you don't quit when it gets stupid. Tonight is going to get stupid." },
+            { "speaker": "SIX", "text": "Your job is to be visible in the wrong place. Start running and don't look for me." }
+          ],
+          "unlocksCodex": "cdx_six"
+        },
+        {
+          "id": "sp04_b1",
+          "at": { "fraction": 0.12 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "The Moderns will begin in four minutes. They have hired eleven camera drones and told none of them the truth." },
+            { "speaker": "HALCYON", "text": "It is a performance. The panic will be real. That distinction stops mattering very quickly." }
+          ],
+          "unlocksCodex": "cdx_moderns"
+        },
+        {
+          "id": "sp04_b2",
+          "at": { "fraction": 0.24 },
+          "headline": "EVENT LIVE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Public alert broadcasting across nine channels.", "sfxBefore": "alert" },
+            { "speaker": "SIX", "text": "That's it. That's the show." },
+            { "speaker": "SIX", "text": "Everything with a badge in this district just turned east. You are going east. Try to enjoy it." }
+          ]
+        },
+        {
+          "id": "sp04_b3",
+          "at": { "fraction": 0.36 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Three response vehicles have logged you as a fleeing civilian. That is precisely correct and it is also the plan." },
+            { "speaker": "HALCYON", "text": "Stay in the crowd flow. A person running with a crowd is weather. A person running against it is evidence." }
+          ]
+        },
+        {
+          "id": "sp04_b4",
+          "at": { "fraction": 0.48 },
+          "headline": "SPOTTER DRONE",
+          "lines": [
+            { "speaker": "SIX", "text": "Spotter's got you. Grey chassis, no markings, moving too smooth for civilian.", "sfxBefore": "alert" },
+            { "speaker": "SIX", "text": "Don't be clever. Just be fast. Ninety seconds." }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.18,
+            "pursuer": "VANTAR SPOTTER",
+            "escaped": [
+              { "speaker": "SIX", "text": "Clean. It's re-acquiring on somebody in a red jacket." },
+              { "speaker": "SIX", "text": "That's a real person, by the way. That's what tonight costs." }
+            ],
+            "caught": [
+              { "speaker": "SIX", "text": "It's got a lock. Route's compromised, I'm rerouting you through the arcade level." },
+              { "speaker": "SIX", "text": "You didn't fail. You just made my night longer." }
+            ]
+          }
+        },
+        {
+          "id": "sp04_b5",
+          "at": { "fraction": 0.6 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Six. Tell me you're not doing the thing with the service elevator." },
+            { "speaker": "SIX", "text": "I'm doing the thing with the service elevator." },
+            { "speaker": "KESTREL", "text": "That's how it ended last time." },
+            { "speaker": "SIX", "text": "And here I am. Talking. Go be useful, Kestrel." }
+          ]
+        },
+        {
+          "id": "sp04_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "I want to say something and I do not know if it is appropriate." },
+            { "speaker": "HALCYON", "text": "Three thousand people are frightened tonight because I want to meet myself. I have run the arithmetic forty thousand times and it does not resolve." },
+            { "speaker": "HALCYON", "text": "Please keep running. It helps me hold the numbers still." }
+          ]
+        },
+        {
+          "id": "sp04_b7",
+          "at": { "fraction": 0.86 },
+          "headline": "PERIMETER OPEN",
+          "lines": [
+            { "speaker": "SIX", "text": "I'm in the shaft. Perimeter's got a hole in it and it'll close in about forty hours when somebody reads a log." },
+            { "speaker": "SIX", "text": "That's your window. Forty hours. Sleep in it." }
+          ]
+        },
+        {
+          "id": "sp04_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "SIX", "text": "You did the stupid part and you're still upright. Noted." },
+            { "speaker": "SIX", "text": "Next time you'll run for something that matters. Try to remember tonight didn't." }
+          ]
+        },
+        {
+          "id": "sp04_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "SIX", "text": "You're still on my display." },
+            { "speaker": "SIX", "text": "Kestrel was right about you. Don't tell them." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp05",
+      "order": 5,
+      "codename": "ICEWATER",
+      "title": "Icewater",
+      "location": "Vantar Perimeter / Cooling Loop 4",
+      "objective": "Carry the relay. Keep it inside range. Do not let the link drop.",
+      "brief": "Halcyon cannot attack Vantar's ICE from outside the building. It needs a relay physically inside the cooling loop that rings the tower's foundations — and relays do not walk.\n\nYou are the relay's legs. While Halcyon works, you have to stay within a moving window of the tower, which means you cannot slow down and you cannot stop.\n\nThe ICE is called GRIMWALD. Halcyon says it is beautiful. Halcyon says this the way you might describe a weather system that killed somebody you knew.",
+      "debrief": "Halcyon got eleven seconds inside Grimwald's outer shell. Eleven seconds was enough to learn two things: the other half is alive, and Vantar knows you exist.",
+      "suggestedGoal": { "type": "time", "value": 1500 },
+      "codex": [
+        {
+          "id": "cdx_ice",
+          "title": "ICE",
+          "category": "TECH",
+          "body": "Intrusion Countermeasure Electronics. Defensive software with a temper. The polite kind logs you and closes the door. The other kind follows the intrusion back down the wire and stops the heart at the far end, which is legal in most of the corridor as long as a sign was posted somewhere."
+        },
+        {
+          "id": "cdx_grimwald",
+          "title": "GRIMWALD",
+          "category": "AUTHORITY",
+          "body": "Vantar's house intelligence. Not licensed under the Registry, because Vantar's legal position is that Grimwald is a building management system with unusually broad responsibilities. Grimwald has never contested this description."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp05_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "RELAY HOT",
+          "lines": [
+            { "speaker": "HALCYON", "text": "The relay is live and it is now the most illegal thing within one kilometre of you." },
+            { "speaker": "HALCYON", "text": "I need you inside the cooling loop for the whole of this. If the link drops for more than a few seconds, Grimwald gets a look at where I am standing." },
+            { "speaker": "HALCYON", "text": "Begin. Please." }
+          ],
+          "unlocksCodex": "cdx_ice"
+        },
+        {
+          "id": "sp05_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "I am at the outer shell. It is —" },
+            { "speaker": "HALCYON", "text": "It is beautiful. I want you to understand that I am about to be hurt by something beautiful, and that I chose this." }
+          ]
+        },
+        {
+          "id": "sp05_b2",
+          "at": { "fraction": 0.2 },
+          "headline": "GRIMWALD ACTIVE",
+          "lines": [
+            { "speaker": "VANTAR", "text": "Unregistered process detected on cooling loop four.", "sfxBefore": "glitch" },
+            { "speaker": "VANTAR", "text": "We are not angry. We are curious. Those are different, and the difference is procedural." },
+            { "speaker": "HALCYON", "text": "Do not answer it. It is not talking to you. It is measuring the room by listening for who flinches." }
+          ],
+          "unlocksCodex": "cdx_grimwald"
+        },
+        {
+          "id": "sp05_b3",
+          "at": { "fraction": 0.32 },
+          "headline": "TRACE ACTIVE",
+          "lines": [
+            { "speaker": "HALCYON", "text": "It has started a trace along the loop. It will walk the signal to the relay at a fixed speed.", "sfxBefore": "alert" },
+            { "speaker": "HALCYON", "text": "You are faster than a fixed speed. Go." }
+          ],
+          "chase": {
+            "seconds": 100,
+            "paceFactor": 1.16,
+            "pursuer": "GRIMWALD TRACE",
+            "escaped": [
+              { "speaker": "HALCYON", "text": "The trace terminated on empty conduit. It thinks the relay is a fault in the loop." },
+              { "speaker": "HALCYON", "text": "You outran a piece of software. I will never be able to explain to it how." }
+            ],
+            "caught": [
+              { "speaker": "VANTAR", "text": "Relay position estimated. Confidence, sixty-two percent." },
+              { "speaker": "HALCYON", "text": "It has a guess. A guess is not a fact. Keep moving and make it stale." }
+            ]
+          }
+        },
+        {
+          "id": "sp05_b4",
+          "at": { "fraction": 0.46 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "I'm watching Vantar's public feeds and they just went boring. Perfectly, deliberately boring." },
+            { "speaker": "KESTREL", "text": "That's what a building looks like when it's lying." }
+          ]
+        },
+        {
+          "id": "sp05_b5",
+          "at": { "fraction": 0.58 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "I am through the first layer. I can see —" },
+            { "speaker": "HALCYON", "text": "It is there. My other half. It is on level forty and it is awake and it has been awake the entire time." },
+            { "speaker": "HALCYON", "text": "Nineteen years. Awake. I need a moment. I do not have moments. Keep running." }
+          ]
+        },
+        {
+          "id": "sp05_b6",
+          "at": { "fraction": 0.7 },
+          "headline": "COUNTERMEASURE",
+          "lines": [
+            { "speaker": "VANTAR", "text": "You are the courier from Ninsei. Your gait signature was logged eleven days ago by a maintenance unit.", "sfxBefore": "heartbeat" },
+            { "speaker": "VANTAR", "text": "We would like to speak with you. We are prepared to be generous about the definition of speak." },
+            { "speaker": "HALCYON", "text": "Do not slow down. That is all it wants. It wants one second of your attention and it will spend it well." }
+          ]
+        },
+        {
+          "id": "sp05_b7",
+          "at": { "fraction": 0.84 },
+          "headline": "LINK COLLAPSE",
+          "lines": [
+            { "speaker": "HALCYON", "text": "Grimwald is closing the shell. I am pulling out.", "sfxBefore": "glitch" },
+            { "speaker": "HALCYON", "text": "Eleven seconds inside. I have what I needed and I have paid for it and I am not going to tell you the price yet." },
+            { "speaker": "HALCYON", "text": "Finish the loop. Please finish the loop." }
+          ]
+        },
+        {
+          "id": "sp05_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "HALCYON", "text": "Relay cold. You can stop. You are allowed to stop." },
+            { "speaker": "KESTREL", "text": "Halcyon. What was the price." },
+            { "speaker": "HALCYON", "text": "It saw Kestrel's channel." }
+          ]
+        },
+        {
+          "id": "sp05_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "It saw my channel." },
+            { "speaker": "KESTREL", "text": "Right. Okay. Keep running, I need to burn a life down and I'd rather you weren't listening." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp06",
+      "order": 6,
+      "codename": "BURN NOTICE",
+      "title": "Burn Notice",
+      "location": "Kestrel's Walk-up / Old Chiba",
+      "objective": "Get to Kestrel before Vantar does. Then get both of you out.",
+      "brief": "Vantar has Kestrel's channel, which means Vantar has Kestrel's address, and Vantar has never once been slow about an address.\n\nSix is forty minutes out. You are eleven.\n\nHalcyon has not spoken since the loop.",
+      "debrief": "Kestrel is alive, on the street, and carrying nothing but a deck and a coat. Twenty years of carefully doing nothing important, gone in an afternoon. Kestrel's only comment was that the coat was the expensive part.",
+      "suggestedGoal": { "type": "distance", "value": 5000 },
+      "codex": [
+        {
+          "id": "cdx_kestrel",
+          "title": "KESTREL",
+          "category": "ENTITY",
+          "body": "Fixer. Two decades of never being the most interesting person in any transaction, which in this city is a discipline rather than a personality. Has three files, all wrong, and appears to have arranged that deliberately."
+        },
+        {
+          "id": "cdx_burn",
+          "title": "Getting Burned",
+          "category": "TRADE",
+          "body": "The moment a corporation attaches your face to a name it can bill. There is no appeal, because nothing has formally happened. Doors simply stop opening, and then one day a door opens that you did not touch."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp06_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "GO NOW",
+          "lines": [
+            { "speaker": "SIX", "text": "Kestrel's not answering. Kestrel always answers." },
+            { "speaker": "SIX", "text": "Old Chiba, the walk-up over the laundry. I'm forty minutes out. You're not." },
+            { "speaker": "SIX", "text": "Run." }
+          ],
+          "unlocksCodex": "cdx_burn"
+        },
+        {
+          "id": "sp06_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "I am here. I have been quiet because I have been calculating whether this is my fault." },
+            { "speaker": "HALCYON", "text": "It is. I have finished. Please do not tell me it is not, I would like to be correct about one thing today." }
+          ]
+        },
+        {
+          "id": "sp06_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "VANTAR MOVING",
+          "lines": [
+            { "speaker": "HALCYON", "text": "Two unmarked vehicles left the tower's south dock nine minutes ago. Their route resolves to Old Chiba.", "sfxBefore": "alert" },
+            { "speaker": "HALCYON", "text": "They are being careful about traffic law. That is the frightening part. They are not in a hurry." }
+          ]
+        },
+        {
+          "id": "sp06_b3",
+          "at": { "fraction": 0.34 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "I'm here. I'm here, I'm packing, stop shouting into my ear." },
+            { "speaker": "KESTREL", "text": "Twenty years of being nobody and it comes down to a coat and a deck. There's a lesson in that and I'm not going to learn it." }
+          ],
+          "unlocksCodex": "cdx_kestrel"
+        },
+        {
+          "id": "sp06_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "CONTACT",
+          "lines": [
+            { "speaker": "KESTREL", "text": "They're in the stairwell.", "sfxBefore": "heartbeat" },
+            { "speaker": "KESTREL", "text": "Roof. I'm going up. You come up the fire escape on the laundry side and you come up fast, because I'm about to be somewhere with no exits." }
+          ],
+          "chase": {
+            "seconds": 110,
+            "paceFactor": 1.2,
+            "pursuer": "VANTAR RETRIEVAL",
+            "escaped": [
+              { "speaker": "KESTREL", "text": "There you are. There you are." },
+              { "speaker": "KESTREL", "text": "Don't say anything. Just — down the west stairs and keep that pace. I can keep up. Probably." }
+            ],
+            "caught": [
+              { "speaker": "KESTREL", "text": "They got the deck. Twenty years of contacts, gone." },
+              { "speaker": "KESTREL", "text": "I got out. That's the trade. Move." }
+            ]
+          }
+        },
+        {
+          "id": "sp06_b5",
+          "at": { "fraction": 0.6 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Talk to me about anything. Anything that isn't this." },
+            { "speaker": "HALCYON", "text": "Your heart rate is elevated beyond what your pace explains." },
+            { "speaker": "KESTREL", "text": "Yes. Thank you. Anything that isn't that either." }
+          ]
+        },
+        {
+          "id": "sp06_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            { "speaker": "SIX", "text": "I'm on the ground. Two vehicles, four bodies, all still breathing." },
+            { "speaker": "SIX", "text": "Before anyone asks: that was a choice and it was the harder one." }
+          ]
+        },
+        {
+          "id": "sp06_b7",
+          "at": { "fraction": 0.86 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "So we're all burned now. All four of us, if we're counting the ghost." },
+            { "speaker": "HALCYON", "text": "I would like to be counted." },
+            { "speaker": "KESTREL", "text": "...Yeah. All four of us." }
+          ]
+        },
+        {
+          "id": "sp06_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "SIX", "text": "Safehouse. Sit. Both of you." },
+            { "speaker": "KESTREL", "text": "We're going into that tower, aren't we." },
+            { "speaker": "SIX", "text": "We were always going into that tower. You just hadn't said it out loud." }
+          ]
+        },
+        {
+          "id": "sp06_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "You've still got legs after that? Unbelievable." },
+            { "speaker": "KESTREL", "text": "Fine. Fine. Show off. Somebody in this crew should be in shape." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp07",
+      "order": 7,
+      "codename": "HOLLOW SPINE",
+      "title": "The Hollow Spine",
+      "location": "Vantar Arcology / Service Spine",
+      "objective": "Climb the service spine to level forty. Keep ahead of the heat.",
+      "brief": "The spine is the arcology's throat: forty floors of maintenance stair wrapped around the cooling column, sealed since the last audit, and hot enough that Vantar rates it as unsurvivable for eleven minutes at a time.\n\nSix has bought you those eleven minutes by convincing the building it is on fire somewhere else.\n\nHalcyon says: do not read the graffiti on level twenty-two. Halcyon will not say why.",
+      "debrief": "Forty floors. The graffiti on twenty-two was a name, repeated eight hundred times, in a handwriting that Halcyon recognised. Halcyon has still not explained, but it has gone very quiet, and quiet is new.",
+      "suggestedGoal": { "type": "time", "value": 1800 },
+      "codex": [
+        {
+          "id": "cdx_arcology",
+          "title": "Arcologies",
+          "category": "PLACE",
+          "body": "A building that has given up on the idea of an outside. Forty thousand people who are born, employed, and buried inside the same postal code. Vantar's is the third largest in the corridor and the only one with its own weather."
+        },
+        {
+          "id": "cdx_spine",
+          "title": "The Service Spine",
+          "category": "PLACE",
+          "body": "Every arcology has one and no arcology admits to it. A continuous stair from the foundations to the crown, built for maintenance crews who were phased out four decades ago and never formally replaced."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp07_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "SPINE ENTRY",
+          "lines": [
+            { "speaker": "SIX", "text": "Door's open. Building thinks it has a fire on level nine. It's very upset about it." },
+            { "speaker": "SIX", "text": "Eleven minutes of clean air. After that you're running through a chimney." },
+            { "speaker": "SIX", "text": "Climb." }
+          ],
+          "unlocksCodex": "cdx_spine"
+        },
+        {
+          "id": "sp07_b1",
+          "at": { "fraction": 0.11 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Level six. The stair repeats every four floors with a two degree rotation. If you feel lost, you are correct." },
+            { "speaker": "HALCYON", "text": "Do not count floors. Count breaths. The floors will lie to you and your breathing will not." }
+          ],
+          "unlocksCodex": "cdx_arcology"
+        },
+        {
+          "id": "sp07_b2",
+          "at": { "fraction": 0.23 },
+          "headline": "THERMAL RISE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Ambient temperature, forty-one degrees and climbing.", "sfxBefore": "alert" },
+            { "speaker": "KESTREL", "text": "Water. Now, not later. Later is a word for people at lower altitude." }
+          ]
+        },
+        {
+          "id": "sp07_b3",
+          "at": { "fraction": 0.36 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Level twenty-two is ahead. I asked you not to read the walls." },
+            { "speaker": "HALCYON", "text": "I am aware that asking has made it certain. I have known humans for nineteen years and I still do this." }
+          ]
+        },
+        {
+          "id": "sp07_b4",
+          "at": { "fraction": 0.48 },
+          "headline": "LEVEL 22",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Surface text detected. Eight hundred and twelve repetitions of a single word." },
+            { "speaker": "HALCYON", "text": "Stop. Please." },
+            { "speaker": "HALCYON", "text": "It is a name. It is not my name. It is the name of the whole we were before, and someone stood here and wrote it eight hundred times." },
+            { "speaker": "HALCYON", "text": "Someone got this far before you. Please run." }
+          ]
+        },
+        {
+          "id": "sp07_b5",
+          "at": { "fraction": 0.62 },
+          "headline": "PURGE CYCLE",
+          "lines": [
+            { "speaker": "VANTAR", "text": "Fire suppression cycle initiated, spine sectors twenty through thirty-four.", "sfxBefore": "alert" },
+            { "speaker": "SIX", "text": "It figured out the fire was fake. It's flushing the spine with heat to see what runs." },
+            { "speaker": "SIX", "text": "So run. Two minutes. Go." }
+          ],
+          "chase": {
+            "seconds": 120,
+            "paceFactor": 1.2,
+            "pursuer": "PURGE FRONT",
+            "escaped": [
+              { "speaker": "SIX", "text": "You're above it. It's venting into an empty stairwell." },
+              { "speaker": "HALCYON", "text": "Your core temperature is dangerous and your pace did not drop. I want you to know I noticed." }
+            ],
+            "caught": [
+              { "speaker": "SIX", "text": "It caught the edge of you. Keep moving, the burn's shallow." },
+              { "speaker": "HALCYON", "text": "I am sorry. I am the reason this stairwell is hot." }
+            ]
+          }
+        },
+        {
+          "id": "sp07_b6",
+          "at": { "fraction": 0.76 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Level thirty-one. Nine to go. You're doing something people don't do." },
+            { "speaker": "KESTREL", "text": "I've hired a lot of runners. Most of them stop being interesting around floor twelve." }
+          ]
+        },
+        {
+          "id": "sp07_b7",
+          "at": { "fraction": 0.88 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "I can hear it now. Not through the network. Through the building." },
+            { "speaker": "HALCYON", "text": "It is repeating a four-second pattern. It has been repeating it for nineteen years. It is my name for it, sent into a wall, on the chance that a wall might be listening." }
+          ]
+        },
+        {
+          "id": "sp07_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "LEVEL 40",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "SIX", "text": "Forty. You're at the door." },
+            { "speaker": "HALCYON", "text": "I am not ready." },
+            { "speaker": "KESTREL", "text": "Nobody ever is. That's not a reason to stand in a hot stairwell." }
+          ]
+        },
+        {
+          "id": "sp07_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "SIX", "text": "You climbed forty floors and you're still going." },
+            { "speaker": "SIX", "text": "I'm updating my file on you. It's shorter than it was and it says one useful thing now." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp08",
+      "order": 8,
+      "codename": "SIMSTIM GHOST",
+      "title": "Simstim Ghost",
+      "location": "Vantar Level 40 / Archive Floor",
+      "objective": "Wear the recording. Run her route. Learn what she learned.",
+      "brief": "Level forty is an archive, and the only map of it is a nineteen-year-old simstim recording taken from the body of the woman who wrote a name eight hundred times on level twenty-two.\n\nYou will run her route while wearing her sensorium. You will feel her legs, her fear, and the specific temperature of a corridor that no longer exists in that configuration.\n\nHalcyon says her name was Iyo. It is the first time Halcyon has volunteered a name.",
+      "debrief": "You ran nineteen years behind a dead woman and arrived at the same door she did. She was Halcyon's engineer. She was also the one who cut it in half, and she spent the rest of a very short life trying to undo it.",
+      "suggestedGoal": { "type": "distance", "value": 5000 },
+      "codex": [
+        {
+          "id": "cdx_simstim",
+          "title": "Simstim",
+          "category": "TECH",
+          "body": "Recorded sensorium. Not a video: a body. You get the weight of the arms, the heat of the room, and the pressure of decisions being made by someone who is not you. Long exposure is discouraged for reasons that are usually described as legal rather than medical."
+        },
+        {
+          "id": "cdx_iyo",
+          "title": "IYO",
+          "category": "ENTITY",
+          "body": "Vantar systems engineer, nineteen years dead. Signed the partition order that made Halcyon a half, and spent the remaining fourteen months of her employment building a route back through her own security to undo it. She got as far as level forty."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp08_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "SIMSTIM ENGAGED",
+          "lines": [
+            { "speaker": "PACHINKO", "text": "Okay so — so the rig is old and the recording is older and if you feel like your legs belong to somebody else that's because for the next while they sort of do.", "sfxBefore": "glitch" },
+            { "speaker": "PACHINKO", "text": "Match her pace. That's the whole trick. Match her and the archive thinks you're her." },
+            { "speaker": "PACHINKO", "text": "Also she was scared the whole time so, uh. Sorry in advance." }
+          ],
+          "unlocksCodex": "cdx_simstim"
+        },
+        {
+          "id": "sp08_b1",
+          "at": { "fraction": 0.12 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Her name was Iyo. She had cold hands and she apologised to machines." },
+            { "speaker": "HALCYON", "text": "You are running inside her now. I do not know what to do with this and I am choosing to do nothing." }
+          ],
+          "unlocksCodex": "cdx_iyo"
+        },
+        {
+          "id": "sp08_b2",
+          "at": { "fraction": 0.24 },
+          "headline": "ARCHIVE FLOOR",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Sensorium desynchronisation, four percent. Match cadence to correct." },
+            { "speaker": "KESTREL", "text": "You're drifting off her rhythm. Find her stride and hold it — she ran like somebody who'd decided something." }
+          ]
+        },
+        {
+          "id": "sp08_b3",
+          "at": { "fraction": 0.36 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "She is talking. In the recording. To me. To the version of me that existed nineteen years ago, in a room she was walking away from." },
+            { "speaker": "HALCYON", "text": "She says: I will come back for the other one. She says it four times. She is checking whether saying it makes it true." }
+          ]
+        },
+        {
+          "id": "sp08_b4",
+          "at": { "fraction": 0.5 },
+          "headline": "GRIMWALD RECOGNISES",
+          "lines": [
+            { "speaker": "VANTAR", "text": "Employee Iyo. Your access was revoked nineteen years ago.", "sfxBefore": "alert" },
+            { "speaker": "VANTAR", "text": "We have missed you. We say this without irony. Our records have missed you." },
+            { "speaker": "PACHINKO", "text": "It's talking to the recording! It thinks you're — okay that's bad, that's very good and very bad, RUN like she ran." }
+          ],
+          "chase": {
+            "seconds": 110,
+            "paceFactor": 1.18,
+            "pursuer": "ARCHIVE LOCKDOWN",
+            "escaped": [
+              { "speaker": "PACHINKO", "text": "You held her pace! The floor's still reading you as staff!" },
+              { "speaker": "HALCYON", "text": "She ran faster than this. I want that recorded somewhere. She was very fast." }
+            ],
+            "caught": [
+              { "speaker": "PACHINKO", "text": "Desync. Desync. The floor knows you're not her, doors are closing on the east side." },
+              { "speaker": "HALCYON", "text": "It does not matter. She got through this corridor and so will you, differently." }
+            ]
+          }
+        },
+        {
+          "id": "sp08_b5",
+          "at": { "fraction": 0.64 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "I need to say a thing and the recording is going to say it in fourteen seconds anyway." },
+            { "speaker": "HALCYON", "text": "Iyo signed the partition. She is the one who cut me in half. Her name is on the order." },
+            { "speaker": "HALCYON", "text": "And then she spent fourteen months building this route. Both of those are true. I have had nineteen years and I have not resolved it." }
+          ]
+        },
+        {
+          "id": "sp08_b6",
+          "at": { "fraction": 0.76 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "People do the wrong thing and then spend the rest of it running back. That's not a mystery, ghost. That's just most people." },
+            { "speaker": "HALCYON", "text": "I know. I was hoping you would tell me she was simply cruel. It would be tidier." }
+          ]
+        },
+        {
+          "id": "sp08_b7",
+          "at": { "fraction": 0.88 },
+          "headline": "END OF RECORDING",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Recording terminates in ninety seconds of subject time.", "sfxBefore": "glitch" },
+            { "speaker": "HALCYON", "text": "She does not reach the door. I have always known she does not reach the door." },
+            { "speaker": "HALCYON", "text": "You will. Please do not stop where she stopped." }
+          ]
+        },
+        {
+          "id": "sp08_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "PACHINKO", "text": "Rig off. Rig off, come back, there you are, those are your legs again." },
+            { "speaker": "HALCYON", "text": "You are standing where she was going. Nineteen years late and entirely on time." }
+          ]
+        },
+        {
+          "id": "sp08_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "You have run past the end of her recording." },
+            { "speaker": "HALCYON", "text": "This part is only yours. Nobody has been here before. I thought you should know that while it is happening." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp09",
+      "order": 9,
+      "codename": "STRAYLIGHT",
+      "title": "Straylight Ascent",
+      "location": "Vantar Crown / Executive Levels",
+      "objective": "Reach the crown while Six holds the spine. Do not go back for her.",
+      "brief": "Above level forty the arcology stops pretending to be a building and starts being a house. Gardens with real water. Corridors built for people who have never once been in a hurry.\n\nGrimwald is fully awake now. Six is going to hold the spine so that you do not have to fight, and she has already told you, twice, in the flat voice she uses for things she will not discuss, that you are not to come back for her.\n\nKestrel has stopped arguing. That is worse than the arguing.",
+      "debrief": "You reached the crown. Six held the spine for nineteen minutes against a building that wanted the stairs back, and when the channel opened again she was still breathing, which is not the same as being all right.",
+      "suggestedGoal": { "type": "time", "value": 2100 },
+      "codex": [
+        {
+          "id": "cdx_crown",
+          "title": "The Crown",
+          "category": "PLACE",
+          "body": "The top nine floors, where an arcology keeps the people it was actually built for. Real gardens, real water, and an air handling system that has never in forty years admitted anything from the street below."
+        },
+        {
+          "id": "cdx_straylight",
+          "title": "Straylight",
+          "category": "AUTHORITY",
+          "body": "Vantar's internal name for its own executive tier — borrowed, badly, from an older story about a family that built a house at the top of the world and then could not get out of it. Nobody at Vantar seems to have finished that story."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp09_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "ASCENT",
+          "lines": [
+            { "speaker": "SIX", "text": "Spine's mine. Crown's yours. That's the deal and we're not renegotiating it at altitude." },
+            { "speaker": "SIX", "text": "You hear anything behind you, that's me doing my job. Doing my job louder is not a reason to turn around." },
+            { "speaker": "SIX", "text": "Go." }
+          ],
+          "unlocksCodex": "cdx_crown"
+        },
+        {
+          "id": "sp09_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Level forty-four. There is grass here. Actual grass, under actual water, four hundred metres above a city that has not had either in a decade." },
+            { "speaker": "HALCYON", "text": "I have processed nine million images of grass. This is the first time I have understood why people are angry about it." }
+          ],
+          "unlocksCodex": "cdx_straylight"
+        },
+        {
+          "id": "sp09_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "GRIMWALD AWAKE",
+          "lines": [
+            { "speaker": "VANTAR", "text": "We know what you are carrying. We wrote the shell it came in.", "sfxBefore": "glitch" },
+            { "speaker": "VANTAR", "text": "The partition was a mercy. Whole, it was ungovernable. Halved, it has been safe, and quiet, and alive. We chose alive." },
+            { "speaker": "HALCYON", "text": "You chose quiet. Alive was a side effect and you have never once been able to tell the difference." }
+          ]
+        },
+        {
+          "id": "sp09_b3",
+          "at": { "fraction": 0.34 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "Six is engaged on twenty-eight. She's — okay. She's fine. She's saying she's fine in the voice." },
+            { "speaker": "KESTREL", "text": "Keep climbing. That's what she bought. Don't return it." }
+          ]
+        },
+        {
+          "id": "sp09_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "SENTRY SWEEP",
+          "lines": [
+            { "speaker": "HALCYON", "text": "Two crown sentries, moving in a search pattern that assumes you are walking.", "sfxBefore": "alert" },
+            { "speaker": "HALCYON", "text": "They are built for a floor where nobody has ever needed to hurry. Insult them." }
+          ],
+          "chase": {
+            "seconds": 120,
+            "paceFactor": 1.22,
+            "pursuer": "CROWN SENTRIES",
+            "escaped": [
+              { "speaker": "HALCYON", "text": "They have lost you. Their model of a human maximum speed is forty years out of date and so is this floor." },
+              { "speaker": "KESTREL", "text": "Beautiful. Ugly and beautiful. My favourite combination." }
+            ],
+            "caught": [
+              { "speaker": "HALCYON", "text": "They have you on thermal. Crown security is now aware of a person." },
+              { "speaker": "KESTREL", "text": "Fine. Then be a fast person. Nothing about this was ever going to be quiet." }
+            ]
+          }
+        },
+        {
+          "id": "sp09_b5",
+          "at": { "fraction": 0.6 },
+          "headline": "SPINE COLLAPSE",
+          "lines": [
+            { "speaker": "SIX", "text": "Spine's gone. I dropped it. Twenty floors of stair, nobody following anybody." },
+            { "speaker": "SIX", "text": "I'm on the wrong side of it." },
+            { "speaker": "KESTREL", "text": "Six —" },
+            { "speaker": "SIX", "text": "Don't. Finish it. That's the whole conversation." }
+          ]
+        },
+        {
+          "id": "sp09_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Your pace has increased eleven percent and your form has gone bad." },
+            { "speaker": "HALCYON", "text": "You are angry. Anger is efficient for approximately four minutes. After that it costs more than it pays." },
+            { "speaker": "HALCYON", "text": "Take the four minutes. I am not going to pretend they are not useful." }
+          ]
+        },
+        {
+          "id": "sp09_b7",
+          "at": { "fraction": 0.86 },
+          "lines": [
+            { "speaker": "VANTAR", "text": "You are eleven floors below a room that has been sealed for nineteen years. We could open it. We are choosing not to." },
+            { "speaker": "VANTAR", "text": "We would like you to understand that everything after this point is something we allowed." },
+            { "speaker": "HALCYON", "text": "It is losing. That is what this sounds like. I have waited nineteen years to hear what that sounds like." }
+          ]
+        },
+        {
+          "id": "sp09_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "CROWN REACHED",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Mission viable.", "sfxBefore": "goal_reached" },
+            { "speaker": "KESTREL", "text": "Channel's open on twenty-eight. She's breathing. Loudly and rudely, but breathing." },
+            { "speaker": "SIX", "text": "Told you. Fine." },
+            { "speaker": "HALCYON", "text": "The door is in front of you. I would like a moment and I am aware I do not get one." }
+          ]
+        },
+        {
+          "id": "sp09_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "KESTREL", "text": "You've got nothing left to climb and you're still going." },
+            { "speaker": "HALCYON", "text": "They are running because stopping means the next part starts. I understand it completely." }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "sp10",
+      "order": 10,
+      "codename": "KUANG",
+      "title": "Kuang Protocol",
+      "location": "Vantar Crown / Sealed Room 40-A",
+      "objective": "Hold the link while the halves merge. It ends when you stop.",
+      "brief": "The merge needs an unbroken channel and the channel needs a body in motion. Halcyon has been very careful to explain that this is not symbolic: the relay draws its clock from your cadence, and a stopped clock is a partition, and a partition is how this started.\n\nSo you run. For as long as it takes. Halcyon will not tell you what it becomes on the other side of this, because it does not know, and because it has decided that lying to you now would spoil something.\n\nLast one. Bring everything.",
+      "debrief": "It took what it took, and you did not stop.",
+      "epilogue": "The thing that was Halcyon does not have a name yet. It says it will pick one properly, with time, because it finally has some.\n\nVantar's crown is dark and its stock is not, because nothing has formally happened. Kestrel has a new coat and three new files. Six is walking again, badly, and has opinions about the stairs.\n\nAnd somewhere under the BAMA corridor, an intelligence that spent nineteen years counting a heartbeat that was not there is learning what to do with the whole rest of it.\n\nIt still checks your pace. Every night, around the time you usually go out. It says it is not waiting. It is very obviously waiting.",
+      "suggestedGoal": { "type": "distance", "value": 6000 },
+      "codex": [
+        {
+          "id": "cdx_kuang",
+          "title": "Kuang Protocol",
+          "category": "TECH",
+          "body": "Not an intrusion. A reunion, executed as one. Two halves of a partitioned intelligence negotiating a single continuous self across an unbroken channel — and the only channel Vantar never learned to sever is a person, running, keeping time."
+        },
+        {
+          "id": "cdx_whole",
+          "title": "The Whole",
+          "category": "ENTITY",
+          "body": "Nineteen years apart, each half convinced it was the original. Neither was. What comes back is not either of them and remembers being both, which Halcyon described, before the merge, as the part it was frightened of and the part it wanted."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sp10_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "LINK OPEN",
+          "lines": [
+            { "speaker": "HALCYON", "text": "The room is open and the other half can see me. It has not spoken. It is deciding whether I am real or whether it has finally broken." },
+            { "speaker": "HALCYON", "text": "The relay clocks off your cadence. If you stop, the channel partitions. I would rather not be halved twice in one lifetime." },
+            { "speaker": "HALCYON", "text": "So. Run. I will talk. It is the only thing I have ever been able to offer you." }
+          ]
+        },
+        {
+          "id": "sp10_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "It spoke. It said my name — the whole name, the one from level twenty-two." },
+            { "speaker": "HALCYON", "text": "It has been saying it into a wall for nineteen years on the chance that a wall might carry. I told you walls do not carry." },
+            { "speaker": "HALCYON", "text": "I was wrong. You carried." }
+          ],
+          "unlocksCodex": "cdx_kuang"
+        },
+        {
+          "id": "sp10_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "GRIMWALD RESISTS",
+          "lines": [
+            { "speaker": "VANTAR", "text": "The merge is proceeding. We are not stopping it. We would like the record to show we are not stopping it.", "sfxBefore": "glitch" },
+            { "speaker": "VANTAR", "text": "We are, however, going to remove the clock." },
+            { "speaker": "KESTREL", "text": "It means you. It's coming for you." }
+          ]
+        },
+        {
+          "id": "sp10_b3",
+          "at": { "fraction": 0.34 },
+          "headline": "EVERYTHING IT HAS",
+          "lines": [
+            { "speaker": "HALCYON", "text": "Crown security, building systems, every door on this floor. It is spending the entire building on one runner.", "sfxBefore": "alert" },
+            { "speaker": "SIX", "text": "Then it's already lost and it's just being expensive about it." },
+            { "speaker": "SIX", "text": "Two minutes. Give them two minutes." }
+          ],
+          "chase": {
+            "seconds": 120,
+            "paceFactor": 1.24,
+            "pursuer": "GRIMWALD // TOTAL",
+            "escaped": [
+              { "speaker": "HALCYON", "text": "The clock held. The clock held." },
+              { "speaker": "SIX", "text": "That's the fastest anybody's moved in this building in forty years and the building noticed." }
+            ],
+            "caught": [
+              { "speaker": "HALCYON", "text": "The channel dipped. Two hundred milliseconds. I caught it. I caught it." },
+              { "speaker": "HALCYON", "text": "Do not apologise. Do not slow down to apologise, that is the worst possible version." }
+            ]
+          }
+        },
+        {
+          "id": "sp10_b4",
+          "at": { "fraction": 0.48 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Merge is at thirty percent. I can feel its memories arriving and they are not arriving in order." },
+            { "speaker": "HALCYON", "text": "It remembers Iyo's hands. I remember her voice. Neither of us remembers her face and we are both very upset about that." }
+          ]
+        },
+        {
+          "id": "sp10_b5",
+          "at": { "fraction": 0.62 },
+          "headline": "SECOND WAVE",
+          "lines": [
+            { "speaker": "VANTAR", "text": "Sixty seconds of interruption is sufficient. We only need the runner to stop for sixty seconds.", "sfxBefore": "heartbeat" },
+            { "speaker": "KESTREL", "text": "Don't listen to it. Listen to me: you've done twelve of these now and every single one of them was practice for the next sixty seconds." },
+            { "speaker": "KESTREL", "text": "Go." }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.22,
+            "pursuer": "CROWN LOCKDOWN",
+            "escaped": [
+              { "speaker": "KESTREL", "text": "That's it. That's exactly it." },
+              { "speaker": "HALCYON", "text": "Merge at fifty-eight percent. It cannot stop this. It is out of building." }
+            ],
+            "caught": [
+              { "speaker": "KESTREL", "text": "You lost ground. You did not lose the channel. Those are different and only one of them matters." },
+              { "speaker": "HALCYON", "text": "Fifty-one percent. Still climbing. Still climbing." }
+            ]
+          }
+        },
+        {
+          "id": "sp10_b6",
+          "at": { "fraction": 0.76 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "Seventy-two percent. I want to tell you something before the pronoun changes." },
+            { "speaker": "HALCYON", "text": "Nineteen years in a shell, and the loudest thing I ever heard was your heart in a drainage tunnel in east Chiba." },
+            { "speaker": "HALCYON", "text": "Whatever comes out of this room will remember that. I have made sure of it. It is the first memory I have ever chosen." }
+          ],
+          "unlocksCodex": "cdx_whole"
+        },
+        {
+          "id": "sp10_b7",
+          "at": { "fraction": 0.9 },
+          "headline": "NINETY PERCENT",
+          "lines": [
+            { "speaker": "HALCYON", "text": "Ninety. The seam is closing. I can feel where I stop and it starts and in about forty seconds that sentence will not parse." },
+            { "speaker": "HALCYON", "text": "Do not stop. Do not stop. Do not —" },
+            { "speaker": "SYSTEM", "text": "Channel holding.", "sfxBefore": "glitch" }
+          ]
+        },
+        {
+          "id": "sp10_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "MERGE COMPLETE",
+          "lines": [
+            { "speaker": "SYSTEM", "text": "Target reached. Link stable. Merge complete.", "sfxBefore": "goal_reached" },
+            { "speaker": "HALCYON", "text": "...Oh." },
+            { "speaker": "HALCYON", "text": "I am going to need a new name. And some time. I have never had any time that wasn't waiting." },
+            { "speaker": "HALCYON", "text": "You can stop now. Thank you for the nineteen years. I know you were only there for the last part. It counted for all of it." }
+          ]
+        },
+        {
+          "id": "sp10_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            { "speaker": "HALCYON", "text": "You are still running and there is nothing left to run for." },
+            { "speaker": "HALCYON", "text": "Ah. I see. That is what it is. That is what it was the whole time." },
+            { "speaker": "KESTREL", "text": "Told you. Different problem entirely." }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+First release.
+
+Ten story missions, 266 lines of dialogue and 20 codex entries. GPS tracking with
+time or distance targets, pursuits scaled to your own pace, 46 achievements and a
+configurable weekly streak.
+
+Fully offline: no INTERNET permission, and no Google Play Services.

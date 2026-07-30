@@ -9,11 +9,11 @@ plugins {
 // Release signing credentials, kept out of version control. See
 // android/key.properties.example for the expected keys.
 //
-// When the file is absent — a fresh clone, or CI without secrets — release
-// builds fall back to the debug key so `flutter build apk` still works. Such a
-// build is fine for testing and must never be published: it carries the
-// throwaway "CN=Android Debug" identity and cannot be updated later by a
-// properly signed release.
+// When the file is absent — a fresh clone, or a reproducible build on F-Droid's
+// server — the release APK is left *unsigned* rather than falling back to the
+// debug key. F-Droid signs the artifact itself and rejects one that arrives
+// pre-signed, and a debug-signed release is a trap: it looks publishable but
+// carries a throwaway identity that can never be updated from.
 val keystoreProperties = Properties().apply {
     val file = rootProject.file("key.properties")
     if (file.exists()) file.inputStream().use { load(it) }
@@ -75,7 +75,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName(if (hasReleaseKey) "release" else "debug")
+            signingConfig = if (hasReleaseKey) signingConfigs.getByName("release") else null
             // R8 is deliberately left at the Flutter Gradle Plugin's default
             // (enabled, with Flutter's own keep rules). Disabling it grows the
             // dex from ~2 MB to ~15 MB. This appends to those rules rather than

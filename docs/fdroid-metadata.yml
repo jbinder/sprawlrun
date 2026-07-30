@@ -1,0 +1,80 @@
+# Draft metadata for F-Droid.
+#
+# This file does NOT belong in this repository as far as F-Droid is concerned —
+# it is kept here for reference. To submit, copy it to
+#
+#     metadata/io.github.jbinder.sprawlrun.yml
+#
+# in a fork of https://gitlab.com/fdroid/fdroiddata and open a merge request.
+#
+# Verify locally before submitting:
+#     fdroid readmeta && fdroid lint io.github.jbinder.sprawlrun
+#     fdroid build io.github.jbinder.sprawlrun            # needs their buildserver
+
+Categories:
+  - Sports & Health
+License: MIT
+AuthorName: jbinder
+SourceCode: https://github.com/jbinder/sprawlrun
+IssueTracker: https://github.com/jbinder/sprawlrun/issues
+Changelog: https://github.com/jbinder/sprawlrun/releases
+
+AutoName: SPRAWL//RUN
+
+RepoType: git
+Repo: https://github.com/jbinder/sprawlrun.git
+
+Builds:
+  - versionName: 0.1.0
+    versionCode: 1
+    commit: v0.1.0
+    subdir: android/app
+    output: build/app/outputs/flutter-apk/app-release.apk
+    srclibs:
+      # Must match a version defined in fdroiddata's srclibs/flutter.yml.
+      # If 3.44.8 is not there yet, either add it in the same merge request or
+      # pin the app to the newest version they do carry.
+      - flutter@3.44.8
+    # package:jni (via path_provider_android) compiles dartjni.c through CMake.
+    ndk: 28.2.13676358
+    build: |
+      $$flutter$$/bin/flutter config --no-analytics
+      $$flutter$$/bin/flutter config --no-cli-animations
+      $$flutter$$/bin/flutter pub get
+      $$flutter$$/bin/flutter build apk --release
+    # No signing config is stripped here on purpose: with android/key.properties
+    # absent — which it always is on the buildserver, being gitignored — the
+    # release build type produces an unsigned APK for F-Droid to sign.
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 0.1.0
+CurrentVersionCode: 1
+
+# ---------------------------------------------------------------------------
+# Notes for the reviewer, worth pasting into the merge request description
+# ---------------------------------------------------------------------------
+#
+# Google Play Services:
+#   geolocator_android declares com.google.android.gms:play-services-location.
+#   The app module excludes the whole `com.google.android.gms` group from its
+#   configurations (android/app/build.gradle.kts), and sets
+#   forceLocationManager: true so the AOSP LocationManager is used directly.
+#   geolocator supports this explicitly — its client selection catches
+#   NoClassDefFoundError with the comment "This might happen when the GMS
+#   package has been excluded by the app developer due to its proprietary
+#   license".
+#
+#   Verified on the release APK: 1898 classes defined in the dex, zero under
+#   com/google. The scanner may still flag the declaration in the transitive
+#   pub dependency; the exclusion is what makes it moot at build time.
+#
+# Network:
+#   No INTERNET permission. ACCESS_NETWORK_STATE is merged in by ExoPlayer via
+#   just_audio and grants no network access.
+#
+# Assets:
+#   All sound effects and launcher icons are generated from source by scripts
+#   in tool/ (tool/gen_sfx.dart, tool/gen_icons.dart). The only third-party
+#   binaries are three SIL Open Font License typefaces in assets/fonts/, with
+#   their licence texts alongside them.

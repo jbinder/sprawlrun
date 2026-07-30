@@ -74,6 +74,12 @@ only third-party binaries in the repo are the three OFL fonts.
 
 ## Untested on real hardware
 
-Audio focus — the runner's music pausing and cleanly resuming around each story
-beat — has never been verified on a device. It cannot be exercised in tests. Treat
-any report about it as new information rather than a regression.
+Two things cannot be exercised by the test suite. Treat any report about either as
+new information rather than a regression:
+
+- **Audio focus** — the runner's music pausing and cleanly resuming around each
+  story beat.
+- **GPS acquisition via the AOSP `LocationManager`.** Since dropping Play
+  Services the app no longer uses the fused provider. Startup is verified clean
+  on device (no `NoClassDefFoundError`), but that fixes actually arrive has only
+  been shown in tests against synthetic data. Needs one real run outdoors.

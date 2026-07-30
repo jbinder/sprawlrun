@@ -1,0 +1,37 @@
+Your running app should not be a spreadsheet. It should be chasing you.
+
+SPRAWL//RUN is a gamified running tracker wrapped around a ten-mission cyberpunk story. You are a courier in a rain-slick megacity. A job on the Ninsei strip turns into carrying something that will not stop transmitting, and ends forty floors up a corporate arcology with an intelligence that has spent nineteen years counting a heartbeat that was not there.
+
+YOUR MUSIC, INTERRUPTED
+
+Bring whatever you normally listen to. Every few minutes the app takes over the audio: a radio squelch, your music drops out, and your handler talks. Then it hands your music back. Five characters, each with a distinct synthesised voice, so you know who is speaking with the phone in your pocket.
+
+SOMEBODY IS CHASING YOU
+
+A drone tags your gait. Collections kick in a clinic door. A corporate trace walks the cooling loop toward you. To escape you have to beat your own pace from the last three minutes — never an arbitrary number, so a pursuit is a genuine effort whether you run 4:00/km or 7:00/km, and impossible at neither. Switch them off if you would rather just run.
+
+YOU SET THE TARGET
+
+Before each mission, choose a time or a distance. Twelve minutes or twenty-one kilometres — the story paces itself to fit. Reach the target and the operation succeeds; stop short and it stays open for another attempt. Overshoot freely, it all counts.
+
+TRACK EVERYTHING, SHARE NOTHING
+
+Distance, time, calories and cleared missions for the last week and month, with per-day bars and your full run log. Calories use the ACSM metabolic equations and your body mass, not an invented multiplier. Every run keeps its GPS trace.
+
+46 achievements across six categories, and a weekly streak you define yourself in minutes, kilometres or missions. A week still in progress never breaks a streak — only a finished week that fell short does.
+
+TWENTY CODEX ENTRIES
+
+Black clinics. The Turing Registry. Simstim. Entries unlock only once a character has actually mentioned them, so the codex records what you have been told rather than letting you read ahead.
+
+GENUINELY OFFLINE
+
+There is no INTERNET permission in the manifest. The app cannot reach the network, so nothing about your runs can leave the device. No accounts, no analytics, no ads.
+
+No Google Play Services either — the proprietary location library is excluded from the build and the AOSP LocationManager is used directly, so this runs identically on a de-Googled ROM.
+
+NOTE ON VOICES
+
+Spoken dialogue needs a text-to-speech engine installed. Many de-Googled builds ship none; if yours does not, the app falls back to on-screen text at speaking pace with all sound effects intact. Installing RHVoice or eSpeak NG restores the voices.
+
+Free software, MIT licensed. All sound effects and artwork are generated from code in the repository rather than shipped as opaque binaries.

@@ -65,13 +65,30 @@ CurrentVersionCode: 2
 #   package has been excluded by the app developer due to its proprietary
 #   license".
 #
-#   Verified on the release APK: 1898 classes defined in the dex, zero under
-#   com/google. The scanner may still flag the declaration in the transitive
-#   pub dependency; the exclusion is what makes it moot at build time.
+#   Verified on the 0.2.0 release APK: 1918 classes defined in the dex, zero
+#   under com/google. The scanner may still flag the declaration in the
+#   transitive pub dependency; the exclusion is what makes it moot at build time.
 #
 # Network:
-#   No INTERNET permission. ACCESS_NETWORK_STATE is merged in by ExoPlayer via
-#   just_audio and grants no network access.
+#   No INTERNET permission. The merged manifest carries two permissions the app
+#   does not request directly:
+#     - ACCESS_NETWORK_STATE, merged in by ExoPlayer via just_audio. Reads
+#       connectivity status; grants no network access.
+#     - io.github.jbinder.sprawlrun.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION,
+#       self-defined by share_plus so only this app can receive its own
+#       share-result broadcast.
+#   Without INTERNET, nothing here can reach the network regardless.
+#
+# Backup and restore:
+#   share_plus and file_selector are used for the export/import feature in
+#   Settings -> Data. Export hands a JSON file to the system share sheet;
+#   import reads one back through the SAF document picker. No storage
+#   permission is requested in either direction.
+#
+# Unsigned output:
+#   Verified locally by building with android/key.properties absent, as it is
+#   on the buildserver: apksigner reports DOES NOT VERIFY / missing
+#   META-INF/MANIFEST.MF, and the APK contains no signature blocks.
 #
 # Assets:
 #   All sound effects and launcher icons are generated from source by scripts

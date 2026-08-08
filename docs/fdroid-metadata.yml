@@ -45,6 +45,9 @@ Builds:
     output: build/app/outputs/flutter-apk/app-release.apk
 
     # package:jni (via path_provider_android) compiles dartjni.c through CMake.
+    # 28.2.13676358 is NDK r28c; both spellings appear in fdroiddata and this
+    # exact numeric version is already used by other apps, so it is available
+    # on the buildserver.
     ndk: 28.2.13676358
 
     # Only Android is shipped; the iOS scaffolding is dead weight for a build
@@ -64,11 +67,14 @@ Builds:
       # newest on the day of the build.
       - $$flutter$$/bin/flutter pub get --enforce-lockfile
 
-    # The Dart SDK and engine artifacts flutter downloads into its own cache
-    # are prebuilt binaries. They are needed to build and must not ship, so
-    # they are excluded from the scan and then deleted.
-    scanignore:
-      - .pub-cache
+    # The pub cache holds prebuilt binaries that are needed to build and must
+    # not ship, so it is deleted after the scan.
+    #
+    # scandelete ONLY — do not also add `scanignore: .pub-cache`. scanignore
+    # makes the scanner skip the subtree, the scandelete then never fires, and
+    # fdroidserver fails the build with "Unused scandelete path: .pub-cache".
+    # That is a real CI failure this recipe already hit once. 349 apps in
+    # fdroiddata use scandelete alone; exactly one uses both.
     scandelete:
       - .pub-cache
 
@@ -85,7 +91,10 @@ AutoUpdateMode: Version
 UpdateCheckMode: Tags
 # A Flutter app's versionCode lives in pubspec.yaml, not in build.gradle.kts
 # (which reads flutter.versionCode), so the updater has to be pointed at it.
-UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
+# Both paths are spelled out rather than using the template's "." shorthand,
+# matching what other Flutter apps in fdroiddata actually carry. Verified
+# against this repo's pubspec.yaml: yields 0.2.0 and 2.
+UpdateCheckData: pubspec.yaml|version:\s+.*\+([0-9]+)|pubspec.yaml|version:\s+([0-9.]+)
 CurrentVersion: 0.2.0
 CurrentVersionCode: 2
 

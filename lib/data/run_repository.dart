@@ -60,6 +60,30 @@ class RunRepository {
     if (await trace.exists()) await trace.delete();
   }
 
+  /// Swaps the entire log for [records] — the restore half of a backup.
+  ///
+  /// Every trace directory is rebuilt from scratch rather than merged, so a
+  /// restore cannot leave orphaned traces from runs that no longer exist.
+  /// Records that arrive without a trace simply have none afterwards.
+  Future<void> replaceAll(List<RunRecord> records) async {
+    final ordered = List<RunRecord>.from(records)
+      ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
+    _cache = ordered;
+
+    if (await _traces.exists()) await _traces.delete(recursive: true);
+    await _writeIndex(ordered);
+
+    final withTraces = ordered.where((r) => r.trace.isNotEmpty);
+    if (withTraces.isNotEmpty) {
+      await _traces.create(recursive: true);
+      for (final record in withTraces) {
+        await File('${_traces.path}/${record.id}.json').writeAsString(
+          jsonEncode(record.trace.map((p) => p.toJson()).toList()),
+        );
+      }
+    }
+  }
+
   Future<void> deleteAll() async {
     _cache = const [];
     if (await _index.exists()) await _index.delete();

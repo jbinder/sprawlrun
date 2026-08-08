@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../data/backup.dart';
 import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
@@ -30,6 +31,8 @@ class AppState extends ChangeNotifier {
   final RunRepository runs;
   final MissionRepository missions;
   final Narrator narrator;
+
+  late final BackupService backups = BackupService(profiles: profiles, runs: runs);
 
   Profile profile = const Profile();
   List<RunRecord> runLog = const [];
@@ -194,6 +197,25 @@ class AppState extends ChangeNotifier {
     await profiles.save(profile);
     _recompute();
     notifyListeners();
+  }
+
+  // -- backup ---------------------------------------------------------------
+
+  /// The whole device state as a JSON document, ready to be written out.
+  Future<String> exportBackup() => backups.exportToJson();
+
+  /// Restores [archive] and rebuilds everything derived from it.
+  ///
+  /// The profile is re-applied to the narrator because a replace can bring in
+  /// different speech and interrupt settings.
+  Future<ImportReport> importBackup(BackupArchive archive, ImportMode mode) async {
+    final report = await backups.import(archive, mode);
+    profile = await profiles.load();
+    runLog = await runs.loadAll();
+    await narrator.applyProfile(profile);
+    _recompute();
+    notifyListeners();
+    return report;
   }
 
   Future<void> reloadMissionPacks() async {

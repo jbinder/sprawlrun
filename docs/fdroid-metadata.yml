@@ -25,9 +25,9 @@ RepoType: git
 Repo: https://github.com/jbinder/sprawlrun.git
 
 Builds:
-  - versionName: 0.1.0
-    versionCode: 1
-    commit: v0.1.0
+  - versionName: 0.2.0
+    versionCode: 2
+    commit: v0.2.0
     subdir: android/app
     output: build/app/outputs/flutter-apk/app-release.apk
     srclibs:
@@ -48,8 +48,8 @@ Builds:
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.0
-CurrentVersionCode: 1
+CurrentVersion: 0.2.0
+CurrentVersionCode: 2
 
 # ---------------------------------------------------------------------------
 # Notes for the reviewer, worth pasting into the merge request description

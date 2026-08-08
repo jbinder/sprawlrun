@@ -20,6 +20,8 @@ Distance, time, calories and cleared missions for the last week and month, with 
 
 46 achievements across six categories, and a weekly streak you define yourself in minutes, kilometres or missions. A week still in progress never breaks a streak — only a finished week that fell short does.
 
+Everything is yours to take with you. One tap exports the lot — profile, campaign progress, achievements, codex and every run with its GPS trace — as a plain JSON file you can read yourself. Import it back to restore a new phone outright, or merge it in alongside what is already there. No storage permission either way: export goes out through the share sheet, import comes in through the system document picker.
+
 TWENTY CODEX ENTRIES
 
 Black clinics. The Turing Registry. Simstim. Entries unlock only once a character has actually mentioned them, so the codex records what you have been told rather than letting you read ahead.

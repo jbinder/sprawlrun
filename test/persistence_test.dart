@@ -134,6 +134,7 @@ void main() {
           units: UnitSystem.imperial,
           streakGoal: StreakGoal(metric: StreakMetric.kilometres, target: 25),
           audioInterrupt: AudioInterrupt.duck,
+          resumeMusic: false,
           completedMissions: {'sp01', 'sp02'},
           unlockedCodex: {'cdx_ninsei'},
           missionAttempts: {'sp03': 2},
@@ -147,6 +148,7 @@ void main() {
       expect(loaded.streakGoal.metric, StreakMetric.kilometres);
       expect(loaded.streakGoal.target, 25);
       expect(loaded.audioInterrupt, AudioInterrupt.duck);
+      expect(loaded.resumeMusic, isFalse);
       expect(loaded.completedMissions, {'sp01', 'sp02'});
       expect(loaded.unlockedCodex, {'cdx_ninsei'});
       expect(loaded.missionAttempts['sp03'], 2);

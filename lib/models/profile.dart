@@ -53,6 +53,7 @@ class Profile {
     this.units = UnitSystem.metric,
     this.streakGoal = const StreakGoal(),
     this.audioInterrupt = AudioInterrupt.pause,
+    this.resumeMusic = true,
     this.voiceEnabled = true,
     this.speechRate = 0.52,
     this.sfxVolume = 0.9,
@@ -73,6 +74,12 @@ class Profile {
   final StreakGoal streakGoal;
 
   final AudioInterrupt audioInterrupt;
+
+  /// Whether to send a media-button PLAY when a music app fails to resume by
+  /// itself after a transmission. See [MusicResumeGuard] for why that happens
+  /// and how narrowly the nudge is aimed.
+  final bool resumeMusic;
+
   final bool voiceEnabled;
 
   /// flutter_tts rate, 0..1. 0.5 is roughly natural on Android.
@@ -103,6 +110,7 @@ class Profile {
     UnitSystem? units,
     StreakGoal? streakGoal,
     AudioInterrupt? audioInterrupt,
+    bool? resumeMusic,
     bool? voiceEnabled,
     double? speechRate,
     double? sfxVolume,
@@ -121,6 +129,7 @@ class Profile {
     units: units ?? this.units,
     streakGoal: streakGoal ?? this.streakGoal,
     audioInterrupt: audioInterrupt ?? this.audioInterrupt,
+    resumeMusic: resumeMusic ?? this.resumeMusic,
     voiceEnabled: voiceEnabled ?? this.voiceEnabled,
     speechRate: speechRate ?? this.speechRate,
     sfxVolume: sfxVolume ?? this.sfxVolume,
@@ -141,6 +150,7 @@ class Profile {
     'units': units.name,
     'streakGoal': streakGoal.toJson(),
     'audioInterrupt': audioInterrupt.name,
+    'resumeMusic': resumeMusic,
     'voiceEnabled': voiceEnabled,
     'speechRate': speechRate,
     'sfxVolume': sfxVolume,
@@ -166,6 +176,7 @@ class Profile {
       (a) => a.name == json['audioInterrupt'],
       orElse: () => AudioInterrupt.pause,
     ),
+    resumeMusic: json['resumeMusic'] as bool? ?? true,
     voiceEnabled: json['voiceEnabled'] as bool? ?? true,
     speechRate: (json['speechRate'] as num?)?.toDouble() ?? 0.52,
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,

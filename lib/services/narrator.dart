@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 
 import '../models/mission.dart';
 import '../models/profile.dart';
+import 'music_resume.dart';
 
 /// Voice colouring per character. Real device voices vary wildly between
 /// phones, so identity is carried primarily by pitch and rate — which every
@@ -75,16 +76,29 @@ abstract class Narrator {
 /// Production implementation: flutter_tts for speech, just_audio for effects,
 /// audio_session for focus.
 class AudioNarrator implements Narrator {
-  AudioNarrator();
+  AudioNarrator({MusicResumeGuard? resumeGuard})
+    : _resume = resumeGuard ?? MusicResumeGuard.platform();
 
   final FlutterTts _tts = FlutterTts();
-  final AudioPlayer _sfxPlayer = AudioPlayer();
-  final AudioPlayer _bedPlayer = AudioPlayer();
+
+  // Both players are built with session activation *off*. just_audio otherwise
+  // calls setActive(true) on every play() and never calls setActive(false) —
+  // so a bare sound effect would take audio focus under the configured gain
+  // type, pause the runner's music, and never give it back. Focus in this
+  // class is taken and released in exactly one place.
+  final AudioPlayer _sfxPlayer = AudioPlayer(handleAudioSessionActivation: false);
+  final AudioPlayer _bedPlayer = AudioPlayer(handleAudioSessionActivation: false);
   final StreamController<NarrationEvent> _events = StreamController<NarrationEvent>.broadcast();
+
+  final MusicResumeGuard _resume;
 
   AudioSession? _session;
   Profile _profile = const Profile();
   bool _ready = false;
+
+  /// Mirrors the session's active state so take/release stay balanced even when
+  /// a beat is cut short.
+  bool _focusHeld = false;
 
   /// Distinct system voices assigned to speakers, when the device has enough.
   final Map<String, Map<String, String>> _voiceAssignments = {};
@@ -259,8 +273,18 @@ class AudioNarrator implements Narrator {
   }
 
   Future<void> _takeFocus() async {
+    if (_focusHeld) return;
+    // Recorded before the music stops, so the guard knows there was something
+    // to put back. Either call also invalidates a nudge still pending from the
+    // previous beat, which must not land in the middle of this one.
+    if (_profile.resumeMusic) {
+      await _resume.beforeInterrupt();
+    } else {
+      _resume.cancel();
+    }
     try {
       await _session?.setActive(true);
+      _focusHeld = true;
       if (_bedPlayer.playing) await _bedPlayer.setVolume(_profile.sfxVolume * 0.08);
     } on Object catch (e) {
       debugPrint('Audio focus request failed: $e');
@@ -268,12 +292,28 @@ class AudioNarrator implements Narrator {
   }
 
   Future<void> _releaseFocus() async {
+    if (!_focusHeld) {
+      _resume.cancel();
+      return;
+    }
+    _focusHeld = false;
     try {
       if (_bedPlayer.playing) await _bedPlayer.setVolume(_profile.sfxVolume * 0.35);
+      // Let the last effect's tail finish before abandoning focus. Handing it
+      // back while audio is still coming out of us is what makes some players
+      // miss the AUDIOFOCUS_GAIN entirely.
+      await Future<void>.delayed(const Duration(milliseconds: 250));
       // Handing focus back is what tells the music app to resume.
       await _session?.setActive(false);
     } on Object catch (e) {
       debugPrint('Audio focus release failed: $e');
+    }
+    // Deliberately not awaited: the guard sits watching for a couple of
+    // seconds, and the next beat must not be held up behind it.
+    if (_profile.resumeMusic) {
+      unawaited(_resume.afterInterrupt());
+    } else {
+      _resume.cancel();
     }
   }
 

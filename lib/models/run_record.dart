@@ -100,7 +100,11 @@ class RunRecord {
 
   double get avgSpeedMps => elapsedSeconds <= 0 ? 0 : distanceMeters / elapsedSeconds;
 
-  RunRecord copyWith({RunOutcome? outcome}) => RunRecord(
+  /// The same run carrying [points]. Used when reassembling a record for
+  /// export, since the run log is stored with its traces split out.
+  RunRecord withTrace(List<TracePoint> points) => copyWith(trace: points);
+
+  RunRecord copyWith({RunOutcome? outcome, List<TracePoint>? trace}) => RunRecord(
     id: id,
     startedAt: startedAt,
     endedAt: endedAt,
@@ -116,7 +120,7 @@ class RunRecord {
     chasesTotal: chasesTotal,
     chasesEvaded: chasesEvaded,
     beatsHeard: beatsHeard,
-    trace: trace,
+    trace: trace ?? this.trace,
   );
 
   Map<String, dynamic> toJson() => {

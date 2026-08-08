@@ -52,6 +52,14 @@ phone in your pocket.
 **Nothing is streamed.** Every voice is generated on your device. The app has no
 internet permission at all.
 
+**And it puts your music back.** Android's transient audio focus is a loan — the
+player pauses when the app takes it and is meant to resume when it is handed
+back. Several popular players only honour that for short interruptions and stay
+silent after a long transmission. Nothing an app can do to its own focus request
+changes that, so this one watches: if music was demonstrably playing before a
+transmission and is still silent a couple of seconds after focus went back, it
+presses play. Switchable off in Settings.
+
 ## Somebody is chasing you
 
 <table>
@@ -116,6 +124,15 @@ what you actually did.</td>
 minutes, kilometres, or missions. A week still in progress never breaks a
 streak; only a finished week that fell short does.
 
+**And it is yours to take with you.** Settings → Data exports everything the app
+knows — profile, campaign progress, achievements, codex, and every run with its
+GPS trace — as one plain JSON file, handed to the share sheet. Importing it back
+either *replaces* this device (a clean restore onto a new phone) or *merges*,
+adding runs and progress this device is missing while keeping its own settings.
+Merging only ever adds, so bringing in an old backup cannot relock a mission.
+No storage permission is involved in either direction: export goes out through
+the share sheet, import comes in through the system document picker.
+
 ## A world worth reading
 
 <table>
@@ -168,9 +185,9 @@ Requires **JDK 17**. A newer default JDK (26 on current Arch) breaks AGP's
 `flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk`.
 
 Release builds are signed from `android/key.properties` — copy
-`android/key.properties.example` and fill it in. Without that file the build
-falls back to the debug key, which is fine for testing and must never be
-published.
+`android/key.properties.example` and fill it in. Without that file the release
+APK comes out **unsigned**, which is what F-Droid's build server needs; sign it
+yourself before installing one.
 
 Android SDK notes, learned the hard way:
 
@@ -185,7 +202,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 117 tests
+flutter test                   # 144 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -220,7 +237,7 @@ the format, and `assets/missions/sprawl_prime.json` for a worked example.
 ```
 lib/
   models/       Mission, StoryBeat, RunGoal, RunRecord, Profile, Achievement
-  data/         JSON repositories (runs, profile, mission packs)
+  data/         JSON repositories (runs, profile, mission packs) + backup
   services/     run_engine · narrator · location · stats · energy · achievements
   state/        AppState — the single source of truth the UI reads
   screens/      dashboard · brief · run HUD · summary · stats · wall · codex · settings
@@ -252,11 +269,16 @@ Some notes on the shape of it:
 
 - **No maps.** Tiles need a network. Routes are drawn from the stored trace as a
   neon filament on a grid.
-- **No accounts, sync or sharing.** There is no `INTERNET` permission in the
-  manifest. The merged manifest does carry `ACCESS_NETWORK_STATE`, pulled in by
-  ExoPlayer via `just_audio`; it lets an app read connectivity status, grants no
-  network access, and without `INTERNET` nothing here could reach the network
-  regardless.
+- **No accounts or sync.** There is no `INTERNET` permission in the manifest.
+  Backups move by hand: exporting hands a file to the system share sheet and
+  importing reads one back through the system document picker, so the app needs
+  no storage permission and never sees a file you did not choose. The merged
+  manifest carries two things it did not ask for directly — `ACCESS_NETWORK_STATE`,
+  pulled in by ExoPlayer via `just_audio`, which reads connectivity status and
+  grants no network access; and a self-defined
+  `…DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` from `share_plus`, which only lets
+  the app receive its own share-result broadcast. Without `INTERNET`, nothing
+  here could reach the network regardless.
 - **No Google Play Services.** `geolocator_android` declares
   `play-services-location`, which is proprietary. The app module excludes the
   `com.google.android.gms` group so it never reaches the APK, and sets

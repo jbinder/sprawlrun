@@ -7,6 +7,7 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
+import '../widgets/backup_controls.dart';
 import '../widgets/panels.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -156,6 +157,16 @@ class SettingsScreen extends StatelessWidget {
                                 ? 'Whatever you are playing pauses for each transmission and resumes afterwards.'
                                 : 'Whatever you are playing drops to a low volume under each transmission.',
                           ),
+                          if (profile.audioInterrupt == AudioInterrupt.pause) ...[
+                            const _Rule(),
+                            _SwitchRow(
+                              label: 'Force music back on',
+                              subtitle: 'Some players stay silent after a long transmission. '
+                                  'Presses play for you when that happens.',
+                              value: profile.resumeMusic,
+                              onChanged: (v) => update(profile.copyWith(resumeMusic: v)),
+                            ),
+                          ],
                           const _Rule(),
                           _SliderRow(
                             label: 'Speech rate',
@@ -270,7 +281,9 @@ class SettingsScreen extends StatelessWidget {
                             'Everything lives on this device. Nothing is uploaded, and the app never '
                             'needs a network connection.',
                           ),
-                          const SizedBox(height: 14),
+                          const _Rule(),
+                          const BackupControls(),
+                          const _Rule(),
                           CyberButton(
                             label: 'Reset all progress',
                             icon: Icons.delete_forever_outlined,

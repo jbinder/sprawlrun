@@ -6,6 +6,9 @@
 #     metadata/io.github.jbinder.sprawlrun.yml
 #
 # in a fork of https://gitlab.com/fdroid/fdroiddata and open a merge request.
+# Strip every comment before submitting: fdroiddata asks for clean files.
+#
+# Modelled on fdroiddata's own templates/build-flutter.yml, srclib variant.
 #
 # Verify locally before submitting:
 #     fdroid readmeta && fdroid lint io.github.jbinder.sprawlrun
@@ -28,26 +31,61 @@ Builds:
   - versionName: 0.2.0
     versionCode: 2
     commit: v0.2.0
-    subdir: android/app
-    output: build/app/outputs/flutter-apk/app-release.apk
+
+    # Flutter is pulled in as a srclib rather than a submodule, so nothing has
+    # to change in the app repo. The @ref is checked out for us — srclibs/
+    # flutter.yml carries no version list, it just points at the Flutter git
+    # repo, so any upstream tag is valid here.
     srclibs:
-      # Must match a version defined in fdroiddata's srclibs/flutter.yml.
-      # If 3.44.8 is not there yet, either add it in the same merge request or
-      # pin the app to the newest version they do carry.
       - flutter@3.44.8
+
+    # Where flutter leaves the unsigned APK. Repo-root relative: there is no
+    # `subdir`, because the Gradle project is driven by the flutter tool rather
+    # than built directly.
+    output: build/app/outputs/flutter-apk/app-release.apk
+
     # package:jni (via path_provider_android) compiles dartjni.c through CMake.
     ndk: 28.2.13676358
-    build: |
-      $$flutter$$/bin/flutter config --no-analytics
-      $$flutter$$/bin/flutter config --no-cli-animations
-      $$flutter$$/bin/flutter pub get
-      $$flutter$$/bin/flutter build apk --release
+
+    # Only Android is shipped; the iOS scaffolding is dead weight for a build
+    # here and its Pods metadata would only give the scanner more to chew on.
+    rm:
+      - ios
+
+    prebuild:
+      # PUB_CACHE must live inside the build directory so the scanner actually
+      # sees the Dart packages. Left at its default (~/.pub_cache) they are
+      # invisible to it, which is grounds for rejection.
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter config --no-cli-animations
+      # --enforce-lockfile pins to the committed pubspec.lock, so the resolved
+      # dependency set is the one the developer tested rather than whatever is
+      # newest on the day of the build.
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+
+    # The Dart SDK and engine artifacts flutter downloads into its own cache
+    # are prebuilt binaries. They are needed to build and must not ship, so
+    # they are excluded from the scan and then deleted.
+    scanignore:
+      - .pub-cache
+    scandelete:
+      - .pub-cache
+
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release
+
     # No signing config is stripped here on purpose: with android/key.properties
     # absent — which it always is on the buildserver, being gitignored — the
-    # release build type produces an unsigned APK for F-Droid to sign.
+    # release build type produces an unsigned APK for F-Droid to sign. Verified
+    # locally; see the note at the bottom of this file.
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
+# A Flutter app's versionCode lives in pubspec.yaml, not in build.gradle.kts
+# (which reads flutter.versionCode), so the updater has to be pointed at it.
+UpdateCheckData: pubspec.yaml|version:\s.+\+(\d+)|.|version:\s(.+)\+
 CurrentVersion: 0.2.0
 CurrentVersionCode: 2
 
@@ -85,13 +123,19 @@ CurrentVersionCode: 2
 #   import reads one back through the SAF document picker. No storage
 #   permission is requested in either direction.
 #
-# Unsigned output:
-#   Verified locally by building with android/key.properties absent, as it is
-#   on the buildserver: apksigner reports DOES NOT VERIFY / missing
-#   META-INF/MANIFEST.MF, and the APK contains no signature blocks.
-#
 # Assets:
 #   All sound effects and launcher icons are generated from source by scripts
 #   in tool/ (tool/gen_sfx.dart, tool/gen_icons.dart). The only third-party
 #   binaries are three SIL Open Font License typefaces in assets/fonts/, with
 #   their licence texts alongside them.
+#
+# Unsigned output:
+#   Verified locally by building with android/key.properties absent, as it is
+#   on the buildserver: apksigner reports DOES NOT VERIFY / missing
+#   META-INF/MANIFEST.MF, and the APK contains no signature blocks.
+#
+# APK size:
+#   56 MB, universal rather than split per ABI. templates/build-flutter.yml
+#   suggests --split-per-abi; that is a deliberate choice not to, to keep one
+#   artifact and one versionCode. Happy to split (with VercodeOperation) if you
+#   would rather.

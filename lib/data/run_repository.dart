@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../models/run_record.dart';
+import 'atomic_write.dart';
 
 /// Persists the run log to disk as plain JSON.
 ///
@@ -33,7 +34,9 @@ class RunRepository {
       list.sort((a, b) => b.startedAt.compareTo(a.startedAt));
       return _cache = list;
     } on Object {
-      // A corrupt log must never brick the app; the runs are gone either way.
+      // A corrupt log must never brick the app. The file is kept aside rather
+      // than left in place, because the next save would otherwise overwrite it.
+      await quarantine(_index);
       return _cache = const [];
     }
   }
@@ -46,7 +49,8 @@ class RunRepository {
     await _writeIndex(runs);
     if (record.trace.isNotEmpty) {
       await _traces.create(recursive: true);
-      await File('${_traces.path}/${record.id}.json').writeAsString(
+      await writeAtomically(
+        File('${_traces.path}/${record.id}.json'),
         jsonEncode(record.trace.map((p) => p.toJson()).toList()),
       );
     }
@@ -77,7 +81,8 @@ class RunRepository {
     if (withTraces.isNotEmpty) {
       await _traces.create(recursive: true);
       for (final record in withTraces) {
-        await File('${_traces.path}/${record.id}.json').writeAsString(
+        await writeAtomically(
+          File('${_traces.path}/${record.id}.json'),
           jsonEncode(record.trace.map((p) => p.toJson()).toList()),
         );
       }
@@ -110,6 +115,6 @@ class RunRepository {
       json['trace'] = const [];
       return json;
     }).toList();
-    await _index.writeAsString(jsonEncode(payload));
+    await writeAtomically(_index, jsonEncode(payload));
   }
 }

@@ -13,6 +13,7 @@ This file is only for things that will otherwise waste your time.
 fvm flutter analyze                                 # must stay clean
 fvm flutter test                                    # 144 tests
 fvm flutter build apk --release
+adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
 fvm dart run tool/gen_icons.dart                    # launcher icons + docs/icon.png
 fvm flutter test tool/screenshots/capture_test.dart # docs/screenshots/*.png
@@ -20,6 +21,13 @@ fvm flutter test tool/screenshots/capture_test.dart # docs/screenshots/*.png
 
 Android builds take 3–6 minutes. Run them in the background with a monitor rather
 than blocking on a foreground timeout.
+
+**Never deploy with `flutter install`.** It uninstalls the existing app before
+installing, and Android deletes the private data directory on uninstall — so it
+silently destroys the run log, which lives in `getApplicationDocumentsDirectory()`.
+`adb install -r` upgrades in place. Confirm it did by checking that
+`firstInstallTime` in `adb shell dumpsys package io.github.jbinder.sprawlrun` did
+not move.
 
 ## Test traps
 
@@ -63,6 +71,15 @@ only third-party binaries in the repo are the three OFL fonts.
   configured gain type, pauses the runner's music and never hands it back. That
   was a real bug — a chase-start sting killed the music for the whole chase.
   Construct any new player the same way.
+- **Persisted JSON is written through `writeAtomically`.** `writeAsString`
+  truncates before it streams, so a process death mid-write leaves a torn file
+  that no longer parses — and both repositories read an unparseable file as
+  empty, which turns a crash into total data loss. Write to a sibling and rename.
+  A file that still fails to parse is quarantined rather than overwritten.
+- **Every field in `Profile` and `RunRecord` must decode from JSON that lacks
+  it.** `test/upgrade_test.dart` holds frozen 0.1.0 documents and asserts they
+  still load; add a required field with no default and an update wipes the
+  runner's history. Do not regenerate those fixtures from `toJson`.
 - **A backup is the whole device.** `data/backup.dart` exports profile plus every
   run *with its trace*, which is complete precisely because stats, streaks and
   achievements are derived. Add a field to `Profile` or `RunRecord` and it rides

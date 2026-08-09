@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import java.util.Properties
 
 plugins {
@@ -81,6 +82,25 @@ android {
             // dex from ~2 MB to ~15 MB. This appends to those rules rather than
             // replacing them.
             proguardFiles("proguard-rules.pro")
+        }
+    }
+}
+
+// Give each ABI of a `--split-per-abi` build its own versionCode.
+//
+// F-Droid publishes one APK per ABI and needs their versionCodes to differ and
+// to order predictably; the scheme is `versionCode * 10 + <abi>`, matched by
+// `VercodeOperation` in the F-Droid metadata. A universal build has no ABI
+// filter, so `abiVersionCode` is null and the plain versionCode from
+// pubspec.yaml is kept — which is what the GitHub release artifact uses.
+val abiCodes = mapOf("armeabi-v7a" to 1, "arm64-v8a" to 2, "x86_64" to 3)
+android.applicationVariants.configureEach {
+    val variant = this
+    variant.outputs.forEach { output ->
+        val abiVersionCode = abiCodes[output.filters.find { it.filterType == "ABI" }?.identifier]
+        if (abiVersionCode != null) {
+            (output as ApkVariantOutputImpl).versionCodeOverride =
+                variant.versionCode * 10 + abiVersionCode
         }
     }
 }

@@ -6,13 +6,33 @@
 #     metadata/io.github.jbinder.sprawlrun.yml
 #
 # in a fork of https://gitlab.com/fdroid/fdroiddata and open a merge request.
-# Strip every comment before submitting: fdroiddata asks for clean files.
 #
 # Modelled on fdroiddata's own templates/build-flutter.yml, srclib variant.
 #
-# Verify locally before submitting:
-#     fdroid readmeta && fdroid lint io.github.jbinder.sprawlrun
-#     fdroid build io.github.jbinder.sprawlrun            # needs their buildserver
+# The grouping and blank lines below are for humans. fdroiddata requires
+# canonical formatting — a fixed field order, `ndk` last, and no blank lines
+# inside a build entry — enforced in CI by `fdroid rewritemeta`. So stripping
+# the comments is NOT enough; the result must be run through rewritemeta or the
+# pipeline fails on formatting alone. Do not hand-maintain the canonical order
+# here; let the tool do it:
+#
+#     grep -v '^[[:space:]]*#' docs/fdroid-metadata.yml | cat -s | sed '/./,$!d' \
+#       > $FDROIDDATA/metadata/io.github.jbinder.sprawlrun.yml
+#     cd $FDROIDDATA && fdroid rewritemeta io.github.jbinder.sprawlrun
+#     fdroid lint io.github.jbinder.sprawlrun
+#
+# fdroidserver is pip-installable into a venv if it is not packaged for your
+# distro, which is enough for rewritemeta and lint (not for `fdroid build`).
+# Install it from git master, not PyPI — CI runs master and has checks releases
+# lack — and pin `ruamel.yaml==0.18.10` to match Debian trixie. fdroidserver
+# never sets ruamel's `width`, so a newer ruamel wraps long values such as
+# UpdateCheckData at 80 columns and CI rejects the formatting. Every version
+# skew here has cost a CI round.
+#
+# NEVER let a build step contain a colon followed by a space. That makes the
+# step an ambiguous YAML scalar, rewritemeta turns it into `{...}`, and the
+# build dies with a bash syntax error. Where a regex needs one, write `:\ `
+# (backslash-space) as the template does — sed reads it as a literal space.
 
 Categories:
   - Sports & Health
@@ -27,94 +47,141 @@ AutoName: SPRAWL//RUN
 RepoType: git
 Repo: https://github.com/jbinder/sprawlrun.git
 
+# One entry per ABI. The three differ only in versionCode, output and
+# --target-platform; everything else is identical and must stay in step.
+#
+# The Flutter version is NOT pinned here. It is pinned in the app repo's
+# .metadata, which the Flutter tool maintains, and extracted below — so a
+# Flutter upgrade in the app needs no change to this file.
 Builds:
-  - versionName: 0.2.0
-    versionCode: 2
-    commit: v0.2.0
-
-    # Flutter is pulled in as a srclib rather than a submodule, so nothing has
-    # to change in the app repo. The @ref is checked out for us — srclibs/
-    # flutter.yml carries no version list, it just points at the Flutter git
-    # repo, so any upstream tag is valid here.
+  - versionName: 0.2.1
+    versionCode: 31
+    commit: v0.2.1
+    output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
-      - flutter@3.44.8
-
-    # Where flutter leaves the unsigned APK. Repo-root relative: there is no
-    # `subdir`, because the Gradle project is driven by the flutter tool rather
-    # than built directly.
-    output: build/app/outputs/flutter-apk/app-release.apk
-
-    # package:jni (via path_provider_android) compiles dartjni.c through CMake.
-    # 28.2.13676358 is NDK r28c; both spellings appear in fdroiddata and this
-    # exact numeric version is already used by other apps, so it is available
-    # on the buildserver.
-    ndk: 28.2.13676358
-
-    # Only Android is shipped; the iOS scaffolding is dead weight for a build
-    # here and its Pods metadata would only give the scanner more to chew on.
+      - flutter@stable
     rm:
       - ios
-
     prebuild:
-      # PUB_CACHE must live inside the build directory so the scanner actually
-      # sees the Dart packages. Left at its default (~/.pub_cache) they are
-      # invisible to it, which is grounds for rejection.
       - export PUB_CACHE=$(pwd)/.pub-cache
+      - flutterVersion=$(sed -n -E "s/.*revision:\ \"(.*)\"/\1/p" .metadata)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
       - $$flutter$$/bin/flutter config --no-analytics
       - $$flutter$$/bin/flutter config --no-cli-animations
-      # --enforce-lockfile pins to the committed pubspec.lock, so the resolved
-      # dependency set is the one the developer tested rather than whatever is
-      # newest on the day of the build.
       - $$flutter$$/bin/flutter pub get --enforce-lockfile
-
-    # The pub cache holds prebuilt binaries that are needed to build and must
-    # not ship, so it is deleted after the scan.
-    #
-    # scandelete ONLY — do not also add `scanignore: .pub-cache`. scanignore
-    # makes the scanner skip the subtree, the scandelete then never fires, and
-    # fdroidserver fails the build with "Unused scandelete path: .pub-cache".
-    # That is a real CI failure this recipe already hit once. 349 apps in
-    # fdroiddata use scandelete alone; exactly one uses both.
+      - GEO=$(dirname $PUB_CACHE/hosted/pub.dev/geolocator_android-*/android/build.gradle)
+      - GM=$GEO/src/main/java/com/baseflow/geolocator/location/GeolocationManager.java
+      - rm $GEO/src/main/java/com/baseflow/geolocator/location/FusedLocationClient.java
+      - sed -i '/play-services-location/d' $GEO/build.gradle
+      - sed -i '/^import com\.google\.android\.gms\./d' $GM
+      - sed -i 's|return isGooglePlayServicesAvailable(context)|return new LocationManagerClient(context, locationOptions);|' $GM
+      - sed -i '/new FusedLocationClient(context, locationOptions)/d' $GM
+      - sed -i '/^ *[:].*new LocationManagerClient/d' $GM
+      - sed -i '/private boolean isGooglePlayServicesAvailable/,/^  }$/d' $GM
+      - if grep -rq 'com\.google\.android\.gms' $GEO; then echo 'GMS still referenced in geolocator_android'; exit 1; fi
     scandelete:
       - .pub-cache
-
     build:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - $$flutter$$/bin/flutter build apk --release
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm
+    ndk: 28.2.13676358
 
-    # No signing config is stripped here on purpose: with android/key.properties
-    # absent — which it always is on the buildserver, being gitignored — the
-    # release build type produces an unsigned APK for F-Droid to sign. Verified
-    # locally; see the note at the bottom of this file.
+  - versionName: 0.2.1
+    versionCode: 32
+    commit: v0.2.1
+    output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - flutterVersion=$(sed -n -E "s/.*revision:\ \"(.*)\"/\1/p" .metadata)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter config --no-cli-animations
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - GEO=$(dirname $PUB_CACHE/hosted/pub.dev/geolocator_android-*/android/build.gradle)
+      - GM=$GEO/src/main/java/com/baseflow/geolocator/location/GeolocationManager.java
+      - rm $GEO/src/main/java/com/baseflow/geolocator/location/FusedLocationClient.java
+      - sed -i '/play-services-location/d' $GEO/build.gradle
+      - sed -i '/^import com\.google\.android\.gms\./d' $GM
+      - sed -i 's|return isGooglePlayServicesAvailable(context)|return new LocationManagerClient(context, locationOptions);|' $GM
+      - sed -i '/new FusedLocationClient(context, locationOptions)/d' $GM
+      - sed -i '/^ *[:].*new LocationManagerClient/d' $GM
+      - sed -i '/private boolean isGooglePlayServicesAvailable/,/^  }$/d' $GM
+      - if grep -rq 'com\.google\.android\.gms' $GEO; then echo 'GMS still referenced in geolocator_android'; exit 1; fi
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm64
+    ndk: 28.2.13676358
+
+  - versionName: 0.2.1
+    versionCode: 33
+    commit: v0.2.1
+    output: build/app/outputs/flutter-apk/app-x86_64-release.apk
+    srclibs:
+      - flutter@stable
+    rm:
+      - ios
+    prebuild:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - flutterVersion=$(sed -n -E "s/.*revision:\ \"(.*)\"/\1/p" .metadata)
+      - '[[ $flutterVersion ]]'
+      - git -C $$flutter$$ checkout -f $flutterVersion
+      - $$flutter$$/bin/flutter config --no-analytics
+      - $$flutter$$/bin/flutter config --no-cli-animations
+      - $$flutter$$/bin/flutter pub get --enforce-lockfile
+      - GEO=$(dirname $PUB_CACHE/hosted/pub.dev/geolocator_android-*/android/build.gradle)
+      - GM=$GEO/src/main/java/com/baseflow/geolocator/location/GeolocationManager.java
+      - rm $GEO/src/main/java/com/baseflow/geolocator/location/FusedLocationClient.java
+      - sed -i '/play-services-location/d' $GEO/build.gradle
+      - sed -i '/^import com\.google\.android\.gms\./d' $GM
+      - sed -i 's|return isGooglePlayServicesAvailable(context)|return new LocationManagerClient(context, locationOptions);|' $GM
+      - sed -i '/new FusedLocationClient(context, locationOptions)/d' $GM
+      - sed -i '/^ *[:].*new LocationManagerClient/d' $GM
+      - sed -i '/private boolean isGooglePlayServicesAvailable/,/^  }$/d' $GM
+      - if grep -rq 'com\.google\.android\.gms' $GEO; then echo 'GMS still referenced in geolocator_android'; exit 1; fi
+    scandelete:
+      - .pub-cache
+    build:
+      - export PUB_CACHE=$(pwd)/.pub-cache
+      - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-x64
+    ndk: 28.2.13676358
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-# A Flutter app's versionCode lives in pubspec.yaml, not in build.gradle.kts
-# (which reads flutter.versionCode), so the updater has to be pointed at it.
-# Both paths are spelled out rather than using the template's "." shorthand,
-# matching what other Flutter apps in fdroiddata actually carry. Verified
-# against this repo's pubspec.yaml: yields 0.2.0 and 2.
 UpdateCheckData: pubspec.yaml|version:\s+.*\+([0-9]+)|pubspec.yaml|version:\s+([0-9.]+)
-CurrentVersion: 0.2.0
-CurrentVersionCode: 2
+# Matches the abiCodes map in android/app/build.gradle.kts, which sets
+# versionCodeOverride = versionCode * 10 + <abi>.
+VercodeOperation:
+  - '%c * 10 + 1'
+  - '%c * 10 + 2'
+  - '%c * 10 + 3'
+CurrentVersion: 0.2.1
+CurrentVersionCode: 33
 
 # ---------------------------------------------------------------------------
 # Notes for the reviewer, worth pasting into the merge request description
 # ---------------------------------------------------------------------------
 #
 # Google Play Services:
-#   geolocator_android declares com.google.android.gms:play-services-location.
-#   The app module excludes the whole `com.google.android.gms` group from its
-#   configurations (android/app/build.gradle.kts), and sets
-#   forceLocationManager: true so the AOSP LocationManager is used directly.
-#   geolocator supports this explicitly — its client selection catches
-#   NoClassDefFoundError with the comment "This might happen when the GMS
-#   package has been excluded by the app developer due to its proprietary
-#   license".
+#   geolocator_android declares com.google.android.gms:play-services-location
+#   and compiles against it, so its dex carries references to
+#   FusedLocationProviderClient and friends even when the group is excluded
+#   from the app module. `fdroid scanner` flags referenced classes, so the
+#   prebuild deletes the fused-location path outright: FusedLocationClient.java
+#   is removed, the dependency line is stripped, and createLocationClient
+#   always returns LocationManagerClient. The app already set
+#   forceLocationManager: true, so that path was dead code at runtime.
+#   A grep guard fails the build if a geolocator upgrade reintroduces it.
 #
-#   Verified on the 0.2.0 release APK: 1918 classes defined in the dex, zero
-#   under com/google. The scanner may still flag the declaration in the
-#   transitive pub dependency; the exclusion is what makes it moot at build time.
+#   Verified locally with `fdroid scanner` on the built APK: 0 problems, and a
+#   byte-grep of the dex for com/google/android/gms returns nothing.
 #
 # Network:
 #   No INTERNET permission. The merged manifest carries two permissions the app
@@ -127,7 +194,7 @@ CurrentVersionCode: 2
 #   Without INTERNET, nothing here can reach the network regardless.
 #
 # Backup and restore:
-#   share_plus and file_selector are used for the export/import feature in
+#   share_plus and file_selector back the export/import feature in
 #   Settings -> Data. Export hands a JSON file to the system share sheet;
 #   import reads one back through the SAF document picker. No storage
 #   permission is requested in either direction.
@@ -140,11 +207,5 @@ CurrentVersionCode: 2
 #
 # Unsigned output:
 #   Verified locally by building with android/key.properties absent, as it is
-#   on the buildserver: apksigner reports DOES NOT VERIFY / missing
-#   META-INF/MANIFEST.MF, and the APK contains no signature blocks.
-#
-# APK size:
-#   56 MB, universal rather than split per ABI. templates/build-flutter.yml
-#   suggests --split-per-abi; that is a deliberate choice not to, to keep one
-#   artifact and one versionCode. Happy to split (with VercodeOperation) if you
-#   would rather.
+#   on the buildserver, since it is gitignored: apksigner reports DOES NOT
+#   VERIFY / missing META-INF/MANIFEST.MF and the APK has no signature blocks.

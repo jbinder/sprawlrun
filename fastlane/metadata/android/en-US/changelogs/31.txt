@@ -1,0 +1,10 @@
+Backup and restore. Settings → Data exports everything the app knows — profile,
+campaign progress, achievements, codex and every run with its GPS trace — as one
+plain JSON file. Import it back to replace a device outright, or merge it in
+without losing what is already there.
+
+Fixed: a sound effect outside a story beat took audio focus and never handed it
+back, so a pursuit could leave your music paused for its whole duration.
+
+New: the app now presses play when a music app fails to resume by itself after a
+long transmission. Switchable off under Audio.

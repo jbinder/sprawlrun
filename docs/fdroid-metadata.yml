@@ -51,8 +51,10 @@ Repo: https://github.com/jbinder/sprawlrun.git
 # --target-platform; everything else is identical and must stay in step.
 #
 # The Flutter version is NOT pinned here. It is pinned in the app repo's
-# .metadata, which the Flutter tool maintains, and extracted below — so a
-# Flutter upgrade in the app needs no change to this file.
+# .fvmrc — the same file fvm uses to select the SDK for local development —
+# and extracted below, so a Flutter upgrade needs no change to this file.
+# `3.44.8` resolves to tag 058e0af2c2b57e369d905a03ac9748b0ebf543c6 in
+# flutter/flutter, which is also what .metadata records, so the two agree.
 Builds:
   - versionName: 0.2.1
     versionCode: 31
@@ -64,7 +66,7 @@ Builds:
       - ios
     prebuild:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - flutterVersion=$(sed -n -E "s/.*revision:\ \"(.*)\"/\1/p" .metadata)
+      - flutterVersion=$(sed -n -E 's/.*"flutter":\ "(.*)"/\1/p' .fvmrc)
       - '[[ $flutterVersion ]]'
       - git -C $$flutter$$ checkout -f $flutterVersion
       - $$flutter$$/bin/flutter config --no-analytics
@@ -97,7 +99,7 @@ Builds:
       - ios
     prebuild:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - flutterVersion=$(sed -n -E "s/.*revision:\ \"(.*)\"/\1/p" .metadata)
+      - flutterVersion=$(sed -n -E 's/.*"flutter":\ "(.*)"/\1/p' .fvmrc)
       - '[[ $flutterVersion ]]'
       - git -C $$flutter$$ checkout -f $flutterVersion
       - $$flutter$$/bin/flutter config --no-analytics
@@ -130,7 +132,7 @@ Builds:
       - ios
     prebuild:
       - export PUB_CACHE=$(pwd)/.pub-cache
-      - flutterVersion=$(sed -n -E "s/.*revision:\ \"(.*)\"/\1/p" .metadata)
+      - flutterVersion=$(sed -n -E 's/.*"flutter":\ "(.*)"/\1/p' .fvmrc)
       - '[[ $flutterVersion ]]'
       - git -C $$flutter$$ checkout -f $flutterVersion
       - $$flutter$$/bin/flutter config --no-analytics

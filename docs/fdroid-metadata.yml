@@ -50,6 +50,10 @@ Repo: https://github.com/jbinder/sprawlrun.git
 # One entry per ABI. The three differ only in versionCode, output and
 # --target-platform; everything else is identical and must stay in step.
 #
+# `commit` is the full 40-character hash, never a tag or branch: a tag can be
+# moved after review (this one was), a hash cannot. UpdateCheckMode is still
+# Tags — that is only how new releases are discovered.
+#
 # The Flutter version is NOT pinned here. It is pinned in the app repo's
 # .fvmrc — the same file fvm uses to select the SDK for local development —
 # and extracted below, so a Flutter upgrade needs no change to this file.
@@ -58,7 +62,7 @@ Repo: https://github.com/jbinder/sprawlrun.git
 Builds:
   - versionName: 0.2.1
     versionCode: 31
-    commit: v0.2.1
+    commit: aa11016c71865c62bd81d6b6caa670e6b068990d
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
@@ -91,7 +95,7 @@ Builds:
 
   - versionName: 0.2.1
     versionCode: 32
-    commit: v0.2.1
+    commit: aa11016c71865c62bd81d6b6caa670e6b068990d
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
@@ -124,7 +128,7 @@ Builds:
 
   - versionName: 0.2.1
     versionCode: 33
-    commit: v0.2.1
+    commit: aa11016c71865c62bd81d6b6caa670e6b068990d
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
       - flutter@stable

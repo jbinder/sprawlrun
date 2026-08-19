@@ -104,16 +104,16 @@ only third-party binaries in the repo are the three OFL fonts.
 
 ## Untested on real hardware
 
-Two things cannot be exercised by the test suite. Treat any report about either as
-new information rather than a regression:
+The test suite cannot exercise audio focus or GPS. Both were confirmed on a real
+outdoor run at 0.2.1, so treat a report about either as a regression rather than
+as new information:
 
-- **Audio focus** — the runner's music pausing and cleanly resuming around each
-  story beat. Two things now stand between the app and the known failure where a
-  player never resumes: focus is taken in exactly one place (see the conventions
-  above), and `MusicResumeGuard` presses a media-button PLAY when a player that
-  *was* running is still silent after focus went back. The guard's decision logic
-  is unit-tested; whether the media key actually reaches Spotify et al. is not.
-- **GPS acquisition via the AOSP `LocationManager`.** Since dropping Play
-  Services the app no longer uses the fused provider. Startup is verified clean
-  on device (no `NoClassDefFoundError`), but that fixes actually arrive has only
-  been shown in tests against synthetic data. Needs one real run outdoors.
+- **Audio focus** — confirmed working on device. Two things keep it that way:
+  focus is taken in exactly one place (see the conventions above), and
+  `MusicResumeGuard` presses a media-button PLAY when a player that *was*
+  running is still silent after focus went back. Only the guard's decision logic
+  is unit-tested; that the media key reaches a given player is not, so a report
+  naming a specific music app is still worth taking at face value.
+- **GPS acquisition via the AOSP `LocationManager`** — the same run exercised
+  it, since dropping Play Services means no fused provider. Startup is also
+  verified clean on device (no `NoClassDefFoundError`).

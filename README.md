@@ -279,6 +279,13 @@ Some notes on the shape of it:
   `…DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION` from `share_plus`, which only lets
   the app receive its own share-result broadcast. Without `INTERNET`, nothing
   here could reach the network regardless.
+- **`android:allowBackup` is left at Android's default**, which is `true`. That
+  means the OS backup agent may copy the run log to the user's Google account if
+  they have device backup switched on — the app never does this itself and could
+  not, but the data can still leave the device by that route. Setting it to
+  `false` would close that path and also disable device-to-device transfer; the
+  deliberate choice is to leave the platform behaviour alone and say so plainly
+  rather than to claim more isolation than the app actually has.
 - **No Google Play Services.** `geolocator_android` declares
   `play-services-location`, which is proprietary. The app module excludes the
   `com.google.android.gms` group so it never reaches the APK, and sets

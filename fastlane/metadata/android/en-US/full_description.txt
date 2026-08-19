@@ -28,7 +28,9 @@ Black clinics. The Turing Registry. Simstim. Entries unlock only once a characte
 
 GENUINELY OFFLINE
 
-There is no INTERNET permission in the manifest. The app cannot reach the network, so nothing about your runs can leave the device. No accounts, no analytics, no ads.
+There is no INTERNET permission in the manifest, so the app itself cannot reach the network at all. No accounts, no analytics, no ads.
+
+One honest caveat: Android's own backup service can copy app data to your Google account, the same as for most apps, if you have device backup switched on. That is the operating system, not this app — turn it off in Android's backup settings if you would rather it did not.
 
 No Google Play Services either — the proprietary location library is excluded from the build and the AOSP LocationManager is used directly, so this runs identically on a de-Googled ROM.
 

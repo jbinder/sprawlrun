@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 144 tests
+fvm flutter test                                    # 157 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -85,6 +85,16 @@ only third-party binaries in the repo are the three OFL fonts.
   achievements are derived. Add a field to `Profile` or `RunRecord` and it rides
   along for free; add a new persisted *file* and it will not, so extend
   `BackupService.collect` and `import` at the same time.
+- **`MainActivity` creates `geolocator_channel_01` before geolocator can.**
+  geolocator builds that channel at `IMPORTANCE_NONE`, which Android treats as
+  blocked: the foreground-service notification never reaches the shade and the
+  app appears only inside the grouped "running in the background" notice.
+  Importance cannot be lowered by a later `createNotificationChannel`, so
+  creating it first at `IMPORTANCE_LOW` wins. The app also has to request
+  `POST_NOTIFICATIONS` itself — no plugin here does, and without the grant the
+  service runs with its notification suppressed. Both were shipped broken
+  through 0.2.1. A device that already has the channel keeps its old settings
+  across delete and recreate, so verify the fix on a fresh install.
 
 ## Gradle config that looks wrong but isn't
 

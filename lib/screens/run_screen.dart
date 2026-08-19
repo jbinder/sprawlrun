@@ -8,6 +8,7 @@ import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../services/location_service.dart';
+import '../services/notification_permission.dart';
 import '../services/run_engine.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
@@ -51,6 +52,14 @@ class _RunScreenState extends State<RunScreen> {
     if (app.profile.keepScreenOn) {
       unawaited(WakelockPlus.enable());
     }
+
+    // Before the engine starts, not after: the foreground service posts its
+    // notification the instant tracking begins, and a grant that arrives later
+    // does not reliably surface one Android has already suppressed. Awaiting
+    // also keeps the two permission dialogs sequential — Android drops a
+    // request made while another is still on screen.
+    await NotificationPermission.platform().request();
+    if (!mounted) return;
 
     _events = engine.events.listen(_onEvent);
     final readiness = await engine.start(

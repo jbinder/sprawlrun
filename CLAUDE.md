@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 157 tests
+fvm flutter test                                    # 164 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -50,7 +50,8 @@ it there.
 
 ## Generated, never hand-edited
 
-`assets/sfx/*.wav`, all launcher icons, `docs/icon.png` and `docs/screenshots/*`
+`assets/sfx/*.wav`, all launcher icons, the status-bar icon
+(`res/drawable-*/ic_notification.png`), `docs/icon.png` and `docs/screenshots/*`
 are produced by the scripts in `tool/`. Edit the generator and re-run it. The
 only third-party binaries in the repo are the three OFL fonts.
 
@@ -95,6 +96,24 @@ only third-party binaries in the repo are the three OFL fonts.
   service runs with its notification suppressed. Both were shipped broken
   through 0.2.1. A device that already has the channel keeps its old settings
   across delete and recreate, so verify the fix on a fresh install.
+- **`MissionService` is the app's only foreground service.** geolocator can post
+  its own, and deliberately is not asked to: `location_service.dart` passes no
+  `foregroundNotificationConfig`, because that text is fixed when the stream
+  opens and so can never count a goal down, and two configs would put two
+  notices on screen for one run. Ours starts before `engine.start`, which blocks
+  on GPS readiness and the ambient bed, and claims `specialUse` until the
+  readiness answer arrives — then `startForeground` runs again to promote it to
+  `location`, which is what keeps fixes coming with the screen off. A repeat
+  call that only changes the text goes through `notify` instead. It holds a
+  partial wake lock too: being in the foreground does not keep the CPU awake,
+  and a frozen process stalls the ticker that fires story beats.
+- **Three things about that notification are load-bearing**, and none of them
+  fail loudly: `FOREGROUND_SERVICE_IMMEDIATE`, or Android 12+ defers it by up
+  to ten seconds; `R.drawable.ic_notification` plus `res/raw/keep.xml`, or the
+  resource shrinker strips an icon only ever resolved by name, the small icon
+  resolves to 0, and Android silently replaces the whole notification with its
+  own "app is running" placeholder; and that icon being a transparent
+  silhouette, since only its alpha channel survives.
 
 ## Gradle config that looks wrong but isn't
 
@@ -127,3 +146,9 @@ as new information:
 - **GPS acquisition via the AOSP `LocationManager`** — the same run exercised
   it, since dropping Play Services means no fused provider. Startup is also
   verified clean on device (no `NoClassDefFoundError`).
+- **Screen-off tracking has not been re-verified since 0.2.2.** What keeps fixes
+  arriving in a pocket changed then, from geolocator's foreground service to
+  `MissionService` claiming the `location` type. The notification was checked on
+  device with GPS both on and off; that *distance still accumulates* with the
+  screen off has not been, and no test can show it. Until one real outdoor run
+  says otherwise, treat a report of a short or empty trace as this change.

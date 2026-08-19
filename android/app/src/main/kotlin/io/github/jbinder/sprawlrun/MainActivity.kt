@@ -74,6 +74,32 @@ class MainActivity : FlutterActivity() {
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "requestPermission" -> requestNotificationPermission(result)
+
+                    // Every run, GPS or not — see MissionService.
+                    "startMissionNotice" -> {
+                        MissionService.start(
+                            this,
+                            call.argument<String>("text") ?: "",
+                            call.argument<Boolean>("tracking") ?: false
+                        )
+                        result.success(null)
+                    }
+
+                    // Same call: the service updates in place once started.
+                    "updateMissionNotice" -> {
+                        MissionService.start(
+                            this,
+                            call.argument<String>("text") ?: "",
+                            call.argument<Boolean>("tracking") ?: false
+                        )
+                        result.success(null)
+                    }
+
+                    "stopMissionNotice" -> {
+                        MissionService.stop(this)
+                        result.success(null)
+                    }
+
                     else -> result.notImplemented()
                 }
             }

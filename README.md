@@ -202,7 +202,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 157 tests
+flutter test                   # 164 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -296,11 +296,15 @@ Some notes on the shape of it:
   identically on a de-Googled ROM.
 - **No `ACCESS_BACKGROUND_LOCATION`.** Tracking with the screen off works through
   a foreground service, which is the narrower permission and the one Play Store
-  review does not treat as a special case. That service posts an ongoing
-  notification for as long as a mission is running — Android requires one, and
-  it is the honest signal that the GPS is on. It is the only notification the
-  app ever shows, which is what `POST_NOTIFICATIONS` is asked for; refuse it and
-  tracking is unaffected, only the notice is hidden.
+  review does not treat as a special case. Every run holds one, and it posts the
+  ongoing notification counting down whatever target you set — Android requires
+  a notification for a foreground service, and it is the honest signal that a
+  mission is live. It is the only notification the app ever shows, which is what
+  `POST_NOTIFICATIONS` is asked for; refuse it and tracking is unaffected, only
+  the notice is hidden. A mission started with no GPS keeps the same service
+  under `FOREGROUND_SERVICE_SPECIAL_USE` rather than claiming a location it does
+  not have, so a time-target run cannot be frozen in a pocket halfway through
+  the story.
 - **No heart rate or cadence.** Nothing here needs a strap, and inventing an
   effort metric from GPS alone would be worse than not having one.
 

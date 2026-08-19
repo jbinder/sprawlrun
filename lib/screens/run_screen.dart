@@ -8,6 +8,7 @@ import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../services/location_service.dart';
+import '../services/mission_notice.dart';
 import '../services/notification_permission.dart';
 import '../services/run_engine.dart';
 import '../state/app_state.dart';
@@ -38,6 +39,12 @@ class _RunScreenState extends State<RunScreen> {
   Timer? _bannerTimer;
   LocationReadiness? _locationTrouble;
   bool _finishing = false;
+  MissionNotice? _notice;
+  String? _noticeText;
+  // Held rather than read from the context: the listener has to be removed in
+  // dispose, where looking the engine up again is not safe.
+  RunEngine? _engine;
+  AppState? _app;
 
   @override
   void initState() {
@@ -48,16 +55,27 @@ class _RunScreenState extends State<RunScreen> {
   Future<void> _begin() async {
     final engine = context.read<RunEngine>();
     final app = context.read<AppState>();
+    _engine = engine;
+    _app = app;
 
     if (app.profile.keepScreenOn) {
       unawaited(WakelockPlus.enable());
     }
 
-    // Before the engine starts, not after: the foreground service posts its
-    // notification the instant tracking begins, and a grant that arrives later
-    // does not reliably surface one Android has already suppressed. Awaiting
-    // also keeps the two permission dialogs sequential — Android drops a
-    // request made while another is still on screen.
+    // First, before anything that can block. engine.start() waits on the GPS
+    // readiness check and on loading the ambient bed, which is seconds the
+    // runner spends looking at a mission with no notification behind it.
+    // Claiming `location` has to wait for the readiness answer, so this opens
+    // as a plain timer and is promoted below the moment that is known.
+    _notice = MissionNotice.platform();
+    _noticeText = _describeGoal(app);
+    unawaited(_notice!.start(_noticeText!, tracking: false));
+
+    // The service above starts either way; without this grant Android just
+    // suppresses its notification. Asking here, awaited, keeps the two dialogs
+    // sequential — Android drops a permission request made while another is
+    // still on screen — and the first tick reposts the notice a second later,
+    // so a grant given now shows up without waiting for the next run.
     await NotificationPermission.platform().request();
     if (!mounted) return;
 
@@ -67,9 +85,49 @@ class _RunScreenState extends State<RunScreen> {
       goal: widget.goal,
       profile: app.profile,
     );
-    if (mounted && readiness != LocationReadiness.ready) {
+    // Disposed mid-start: dispose has already stopped the service, so there is
+    // nothing left to promote or listen to.
+    if (!mounted) return;
+
+    // Now the readiness is known, claim the type that matches it. `location` is
+    // what keeps fixes arriving once the screen goes off; the plain timer the
+    // service opened with would have Android throttle them.
+    if (readiness == LocationReadiness.ready) {
+      unawaited(_notice!.start(_noticeText!, tracking: true));
+    } else {
       setState(() => _locationTrouble = readiness);
     }
+    engine.addListener(_pushNotice);
+  }
+
+  /// The notice's opening line, from the goal alone — the engine has not
+  /// started yet and its counters still belong to the last run.
+  String _describeGoal(AppState app) => widget.goal.isTime
+      ? '${Fmt.clock(widget.goal.value)} left'
+      : '${Fmt.distanceWithUnit(widget.goal.value, app.profile.units)} left';
+
+  /// What the notification says: how much of the target is left, in whichever
+  /// unit the runner chose it in.
+  String _describeProgress(RunEngine engine, AppState app) {
+    if (engine.goalReached) return 'Target reached — still running.';
+    final left = engine.remaining;
+    return widget.goal.isTime
+        ? '${Fmt.clock(left)} left'
+        : '${Fmt.distanceWithUnit(left, app.profile.units)} left';
+  }
+
+  /// Called on every engine tick. The notification is only rewritten when the
+  /// text actually changes, so a second that rounds to the same string costs
+  /// nothing.
+  void _pushNotice() {
+    final notice = _notice;
+    final engine = _engine;
+    final app = _app;
+    if (notice == null || engine == null || app == null) return;
+    final text = _describeProgress(engine, app);
+    if (text == _noticeText) return;
+    _noticeText = text;
+    unawaited(notice.update(text));
   }
 
   void _onEvent(RunEvent event) {
@@ -102,6 +160,9 @@ class _RunScreenState extends State<RunScreen> {
   void dispose() {
     _bannerTimer?.cancel();
     _events?.cancel();
+    _engine?.removeListener(_pushNotice);
+    // Covers every way off this screen: finishing, abandoning, or backing out.
+    unawaited(_notice?.stop() ?? Future<void>.value());
     unawaited(WakelockPlus.disable());
     super.dispose();
   }

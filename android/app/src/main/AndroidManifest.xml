@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
+    <!-- The same job with the GPS switched off. A time-target mission still
+         runs, still narrates and still has to survive a pocket, but it claims
+         no location, so it cannot honestly use the location type. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
+
     <!-- Android 13+ requires this to show the ongoing "mission active" notice. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
@@ -47,6 +52,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- Holds every run in the foreground and owns its notification. The
+             type is chosen at runtime: location when the runner granted it,
+             specialUse when there is none to claim. -->
+        <service
+            android:name=".MissionService"
+            android:exported="false"
+            android:foregroundServiceType="location|specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keeps a running mission timed and narrating while the screen is off when GPS is unavailable."/>
+        </service>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

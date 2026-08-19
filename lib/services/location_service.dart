@@ -40,9 +40,10 @@ class GpsLocationSource implements LocationSource {
     final controller = StreamController<GeoFix>.broadcast(onCancel: stop);
     _controller = controller;
 
-    // A foreground service is what keeps fixes arriving with the screen off —
-    // without it Android throttles the app to a fix every few minutes and the
-    // recorded distance quietly collapses.
+    // Fixes keep arriving with the screen off because MissionService holds the
+    // app in the foreground with the `location` service type. Without some
+    // foreground service Android throttles the app to a handful of fixes an
+    // hour and the recorded distance quietly collapses.
     final settings = AndroidSettings(
       accuracy: LocationAccuracy.best,
       // Use AOSP's LocationManager rather than the Play Services fused
@@ -58,13 +59,10 @@ class GpsLocationSource implements LocationSource {
       forceLocationManager: true,
       distanceFilter: 0,
       intervalDuration: const Duration(seconds: 1),
-      foregroundNotificationConfig: const ForegroundNotificationConfig(
-        notificationTitle: 'SPRAWL//RUN',
-        notificationText: 'Mission active — tracking your route.',
-        notificationChannelName: 'Active mission',
-        enableWakeLock: true,
-        setOngoing: true,
-      ),
+      // No foregroundNotificationConfig on purpose. MissionService is the
+      // app's foreground service for every run and owns the notification, so
+      // it can count the goal down — geolocator's text is fixed for the life
+      // of the stream. Two configs would post two notices for one run.
     );
 
     _sub = Geolocator.getPositionStream(locationSettings: settings).listen(

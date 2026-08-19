@@ -20,6 +20,7 @@ const _magenta = (0xFF, 0x2D, 0x9B);
 
 void main() {
   _writeAndroid();
+  _writeNotificationIcon();
   _writeIos();
   _writeStoreIcon();
   stdout.writeln('Icons regenerated.');
@@ -75,6 +76,66 @@ void _writeIos() {
     final size = (points * scale).round();
     File('$dir/$filename').writeAsBytesSync(encodePng(renderIcon(size, background: true, inset: 0.80)));
   }
+}
+
+/// The status-bar icon.
+///
+/// Android throws away every channel but alpha here, so a launcher icon would
+/// come out as a solid white blob of its own outline. This renders the mark as
+/// a silhouette instead: the same hexagon and double slash, in white on
+/// nothing, so the shape survives the system's treatment.
+///
+/// The dim inner hexagon is left out and the strokes run heavier than the
+/// launcher icon's — at 24 dp a hairline disappears into the status bar.
+void _writeNotificationIcon() {
+  const res = 'android/app/src/main/res';
+  const densities = {'mdpi': 24, 'hdpi': 36, 'xhdpi': 48, 'xxhdpi': 72, 'xxxhdpi': 96};
+
+  densities.forEach((density, size) {
+    final dir = Directory('$res/drawable-$density')..createSync(recursive: true);
+    File('${dir.path}/ic_notification.png').writeAsBytesSync(encodePng(renderNotificationIcon(size)));
+  });
+}
+
+/// White-on-transparent silhouette of the mark, sized for the status bar.
+Uint8List renderNotificationIcon(int size) {
+  const ss = 4;
+  final n = size * ss;
+  final coverage = Float64List(size * size);
+
+  final centre = n / 2.0;
+  // Android reserves a little padding inside the 24 dp box; without it the
+  // hexagon touches the edges and reads as a filled tile.
+  final unit = n * 0.84 / 2.0;
+
+  for (var py = 0; py < n; py++) {
+    for (var px = 0; px < n; px++) {
+      final x = (px + 0.5 - centre) / unit;
+      final y = (py + 0.5 - centre) / unit;
+
+      final hex = _sdHexagon(x, y, 0.74).abs() - 0.11;
+      var a = _coverage(hex);
+
+      for (final offset in [-0.19, 0.19]) {
+        final slash = _sdSegment(x - offset, y, -0.30, 0.52, 0.30, -0.52) - 0.095;
+        a = max(a, _coverage(slash));
+      }
+
+      coverage[(py ~/ ss) * size + (px ~/ ss)] += a;
+    }
+  }
+
+  final out = Uint8List(size * size * 4);
+  const samples = ss * ss;
+  for (var i = 0; i < size * size; i++) {
+    // White everywhere; only the alpha channel carries the shape, which is all
+    // the system reads.
+    out[i * 4] = 255;
+    out[i * 4 + 1] = 255;
+    out[i * 4 + 2] = 255;
+    out[i * 4 + 3] = ((coverage[i] / samples) * 255).clamp(0, 255).round();
+  }
+  return out;
 }
 
 /// A large flat icon for store listings and READMEs.

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ic_notification is resolved by name at runtime — from MissionService and,
+     via AndroidResource, by geolocator. The resource shrinker sees no static
+     reference and strips it, which does not fail the build: the small icon
+     resolves to 0, the notification is invalid, and Android silently replaces
+     it with its own "app is running" placeholder. That shipped once. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_notification"/>

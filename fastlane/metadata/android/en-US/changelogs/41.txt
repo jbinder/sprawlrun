@@ -1,0 +1,9 @@
+Fixed: the "mission active" notification never appeared. Android treated the
+notification channel as blocked, and the app never asked for permission to post
+notifications at all. Both are fixed — you will be asked once, at the start of
+your next run.
+
+Fixed: a mission started without GPS — location switched off, or the permission
+refused — had nothing keeping it in the foreground, so Android could freeze it
+in your pocket and the story would stop while the clock kept counting. Those
+runs now hold a foreground service of their own, and show the same notification.

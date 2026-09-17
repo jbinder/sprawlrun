@@ -508,20 +508,44 @@ class RunEngine extends ChangeNotifier {
     _fireBeat(next);
   }
 
+  CodexEntry? _codexEntry(String id) {
+    for (final entry in mission?.codex ?? const <CodexEntry>[]) {
+      if (entry.id == id) return entry;
+    }
+    return null;
+  }
+
   void _fireBeat(StoryBeat beat) {
     _firedBeats.add(beat.id);
     _beatPlaying = true;
     currentBeat = beat;
     beatsHeard++;
 
+    var lines = beat.lines;
     if (beat.unlocksCodex != null && !codexUnlocked.contains(beat.unlocksCodex)) {
       codexUnlocked.add(beat.unlocksCodex!);
       _events.add(CodexUnlocked(beat.unlocksCodex!));
+      // Announced inside the same transmission, after the character has
+      // finished: the runner is not looking at the screen, so the voice is the
+      // only channel that reliably reaches them, and one interruption of their
+      // music is better than two.
+      final entry = _codexEntry(beat.unlocksCodex!);
+      if (entry != null) {
+        lines = [
+          ...lines,
+          StoryLine(
+            speaker: 'SYSTEM',
+            text: 'Codex entry recovered: ${entry.title}.',
+            sfxBefore: 'unlock',
+            pauseAfterMs: 120,
+          ),
+        ];
+      }
     }
     _events.add(BeatEvent(beat));
 
     unawaited(
-      narrator.speakBeat(beat.lines).whenComplete(() {
+      narrator.speakBeat(lines).whenComplete(() {
         _beatPlaying = false;
         _lastBeatEndedAt = _now();
         currentBeat = null;

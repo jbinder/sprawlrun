@@ -1,5 +1,3 @@
-import 'run_record.dart';
-
 /// Aggregates for one window of time (this week, this month, ...).
 class PeriodStats {
   const PeriodStats({
@@ -149,15 +147,4 @@ class StreakStatus {
     weekEndsIn: Duration.zero,
     recentWeeks: [],
   );
-}
-
-/// A single run plus its context, handed to the summary screen.
-class RunOutcomeReport {
-  const RunOutcomeReport({required this.record, required this.newAchievements, required this.missionUnlocked});
-
-  final RunRecord record;
-  final List<String> newAchievements;
-
-  /// Codename of the mission this run just unlocked, if any.
-  final String? missionUnlocked;
 }

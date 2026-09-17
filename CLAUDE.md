@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 164 tests
+fvm flutter test                                    # 175 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -27,7 +27,23 @@ installing, and Android deletes the private data directory on uninstall — so i
 silently destroys the run log, which lives in `getApplicationDocumentsDirectory()`.
 `adb install -r` upgrades in place. Confirm it did by checking that
 `firstInstallTime` in `adb shell dumpsys package io.github.jbinder.sprawlrun` did
-not move.
+not move — and check the install actually succeeded first; a failed install
+leaves the timestamp untouched too.
+
+Two more ways a deploy fails without touching data, both seen:
+
+- **Deploy the arm64 split, not the universal APK.** Since 0.2.2 the phone
+  carries the split versionCode (`versionCode * 10 + abi`, so 42), and the
+  universal build's plain `4` is refused as a downgrade. Build with
+  `--split-per-abi --target-platform=android-arm64` and install
+  `app-arm64-v8a-release.apk`.
+- **A CI artifact on the phone blocks every local build.** fdroiddata's pipeline
+  signs its test APKs with a throwaway key (`CN=y, OU=y, O=y`), so once one is
+  installed nothing signed with the release key can replace it —
+  `INSTALL_FAILED_UPDATE_INCOMPATIBLE`. The only way back is uninstall, which
+  deletes the run log: have the runner export a backup from Settings → Data
+  first, and let them do the uninstall. F-Droid's own eventual builds are a
+  third signature again.
 
 ## Test traps
 

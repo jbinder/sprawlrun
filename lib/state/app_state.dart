@@ -9,6 +9,7 @@ import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
+import '../models/run_outcome.dart';
 import '../models/stats.dart';
 import '../services/achievement_engine.dart';
 import '../services/narrator.dart';
@@ -86,6 +87,18 @@ class AppState extends ChangeNotifier {
     return out;
   }
 
+  /// Looks a codex entry up across every loaded pack.
+  CodexEntry? codexEntry(String id) {
+    for (final pack in packs) {
+      for (final mission in pack.missions) {
+        for (final entry in mission.codex) {
+          if (entry.id == id) return entry;
+        }
+      }
+    }
+    return null;
+  }
+
   int get codexTotal =>
       packs.fold(0, (s, p) => s + p.missions.fold(0, (t, m) => t + m.codex.length));
 
@@ -141,6 +154,12 @@ class AppState extends ChangeNotifier {
         next = next.copyWith(completedMissions: {...next.completedMissions, mission.id});
       }
     }
+    // Only what was not already known counts as recovered — a replayed
+    // mission hears the same lines again.
+    final recovered = [
+      for (final id in codexHeard)
+        if (!next.unlockedCodex.contains(id)) id,
+    ];
     if (codexHeard.isNotEmpty) {
       next = next.copyWith(unlockedCodex: {...next.unlockedCodex, ...codexHeard});
     }
@@ -172,7 +191,8 @@ class AppState extends ChangeNotifier {
 
     return RunOutcomeReport(
       record: record,
-      newAchievements: fresh.map((a) => a.title).toList(),
+      newAchievements: fresh,
+      codexRecovered: [for (final id in recovered) ?codexEntry(id)],
       missionUnlocked: unlocked,
     );
   }

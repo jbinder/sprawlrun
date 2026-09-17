@@ -67,8 +67,9 @@ class Harness {
   }
 }
 
-Mission missionWith(List<StoryBeat> beats) => Mission(
+Mission missionWith(List<StoryBeat> beats, {List<CodexEntry> codex = const []}) => Mission(
   id: 'test',
+  codex: codex,
   packId: 'test',
   order: 1,
   codename: 'TEST OP',
@@ -330,6 +331,38 @@ void main() {
         )..begin();
         fake.flushMicrotasks();
         expect(h.engine.codexUnlocked, ['cdx_test']);
+      });
+    });
+
+    test('a recovery is announced by the system voice inside the same transmission', () {
+      fakeAsync((fake) {
+        const entry = CodexEntry(id: 'cdx_test', title: 'The Turing Registry', category: 'LAW', body: '…');
+        final h = Harness(
+          fake,
+          mission: missionWith([beat('b0', fraction: 0.0, codex: 'cdx_test')], codex: [entry]),
+          goal: RunGoal.seconds(600),
+        )..begin();
+        fake.flushMicrotasks();
+
+        final spoken = h.narrator.beats.single;
+        expect(spoken, hasLength(2), reason: 'the character line, then the announcement');
+        expect(spoken.first.text, 'line for b0');
+        expect(spoken.last.speaker, 'SYSTEM');
+        expect(spoken.last.text, contains('The Turing Registry'));
+        expect(spoken.last.sfxBefore, 'unlock', reason: 'the sting rides with the line, not over the comm-open');
+      });
+    });
+
+    test('an entry the mission does not define is unlocked silently', () {
+      fakeAsync((fake) {
+        final h = Harness(
+          fake,
+          mission: missionWith([beat('b0', fraction: 0.0, codex: 'cdx_unknown')]),
+          goal: RunGoal.seconds(600),
+        )..begin();
+        fake.flushMicrotasks();
+        expect(h.engine.codexUnlocked, ['cdx_unknown']);
+        expect(h.narrator.beats.single, hasLength(1), reason: 'nothing to name, nothing to say');
       });
     });
   });

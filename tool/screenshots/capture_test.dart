@@ -22,14 +22,18 @@ import 'package:sprawl_run/app.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/models/achievement.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:sprawl_run/models/run_outcome.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/screens/run_screen.dart';
+import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
+import 'package:sprawl_run/widgets/unlock_reveal.dart';
 
 import '../../test/support/fakes.dart';
 
@@ -108,6 +112,31 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     }
     await _shoot(tester, 'run-hud');
+  });
+
+  testWidgets('unlock reveal', (tester) async {
+    final state = await _seed(tester);
+    final mission = state.currentMission!.mission;
+    // A LEGEND-tier card is the one worth showing: amber, the rarest band.
+    final legend = kAchievements.firstWhere((a) => a.tier == AchTier.legend);
+    final report = RunOutcomeReport(
+      record: run(at: DateTime(2026, 7, 27, 21, 14), meters: 8200, seconds: 2700, missionId: mission.id),
+      newAchievements: [legend],
+      codexRecovered: mission.codex.take(1).toList(),
+      missionUnlocked: 'COOLING LOOP',
+    );
+
+    await _pump(tester, RunSummaryScreen(report: report, mission: mission), state);
+    // Past the mission card and the codex card, onto the achievement. Two pumps
+    // per step: the first frame after an animation starts only sets its clock.
+    for (var i = 0; i < 2; i++) {
+      await tester.tap(find.byType(UnlockReveal));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+    }
+    // Let the description finish typing.
+    await tester.pump(const Duration(milliseconds: 2500));
+    await _shoot(tester, 'unlock');
   });
 
   testWidgets('stats', (tester) async {

@@ -10,6 +10,7 @@ import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/glitch_text.dart';
+import '../widgets/mission_widgets.dart';
 import '../widgets/panels.dart';
 import 'run_screen.dart';
 
@@ -49,31 +50,48 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              _BriefBar(mission: mission),
+              OpsBar(mission: mission, label: 'BRIEFING'),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(18, 4, 18, 24),
                   children: [
                     if (mission != null) ...[
-                      Text(mission.location.toUpperCase(), style: CyType.label(size: 10, color: accent)),
+                      Text(
+                        mission.location.toUpperCase(),
+                        style: CyType.label(size: 10, color: accent),
+                      ),
                       const SizedBox(height: 8),
                       GlitchText(
                         mission.codename,
-                        style: CyType.display(size: 30, color: Cy.ink, shadows: textGlow(accent, blur: 18)),
+                        style: CyType.display(
+                          size: 30,
+                          color: Cy.ink,
+                          shadows: textGlow(accent, blur: 18),
+                        ),
                       ),
                       const SizedBox(height: 6),
-                      Text(mission.title, style: CyType.body(size: 17, color: Cy.inkDim)),
+                      Text(
+                        mission.title,
+                        style: CyType.body(size: 17, color: Cy.inkDim),
+                      ),
                       const SizedBox(height: 20),
                       NeonPanel(
                         accent: Cy.rule,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('BRIEFING', style: CyType.label(size: 10, color: accent)),
+                            Text(
+                              'BRIEFING',
+                              style: CyType.label(size: 10, color: accent),
+                            ),
                             const SizedBox(height: 10),
                             TypewriterText(
                               mission.brief,
-                              style: CyType.body(size: 16, height: 1.5, color: Cy.ink),
+                              style: CyType.body(
+                                size: 16,
+                                height: 1.5,
+                                color: Cy.ink,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             Container(height: 1, color: Cy.rule),
@@ -81,12 +99,20 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Icon(Icons.flag_outlined, size: 15, color: accent),
+                                Icon(
+                                  Icons.flag_outlined,
+                                  size: 15,
+                                  color: accent,
+                                ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
                                     mission.objective,
-                                    style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
+                                    style: CyType.body(
+                                      size: 15,
+                                      color: Cy.inkDim,
+                                      height: 1.35,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -98,7 +124,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: _InfoCell(
+                            child: InfoCell(
                               label: 'Transmissions',
                               value: '${mission.beats.length}',
                               icon: Icons.record_voice_over_outlined,
@@ -106,7 +132,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: _InfoCell(
+                            child: InfoCell(
                               label: 'Pursuits',
                               value: '${mission.chaseBeats.length}',
                               icon: Icons.radar,
@@ -114,7 +140,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           ),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: _InfoCell(
+                            child: InfoCell(
                               label: 'Suggested',
                               value: mission.suggestedGoal.toString(),
                               icon: Icons.tune,
@@ -126,19 +152,30 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                     ] else ...[
                       GlitchText(
                         'FREE RUN',
-                        style: CyType.display(size: 30, color: Cy.ink, shadows: textGlow(accent, blur: 18)),
+                        style: CyType.display(
+                          size: 30,
+                          color: Cy.ink,
+                          shadows: textGlow(accent, blur: 18),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'No story, no handler, no one chasing you. Distance and time still count '
                         'toward your streak, your totals and the wall.',
-                        style: CyType.body(size: 16, color: Cy.inkDim, height: 1.4),
+                        style: CyType.body(
+                          size: 16,
+                          color: Cy.inkDim,
+                          height: 1.4,
+                        ),
                       ),
                       const SizedBox(height: 24),
                     ],
 
                     if (mission != null && mission.codex.isNotEmpty) ...[
-                      _IntelSection(mission: mission, recovered: state.profile.unlockedCodex),
+                      IntelSection(
+                        mission: mission,
+                        recovered: state.profile.unlockedCodex,
+                      ),
                       const SizedBox(height: 18),
                     ],
                     const SectionHeader('SET YOUR TARGET'),
@@ -153,7 +190,11 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           ? 'Reach the target and the run is logged as a success.'
                           : 'Reach the target and the operation is a success. Stop short and it counts as a failure — '
                                 'you can retry it as many times as you like. You can always keep running past the target.',
-                      style: CyType.body(size: 14, color: Cy.ghost, height: 1.35),
+                      style: CyType.body(
+                        size: 14,
+                        color: Cy.ghost,
+                        height: 1.35,
+                      ),
                     ),
                   ],
                 ),
@@ -165,12 +206,16 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                   icon: Icons.play_arrow_rounded,
                   onPressed: () async {
                     if (mission != null) {
-                      await context.read<AppState>().rememberGoal(mission, _goal);
+                      await context.read<AppState>().rememberGoal(
+                        mission,
+                        _goal,
+                      );
                     }
                     if (!context.mounted) return;
                     await Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
-                        builder: (_) => RunScreen(mission: mission, goal: _goal),
+                        builder: (_) =>
+                            RunScreen(mission: mission, goal: _goal),
                       ),
                     );
                   },
@@ -184,84 +229,65 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
   }
 }
 
-class _BriefBar extends StatelessWidget {
-  const _BriefBar({required this.mission});
-
-  final Mission? mission;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(6, 6, 16, 6),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
-          ),
-          const Spacer(),
-          Text(
-            mission == null ? 'UNLOGGED RUN' : 'OPERATION ${mission!.order.toString().padLeft(2, '0')}',
-            style: CyType.label(size: 10),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoCell extends StatelessWidget {
-  const _InfoCell({required this.label, required this.value, required this.icon});
-
-  final String label;
-  final String value;
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    return NeonPanel(
-      cut: 8,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 14, color: Cy.inkDim),
-          const SizedBox(height: 8),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.centerLeft,
-            child: Text(value, style: CyType.readout(16, Cy.ink)),
-          ),
-          const SizedBox(height: 3),
-          Text(label.toUpperCase(), style: CyType.label(size: 8)),
-        ],
-      ),
-    );
-  }
-}
-
 /// Time-or-distance toggle plus presets and a fine adjustment.
 ///
 /// Presets cover what people actually run; the stepper exists so nobody is
 /// stuck with a target that is close-but-not-what-they-wanted.
 class _GoalPicker extends StatelessWidget {
-  const _GoalPicker({required this.goal, required this.units, required this.onChanged});
+  const _GoalPicker({
+    required this.goal,
+    required this.units,
+    required this.onChanged,
+  });
 
   final RunGoal goal;
   final UnitSystem units;
   final ValueChanged<RunGoal> onChanged;
 
-  static const List<double> _timePresets = [600, 900, 1200, 1500, 1800, 2400, 3000, 3600, 5400];
-  static const List<double> _metricDistance = [1000, 2000, 3000, 5000, 7500, 10000, 15000, 21100, 30000];
-  static const List<double> _imperialDistance = [1609, 3219, 4828, 8047, 10000, 16093, 21100, 32187, 42195];
+  static const List<double> _timePresets = [
+    600,
+    900,
+    1200,
+    1500,
+    1800,
+    2400,
+    3000,
+    3600,
+    5400,
+  ];
+  static const List<double> _metricDistance = [
+    1000,
+    2000,
+    3000,
+    5000,
+    7500,
+    10000,
+    15000,
+    21100,
+    30000,
+  ];
+  static const List<double> _imperialDistance = [
+    1609,
+    3219,
+    4828,
+    8047,
+    10000,
+    16093,
+    21100,
+    32187,
+    42195,
+  ];
 
-  List<double> get _distancePresets => units == UnitSystem.imperial ? _imperialDistance : _metricDistance;
+  List<double> get _distancePresets =>
+      units == UnitSystem.imperial ? _imperialDistance : _metricDistance;
 
-  String _label(double value) =>
-      goal.isTime ? '${(value / 60).round()} min' : Fmt.distanceWithUnit(value, units);
+  String _label(double value) => goal.isTime
+      ? '${(value / 60).round()} min'
+      : Fmt.distanceWithUnit(value, units);
 
   /// One tap of the stepper: a minute, or a quarter of the display unit.
-  double get _step => goal.isTime ? 60 : (units == UnitSystem.imperial ? 402.336 : 250);
+  double get _step =>
+      goal.isTime ? 60 : (units == UnitSystem.imperial ? 402.336 : 250);
 
   @override
   Widget build(BuildContext context) {
@@ -286,7 +312,10 @@ class _GoalPicker extends StatelessWidget {
                   icon: Icons.route_outlined,
                   selected: goal.isDistance,
                   onTap: () => onChanged(
-                    RunGoal(GoalType.distance, units == UnitSystem.imperial ? 4828 : 5000),
+                    RunGoal(
+                      GoalType.distance,
+                      units == UnitSystem.imperial ? 4828 : 5000,
+                    ),
                   ),
                 ),
               ),
@@ -299,7 +328,11 @@ class _GoalPicker extends StatelessWidget {
               children: [
                 _StepButton(
                   icon: Icons.remove,
-                  onTap: () => onChanged(goal.copyWith(value: (goal.value - _step).clamp(_step, 200000))),
+                  onTap: () => onChanged(
+                    goal.copyWith(
+                      value: (goal.value - _step).clamp(_step, 200000),
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 18),
                 SizedBox(
@@ -307,14 +340,21 @@ class _GoalPicker extends StatelessWidget {
                   child: Center(
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
-                      child: Text(_label(goal.value), style: CyType.readout(30, Cy.cyan)),
+                      child: Text(
+                        _label(goal.value),
+                        style: CyType.readout(30, Cy.cyan),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 18),
                 _StepButton(
                   icon: Icons.add,
-                  onTap: () => onChanged(goal.copyWith(value: (goal.value + _step).clamp(_step, 200000))),
+                  onTap: () => onChanged(
+                    goal.copyWith(
+                      value: (goal.value + _step).clamp(_step, 200000),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -324,7 +364,8 @@ class _GoalPicker extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              for (final preset in goal.isTime ? _timePresets : _distancePresets)
+              for (final preset
+                  in goal.isTime ? _timePresets : _distancePresets)
                 _PresetChip(
                   label: _label(preset),
                   selected: (goal.value - preset).abs() < 1,
@@ -339,7 +380,12 @@ class _GoalPicker extends StatelessWidget {
 }
 
 class _ModeButton extends StatelessWidget {
-  const _ModeButton({required this.label, required this.icon, required this.selected, required this.onTap});
+  const _ModeButton({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final IconData icon;
@@ -384,7 +430,10 @@ class _StepButton extends StatelessWidget {
         width: 42,
         height: 42,
         alignment: Alignment.center,
-        decoration: BoxDecoration(border: Border.all(color: Cy.rule), color: Cy.panelHi),
+        decoration: BoxDecoration(
+          border: Border.all(color: Cy.rule),
+          color: Cy.panelHi,
+        ),
         child: Icon(icon, size: 20, color: Cy.cyan),
       ),
     );
@@ -392,7 +441,11 @@ class _StepButton extends StatelessWidget {
 }
 
 class _PresetChip extends StatelessWidget {
-  const _PresetChip({required this.label, required this.selected, required this.onTap});
+  const _PresetChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -413,60 +466,6 @@ class _PresetChip extends StatelessWidget {
           style: CyType.mono(size: 11, color: selected ? Cy.v0id : Cy.inkDim),
         ),
       ),
-    );
-  }
-}
-
-/// What this mission has to tell you, and how much of it you have heard.
-///
-/// Recovered entries show by name. The rest show only as encrypted — a count
-/// of what is left is motivation; a title would be a spoiler.
-class _IntelSection extends StatelessWidget {
-  const _IntelSection({required this.mission, required this.recovered});
-
-  final Mission mission;
-  final Set<String> recovered;
-
-  @override
-  Widget build(BuildContext context) {
-    final have = mission.codex.where((e) => recovered.contains(e.id)).length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionHeader('INTEL  $have / ${mission.codex.length}', accent: Cy.cyan),
-        for (final entry in mission.codex)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: recovered.contains(entry.id)
-                ? NeonPanel(
-                    accent: Cy.cyan,
-                    cut: 8,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.memory_outlined, size: 16, color: Cy.cyan),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(entry.title, style: CyType.body(size: 14, weight: FontWeight.w700)),
-                        ),
-                        CyberTag(entry.category, color: Cy.cyan),
-                      ],
-                    ),
-                  )
-                : NeonPanel(
-                    accent: Cy.rule,
-                    cut: 8,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.lock_outline, size: 16, color: Cy.ghost),
-                        const SizedBox(width: 10),
-                        Text('▮▮▮▮▮▮  ENCRYPTED', style: CyType.mono(size: 12, color: Cy.ghost, letterSpacing: 1.4)),
-                      ],
-                    ),
-                  ),
-          ),
-      ],
     );
   }
 }

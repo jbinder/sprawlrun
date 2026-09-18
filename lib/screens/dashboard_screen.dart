@@ -13,6 +13,7 @@ import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
 import '../widgets/progress.dart';
 import 'mission_brief_screen.dart';
+import 'mission_debrief_screen.dart';
 
 /// The home screen: who you are, how the week is going, and the one mission
 /// you are allowed to play next.
@@ -392,10 +393,14 @@ class _MissionRow extends StatelessWidget {
       fill: locked ? Cy.v0id : Cy.panel,
       cut: 10,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      // A cleared operation opens onto its debriefing; the briefing is still
+      // there behind "Run it again".
       onTap: locked
           ? null
           : () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => MissionBriefScreen(mission: mission)),
+              MaterialPageRoute<void>(
+                builder: (_) => done ? MissionDebriefScreen(mission: mission) : MissionBriefScreen(mission: mission),
+              ),
             ),
       child: Row(
         children: [

@@ -9,6 +9,7 @@ import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
+import 'package:sprawl_run/screens/mission_debrief_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
@@ -85,6 +86,37 @@ void main() {
     expect(find.text('LOCKED'), findsNWidgets(7));
     expect(find.text('GHOST SIGNAL'), findsWidgets, reason: 'the third op is now the active one');
     expect(find.text('2/10'), findsOneWidget);
+  });
+
+  testWidgets('a cleared operation opens its debriefing, with the briefing behind "Run it again"', (tester) async {
+    final state = await pumpApp(
+      tester,
+      profile: const Profile(completedMissions: {'sp01'}, missionAttempts: {'sp01': 2}, unlockedCodex: {'cdx_courier'}),
+    );
+    await tester.runAsync(
+      () => state.completeRun(run(at: DateTime(2026, 7, 6, 19, 40), meters: 3100, seconds: 900, missionId: 'sp01')),
+    );
+    await tester.pump(const Duration(milliseconds: 200));
+
+    // The first CLEARED tag is the finished mission's row.
+    await tester.tap(find.text('CLEARED').first);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byType(MissionDebriefScreen), findsOneWidget);
+    expect(find.textContaining('DEBRIEFING'), findsOneWidget);
+    expect(find.text('DEBRIEF'), findsOneWidget);
+    expect(find.text('SET YOUR TARGET'), findsNothing, reason: 'no goal picker on a debrief');
+    expect(find.text('Meat Courier'), findsOneWidget, reason: 'intel recovered');
+    expect(find.text('RUNS'), findsOneWidget);
+    expect(find.text('06 JUL · 19:40'), findsOneWidget, reason: 'the attempt is listed');
+
+    await tester.tap(find.text('RUN IT AGAIN'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.byType(MissionBriefScreen), findsOneWidget);
+    expect(find.text('SET YOUR TARGET'), findsOneWidget);
   });
 
   testWidgets('the briefing lists the mission\'s intel: recovered by name, the rest encrypted', (tester) async {

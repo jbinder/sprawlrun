@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
+import '../services/app_version.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
@@ -295,12 +296,7 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Center(
-                      child: Text(
-                        'SPRAWL//RUN — OFFLINE BUILD',
-                        style: CyType.label(size: 9, color: Cy.ghost),
-                      ),
-                    ),
+                    const _Colophon(),
                   ],
                 ),
               ),
@@ -615,6 +611,36 @@ class _TextRowState extends State<_TextRow> {
           },
         ),
       ],
+    );
+  }
+}
+
+/// Name, version and provenance, at the very bottom where it belongs.
+class _Colophon extends StatelessWidget {
+  const _Colophon();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<AppVersion?>(
+      future: AppVersion.load(),
+      builder: (context, snapshot) {
+        final version = snapshot.data;
+        return Column(
+          children: [
+            Text('SPRAWL//RUN', style: CyType.display(size: 11, color: Cy.inkDim, letterSpacing: 3)),
+            const SizedBox(height: 6),
+            Text(
+              version == null ? 'OFFLINE BUILD' : '${version.label} · offline'.toUpperCase(),
+              style: CyType.mono(size: 10, color: Cy.ghost, letterSpacing: 1.6),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Free software, MIT · github.com/jbinder/sprawlrun',
+              style: CyType.body(size: 11, color: Cy.ghost, weight: FontWeight.w500),
+            ),
+          ],
+        );
+      },
     );
   }
 }

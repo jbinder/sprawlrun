@@ -7,6 +7,7 @@ import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
@@ -26,6 +27,17 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
   tester.view.physicalSize = const Size(1200, 24000);
   tester.view.devicePixelRatio = 3.0;
   addTearDown(tester.view.reset);
+
+  // package_info_plus has no platform side in the harness; without this the
+  // colophon would just say OFFLINE BUILD, which is also what the tests check
+  // it falls back to when the values are absent.
+  PackageInfo.setMockInitialValues(
+    appName: 'SPRAWL//RUN',
+    packageName: 'io.github.jbinder.sprawlrun',
+    version: '9.9.9',
+    buildNumber: '999',
+    buildSignature: '',
+  );
 
   final profiles = ProfileRepository(root);
   final state = AppState(
@@ -78,5 +90,13 @@ void main() {
     // file I/O, which never completes in a widget test's fake-async zone.
     // persistence_test.dart covers the round trip to disk.
     expect(state.profile.resumeMusic, isFalse);
+  });
+
+  testWidgets('the colophon shows the installed version and build', (tester) async {
+    await pumpSettings(tester);
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text('V9.9.9 · BUILD 999 · OFFLINE'), findsOneWidget);
+    expect(find.textContaining('github.com/jbinder/sprawlrun'), findsOneWidget);
   });
 }

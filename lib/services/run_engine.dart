@@ -522,14 +522,18 @@ class RunEngine extends ChangeNotifier {
     beatsHeard++;
 
     var lines = beat.lines;
-    if (beat.unlocksCodex != null && !codexUnlocked.contains(beat.unlocksCodex)) {
-      codexUnlocked.add(beat.unlocksCodex!);
-      _events.add(CodexUnlocked(beat.unlocksCodex!));
+    // A recovery is something the runner did not have. An entry already in the
+    // codex — from an earlier attempt at this mission, aborted or not — is
+    // neither announced nor flashed again; hearing the line is just the story.
+    final codexId = beat.unlocksCodex;
+    if (codexId != null && !codexUnlocked.contains(codexId) && !profile.unlockedCodex.contains(codexId)) {
+      codexUnlocked.add(codexId);
+      _events.add(CodexUnlocked(codexId));
       // Announced inside the same transmission, after the character has
       // finished: the runner is not looking at the screen, so the voice is the
       // only channel that reliably reaches them, and one interruption of their
       // music is better than two.
-      final entry = _codexEntry(beat.unlocksCodex!);
+      final entry = _codexEntry(codexId);
       if (entry != null) {
         lines = [
           ...lines,

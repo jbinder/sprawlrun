@@ -353,6 +353,27 @@ void main() {
       });
     });
 
+    test('an entry already in the codex is neither announced nor unlocked again', () {
+      fakeAsync((fake) {
+        const entry = CodexEntry(id: 'cdx_test', title: 'The Turing Registry', category: 'LAW', body: '…');
+        final h = Harness(
+          fake,
+          mission: missionWith([beat('b0', fraction: 0.0, codex: 'cdx_test')], codex: [entry]),
+          goal: RunGoal.seconds(600),
+          // Heard on a previous attempt — aborted or completed, it is banked.
+          profile: const Profile(unlockedCodex: {'cdx_test'}),
+        );
+        final events = <RunEvent>[];
+        h.engine.events.listen(events.add);
+        h.begin();
+        fake.flushMicrotasks();
+
+        expect(h.engine.codexUnlocked, isEmpty, reason: 'nothing new to bank');
+        expect(events.whereType<CodexUnlocked>(), isEmpty, reason: 'no HUD flash');
+        expect(h.narrator.beats.single, hasLength(1), reason: 'the story line only, no SYSTEM announcement');
+      });
+    });
+
     test('an entry the mission does not define is unlocked silently', () {
       fakeAsync((fake) {
         final h = Harness(

@@ -534,9 +534,11 @@ class RunEngine extends ChangeNotifier {
     _log(StoryEventKind.beat, ref: beat.id);
 
     var lines = beat.lines;
-    // A recovery is something the runner did not have. An entry already in the
-    // codex — from an earlier attempt at this mission, aborted or not — is
-    // neither announced nor flashed again; hearing the line is just the story.
+    // Hearing the line *intercepts* the entry; it is only *recovered* — banked
+    // in the codex — when the operation succeeds. An entry already in the codex
+    // is neither announced nor flashed again; hearing the line is just the
+    // story. One that was intercepted on a failed attempt is announced again,
+    // because the runner still does not have it.
     final codexId = beat.unlocksCodex;
     if (codexId != null && !codexUnlocked.contains(codexId) && !profile.unlockedCodex.contains(codexId)) {
       codexUnlocked.add(codexId);
@@ -552,7 +554,7 @@ class RunEngine extends ChangeNotifier {
           ...lines,
           StoryLine(
             speaker: 'SYSTEM',
-            text: 'Codex entry recovered: ${entry.title}.',
+            text: 'Intel intercepted: ${entry.title}. Complete the operation to decrypt.',
             sfxBefore: 'unlock',
             pauseAfterMs: 120,
           ),

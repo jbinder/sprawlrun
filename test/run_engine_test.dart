@@ -334,7 +334,7 @@ void main() {
       });
     });
 
-    test('a recovery is announced by the system voice inside the same transmission', () {
+    test('an interception is announced by the system voice inside the same transmission', () {
       fakeAsync((fake) {
         const entry = CodexEntry(id: 'cdx_test', title: 'The Turing Registry', category: 'LAW', body: '…');
         final h = Harness(
@@ -348,7 +348,7 @@ void main() {
         expect(spoken, hasLength(2), reason: 'the character line, then the announcement');
         expect(spoken.first.text, 'line for b0');
         expect(spoken.last.speaker, 'SYSTEM');
-        expect(spoken.last.text, contains('The Turing Registry'));
+        expect(spoken.last.text, contains('Intel intercepted: The Turing Registry'));
         expect(spoken.last.sfxBefore, 'unlock', reason: 'the sting rides with the line, not over the comm-open');
       });
     });

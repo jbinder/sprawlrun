@@ -165,24 +165,27 @@ class AppState extends ChangeNotifier {
         next = next.copyWith(completedMissions: {...next.completedMissions, mission.id});
       }
     }
-    // Only what was not already known counts as recovered — a replayed
-    // mission hears the same lines again.
-    final recovered = [
+    // Intel is banked only by a successful operation. Only what was not
+    // already known counts either way — a replayed mission hears the same
+    // lines again.
+    final fresh = [
       for (final id in codexHeard)
         if (!next.unlockedCodex.contains(id)) id,
     ];
-    if (codexHeard.isNotEmpty) {
-      next = next.copyWith(unlockedCodex: {...next.unlockedCodex, ...codexHeard});
+    final recovered = record.isSuccess ? fresh : const <String>[];
+    final lost = record.isSuccess ? const <String>[] : fresh;
+    if (recovered.isNotEmpty) {
+      next = next.copyWith(unlockedCodex: {...next.unlockedCodex, ...recovered});
     }
 
     // Achievements are evaluated against the stats the new run produces, using
     // the streak goal the runner has set right now.
     final stats = StatsService.lifetime(runLog, next.streakGoal);
-    final fresh = AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet());
-    if (fresh.isNotEmpty) {
+    final earned = AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet());
+    if (earned.isNotEmpty) {
       final now = DateTime.now();
       next = next.copyWith(
-        unlockedAchievements: {...next.unlockedAchievements, for (final a in fresh) a.id: now},
+        unlockedAchievements: {...next.unlockedAchievements, for (final a in earned) a.id: now},
       );
     }
 
@@ -202,8 +205,9 @@ class AppState extends ChangeNotifier {
 
     return RunOutcomeReport(
       record: record,
-      newAchievements: fresh,
+      newAchievements: earned,
       codexRecovered: [for (final id in recovered) ?codexEntry(id)],
+      codexLost: [for (final id in lost) ?codexEntry(id)],
       missionUnlocked: unlocked,
     );
   }

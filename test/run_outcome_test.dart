@@ -5,6 +5,7 @@ import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/achievement.dart';
+import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/state/app_state.dart';
 
 import 'support/fakes.dart';
@@ -29,7 +30,7 @@ void main() {
     await state.load();
   });
 
-  test('codex entries heard for the first time are reported as recovered, with their titles', () async {
+  test('a successful run recovers the entries it heard, with their titles', () async {
     final report = await state.completeRun(
       run(at: DateTime.now()),
       codexHeard: const ['cdx_courier', 'cdx_ninsei'],
@@ -37,7 +38,44 @@ void main() {
 
     expect(report.codexRecovered.map((e) => e.id), ['cdx_courier', 'cdx_ninsei']);
     expect(report.codexRecovered.first.title, 'Meat Courier');
+    expect(report.codexLost, isEmpty);
     expect(report.hasUnlocks, isTrue);
+    expect(state.profile.unlockedCodex, containsAll(['cdx_courier', 'cdx_ninsei']));
+  });
+
+  test('a failed run banks nothing — what it heard is reported as lost', () async {
+    final failed = await state.completeRun(
+      run(at: DateTime.now(), outcome: RunOutcome.failed),
+      codexHeard: const ['cdx_courier'],
+    );
+
+    expect(failed.codexRecovered, isEmpty);
+    expect(failed.codexLost.map((e) => e.title), ['Meat Courier'], reason: 'named: the runner already heard it');
+    expect(state.profile.unlockedCodex, isNot(contains('cdx_courier')));
+    // A loss is not a reward: it never puts a card in the reveal on its own.
+    // Achievements can still be earned on a failed run — they derive from the
+    // log, not the outcome — so only assert that lost intel is not what
+    // triggers it.
+    expect(failed.hasUnlocks, failed.newAchievements.isNotEmpty);
+  });
+
+  test('a run too short to score still banks nothing', () async {
+    final discarded = await state.completeRun(
+      run(at: DateTime.now(), outcome: RunOutcome.discarded),
+      codexHeard: const ['cdx_courier'],
+    );
+    expect(discarded.codexLost, hasLength(1));
+    expect(state.profile.unlockedCodex, isEmpty);
+  });
+
+  test('intel lost on a failed run is recovered by the next successful one', () async {
+    await state.completeRun(run(at: DateTime.now(), outcome: RunOutcome.failed), codexHeard: const ['cdx_courier']);
+    final success = await state.completeRun(
+      run(at: DateTime.now().add(const Duration(days: 1))),
+      codexHeard: const ['cdx_courier'],
+    );
+    expect(success.codexRecovered.map((e) => e.id), ['cdx_courier']);
+    expect(success.codexLost, isEmpty);
   });
 
   test('hearing an entry again on a replay is not a recovery', () async {

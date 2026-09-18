@@ -62,7 +62,7 @@ void main() {
     expect(find.text('Package is live.'), findsOneWidget);
     expect(find.text('Please do not stop.'), findsOneWidget);
     expect(find.text('KESTREL'), findsOneWidget);
-    expect(find.text('CODEX RECOVERED — The Turing Registry'), findsOneWidget);
+    expect(find.text('INTEL INTERCEPTED — The Turing Registry'), findsOneWidget);
     expect(find.text('PURSUIT — DRONE'), findsOneWidget);
     expect(find.text('CAUGHT — DRONE'), findsOneWidget);
     expect(find.text('TARGET REACHED'), findsOneWidget);

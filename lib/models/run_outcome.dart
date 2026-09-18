@@ -11,6 +11,7 @@ class RunOutcomeReport {
     required this.record,
     this.newAchievements = const [],
     this.codexRecovered = const [],
+    this.codexLost = const [],
     this.missionUnlocked,
   });
 
@@ -19,9 +20,14 @@ class RunOutcomeReport {
   /// Earned by this run, in wall order.
   final List<AchievementDef> newAchievements;
 
-  /// Codex entries this run unlocked for the first time. A replayed mission
-  /// hears the same lines again; those are not recoveries.
+  /// Codex entries this run unlocked for the first time. Only a successful
+  /// run recovers anything; a replayed mission hears the same lines again, and
+  /// those are not recoveries either.
   final List<CodexEntry> codexRecovered;
+
+  /// Entries heard on a run that did not succeed — intercepted, not banked.
+  /// Named, because the runner already heard them; the reason to go back.
+  final List<CodexEntry> codexLost;
 
   /// Codename of the mission this run just unlocked, if any.
   final String? missionUnlocked;

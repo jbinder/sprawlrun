@@ -144,7 +144,7 @@ class _RunScreenState extends State<RunScreen> {
       case CodexUnlocked(:final entryId):
         // The voice carries this one; the flash is for whoever glances down.
         final title = widget.mission?.codex.where((e) => e.id == entryId).firstOrNull?.title;
-        _flash(title == null ? 'CODEX ENTRY RECOVERED' : 'CODEX RECOVERED — ${title.toUpperCase()}');
+        _flash(title == null ? 'INTEL INTERCEPTED' : 'INTEL INTERCEPTED — ${title.toUpperCase()}');
       case LocationTrouble(:final readiness):
         setState(() => _locationTrouble = readiness);
     }

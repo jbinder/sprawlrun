@@ -239,6 +239,55 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                             const SizedBox(height: 16),
                           ],
 
+                          if (report.codexLost.isNotEmpty) ...[
+                            const SectionHeader('INTEL LOST', accent: Cy.amber),
+                            NeonPanel(
+                              accent: Cy.amber,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Intercepted but not decrypted. Complete the operation to recover:',
+                                    style: CyType.body(
+                                      size: 14,
+                                      color: Cy.inkDim,
+                                      height: 1.35,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  for (final entry in report.codexLost)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 6),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.lock_outline,
+                                            size: 15,
+                                            color: Cy.amber,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              entry.title,
+                                              style: CyType.body(
+                                                size: 15,
+                                                weight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          CyberTag(
+                                            entry.category,
+                                            color: Cy.amber,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
                           if (report.codexRecovered.isNotEmpty) ...[
                             const SectionHeader('RECOVERED', accent: Cy.cyan),
                             for (final entry in report.codexRecovered)

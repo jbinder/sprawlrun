@@ -58,7 +58,7 @@ class _Moment extends StatelessWidget {
         event.escaped == true ? Cy.green : Cy.amber,
         '${event.escaped == true ? 'EVADED' : 'CAUGHT'} — ${event.ref ?? 'UNKNOWN'}',
       ),
-      StoryEventKind.codex => (Cy.cyan, 'CODEX RECOVERED — ${codexTitle(event.ref ?? '') ?? event.ref ?? ''}'),
+      StoryEventKind.codex => (Cy.cyan, 'INTEL INTERCEPTED — ${codexTitle(event.ref ?? '') ?? event.ref ?? ''}'),
       StoryEventKind.goal => (Cy.green, 'TARGET REACHED'),
     };
     final beat = _beat;

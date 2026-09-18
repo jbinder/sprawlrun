@@ -135,7 +135,8 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
     }
-    // Let the description finish typing.
+    // Let the boot finish, the stamp land, and the description type out. The
+    // halo is caught mid-drift, which is what it looks like in the hand.
     await tester.pump(const Duration(milliseconds: 2500));
     await _shoot(tester, 'unlock');
   });

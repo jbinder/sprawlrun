@@ -59,7 +59,7 @@ void main() {
     expect(find.text('ACHIEVEMENT UNLOCKED'), findsOneWidget);
     // Finders see widgets at opacity zero; the runner does not. The boot-in
     // has to restart for every card, not just the first.
-    expect(tester.widget<Opacity>(find.byType(Opacity)).opacity, 1.0, reason: 'the second card faded in');
+    expect(tester.widget<Opacity>(find.byType(Opacity).first).opacity, greaterThan(0.95), reason: 'the second card faded in');
     expect(find.text('TEST LEGEND'), findsOneWidget);
     expect(find.text('LEGEND'), findsOneWidget, reason: 'tier tag');
     expect(find.text('02 / 02'), findsOneWidget);

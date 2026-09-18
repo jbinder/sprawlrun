@@ -58,6 +58,9 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
         success &&
         mission?.epilogue != null &&
         context.read<AppState>().currentMission == null;
+    final nextPack = campaignFinished
+        ? context.read<AppState>().nextOpenPack
+        : null;
 
     return PopScope(
       canPop: false,
@@ -173,6 +176,55 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
+
+                            // The story is over; offer the next one while the
+                            // runner is still standing here, rather than leaving
+                            // them to find it on the ops screen.
+                            if (nextPack != null) ...[
+                              const SectionHeader(
+                                'NEXT CAMPAIGN',
+                                accent: Cy.magenta,
+                              ),
+                              NeonPanel(
+                                accent: Cy.magenta,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      nextPack.title,
+                                      style: CyType.display(
+                                        size: 16,
+                                        color: Cy.ink,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      nextPack.tagline,
+                                      style: CyType.body(
+                                        size: 15,
+                                        color: Cy.inkDim,
+                                        height: 1.35,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 14),
+                                    CyberButton(
+                                      label: 'Switch to ${nextPack.title}',
+                                      icon: Icons.swap_horiz_rounded,
+                                      dense: true,
+                                      onPressed: () {
+                                        context.read<AppState>().selectPack(
+                                          nextPack.id,
+                                        );
+                                        Navigator.of(
+                                          context,
+                                        ).popUntil((route) => route.isFirst);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
                           ],
 
                           if (!success && mission != null) ...[

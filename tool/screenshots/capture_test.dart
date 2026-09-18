@@ -28,6 +28,7 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
+import 'package:sprawl_run/screens/missions_screen.dart';
 import 'package:sprawl_run/screens/run_detail_screen.dart';
 import 'package:sprawl_run/screens/run_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
@@ -165,6 +166,13 @@ void main() {
     await tester.drag(find.byType(ListView), const Offset(0, -900));
     await tester.pump(const Duration(milliseconds: 400));
     await _shoot(tester, 'run-story');
+  });
+
+  testWidgets('mission packs', (tester) async {
+    final state = await _seed(tester);
+    await _pump(tester, const MissionsScreen(), state);
+    await tester.pump(const Duration(milliseconds: 300));
+    await _shoot(tester, 'packs');
   });
 
   testWidgets('stats', (tester) async {

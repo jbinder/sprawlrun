@@ -170,12 +170,11 @@ void main() {
     /// Serves the bundled campaign from disk so the test needs no asset bundle.
     AssetBundle diskBundle() => _DiskBundle();
 
-    test('loads the bundled campaign', () async {
+    test('loads every bundled campaign, in order', () async {
       final repo = MissionRepository(externalDir: external, bundle: diskBundle());
       final packs = await repo.loadPacks();
-      expect(packs, hasLength(1));
-      expect(packs.single.id, 'sprawl_prime');
-      expect(packs.single.missions, hasLength(10));
+      expect(packs.map((p) => p.id), ['sprawl_prime', 'null_tide']);
+      expect(packs.map((p) => p.missions.length), everyElement(10));
       expect(repo.loadErrors, isEmpty);
     });
 
@@ -208,9 +207,9 @@ void main() {
 
       final repo = MissionRepository(externalDir: external, bundle: diskBundle());
       final packs = await repo.loadPacks();
-      expect(packs, hasLength(2));
-      expect(packs.last.title, 'CHIBA NIGHTS');
-      expect((await repo.allMissions()), hasLength(11));
+      expect(packs, hasLength(3), reason: 'two bundled, one side-loaded');
+      expect(packs.last.title, 'CHIBA NIGHTS', reason: 'side-loaded packs come after the bundled ones');
+      expect((await repo.allMissions()), hasLength(21));
     });
 
     test('a malformed side-loaded pack is reported, not fatal', () async {
@@ -218,7 +217,7 @@ void main() {
       final repo = MissionRepository(externalDir: external, bundle: diskBundle());
 
       final packs = await repo.loadPacks();
-      expect(packs, hasLength(1), reason: 'the bundled campaign still loads');
+      expect(packs, hasLength(2), reason: 'the bundled campaigns still load');
       expect(repo.loadErrors, hasLength(1));
       expect(repo.loadErrors.single, contains('broken.json'));
     });
@@ -228,18 +227,19 @@ void main() {
         jsonEncode({'id': 'sprawl_prime', 'title': 'REVISED', 'missions': []}),
       );
       final packs = await MissionRepository(externalDir: external, bundle: diskBundle()).loadPacks();
-      expect(packs, hasLength(1));
-      expect(packs.single.title, 'REVISED');
+      expect(packs, hasLength(2));
+      expect(packs.first.title, 'REVISED', reason: 'replaced in place, keeping its position');
     });
   });
 
   group('mission chain', () {
+    // Each pack is its own chain, so these resolve the first bundled one.
     Future<List<dynamic>> chainFor(Set<String> completed) async {
-      final missions = await MissionRepository(
+      final packs = await MissionRepository(
         externalDir: tempRoot('chain'),
         bundle: _DiskBundle(),
-      ).allMissions();
-      return resolveChain(missions, completed, const {});
+      ).loadPacks();
+      return resolveChain(packs.first.missions, completed, const {});
     }
 
     test('only the first mission is playable on a fresh install', () async {

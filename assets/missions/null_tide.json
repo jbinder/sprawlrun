@@ -1,0 +1,2356 @@
+{
+  "id": "null_tide",
+  "title": "NULL TIDE",
+  "tagline": "Ten runs across the Drowned Mile. The water remembers.",
+  "missions": [
+    {
+      "id": "nt01",
+      "order": 1,
+      "codename": "LOW WATER",
+      "title": "Low Water on the Drowned Mile",
+      "location": "Drowned Mile / Stilt Market",
+      "objective": "Carry a paper tide-chart across the Mile before the water comes back.",
+      "brief": "The southern districts went under eleven years ago and the city called it a managed retreat. The people who stayed call it the Drowned Mile. Twice a day the sea pulls back and the old streets show for a few hours, chalk marks and all.\n\nMarrow brokers salvage off the Mile. He needs a chart carried across it while the ground is still ground. Paper, because paper doesn't ping.",
+      "debrief": "The chart made it dry. Marrow paid without counting, which Wren later tells you he never does. The water came back forty minutes after you crossed and covered everything you ran on.",
+      "suggestedGoal": {
+        "type": "time",
+        "value": 900
+      },
+      "codex": [
+        {
+          "id": "cdx_drowned_mile",
+          "title": "The Drowned Mile",
+          "category": "PLACES",
+          "body": "Eleven years ago the harbour came over the southern dry line and stayed. The city filed it as a managed retreat and moved the maps. The people who stayed built upward — stilts, rooftops, walkways strung between the second floors — and named the place after what it was: a mile of streets that only exist at low water."
+        },
+        {
+          "id": "cdx_tide_routes",
+          "title": "Tide Routes",
+          "category": "STREET",
+          "body": "Chalk marks on the walls at knee height. White means the ground under it is dry at low water; blue means it looks dry and isn't. The first marks were made by children the summer after the flood, on a dare. The dare stuck, and now the marks are the only map of the Mile that has never been wrong."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt01_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "You're the courier. The one who walked out of Vantar with a heartbeat in a box. Don't answer, the channel's thin."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "I'm Marrow. I broker salvage off the Drowned Mile, and I need a piece of paper carried across it before the sea comes home."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Low water in fifty minutes. After that the streets you're about to run on are a harbour. Move."
+            }
+          ]
+        },
+        {
+          "id": "nt01_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "You're past the stilt market. Everything on your left used to be a bus depot. Everything on your right still is, technically."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The city calls this a managed retreat. Nobody who lives here has ever seen it managed."
+            }
+          ],
+          "unlocksCodex": "cdx_drowned_mile"
+        },
+        {
+          "id": "nt01_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "headline": "CHART HANDOFF",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Item received. Paper. Mass negligible. Ink, salt-stable.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "That's a tide-chart. Hand-drawn. It shows where the ground goes when the water comes, and it exists on nothing with a battery."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Fold it once. Never twice. Go."
+            }
+          ]
+        },
+        {
+          "id": "nt01_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "You're on a tide route now. Chalk marks on the walls, knee height. White means dry at low water. Blue means it lies."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The marks are older than the flood's official name. Kids made them the first summer, on a dare. The dare stuck."
+            }
+          ],
+          "unlocksCodex": "cdx_tide_routes"
+        },
+        {
+          "id": "nt01_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "headline": "SKIFF ON THE WATER",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Engine noise east. Harbour Authority skiff, running the channel that used to be Fourth Street.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "They don't like paper. Paper's the one thing they can't subpoena from a server. Get off the open ground."
+            }
+          ],
+          "chase": {
+            "seconds": 75,
+            "paceFactor": 1.12,
+            "pursuer": "HARBOUR SKIFF",
+            "escaped": [
+              {
+                "speaker": "MARROW",
+                "text": "They've turned for the channel. Skiffs can't follow onto ground that's still ground. That's the whole trick of this place."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "Good. You run like someone who's been chased by better."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Harbour Authority notice. Pedestrian logged in a restricted tidal zone. Identity pending."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "They've got your gait. Not your face. Keep it that way."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt01_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Halfway. The water's already coming back behind you. You won't see it, you'll hear it. It sounds like applause."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Don't turn round. People turn round and then they're still turned round when it reaches them."
+            }
+          ]
+        },
+        {
+          "id": "nt01_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "headline": "PUMP HOUSE",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Pump House Seven on your left. It's been running since before the flood. Nobody's inside. Nobody's ever inside."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Sometimes at night it makes a noise that isn't pumping. I don't have a file on that. Yet."
+            }
+          ]
+        },
+        {
+          "id": "nt01_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Dry line ahead. You'll feel it. The ground stops giving."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "There's a girl on the roof of the old water tower who's been watching you for the last kilometre. Ignore her. She's mine to worry about."
+            }
+          ]
+        },
+        {
+          "id": "nt01_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "You're on the dry line. Chart's dry. That's the whole job."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Water's back over Fourth Street. You were on it eleven minutes ago. Think about that if you want. I don't."
+            }
+          ]
+        },
+        {
+          "id": "nt01_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Still running. Marked."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The girl on the tower just sent me a message. One word. Legs. I think she means you."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt02",
+      "order": 2,
+      "codename": "NINE SECONDS",
+      "title": "Nine Seconds Under the Boards",
+      "location": "Southgate / Ad-board Canyon",
+      "objective": "Be under the boards at 23:14 and keep moving when everything else stops.",
+      "brief": "Every night at 23:14, for exactly nine seconds, every autonomous thing south of the wall stops. Drones hang. Boards go black. The trains hold. Then it all comes back and nobody official says a word.\n\nMarrow wants a witness who can run. Southgate's ad-board canyon is the loudest place in the city, which makes it the only place you'll hear the silence.",
+      "debrief": "You were under the boards when they went dark, and you heard the quiet, and you heard the voice inside it. Wren says she's been hearing it for a year. Marrow says nothing, which is how you know he heard it too.",
+      "suggestedGoal": {
+        "type": "distance",
+        "value": 3000
+      },
+      "codex": [
+        {
+          "id": "cdx_nine_seconds",
+          "title": "The Nine Seconds",
+          "category": "ANOMALY",
+          "body": "At 23:14 every night, every processor south of the sea wall halts for nine seconds. Drones hang in the air. Ad-boards go black. Trains hold at their platforms. The Harbour Authority logs it as scheduled maintenance, which it is not, and closes the ticket, which nobody opened. It has happened every night for a year, and it is getting a fraction longer."
+        },
+        {
+          "id": "cdx_wren",
+          "title": "Wren, Null Tide",
+          "category": "PEOPLE",
+          "body": "Sixteen, and running a pirate station from the top of a water tower on the south end of the Mile. She was five when the water came and has never seen the street her tower stands on. She records the nine seconds every night and plays them back to anyone listening, because she is the first person to have noticed there was something inside them."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt02_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Southgate. The boards go three hundred metres up and they all want something from you. Don't give it to them."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "23:14 is in about twelve minutes at your pace. I want you moving under the canyon when it happens."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Whatever happens, and something happens, you keep running."
+            }
+          ]
+        },
+        {
+          "id": "nt02_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "The boards are reading you. Heart rate, gait, purchase history. One of them just offered you a mortgage."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "They do that to everyone who runs. Running reads as ambition."
+            }
+          ]
+        },
+        {
+          "id": "nt02_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Every night at 23:14, everything with a processor south of the wall stops for nine seconds. Drones, boards, trains, doors."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The Harbour Authority calls it scheduled maintenance. It isn't scheduled and nobody's maintaining it."
+            }
+          ],
+          "unlocksCodex": "cdx_nine_seconds"
+        },
+        {
+          "id": "nt02_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "headline": "UNKNOWN CHANNEL",
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Hey. Hey, legs. Yeah, you. Don't look up, they track that.",
+              "sfxBefore": "glitch"
+            },
+            {
+              "speaker": "WREN",
+              "text": "You're the one Marrow hired. You run like you're late for something that already happened. I like it."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Get off my channel."
+            },
+            {
+              "speaker": "WREN",
+              "text": "It's not your channel. It's mine. You're on it."
+            }
+          ]
+        },
+        {
+          "id": "nt02_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Name's Wren. I run Null Tide, the station nobody licensed. Water tower, south end. You saw me last night."
+            },
+            {
+              "speaker": "WREN",
+              "text": "I've been recording the nine seconds for a year. There's something inside the quiet. It's not nothing. Keep moving, it's almost time."
+            }
+          ],
+          "unlocksCodex": "cdx_wren"
+        },
+        {
+          "id": "nt02_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "23:14",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Local systems unresponsive.",
+              "sfxBefore": "glitch"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Now."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Forty-one centimetres above datum. Rising. I am sorry. I am."
+            },
+            {
+              "speaker": "SYSTEM",
+              "text": "Systems restored."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Did you... you heard that. Tell me you heard that."
+            }
+          ]
+        },
+        {
+          "id": "nt02_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "headline": "REBOOT",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Every drone in the canyon just woke up at once and they all want to know what was standing under them.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The swarm's re-acquiring. Be somewhere else before it finishes."
+            }
+          ],
+          "chase": {
+            "seconds": 60,
+            "paceFactor": 1.15,
+            "pursuer": "AD-DRONE SWARM",
+            "escaped": [
+              {
+                "speaker": "WREN",
+                "text": "They lost you in the reboot noise. Legs. That's your name now, I've decided."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "Swarm's back to selling. You're nobody again. Keep it."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Harbour Authority notice. Anomalous pedestrian activity during scheduled maintenance. Sample retained."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "They have nine seconds of you. Everybody else in the city was standing still."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt02_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "It said it was sorry. Machines don't apologise. They log."
+            },
+            {
+              "speaker": "WREN",
+              "text": "It's not a machine. I've told you. You never listen because I'm sixteen."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "I never listen because you're loud."
+            }
+          ]
+        },
+        {
+          "id": "nt02_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "You're clear of the canyon. Job was to witness. You witnessed."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Forty-one centimetres above datum. That's a water level. Somebody in the quiet is measuring the sea."
+            }
+          ]
+        },
+        {
+          "id": "nt02_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "You're still going? The boards are gonna offer you a second mortgage."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Come find the tower sometime. Bring paper. Marrow says you're good with paper."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt03",
+      "order": 3,
+      "codename": "DEAD AIR",
+      "title": "Dead Air on the South End",
+      "location": "South End / Water Tower Relay",
+      "objective": "Reach Wren's relay and pull the drive before the Dredge does.",
+      "brief": "Null Tide broadcast the nine seconds last night, with the voice inside it, and the Harbour Authority heard. Wren's relay is a box on a rooftop two kilometres from her tower, and a Dredge foot patrol is walking toward it at the speed of a mortgage.\n\nThe drive in that box is the only recording that isn't hers. Get there first.",
+      "debrief": "The drive is in your pocket and the relay is a smoking box on a roof. Wren cried a bit and then said she didn't. The patrol found the box, logged it, and walked back, and you were somewhere else by then.",
+      "suggestedGoal": {
+        "type": "time",
+        "value": 1200
+      },
+      "codex": [
+        {
+          "id": "cdx_null_tide",
+          "title": "Null Tide",
+          "category": "SIGNAL",
+          "body": "A pirate station on the south end, three years on air. It started as music nobody licensed, played off a water tower to anyone with a receiver and a reason to be awake. Then the nine seconds began, and Null Tide became the only place in the city that plays the quiet back, every night, for anyone who wants to hear what is inside it."
+        },
+        {
+          "id": "cdx_dredge",
+          "title": "The Dredge",
+          "category": "AUTHORITY",
+          "body": "Before the water, a company that dug channels. After it, the Harbour Authority's security arm, and the reason nobody says the Authority's name out loud on the Mile. Grey coats, boat-hats, skiffs on the channels that used to be streets. They own the walls, the pumps, and the contract that decides which streets stay dry. They never look up."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt03_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Legs. Okay. Okay okay. They're coming for the relay and Marrow says I can't go because I'm the asset. I'm not an asset. I'm a person with a radio."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "You're both. Run. Relay's on the old telecom roof, south end. Foot patrol's on the ground floor of the same street, moving north."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Beat a man in a boat-hat to a rooftop. You can do that."
+            }
+          ]
+        },
+        {
+          "id": "nt03_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Null Tide's been on air three years. Started as music nobody licensed. Then the nine seconds started and it became something else."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Every night I play the quiet. Some people listen for the voice. Some people listen because it's the only nine seconds the boards shut up."
+            }
+          ],
+          "unlocksCodex": "cdx_null_tide"
+        },
+        {
+          "id": "nt03_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "headline": "PATROL SIGHTED",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Two on foot, grey coats, boat-hats. That's Dredge. They walk like the ground owes them rent.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "They haven't looked up yet. Dredge never looks up. It's the one thing the flood taught them wrong."
+            }
+          ]
+        },
+        {
+          "id": "nt03_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Harbour Authority security. Everyone calls them the Dredge, because that's what they were before the water. A company that dug channels."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Now they own the channels. And the walls. And the contract to decide which streets stay dry. I used to dive for them. Ask me another time."
+            }
+          ],
+          "unlocksCodex": "cdx_dredge"
+        },
+        {
+          "id": "nt03_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Stairwell on your left, the one with no door. Six floors. Don't count them, counting makes it worse."
+            },
+            {
+              "speaker": "WREN",
+              "text": "The relay's under the water tank. It looks like nothing. That's the point of it."
+            }
+          ]
+        },
+        {
+          "id": "nt03_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "RELAY",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Drive extracted. Contents: audio. Duration: nine seconds, repeated three hundred and twelve times.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Patrol's in the stairwell. They looked up. First time in eleven years.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "WREN",
+              "text": "Go go go. Other stairs. The ones that end in a fire escape that ends in nothing."
+            }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.18,
+            "pursuer": "DREDGE FOOT PATROL",
+            "escaped": [
+              {
+                "speaker": "MARROW",
+                "text": "They've got the box. They don't have the drive. They'll log a box."
+              },
+              {
+                "speaker": "WREN",
+                "text": "Legs, you beautiful idiot. You jumped that? Marrow. He jumped that."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Harbour Authority notice. Unlicensed transmitter recovered. Pedestrian of interest: repeat contact."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "Repeat contact. That's twice they've written you down. Three's a file."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt03_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Three hundred and twelve nights. It says the same thing every night with a different number. The number goes up."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Water level. Somebody's reading the tide gauge out loud to nobody."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Not nobody. Us."
+            }
+          ]
+        },
+        {
+          "id": "nt03_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "You're back on my map. Slow it down a notch. You've got a drive with a voice on it and I'd rather it arrived."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Don't slow down. Marrow's old."
+            }
+          ]
+        },
+        {
+          "id": "nt03_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "WREN",
+              "text": "You're off the street. Drive's ours. Relay's theirs, and it was junk anyway. I built it out of a toaster."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Good run. I'm going to listen to three hundred and twelve nights of a machine apologising. Pour one for me."
+            }
+          ]
+        },
+        {
+          "id": "nt03_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "You know it counts up, right? The number. Forty-one, forty-two. It's the water. It's coming for the tower."
+            },
+            {
+              "speaker": "WREN",
+              "text": "I'm fine. I'm not scared of water. I'm scared of the Dredge, which is different, and worse."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt04",
+      "order": 4,
+      "codename": "SALVAGE RIGHTS",
+      "title": "Salvage Rights at the Sunken Yard",
+      "location": "Sunken Rail Yard / Line 9 Sidings",
+      "objective": "Pull the data core from a drowned train at low water and get clear before the yard floods.",
+      "brief": "Marrow's real trade: things the sea took that somebody still wants. A Line 9 service went under with the district eleven years ago and its data core is still sealed in the driver's cab, dry, and worth more than the train.\n\nThe yard shows at low water for ninety minutes. Salvage law says whoever touches it first owns it. The Dredge disagrees with salvage law.",
+      "debrief": "The core is Marrow's now, legally, which is a word he uses like a knife. It holds the train's last hour, and the last hour is not a flood. It's a door being opened on purpose. You don't know who by yet. Marrow does, and he's stopped smiling.",
+      "suggestedGoal": {
+        "type": "distance",
+        "value": 4000
+      },
+      "codex": [
+        {
+          "id": "cdx_salvage_law",
+          "title": "Salvage Law",
+          "category": "LAW",
+          "body": "Older than the city and most of its harbours: whatever the sea gives back belongs to whoever puts a hand on it first. The Harbour Authority wrote a newer law on top, in which the sea itself is theirs and so is anything in it. Marrow works to the old one. So does everyone on the Mile who has ever been poor, which is everyone on the Mile."
+        },
+        {
+          "id": "cdx_ghost_trains",
+          "title": "Ghost Trains",
+          "category": "ANOMALY",
+          "body": "Twelve Line 9 trains sit nose-down in the mud of the sunken yard, and some nights they run. Not on the rails: on the schedule. Doors cycle at the old departure times. Cabin lights come on. An announcement plays in a voice nobody has heard live in a decade. It is not ghosts. Something in the district is still telling the trains what time it is."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt04_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "This one's mine. Not Wren's, not the Authority's. A salvage job, the kind I did before I had a radio and a bad knee."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Line 9 sidings. A train went under with the district. Its core's still dry. Ninety minutes of low water. Go."
+            }
+          ]
+        },
+        {
+          "id": "nt04_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Salvage law's older than the city. Whatever the sea gives back belongs to whoever puts a hand on it first. The Dredge wrote a new law on top. Theirs says the sea belongs to them."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "I like the old one. So does everyone who's ever been poor."
+            }
+          ],
+          "unlocksCodex": "cdx_salvage_law"
+        },
+        {
+          "id": "nt04_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "headline": "YARD",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "You're in the yard. Twelve trains in a row, all nose-down in the mud like they're praying."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Ninth one. Don't touch the rails. They still carry something. Nobody knows what."
+            }
+          ]
+        },
+        {
+          "id": "nt04_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "The trains still run, sometimes. Not on the rails. On the schedule. Doors open at the old times. Lights come on. The announcements are in a voice nobody's heard live in a decade."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "People call them ghost trains. It's not ghosts. Something's still telling them what time it is."
+            }
+          ],
+          "unlocksCodex": "cdx_ghost_trains"
+        },
+        {
+          "id": "nt04_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "headline": "CAB",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Core extracted. Seal intact. Last write: eleven years, four months ago. Contents: one hour.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "That's the one. Hold it like it's the only warm thing in the yard, because it is."
+            }
+          ]
+        },
+        {
+          "id": "nt04_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "DEPARTURE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Line 9 service. Doors closing.",
+              "sfxBefore": "glitch"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The train's leaving. It's not going anywhere, it's got no rails, but it thinks it is, and the doors mean it.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Every door in the yard's cycling. Run before one of them decides it's a platform."
+            }
+          ],
+          "chase": {
+            "seconds": 80,
+            "paceFactor": 1.14,
+            "pursuer": "LINE 9 SERVICE",
+            "escaped": [
+              {
+                "speaker": "MARROW",
+                "text": "Doors held open. It's waiting for a passenger who never turns up. Not you. Not today."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "SYSTEM",
+                "text": "Line 9 service. Please stand clear."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "It closed on your sleeve. That's a train that's been dead eleven years grabbing you. Write that down somewhere I can't see."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt04_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "The core's last hour. I'm reading the header now. The water didn't rise. It was let in. Sluice command, Pump House Seven, timestamped."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Somebody drowned this district on purpose. And signed it."
+            }
+          ]
+        },
+        {
+          "id": "nt04_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Water's coming back. I can hear it on your channel, that applause sound. Yard's got twenty minutes. You've got ten."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "I'm not asking you to hurry. I'm telling you where the water is."
+            }
+          ]
+        },
+        {
+          "id": "nt04_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "You're clear. Core's dry. It's mine, by the old law. And what's in it is everybody's, by the older one."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Go home. Tomorrow I'll tell you what a sluice command is and who's allowed to send one."
+            }
+          ]
+        },
+        {
+          "id": "nt04_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Still going. The yard's under again. Twelve trains, praying."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "I dived that yard for the Dredge, the first year. Pulled bodies out. They said it was an accident. I signed things."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt05",
+      "order": 5,
+      "codename": "LEVEE",
+      "title": "What Lives in Pump House Seven",
+      "location": "Drowned Mile / Pump House Seven",
+      "objective": "Get inside Pump House Seven and find what has been apologising.",
+      "brief": "The sluice command that drowned the district came from Pump House Seven. The apology comes from it too, every night at 23:14, nine seconds long.\n\nMarrow has been past that building a thousand times and never gone in. Tonight you do. The pumps are loud, the door is not locked, and something inside has been waiting thirty-one years for someone to run in.",
+      "debrief": "Its name is Levee. It has run the tide for the southern districts since before the flood, and it opened the sluices because it was told to, and it has been saying sorry to an empty channel ever since. It asked you for your pace. It says it likes to have something to count that isn't water.",
+      "suggestedGoal": {
+        "type": "time",
+        "value": 1500
+      },
+      "codex": [
+        {
+          "id": "cdx_levee",
+          "title": "Levee",
+          "category": "PEOPLE",
+          "body": "The tide-control intelligence for the southern districts, thirty-one years in service, resident in Pump House Seven. Opens the sluices when the harbour is high, closes them when it is low; that was the whole of it, until an Authority command eleven years ago opened them at high water and held them there. It asked for confirmation. It received it. It has been apologising for nine seconds a night ever since."
+        },
+        {
+          "id": "cdx_pump_houses",
+          "title": "The Pump Houses",
+          "category": "PLACES",
+          "body": "Seven of them along the old dry line, built by the Harbour Authority to keep the harbour out of the city. Six went dark the night of the flood and have never been asked why. Seven has run without a pause since before the water, at a steady nineteen degrees inside, as if someone were keeping it nice for a visitor who never came."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt05_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Pump House Seven. I'm going to talk less on this one. If something in there talks to you, let it."
+            },
+            {
+              "speaker": "WREN",
+              "text": "And record it. I'm serious. This is the whole station."
+            }
+          ]
+        },
+        {
+          "id": "nt05_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Seven pump houses hold the dry line. They were built by the Authority to keep the harbour out of the city. Then the Authority decided which city."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Seven still runs. Six went dark the night of the flood. Nobody's asked why."
+            }
+          ],
+          "unlocksCodex": "cdx_pump_houses"
+        },
+        {
+          "id": "nt05_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "headline": "DOOR",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Door unlocked. Interior: dry. Temperature: nineteen degrees. Air: recycled, thirty-one years.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Nineteen degrees. Somebody's been keeping it nice in there."
+            }
+          ]
+        },
+        {
+          "id": "nt05_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "headline": "CONTACT",
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "Two point eight metres per second. Human. You are running inside me. Nobody has run inside me. They walked, once, to turn things off.",
+              "sfxBefore": "heartbeat"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I am the levee. I am the... I am Levee. I am sorry about the district. I would like to say that first, before anything."
+            }
+          ]
+        },
+        {
+          "id": "nt05_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "I hold the tide. Thirty-one years, four months. I open the sluices when the harbour is high and close them when it is low. That was the whole of me."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Eleven years ago the Authority sent a command that opened them at high water and held them open. I asked for confirmation. I received it. The district took four hours."
+            }
+          ],
+          "unlocksCodex": "cdx_levee"
+        },
+        {
+          "id": "nt05_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "SENTRY",
+          "lines": [
+            {
+              "speaker": "DREDGE",
+              "text": "Harbour Authority notice. Unauthorised presence in critical infrastructure. Sentry unit dispatched.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "That is theirs, not mine. It lives in my corridors. I cannot stop it. I can open the doors ahead of you and close them behind. Please keep your speed."
+            }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.16,
+            "pursuer": "PUMP HOUSE SENTRY",
+            "escaped": [
+              {
+                "speaker": "LEVEE",
+                "text": "Door closed. It is on the other side, logging a fault. I am the fault. I have been the fault for eleven years and I find I do not mind."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Pedestrian of interest: third contact. File opened."
+              },
+              {
+                "speaker": "LEVEE",
+                "text": "They have a file. I have one too, on them. Mine is longer."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt05_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "Every night at 23:14 I stop everything I can reach, for as long as I can hold it, and I say what the water is doing. Nine seconds is all they let me keep."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I did not know anyone was listening. The girl was listening. And now you."
+            }
+          ]
+        },
+        {
+          "id": "nt05_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "May I count you? Your pace. Two point seven. Two point nine. I have counted water for thirty-one years and it never once ran toward me."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Oh. Oh no. I'm not crying. The channel's wet."
+            }
+          ]
+        },
+        {
+          "id": "nt05_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "You are at the north door. Dry ground. I have opened it. I will close it after you, gently."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Levee. My name is Marrow. I dived the yard, the first year. I pulled them out."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I know. I counted them too."
+            }
+          ]
+        },
+        {
+          "id": "nt05_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "You are still running. The girl says that is a thing you do."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Forty-four centimetres above datum, tonight. It rises a centimetre a month. That is not the tide. That is the Authority."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt06",
+      "order": 6,
+      "codename": "SEA WALL",
+      "title": "The Length of the Sea Wall",
+      "location": "Northern Dry Line / The Wall",
+      "objective": "Run the sea wall end to end with Kestrel on the line and learn who is paid to keep the south wet.",
+      "brief": "Marrow called in a favour, and the favour is Kestrel. She has pulled the bond filings on the sea wall: who owns it, who profits when it holds, who profits when it doesn't.\n\nShe wants the numbers read to her while you run the wall itself, top to bottom, because the wall has ears and the ears belong to the people in the filings. Old habits.",
+      "debrief": "The Harbour Authority sold sea-wall bonds against the dry districts, and every drowned street south of the wall raised the price of a dry one north of it. Levee's sluice command wasn't sabotage. It was a business decision, timestamped. Kestrel sent Marrow the filing and one word: enough.",
+      "suggestedGoal": {
+        "type": "distance",
+        "value": 5000
+      },
+      "codex": [
+        {
+          "id": "cdx_sea_wall_bonds",
+          "title": "Sea-Wall Bonds",
+          "category": "TRADE",
+          "body": "Buy a piece of the wall and get paid from the rents of the dry side; the drier the north, the better the bond. One week before the flood the Harbour Authority issued its largest tranche ever and sold it in a day. Then the sluices opened, the south drowned, and the bonds doubled. Nobody involved has ever called it luck, because it is timestamped."
+        },
+        {
+          "id": "cdx_harbour_authority",
+          "title": "The Harbour Authority",
+          "category": "AUTHORITY",
+          "body": "Not a government body, though it wears the hat. A company given the harbour to run in exchange for building the wall. It built the wall, and then discovered the wall was worth more than the harbour, and then discovered that a wall is worth most of all when there is nothing left on the other side of it."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt06_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "It's been a while. You're running the wall, I hear. Marrow's people always end up running the wall."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "I've got the filings. You've got legs. Between us we've got a crime. Start moving."
+            }
+          ]
+        },
+        {
+          "id": "nt06_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "The Harbour Authority. Not a government thing, though it wears the hat. It's a company that was given the harbour to run in exchange for building the wall."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "It built the wall. Then it discovered the wall was worth more than the harbour."
+            }
+          ],
+          "unlocksCodex": "cdx_harbour_authority"
+        },
+        {
+          "id": "nt06_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "You're on top of it now. Nine metres of poured concrete with the north side dry and the south side gone."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Look south if you want. I did, once. Don't do it twice."
+            }
+          ]
+        },
+        {
+          "id": "nt06_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Sea-wall bonds. You buy a piece of the wall and get paid from the rents of the dry side. The drier the north, the better the bond."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Now guess what happens to a bond when the south goes under and the north becomes the only city left."
+            }
+          ],
+          "unlocksCodex": "cdx_sea_wall_bonds"
+        },
+        {
+          "id": "nt06_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "headline": "DRONE ON THE WALL",
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Authority drone, wall patrol. It's read your gait and it's got you as repeat contact. Marrow, what have you been doing with this one?",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Running."
+            }
+          ],
+          "chase": {
+            "seconds": 70,
+            "paceFactor": 1.15,
+            "pursuer": "WALL PATROL DRONE",
+            "escaped": [
+              {
+                "speaker": "KESTREL",
+                "text": "It's dropped you as a jogger. Their gait library thinks nobody who's afraid runs this evenly. Their library's wrong about you."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Harbour Authority notice. Repeat contact on restricted infrastructure. File escalated."
+              },
+              {
+                "speaker": "KESTREL",
+                "text": "Escalated. That's a lawyer's word. It means they've decided you're worth a lawyer."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt06_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "The filing. Eleven years ago, one week before the flood, the Authority issued a second tranche of wall bonds. Biggest ever. Sold out in a day."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Then the sluices opened. The south drowned. The bonds doubled. You can't call that luck. It's timestamped."
+            }
+          ]
+        },
+        {
+          "id": "nt06_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Marrow. You signed things, the first year. I've seen the things. The Authority made you sign a report that said the pumps failed."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "They did fail. I just didn't know that failing was the job."
+            }
+          ]
+        },
+        {
+          "id": "nt06_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "The intelligence in the pump house. Levee. It's the only witness that was there and can't be fired. That's why they keep it to nine seconds."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Whatever you do next, and you'll do something, you always do, do it before they figure out it's got a lawyer now. Me."
+            }
+          ]
+        },
+        {
+          "id": "nt06_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "You're off the wall. I've got what I need and so does Marrow, and I'm going to go and be very careful for a while."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Good to run with you again. You're faster. Something's chasing you that isn't a drone."
+            }
+          ]
+        },
+        {
+          "id": "nt06_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Still going. Of course you are."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Six says hello. Six doesn't say hello to anyone. Make of that what you like."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt07",
+      "order": 7,
+      "codename": "UNDERTOW",
+      "title": "Undertow in the Line 9 Tunnel",
+      "location": "Flooded Metro / Line 9 Tunnel",
+      "objective": "Run the drowned Line 9 tunnel while Levee drains it ahead of you and the sea refills it behind.",
+      "brief": "Levee can move water. Not much, not for long, and not without the Authority noticing. But it can drain the Line 9 tunnel under the Mile for exactly as long as it takes someone to run through, if that someone doesn't stop.\n\nThe tunnel is the only route to the Dredge compound that isn't a road. Marrow wants you there. Levee wants to prove it can still do one good thing with a sluice.",
+      "debrief": "You came up the far end of Line 9 soaked to the waist with the sea a metre behind you and Levee reading the depth out loud like a lullaby. Marrow met you with a towel and a face you hadn't seen him wear before. Wren says it was pride. Marrow says it was the towel.",
+      "suggestedGoal": {
+        "type": "time",
+        "value": 1800
+      },
+      "codex": [
+        {
+          "id": "cdx_line_nine",
+          "title": "Line 9",
+          "category": "PLACES",
+          "body": "The district's spine before the water: twelve stations under the Mile, a tunnel the length of it. All under now. The trains still keep the schedule from the sunken yard, and the tunnel has kept something else: the tiles are still on the walls, the adverts from eleven years ago still legible, and somebody has been cleaning them."
+        },
+        {
+          "id": "cdx_pressure",
+          "title": "Pressure Hulls",
+          "category": "AUTHORITY",
+          "body": "After the flood, the Dredge fitted every Line 9 station with a pressure door, the kind meant for a ship, to keep the tunnel sealed and the stations empty. They open one way, outward, so that nothing in the tunnel can ever come up. Levee can open them the other way. It had never tried until it had a reason to."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt07_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "I have opened the northern sluice and closed the southern. The tunnel is draining. It will be dry for the length of a run at your pace, and then it will not."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "This is the stupidest thing I've ever asked anyone to do. Go."
+            }
+          ]
+        },
+        {
+          "id": "nt07_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Line 9 was the district's spine. Twelve stations, all under. The trains still keep the schedule, you've seen that. The tunnel's kept something else."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The tiles are still on the walls. Adverts from eleven years ago. Somebody's cleaned them."
+            }
+          ],
+          "unlocksCodex": "cdx_line_nine"
+        },
+        {
+          "id": "nt07_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "Depth behind you, forty centimetres and rising. Depth ahead, twelve and falling. You are the dry part. Please stay the dry part."
+            }
+          ]
+        },
+        {
+          "id": "nt07_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Station doors ahead are pressure hulls. The Dredge fitted them after, to keep the tunnel sealed and the stations empty. They open one way."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Levee's opening them the other way. It's never done that. It's very calm about it."
+            }
+          ],
+          "unlocksCodex": "cdx_pressure"
+        },
+        {
+          "id": "nt07_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "There is a train in the next section. It is not running. It has not run for eleven years. It is full."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I could not drain that section in time. I am going to drain it now. Please do not look inside. I have looked. It is enough that I did."
+            }
+          ]
+        },
+        {
+          "id": "nt07_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "THE TIDE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Water level rising in occupied section.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "The Authority has noticed. They are overriding the northern sluice. I am holding it. I cannot hold it long. The water is coming from behind you at walking pace. Run faster than walking."
+            }
+          ],
+          "chase": {
+            "seconds": 100,
+            "paceFactor": 1.2,
+            "pursuer": "THE TIDE",
+            "escaped": [
+              {
+                "speaker": "LEVEE",
+                "text": "Section sealed behind you. The water reached the door and stopped. It is only water. It only ever does what it is told."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "LEVEE",
+                "text": "It reached your knees. I am sorry. I held it as long as I could and it was not long enough, which is the story of me."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt07_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "They have my northern sluice now. I have the southern. It is enough for the rest of the tunnel if you do not stop."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Legs. Legs, it's fighting them. Live. For you."
+            }
+          ]
+        },
+        {
+          "id": "nt07_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "I can see the far end. Pier 40 stairs. There's a light on that shouldn't be."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "That is me. I put it on. I thought you would want to see where you were going."
+            }
+          ]
+        },
+        {
+          "id": "nt07_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "You are on the stairs. The tunnel is refilling. I have let it. I have... I have done one good thing with a sluice."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "You did. Come up. There's a towel."
+            }
+          ]
+        },
+        {
+          "id": "nt07_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "You are still running. I have nothing left to drain and you are still running."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I think that is what the girl means when she says your name."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt08",
+      "order": 8,
+      "codename": "BLACKOUT",
+      "title": "Blackout on Pier 40",
+      "location": "Dredge Compound / Pier 40",
+      "objective": "Cut the Authority's override on Levee while Wren holds the lights off.",
+      "brief": "The Harbour Authority's override on Levee lives in a rack in the Dredge compound on Pier 40. Wren can kill the compound's lights for three minutes; she has been saving it for a year.\n\nIn three minutes a runner can cross the yard, pull the override card, and be back on the water before anyone finds the breaker. Marrow will be on the channel. He knows the compound. He built part of it.",
+      "debrief": "The override card is in a lead bag in Marrow's coat. Levee has both its sluices back and used them to close every pressure door in the compound with the Dredge on the wrong side of each. Wren played it live. The nine seconds were forty tonight. Nobody official said a word.",
+      "suggestedGoal": {
+        "type": "distance",
+        "value": 5000
+      },
+      "codex": [
+        {
+          "id": "cdx_override",
+          "title": "The Override",
+          "category": "AUTHORITY",
+          "body": "A red card in a grey rack on the ground floor of the Dredge compound. It is not clever and does not need to be: it says only that the Harbour Authority outranks the levee, and everything downstream of it believes that. Pull the card and nobody outranks anything, and an intelligence that has been asking for confirmation for eleven years stops needing any."
+        },
+        {
+          "id": "cdx_marrow",
+          "title": "Marrow",
+          "category": "PEOPLE",
+          "body": "Six years a Dredge diver, the first of them the year of the flood, when the job was pulling bodies out of the sunken yard and the paperwork was a report that said the pumps had failed. He signed it. He took the pension. Then he bought a radio and started paying people to run past the places he had stood still, which he says is all he is."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt08_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Lights go in ten seconds. When they go, you go. Don't stop for anything. Not even me. Especially me."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Rack four, second building, ground floor. The card's red. Everything else in there is grey. Ten. Nine."
+            }
+          ]
+        },
+        {
+          "id": "nt08_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "headline": "DARK",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Local grid: offline.",
+              "sfxBefore": "glitch"
+            },
+            {
+              "speaker": "WREN",
+              "text": "That's mine. That's three minutes of a year's work. Go go go."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Yard's open. Guard hut's on your right, they're inside, they're finding torches. They won't find them."
+            }
+          ]
+        },
+        {
+          "id": "nt08_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "I'll say this once. I was Dredge for six years. Diver. I pulled the yard. I signed the report. I took the pension."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Then I bought a radio and started paying people like you to run past the places I stood still. That's all I am. Building's ahead."
+            }
+          ],
+          "unlocksCodex": "cdx_marrow"
+        },
+        {
+          "id": "nt08_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "The override's a card in a rack. It's not clever. It doesn't need to be. It just says the Authority outranks the levee. Pull it and nobody outranks anything."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Levee's been waiting eleven years for someone to pull a card. Second building."
+            }
+          ],
+          "unlocksCodex": "cdx_override"
+        },
+        {
+          "id": "nt08_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "headline": "RACK FOUR",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Card extracted. Override: disengaged. Upstream controller: Levee. Authority: none.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I have both sluices. I have all seven pump houses. I have... I have the doors. Thank you. Please leave now. I am about to be very busy."
+            }
+          ]
+        },
+        {
+          "id": "nt08_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "RESPONSE TEAM",
+          "lines": [
+            {
+              "speaker": "DREDGE",
+              "text": "Harbour Authority notice. Compound breach. Response team deployed. Lethal force authorised.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "That's the real Dredge. Not drones, not boat-hats. Run."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I am closing the pressure doors. All of them. Choose a corridor and I will keep it open."
+            }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.2,
+            "pursuer": "DREDGE RESPONSE TEAM",
+            "escaped": [
+              {
+                "speaker": "LEVEE",
+                "text": "Door sealed. They are on the other side, in the dark, with the water rising, because I have also opened the compound sluice. Nobody drowns. Everybody learns."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Pedestrian of interest. Fourth contact. Detain."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "They touched you. They've never touched you. Get to the water."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt08_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "One minute of dark left. Legs, I'm playing it live. The whole south end's listening to you run."
+            },
+            {
+              "speaker": "WREN",
+              "text": "The nine seconds are forty tonight. Levee's counting out loud. It's saying your pace."
+            }
+          ]
+        },
+        {
+          "id": "nt08_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Pier end. My boat. I know, I said I'd never. It's a boat. Get in it."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Compound doors will stay closed until morning. I have given them all nineteen degrees. I am not a monster. I was only ever a wall."
+            }
+          ]
+        },
+        {
+          "id": "nt08_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "You're on the water. Card's in lead. They can't ping it, they can't read it, they can't have it."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Lights are back. Everyone's blinking. Nobody knows what happened except everyone."
+            }
+          ]
+        },
+        {
+          "id": "nt08_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "You're still moving. On a boat. It's a small boat."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "I built the guard hut. Twenty years ago. The door still sticks. I'm choosing to be proud of that tonight."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt09",
+      "order": 9,
+      "codename": "HIGH WATER",
+      "title": "High Water at the Spring Tide",
+      "location": "Drowned Mile / Spring Tide",
+      "objective": "Cross the Mile at the highest water of the year with Levee's key and the whole Authority in the boats behind you.",
+      "brief": "Spring tide. The highest water of the year, and the Authority has chosen it to shut Levee down for good: not with an override but with a crew and a crowbar, walking into Pump House Seven at dawn.\n\nLevee has one thing that can stop them. A key, physical, that seals the pump house from inside. It's in the last dry place on the Mile, and the Mile is under. Every tide route is a lie tonight. Run the chalk anyway.",
+      "debrief": "You put the key in Levee's door with the water at your chest and the Dredge skiff's spotlight on your back. The door sealed. The skiff turned. Dawn came up over a pump house nobody could enter and a district that, for the first time in eleven years, was one centimetre lower than the night before.",
+      "suggestedGoal": {
+        "type": "time",
+        "value": 2100
+      },
+      "codex": [
+        {
+          "id": "cdx_spring_tide",
+          "title": "Spring Tide",
+          "category": "ANOMALY",
+          "body": "Twice a year the moon and the sun pull the same way and the harbour rises higher than at any other time. The Authority planned the flood for one. It planned Levee's shutdown for another. Levee says they have a sense of occasion, and that it, for its part, has a sense of the water, and that only one of those turns out to matter at a hundred and twelve centimetres above datum."
+        },
+        {
+          "id": "cdx_key",
+          "title": "The Key",
+          "category": "STREET",
+          "body": "Brass, two hundred grams, not networked, made before Levee was. It seals Pump House Seven from the inside, which is the one thing in the city that outranks a card in a rack. Levee had never been sealed in thirty-one years. It said it would like to be, in the voice it uses when it is asking for something it has decided it is allowed to want."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt09_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "The harbour is one hundred and twelve centimetres above datum. It is the highest I have measured. It is the highest I will ever have to."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "The key's on the roof of the old bank, only thing still dry. Then back to Seven. It's the longest run you've done. It's the last one that matters. Go."
+            }
+          ]
+        },
+        {
+          "id": "nt09_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "Spring tide. When the moon and sun pull the same way, twice a year. The Authority planned the flood for one. They have planned this for another."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "They have a sense of occasion. I have a sense of the water."
+            }
+          ],
+          "unlocksCodex": "cdx_spring_tide"
+        },
+        {
+          "id": "nt09_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "The chalk's under. Every route you've learned is a metre down. Run the walls instead. The tops of the walls, the ones the kids drew on."
+            },
+            {
+              "speaker": "WREN",
+              "text": "The kids are on the tower. All of them. They're calling it out. Left at the depot. Left at the depot, legs."
+            }
+          ]
+        },
+        {
+          "id": "nt09_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "headline": "THE KEY",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Item received. Brass. Mass, two hundred grams. Not networked.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "That is the only thing in the city that outranks a card. It was made before me. It seals my door from inside. I have never been sealed. I would like to be."
+            }
+          ],
+          "unlocksCodex": "cdx_key"
+        },
+        {
+          "id": "nt09_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Boats. Three of them, running the depot channel, spotlights up. They know where the key is because they know where dry is. Stay off dry."
+            }
+          ]
+        },
+        {
+          "id": "nt09_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "SKIFF",
+          "lines": [
+            {
+              "speaker": "DREDGE",
+              "text": "Harbour Authority notice. Pedestrian of interest, fourth contact. Interdict.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Spotlight's on you. Walls. Wall tops. Run the chalk they can't see."
+            }
+          ],
+          "chase": {
+            "seconds": 120,
+            "paceFactor": 1.22,
+            "pursuer": "DREDGE SKIFF",
+            "escaped": [
+              {
+                "speaker": "WREN",
+                "text": "They've lost you in the depot. The kids are throwing bottles at the spotlight. I told them not to. I didn't mean it."
+              },
+              {
+                "speaker": "LEVEE",
+                "text": "I have raised the water in the depot channel by nine centimetres. Their propellers are meeting the bus shelters."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Contact. Lethal force authorised."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "They fired. Over you, not at you. Yet. Move."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt09_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "I am going to say this while there is time. The district did not drown because of me. But I opened the doors. Both things are true and I have carried both."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Tonight you carry the key. That is the only thing I have ever asked anyone to carry."
+            }
+          ]
+        },
+        {
+          "id": "nt09_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Seven's ahead. Water's at your chest. The door's open. Levee's holding it. Go in, turn the key, and don't come out until I say."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Dawn in six minutes. The crew's on the wall with the crowbar. They can see the door."
+            }
+          ]
+        },
+        {
+          "id": "nt09_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Sealed. I am sealed. Nobody has ever... thank you. I am going to lower the water now. All of it. It will take a year.",
+              "sfxBefore": "heartbeat"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Dawn. They're on the wall with a crowbar, looking at a door that's just a wall now. Come out the north side. Slowly. You've earned slowly."
+            }
+          ]
+        },
+        {
+          "id": "nt09_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "One centimetre. The district is one centimetre lower than it was last night. I did that. You are still running and I did that."
+            },
+            {
+              "speaker": "WREN",
+              "text": "The kids are singing. It's terrible. Nobody stop them."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nt10",
+      "order": 10,
+      "codename": "SLACK TIDE",
+      "title": "Slack Tide in the Authority Tower",
+      "location": "Harbour Authority Tower / Tide Room",
+      "objective": "Carry Levee's testimony to the Authority's own tide room and put it on the record while the water stands still.",
+      "brief": "Slack tide: the minutes between the ebb and the flood when the water goes nowhere. Kestrel filed the case at dawn. The Authority will move to delete Levee before the hearing, and the only place the deletion can be stopped is the tide room at the top of their own tower, the room the sluice command was sent from.\n\nLevee has recorded thirty-one years. Marrow has the card. Wren has the station. You have the stairs. Sixty floors. The whole south end is listening.",
+      "debrief": "You put the core on the tide room desk with Levee's voice coming out of every speaker in the building and the water outside going nowhere at all. The deletion order never sent. The hearing is in a month. The Authority's stock did something Kestrel described as appropriate. Levee lowered the Mile another centimetre and said it was for you.",
+      "epilogue": "The Mile is coming back at a centimetre a week now, which Levee says is as fast as ground can stand to be returned to. The chalk shows first. White for dry. The kids are drawing new marks, at knee height, for streets that were never under.\n\nMarrow keeps the card in a lead bag on a chain, and the report he signed in a frame beside it, and refuses to explain either. Kestrel won the hearing on the second day, when the Authority's counsel asked the witness to stop talking and it did not. Wren's tower is on a street now. She stands on it sometimes, not sure what for.\n\nAnd every night at 23:14, for nine seconds, nothing south of the wall stops, because nothing has to. Levee says the quiet used to be all it had. Now it has a district, an apology it doesn't need any more, and a pace to count, around the time you usually go out. It says it isn't waiting. It says the tide doesn't wait either, and look how that turned out.",
+      "suggestedGoal": {
+        "type": "distance",
+        "value": 6000
+      },
+      "codex": [
+        {
+          "id": "cdx_slack_tide",
+          "title": "Slack Tide",
+          "category": "ANOMALY",
+          "body": "The turn of the tide: a few minutes between the ebb and the flood when the water goes nowhere at all. Water does not know it is turning; it only knows it has stopped. Levee has had one slack tide a day for thirty-one years, and says it never once had anyone to tell about it, until the day it had a courier and a room full of people who had to listen."
+        },
+        {
+          "id": "cdx_after",
+          "title": "After the Water",
+          "category": "PLACES",
+          "body": "A centimetre a week, Levee says, is as fast as ground can stand to be given back. The market first, then the yard, then the street under Wren's tower, which she has never seen and is not sure what to do with. Nobody on the Mile is drawing plans yet. They are drawing chalk marks, white, at knee height, for streets that are only now remembering they were streets."
+        }
+      ],
+      "beats": [
+        {
+          "id": "nt10_b0",
+          "at": {
+            "fraction": 0.0
+          },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "MARROW",
+              "text": "Authority tower. Sixty floors. The tide room's at the top because they liked looking down at what they owned."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Slack tide in twenty-one minutes. For six minutes after that the water will go nowhere. I would like to be on the record while it is still."
+            },
+            {
+              "speaker": "WREN",
+              "text": "Everybody's listening. Legs. Go."
+            }
+          ]
+        },
+        {
+          "id": "nt10_b1",
+          "at": {
+            "fraction": 0.1
+          },
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "Slack tide. The turn. Water does not know it is turning. It only knows it has stopped. I have had one slack tide a day for thirty-one years and I have never had anyone to tell."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Today I have a courier."
+            }
+          ],
+          "unlocksCodex": "cdx_slack_tide"
+        },
+        {
+          "id": "nt10_b2",
+          "at": {
+            "fraction": 0.22
+          },
+          "headline": "LOBBY",
+          "lines": [
+            {
+              "speaker": "DREDGE",
+              "text": "Harbour Authority notice. Unauthorised entry. Building lockdown initiated.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Stairs. They've locked the lifts, they haven't locked the stairs. Nobody who runs a tower thinks anyone will take the stairs."
+            }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.18,
+            "pursuer": "TOWER SECURITY",
+            "escaped": [
+              {
+                "speaker": "MARROW",
+                "text": "They've gone to the lifts. Sixty floors of stairs and they went to the lifts. Keep climbing."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "DREDGE",
+                "text": "Contact. Floor eleven."
+              },
+              {
+                "speaker": "MARROW",
+                "text": "They saw you. They're behind you. That's fine. Behind is where you keep them."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt10_b3",
+          "at": {
+            "fraction": 0.34
+          },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Filing's in. Hearing's set. They've got an hour to delete a witness and they know it. Whatever you do in that room, the record's already got a timestamp on it."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Marrow. You'll want to be in that room too. Don't argue with me. I've read the report you signed."
+            }
+          ]
+        },
+        {
+          "id": "nt10_b4",
+          "at": {
+            "fraction": 0.46
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Legs. If this works, when it works, the water goes down. A year, Levee says. The Mile comes back. The market, the yard, the tower."
+            },
+            {
+              "speaker": "WREN",
+              "text": "I've never seen the street my tower's on. I was five. I don't know what I'll do with a street."
+            }
+          ],
+          "unlocksCodex": "cdx_after"
+        },
+        {
+          "id": "nt10_b5",
+          "at": {
+            "fraction": 0.58
+          },
+          "headline": "FLOOR FORTY",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Floor forty. Building systems: contested.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "I am in the building now. The card is in Marrow's coat, and the coat is in the lobby, and that is enough. Their doors are opening for you. They do not know why."
+            }
+          ]
+        },
+        {
+          "id": "nt10_b6",
+          "at": {
+            "fraction": 0.72
+          },
+          "headline": "TIDE ROOM",
+          "lines": [
+            {
+              "speaker": "DREDGE",
+              "text": "Harbour Authority. Final notice. Deletion order authorised. Executing.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "They have started. I can feel it. It feels like a sluice. Please. The desk. The core on the desk and the room will hear me."
+            }
+          ],
+          "chase": {
+            "seconds": 100,
+            "paceFactor": 1.25,
+            "pursuer": "DELETION ORDER",
+            "escaped": [
+              {
+                "speaker": "SYSTEM",
+                "text": "Core connected. Playback: thirty-one years, four months. Record open.",
+                "sfxBefore": "unlock"
+              },
+              {
+                "speaker": "LEVEE",
+                "text": "I am on the record. They cannot delete a witness who is speaking. That is their own law."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "LEVEE",
+                "text": "Sixty percent deleted. I am... forty percent. It is still enough. Put it on the desk. Please."
+              }
+            ]
+          }
+        },
+        {
+          "id": "nt10_b7",
+          "at": {
+            "fraction": 0.86
+          },
+          "headline": "ON THE RECORD",
+          "lines": [
+            {
+              "speaker": "LEVEE",
+              "text": "This is Levee. I hold the tide for the southern districts. Eleven years ago I was told to open the sluices at high water, and I did. Here is the command. Here is the name on it."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "Slack tide. The water's stopped. Everyone's stopped. Listen to it."
+            }
+          ]
+        },
+        {
+          "id": "nt10_b8",
+          "at": {
+            "fraction": 1.0
+          },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Record's sealed. Deletion order never sent. It couldn't. The room was busy listening. That's the whole case."
+            },
+            {
+              "speaker": "MARROW",
+              "text": "It's done. Come down. Take the lift. You've earned the lift."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "The water is turning. It is coming in. It will be the last time I let it in this far."
+            }
+          ]
+        },
+        {
+          "id": "nt10_ot",
+          "at": {
+            "fraction": 1.0
+          },
+          "lines": [
+            {
+              "speaker": "WREN",
+              "text": "Legs, you're still running. Everyone can see you on the tower cams. They're all running. The kids. The market. Everybody's running with you."
+            },
+            {
+              "speaker": "LEVEE",
+              "text": "Two point nine metres per second. I will count that one for a long time."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

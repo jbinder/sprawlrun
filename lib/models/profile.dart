@@ -61,6 +61,7 @@ class Profile {
     this.chasesEnabled = true,
     this.autoPause = true,
     this.keepScreenOn = true,
+    this.activePackId,
     this.completedMissions = const <String>{},
     this.unlockedAchievements = const <String, DateTime>{},
     this.unlockedCodex = const <String>{},
@@ -93,6 +94,11 @@ class Profile {
   final bool autoPause;
   final bool keepScreenOn;
 
+  /// The mission pack the ops screen shows. Null means the first loaded pack,
+  /// which is also what every profile from before packs were selectable
+  /// resolves to.
+  final String? activePackId;
+
   final Set<String> completedMissions;
   final Map<String, DateTime> unlockedAchievements;
   final Set<String> unlockedCodex;
@@ -118,6 +124,7 @@ class Profile {
     bool? chasesEnabled,
     bool? autoPause,
     bool? keepScreenOn,
+    String? activePackId,
     Set<String>? completedMissions,
     Map<String, DateTime>? unlockedAchievements,
     Set<String>? unlockedCodex,
@@ -137,6 +144,7 @@ class Profile {
     chasesEnabled: chasesEnabled ?? this.chasesEnabled,
     autoPause: autoPause ?? this.autoPause,
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
+    activePackId: activePackId ?? this.activePackId,
     completedMissions: completedMissions ?? this.completedMissions,
     unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
     unlockedCodex: unlockedCodex ?? this.unlockedCodex,
@@ -158,6 +166,7 @@ class Profile {
     'chasesEnabled': chasesEnabled,
     'autoPause': autoPause,
     'keepScreenOn': keepScreenOn,
+    if (activePackId != null) 'activePackId': activePackId,
     'completedMissions': completedMissions.toList(),
     'unlockedAchievements': unlockedAchievements.map((k, v) => MapEntry(k, v.toIso8601String())),
     'unlockedCodex': unlockedCodex.toList(),
@@ -184,6 +193,7 @@ class Profile {
     chasesEnabled: json['chasesEnabled'] as bool? ?? true,
     autoPause: json['autoPause'] as bool? ?? true,
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,
+    activePackId: json['activePackId'] as String?,
     completedMissions: ((json['completedMissions'] as List?) ?? const []).map((e) => e as String).toSet(),
     unlockedAchievements: ((json['unlockedAchievements'] as Map?) ?? const {}).map(
       (k, v) => MapEntry(k as String, DateTime.parse(v as String)),

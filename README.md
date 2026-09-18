@@ -6,8 +6,9 @@
 
 ### Your running app should not be a spreadsheet. It should be chasing you.
 
-Ten story missions through a rain-slick megacity. GPS-tracked, voice-acted by
-your phone, and built around one idea: *somebody is waiting for you to slow down.*
+Two campaigns, twenty story missions through a rain-slick megacity. GPS-tracked,
+voice-acted by your phone, and built around one idea: *somebody is waiting for
+you to slow down.*
 
 **Android · Flutter · completely offline · no Google Play Services · no accounts, no ads, no tracking**
 
@@ -36,6 +37,12 @@ heard says:
 
 Ten missions later you are forty floors up a corporate arcology, and the only
 thing keeping an intelligence alive is whether you keep running.
+
+That's **Sprawl Prime**. Finish it and **Null Tide** opens: the southern
+districts went under eleven years ago, something in Pump House Seven has been
+apologising for nine seconds a night ever since, and a salvage broker with a
+bad knee wants a piece of paper carried across the Drowned Mile before the sea
+comes home.
 
 ---
 
@@ -145,7 +152,7 @@ that nobody admits exists.
 Entries unlock only once a character has actually mentioned them to you — the
 codex is a record of what you have been told, not a wiki you can read ahead in.
 
-Twenty entries across the campaign.
+Forty entries across the two campaigns.
 
 </td>
 <td width="42%"><img src="docs/screenshots/codex.png" alt="Codex"></td>
@@ -156,7 +163,7 @@ Twenty entries across the campaign.
 
 <div align="center">
 
-### Ten missions. 266 lines of dialogue. No network required.
+### Twenty missions. Two campaigns. 528 lines of dialogue. No network required.
 
 </div>
 
@@ -202,7 +209,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 185 tests
+flutter test                   # 214 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -230,7 +237,12 @@ this README cannot drift from what the app actually looks like.
 A mission pack is one JSON file. Drop it into the app's documents directory under
 `sprawlrun/mission_packs/` and hit **Settings → Mission packs → Reload** — no
 rebuild, no app update. See **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** for
-the format, and `assets/missions/sprawl_prime.json` for a worked example.
+the format, and `assets/missions/sprawl_prime.json` or `null_tide.json` for a
+worked example.
+
+Every pack is its own campaign with its own chain of missions. The ops screen
+shows one at a time; **All packs** lists them all, grouped into active and done,
+and finishing the last mission of a pack offers the next one that's still open.
 
 ## Layout
 

@@ -32,6 +32,18 @@ class VoiceProfile {
     'PACHINKO': VoiceProfile(pitch: 1.32, rateScale: 1.28),
     // Corporate, cold, plural.
     'VANTAR': VoiceProfile(pitch: 0.68, rateScale: 0.86),
+
+    // -- NULL TIDE ------------------------------------------------------------
+    // Ex-Dredge diver turned salvage broker. Low, unhurried, counts everything.
+    'MARROW': VoiceProfile(pitch: 0.76, rateScale: 0.9),
+    // Sixteen, runs a pirate station from a water tower, never finishes a
+    // sentence at the speed she started it.
+    'WREN': VoiceProfile(pitch: 1.26, rateScale: 1.22),
+    // The tide-control intelligence. Deep, slow, speaks in measurements.
+    'LEVEE': VoiceProfile(pitch: 0.7, rateScale: 0.8),
+    // Harbour Authority security. Procedural, flat, plural.
+    'DREDGE': VoiceProfile(pitch: 0.62, rateScale: 0.88),
+
     // The app's own readout voice.
     'SYSTEM': VoiceProfile(pitch: 1.0, rateScale: 1.06),
   };

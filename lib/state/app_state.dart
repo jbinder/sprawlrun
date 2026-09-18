@@ -58,12 +58,25 @@ class AppState extends ChangeNotifier {
 
   // -- campaign -------------------------------------------------------------
 
-  /// All missions across all packs, with their locked/available/completed state.
-  List<MissionProgress> get chain {
-    final all = [for (final pack in packs) ...pack.missions];
-    return resolveChain(all, profile.completedMissions, profile.missionAttempts);
+  /// The pack the ops screen is showing. Falls back to the first loaded pack
+  /// when nothing is selected or the selected one has been removed, so the
+  /// screen never points at nothing while packs exist.
+  MissionPack? get activePack {
+    if (packs.isEmpty) return null;
+    for (final pack in packs) {
+      if (pack.id == profile.activePackId) return pack;
+    }
+    return packs.first;
   }
 
+  /// The active pack's missions with their locked/available/completed state.
+  /// Each pack is its own chain: finishing one never gates another.
+  List<MissionProgress> get chain => chainFor(activePack);
+
+  List<MissionProgress> chainFor(MissionPack? pack) =>
+      pack == null ? const [] : resolveChain(pack.missions, profile.completedMissions, profile.missionAttempts);
+
+  /// The one playable mission in the active pack, or null once it is cleared.
   MissionProgress? get currentMission {
     for (final m in chain) {
       if (m.state == MissionState.available) return m;
@@ -73,6 +86,33 @@ class AppState extends ChangeNotifier {
 
   int get missionsCompleted => chain.where((m) => m.state == MissionState.completed).length;
   int get missionsTotal => chain.length;
+
+  /// Every loaded pack with how far the runner is through it.
+  List<PackProgress> get packProgress => [
+    for (final pack in packs)
+      PackProgress(pack: pack, chain: chainFor(pack), selected: pack.id == activePack?.id),
+  ];
+
+  /// The next pack worth switching to once the active one is cleared: the
+  /// first after it in load order that still has missions open, wrapping
+  /// round, or null if everything is done.
+  MissionPack? get nextOpenPack {
+    final active = activePack;
+    if (active == null) return null;
+    final start = packs.indexWhere((p) => p.id == active.id);
+    for (var i = 1; i < packs.length; i++) {
+      final pack = packs[(start + i) % packs.length];
+      if (!PackProgress(pack: pack, chain: chainFor(pack), selected: false).isDone) return pack;
+    }
+    return null;
+  }
+
+  Future<void> selectPack(String id) async {
+    if (!packs.any((p) => p.id == id) || profile.activePackId == id) return;
+    profile = profile.copyWith(activePackId: id);
+    await profiles.save(profile);
+    notifyListeners();
+  }
 
   /// Every codex entry the runner has actually unlocked, newest pack last.
   List<CodexEntry> get unlockedCodex {

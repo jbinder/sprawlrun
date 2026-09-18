@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../data/mission_repository.dart';
 import '../models/achievement.dart';
+import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/stats.dart';
 import '../state/app_state.dart';
@@ -14,6 +15,7 @@ import '../widgets/panels.dart';
 import '../widgets/progress.dart';
 import 'mission_brief_screen.dart';
 import 'mission_debrief_screen.dart';
+import 'missions_screen.dart';
 
 /// The home screen: who you are, how the week is going, and the one mission
 /// you are allowed to play next.
@@ -25,6 +27,7 @@ class DashboardScreen extends StatelessWidget {
     final state = context.watch<AppState>();
     final chain = state.chain;
     final current = state.currentMission;
+    final pack = state.activePack;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
@@ -42,21 +45,50 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 22),
         ] else if (chain.isNotEmpty) ...[
           const SectionHeader('CAMPAIGN COMPLETE', accent: Cy.green),
-          const _CampaignCompleteCard(),
+          _CampaignCompleteCard(pack: pack!, next: state.nextOpenPack),
           const SizedBox(height: 22),
         ],
 
         SectionHeader(
-          'MISSION CHAIN',
-          trailing: Text(
-            '${state.missionsCompleted}/${state.missionsTotal}',
-            style: CyType.mono(size: 11, color: Cy.inkDim),
+          pack?.title ?? 'MISSION CHAIN',
+          trailing: InkWell(
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const MissionsScreen()),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${state.missionsCompleted}/${state.missionsTotal}',
+                    style: CyType.mono(size: 11, color: Cy.inkDim),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'ALL PACKS',
+                    style: CyType.label(size: 10, color: Cy.cyan),
+                  ),
+                  const Icon(Icons.chevron_right, size: 16, color: Cy.cyan),
+                ],
+              ),
+            ),
           ),
         ),
+        if (pack != null) ...[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              pack.tagline,
+              style: CyType.body(size: 13, color: Cy.inkDim),
+            ),
+          ),
+        ],
         if (chain.isEmpty)
           const EmptyState(
             title: 'No mission packs',
-            body: 'The bundled campaign failed to load. Check Settings → Mission packs.',
+            body:
+                'The bundled campaign failed to load. Check Settings → Mission packs.',
             icon: Icons.sync_problem_outlined,
           )
         else
@@ -71,7 +103,9 @@ class DashboardScreen extends StatelessWidget {
           icon: Icons.directions_run,
           style: CyberButtonStyle.ghost,
           onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const MissionBriefScreen(mission: null)),
+            MaterialPageRoute<void>(
+              builder: (_) => const MissionBriefScreen(mission: null),
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -90,11 +124,15 @@ class _Greeting extends StatelessWidget {
   /// should sound like it knows what time it is.
   String get _line {
     final hour = DateTime.now().hour;
-    if (hour < 5) return 'The city is at its quietest. Nobody is watching the streets at this hour.';
-    if (hour < 8) return 'Grey light on wet concrete. Best hours to move unnoticed.';
+    if (hour < 5)
+      return 'The city is at its quietest. Nobody is watching the streets at this hour.';
+    if (hour < 8)
+      return 'Grey light on wet concrete. Best hours to move unnoticed.';
     if (hour < 12) return 'Day shift is on the grid. Blend in.';
-    if (hour < 17) return 'Heat, noise, and forty thousand people between you and anyone tracking you.';
-    if (hour < 21) return 'The signs are coming on. This is when the work starts.';
+    if (hour < 17)
+      return 'Heat, noise, and forty thousand people between you and anyone tracking you.';
+    if (hour < 21)
+      return 'The signs are coming on. This is when the work starts.';
     return 'Rain on the strip. Good conditions. Nobody looks up when it rains.';
   }
 
@@ -113,18 +151,28 @@ class _Greeting extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text('$_salutation, ', style: CyType.label(size: 11, color: Cy.inkDim)),
+            Text(
+              '$_salutation, ',
+              style: CyType.label(size: 11, color: Cy.inkDim),
+            ),
             Flexible(
               child: GlitchText(
                 callsign.toUpperCase(),
                 maxLines: 1,
-                style: CyType.display(size: 13, color: Cy.cyan, shadows: textGlow(Cy.cyan, blur: 10)),
+                style: CyType.display(
+                  size: 13,
+                  color: Cy.cyan,
+                  shadows: textGlow(Cy.cyan, blur: 10),
+                ),
               ),
             ),
           ],
         ),
         const SizedBox(height: 8),
-        Text(_line, style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35)),
+        Text(
+          _line,
+          style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
+        ),
       ],
     );
   }
@@ -158,9 +206,15 @@ class _StreakCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: [
-                        Text('${streak.weeks}', style: CyType.readout(32, accent)),
+                        Text(
+                          '${streak.weeks}',
+                          style: CyType.readout(32, accent),
+                        ),
                         const SizedBox(width: 6),
-                        Text('WEEK STREAK', style: CyType.label(size: 10, color: Cy.inkDim)),
+                        Text(
+                          'WEEK STREAK',
+                          style: CyType.label(size: 10, color: Cy.inkDim),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 2),
@@ -258,7 +312,9 @@ class _NextOpCard extends StatelessWidget {
       lit: true,
       padding: EdgeInsets.zero,
       onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(builder: (_) => MissionBriefScreen(mission: mission)),
+        MaterialPageRoute<void>(
+          builder: (_) => MissionBriefScreen(mission: mission),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,10 +327,15 @@ class _NextOpCard extends StatelessWidget {
               children: [
                 Text(
                   'OP ${mission.order.toString().padLeft(2, '0')}',
-                  style: CyType.mono(size: 12, color: Cy.magenta, letterSpacing: 2),
+                  style: CyType.mono(
+                    size: 12,
+                    color: Cy.magenta,
+                    letterSpacing: 2,
+                  ),
                 ),
                 const Spacer(),
-                if (progress.attempts > 0) CyberTag('ATTEMPT ${progress.attempts + 1}', color: Cy.amber),
+                if (progress.attempts > 0)
+                  CyberTag('ATTEMPT ${progress.attempts + 1}', color: Cy.amber),
               ],
             ),
           ),
@@ -285,14 +346,27 @@ class _NextOpCard extends StatelessWidget {
               children: [
                 GlitchText(
                   mission.codename,
-                  style: CyType.display(size: 22, color: Cy.ink, shadows: textGlow(Cy.magenta, blur: 14)),
+                  style: CyType.display(
+                    size: 22,
+                    color: Cy.ink,
+                    shadows: textGlow(Cy.magenta, blur: 14),
+                  ),
                 ),
                 const SizedBox(height: 6),
-                Text(mission.title, style: CyType.body(size: 16, color: Cy.inkDim)),
+                Text(
+                  mission.title,
+                  style: CyType.body(size: 16, color: Cy.inkDim),
+                ),
                 const SizedBox(height: 2),
-                Text(mission.location.toUpperCase(), style: CyType.label(size: 9, color: Cy.ghost)),
+                Text(
+                  mission.location.toUpperCase(),
+                  style: CyType.label(size: 9, color: Cy.ghost),
+                ),
                 const SizedBox(height: 14),
-                Text(mission.objective, style: CyType.body(size: 15, height: 1.4)),
+                Text(
+                  mission.objective,
+                  style: CyType.body(size: 15, height: 1.4),
+                ),
                 const SizedBox(height: 16),
                 // Wrap rather than Row: the chips carry variable-length text
                 // and must not overflow on a narrow screen or at a large
@@ -301,19 +375,33 @@ class _NextOpCard extends StatelessWidget {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _Chip(icon: Icons.flag_outlined, text: mission.suggestedGoal.toString()),
-                    _Chip(icon: Icons.record_voice_over_outlined, text: '${mission.beats.length} transmissions'),
+                    _Chip(
+                      icon: Icons.flag_outlined,
+                      text: mission.suggestedGoal.toString(),
+                    ),
+                    _Chip(
+                      icon: Icons.record_voice_over_outlined,
+                      text: '${mission.beats.length} transmissions',
+                    ),
                     _Chip(
                       icon: Icons.radar,
-                      text: '${mission.chaseBeats.length} pursuit${mission.chaseBeats.length == 1 ? '' : 's'}',
+                      text:
+                          '${mission.chaseBeats.length} pursuit${mission.chaseBeats.length == 1 ? '' : 's'}',
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Text('OPEN BRIEFING', style: CyType.display(size: 12, color: Cy.magenta)),
-                    const Icon(Icons.chevron_right, size: 18, color: Cy.magenta),
+                    Text(
+                      'OPEN BRIEFING',
+                      style: CyType.display(size: 12, color: Cy.magenta),
+                    ),
+                    const Icon(
+                      Icons.chevron_right,
+                      size: 18,
+                      color: Cy.magenta,
+                    ),
                   ],
                 ),
               ],
@@ -335,7 +423,10 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(color: Cy.panelHi, border: Border.all(color: Cy.rule)),
+      decoration: BoxDecoration(
+        color: Cy.panelHi,
+        border: Border.all(color: Cy.rule),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -349,7 +440,12 @@ class _Chip extends StatelessWidget {
 }
 
 class _CampaignCompleteCard extends StatelessWidget {
-  const _CampaignCompleteCard();
+  const _CampaignCompleteCard({required this.pack, required this.next});
+
+  final MissionPack pack;
+
+  /// The pack to offer, if anything is still open elsewhere.
+  final MissionPack? next;
 
   @override
   Widget build(BuildContext context) {
@@ -359,13 +455,27 @@ class _CampaignCompleteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('ALL OPERATIONS CLEARED', style: CyType.display(size: 14, color: Cy.green)),
+          Text(
+            'ALL OPERATIONS CLEARED',
+            style: CyType.display(size: 14, color: Cy.green),
+          ),
           const SizedBox(height: 8),
           Text(
-            'Sprawl Prime is finished. Free runs still count toward streaks, distance and the wall — '
-            'and new mission packs can be dropped in without an update.',
+            next == null
+                ? '${pack.title} is finished, and so is everything else loaded. Free runs still count '
+                      'toward streaks, distance and the wall — and new packs can be dropped in without an update.'
+                : '${pack.title} is finished. ${next!.title} is open: ${next!.tagline}',
             style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
           ),
+          if (next != null) ...[
+            const SizedBox(height: 14),
+            CyberButton(
+              label: 'Switch to ${next!.title}',
+              icon: Icons.swap_horiz_rounded,
+              dense: true,
+              onPressed: () => context.read<AppState>().selectPack(next!.id),
+            ),
+          ],
         ],
       ),
     );
@@ -399,7 +509,9 @@ class _MissionRow extends StatelessWidget {
           ? null
           : () => Navigator.of(context).push(
               MaterialPageRoute<void>(
-                builder: (_) => done ? MissionDebriefScreen(mission: mission) : MissionBriefScreen(mission: mission),
+                builder: (_) => done
+                    ? MissionDebriefScreen(mission: mission)
+                    : MissionBriefScreen(mission: mission),
               ),
             ),
       child: Row(
@@ -424,7 +536,10 @@ class _MissionRow extends StatelessWidget {
                   children: [
                     Text(
                       mission.order.toString().padLeft(2, '0'),
-                      style: CyType.mono(size: 11, color: locked ? Cy.ghost : Cy.inkDim),
+                      style: CyType.mono(
+                        size: 11,
+                        color: locked ? Cy.ghost : Cy.inkDim,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Flexible(
@@ -433,16 +548,24 @@ class _MissionRow extends StatelessWidget {
                         // is not spoiled by the list itself.
                         locked ? '█████████' : mission.codename,
                         overflow: TextOverflow.ellipsis,
-                        style: CyType.display(size: 13, color: locked ? Cy.ghost : Cy.ink),
+                        style: CyType.display(
+                          size: 13,
+                          color: locked ? Cy.ghost : Cy.ink,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  locked ? 'CLASSIFIED — CLEAR PRECEDING OPERATION' : mission.title,
+                  locked
+                      ? 'CLASSIFIED — CLEAR PRECEDING OPERATION'
+                      : mission.title,
                   overflow: TextOverflow.ellipsis,
-                  style: CyType.body(size: 13, color: locked ? Cy.ghost : Cy.inkDim),
+                  style: CyType.body(
+                    size: 13,
+                    color: locked ? Cy.ghost : Cy.inkDim,
+                  ),
                 ),
               ],
             ),
@@ -467,7 +590,12 @@ class _NextUnlocks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final next = context.read<AppState>().achievementWall.where((v) => !v.earned && v.progress > 0).take(3).toList();
+    final next = context
+        .read<AppState>()
+        .achievementWall
+        .where((v) => !v.earned && v.progress > 0)
+        .take(3)
+        .toList();
     if (next.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -485,12 +613,22 @@ class _NextUnlocks extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(view.def.category.icon, size: 14, color: view.def.tier.color),
+                      Icon(
+                        view.def.category.icon,
+                        size: 14,
+                        color: view.def.tier.color,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(view.def.title, style: CyType.body(size: 14, weight: FontWeight.w700)),
+                        child: Text(
+                          view.def.title,
+                          style: CyType.body(size: 14, weight: FontWeight.w700),
+                        ),
                       ),
-                      Text(view.def.progressLabel(stats), style: CyType.mono(size: 10, color: Cy.inkDim)),
+                      Text(
+                        view.def.progressLabel(stats),
+                        style: CyType.mono(size: 10, color: Cy.inkDim),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8),

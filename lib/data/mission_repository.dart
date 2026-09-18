@@ -17,7 +17,10 @@ import '../models/mission.dart';
 class MissionRepository {
   MissionRepository({required this.externalDir, AssetBundle? bundle}) : _bundle = bundle ?? rootBundle;
 
-  static const List<String> bundledPacks = ['assets/missions/sprawl_prime.json'];
+  static const List<String> bundledPacks = [
+    'assets/missions/sprawl_prime.json',
+    'assets/missions/null_tide.json',
+  ];
 
   /// Where side-loaded packs live. Created lazily; missing is not an error.
   final Directory externalDir;
@@ -54,9 +57,15 @@ class MissionRepository {
           final pack = MissionPack.fromJson(
             Map<String, dynamic>.from(jsonDecode(await file.readAsString()) as Map),
           );
-          // A side-loaded pack may deliberately replace a bundled one.
-          packs.removeWhere((p) => p.id == pack.id);
-          packs.add(pack);
+          // A side-loaded pack may deliberately replace a bundled one. It
+          // takes the bundled pack's place rather than moving to the end, so
+          // patching shipped content does not reorder the campaign list.
+          final existing = packs.indexWhere((p) => p.id == pack.id);
+          if (existing >= 0) {
+            packs[existing] = pack;
+          } else {
+            packs.add(pack);
+          }
         } on Object catch (e) {
           loadErrors.add('${file.uri.pathSegments.last}: $e');
         }
@@ -87,6 +96,50 @@ class MissionProgress {
   final int attempts;
 
   bool get isPlayable => state != MissionState.locked;
+
+  /// How the runner has got on with it, independent of whether it is reachable.
+  MissionStatus get status => state == MissionState.completed
+      ? MissionStatus.finished
+      : attempts > 0
+      ? MissionStatus.started
+      : MissionStatus.fresh;
+}
+
+/// Progress on a single mission: untouched, attempted, or cleared.
+enum MissionStatus { fresh, started, finished }
+
+/// Where a pack stands as a whole.
+enum PackState {
+  /// Nothing attempted yet.
+  fresh,
+
+  /// Some progress, missions still open.
+  active,
+
+  /// Every mission cleared.
+  done,
+}
+
+/// A pack with the runner's progress through it.
+class PackProgress {
+  const PackProgress({required this.pack, required this.chain, required this.selected});
+
+  final MissionPack pack;
+  final List<MissionProgress> chain;
+
+  /// Whether this is the pack the ops screen shows.
+  final bool selected;
+
+  int get completed => chain.where((m) => m.state == MissionState.completed).length;
+  int get total => chain.length;
+  bool get isDone => total > 0 && completed == total;
+  bool get isFresh => chain.every((m) => m.attempts == 0 && m.state != MissionState.completed);
+
+  PackState get state => isDone
+      ? PackState.done
+      : isFresh
+      ? PackState.fresh
+      : PackState.active;
 }
 
 /// Resolves the locked/available/completed chain for one pack.

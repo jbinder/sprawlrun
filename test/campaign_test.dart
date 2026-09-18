@@ -2,16 +2,33 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/models/mission.dart';
+import 'package:sprawl_run/services/narrator.dart';
 
 /// Guards the shipped campaign against the kinds of damage that only show up
 /// twenty minutes into a run: a beat that never fires, a codex entry nothing
 /// unlocks, a chase with no lines.
 void main() {
+  // Every bundled pack gets the same checks. A pack that only side-loads can
+  // be added here temporarily to get them too.
+  for (final path in MissionRepository.bundledPacks) {
+    group(path.split('/').last, () => _checks(path));
+  }
+
+  test('the voices the packs speak with are the ones the narrator can voice', () {
+    // Cheap sanity on the table itself: every profile is distinct enough to
+    // tell apart in a pocket.
+    final profiles = VoiceProfile.bySpeaker.values.map((v) => (v.pitch, v.rateScale)).toList();
+    expect(profiles.toSet(), hasLength(profiles.length), reason: 'two speakers share a voice');
+  });
+}
+
+void _checks(String path) {
   late MissionPack pack;
 
   setUpAll(() {
-    final raw = File('assets/missions/sprawl_prime.json').readAsStringSync();
+    final raw = File(path).readAsStringSync();
     pack = MissionPack.fromJson(Map<String, dynamic>.from(jsonDecode(raw) as Map));
   });
 
@@ -74,7 +91,9 @@ void main() {
   });
 
   test('every beat says something, from a known speaker', () {
-    const known = {'KESTREL', 'HALCYON', 'SIX', 'PACHINKO', 'VANTAR', 'SYSTEM'};
+    // The narrator's own table, so a new speaker cannot be added to a pack
+    // without also being given a voice.
+    final known = VoiceProfile.bySpeaker.keys.toSet();
     for (final m in pack.missions) {
       for (final beat in m.beats) {
         expect(beat.lines, isNotEmpty, reason: '${m.id}/${beat.id}');

@@ -76,8 +76,12 @@ class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final style = widget.style ?? DefaultTextStyle.of(context).style;
+    // Both edges pinned, so a layer is exactly as wide as the text beneath it
+    // (shifted by dx) and wraps on the same lines. With only `left` set it
+    // would get unbounded width and stay on one line while the title breaks.
     Widget layer(Color color, double dx) => Positioned(
       left: dx,
+      right: -dx,
       child: Text(
         widget.text,
         style: style.copyWith(color: color.withValues(alpha: 0.75), shadows: const []),

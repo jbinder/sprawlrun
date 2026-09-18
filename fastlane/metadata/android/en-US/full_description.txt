@@ -1,6 +1,6 @@
 Your running app should not be a spreadsheet. It should be chasing you.
 
-SPRAWL//RUN is a gamified running tracker wrapped around a ten-mission cyberpunk story. You are a courier in a rain-slick megacity. A job on the Ninsei strip turns into carrying something that will not stop transmitting, and ends forty floors up a corporate arcology with an intelligence that has spent nineteen years counting a heartbeat that was not there.
+SPRAWL//RUN is a gamified running tracker wrapped around two ten-mission cyberpunk campaigns. In Sprawl Prime you are a courier in a rain-slick megacity: a job on the Ninsei strip turns into carrying something that will not stop transmitting, and ends forty floors up a corporate arcology with an intelligence that has spent nineteen years counting a heartbeat that was not there. In Null Tide the southern districts are under water, something in a pump house has been apologising for nine seconds a night, and a salvage broker needs a piece of paper carried across the Drowned Mile before the sea comes home.
 
 YOUR MUSIC, INTERRUPTED
 
@@ -22,7 +22,7 @@ Distance, time, calories and cleared missions for the last week and month, with 
 
 Everything is yours to take with you. One tap exports the lot — profile, campaign progress, achievements, codex and every run with its GPS trace — as a plain JSON file you can read yourself. Import it back to restore a new phone outright, or merge it in alongside what is already there. No storage permission either way: export goes out through the share sheet, import comes in through the system document picker.
 
-TWENTY CODEX ENTRIES
+FORTY CODEX ENTRIES
 
 Black clinics. The Turing Registry. Simstim. Entries unlock only once a character has actually mentioned them, so the codex records what you have been told rather than letting you read ahead.
 

@@ -1,7 +1,8 @@
 # Mission pack format
 
 A mission pack is a single JSON file. The campaign that ships with the app —
-`assets/missions/sprawl_prime.json` — uses exactly the same format as anything
+`assets/missions/sprawl_prime.json`, and the second, `null_tide.json` — use
+exactly the same format as anything
 you add later, so it doubles as a worked example.
 
 ## Where packs are loaded from
@@ -53,8 +54,12 @@ listed in Settings.
 default — the runner picks their own target on the brief screen, and everything
 below scales to whatever they choose.
 
-Missions unlock strictly in `order`. Exactly one mission is playable at a time:
-the lowest-order one not yet completed.
+Missions unlock strictly in `order` *within their pack*. Exactly one mission per
+pack is playable at a time: the lowest-order one not yet completed. Packs are
+independent — clearing one never gates another — and the runner chooses which
+pack the ops screen shows from **All packs**. When the last mission of a pack is
+cleared, the debrief offers the next pack in load order that still has missions
+open.
 
 ### StoryBeat
 

@@ -157,6 +157,14 @@ class RunEngine extends ChangeNotifier {
   /// Lines already delivered this run, newest last — the HUD transcript.
   final List<StoryLine> transcript = [];
 
+  /// Every story moment this run, in order — persisted so the run can be read
+  /// back afterwards. References only; see [StoryEvent].
+  final List<StoryEvent> story = [];
+
+  void _log(StoryEventKind kind, {String? ref, bool? escaped}) {
+    story.add(StoryEvent(atSeconds: elapsedSeconds, kind: kind, ref: ref, escaped: escaped));
+  }
+
   final _events = StreamController<RunEvent>.broadcast();
   Stream<RunEvent> get events => _events.stream;
 
@@ -294,6 +302,7 @@ class RunEngine extends ChangeNotifier {
       chasesTotal: chasesTotal,
       chasesEvaded: chasesEvaded,
       beatsHeard: beatsHeard,
+      story: List.unmodifiable(story),
       trace: List.unmodifiable(trace),
     );
 
@@ -326,6 +335,7 @@ class RunEngine extends ChangeNotifier {
     trace.clear();
     codexUnlocked.clear();
     transcript.clear();
+    story.clear();
     _accumulated = Duration.zero;
     _segmentStart = null;
     _lastFix = null;
@@ -476,6 +486,7 @@ class RunEngine extends ChangeNotifier {
     if (goalReached) return;
     if (!goal.isMet(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters)) return;
     goalReached = true;
+    _log(StoryEventKind.goal);
     _events.add(const GoalReached());
   }
 
@@ -520,6 +531,7 @@ class RunEngine extends ChangeNotifier {
     _beatPlaying = true;
     currentBeat = beat;
     beatsHeard++;
+    _log(StoryEventKind.beat, ref: beat.id);
 
     var lines = beat.lines;
     // A recovery is something the runner did not have. An entry already in the
@@ -528,6 +540,7 @@ class RunEngine extends ChangeNotifier {
     final codexId = beat.unlocksCodex;
     if (codexId != null && !codexUnlocked.contains(codexId) && !profile.unlockedCodex.contains(codexId)) {
       codexUnlocked.add(codexId);
+      _log(StoryEventKind.codex, ref: codexId);
       _events.add(CodexUnlocked(codexId));
       // Announced inside the same transmission, after the character has
       // finished: the runner is not looking at the screen, so the voice is the
@@ -574,6 +587,7 @@ class RunEngine extends ChangeNotifier {
     );
     activeChase = chase;
     chasesTotal++;
+    _log(StoryEventKind.chaseStarted, ref: spec.pursuer);
     unawaited(narrator.sfx('chase_start'));
     _events.add(ChaseStarted(chase));
     notifyListeners();
@@ -589,6 +603,7 @@ class RunEngine extends ChangeNotifier {
     activeChase = null;
     if (escaped) chasesEvaded++;
 
+    _log(StoryEventKind.chaseEnded, ref: chase.spec.pursuer, escaped: escaped);
     unawaited(narrator.sfx(escaped ? 'chase_clear' : 'chase_failed'));
     _events.add(ChaseEnded(escaped, chase.spec.pursuer));
 

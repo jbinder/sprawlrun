@@ -42,6 +42,43 @@ class TracePoint {
   ];
 }
 
+/// What kind of thing happened at a moment in a run.
+enum StoryEventKind { beat, chaseStarted, chaseEnded, codex, goal }
+
+/// One moment of a run's story, so the run can be read back afterwards.
+///
+/// Stores references, not content: a beat's lines live in the mission pack and
+/// are looked up when the log is shown. That keeps the index small and means
+/// a pack edit is reflected in old runs too — but a run from a pack that has
+/// since been removed shows the moment without its words.
+class StoryEvent {
+  const StoryEvent({required this.atSeconds, required this.kind, this.ref, this.escaped});
+
+  /// Run time when it happened.
+  final double atSeconds;
+  final StoryEventKind kind;
+
+  /// Beat id, codex entry id, or the pursuer's name for a chase.
+  final String? ref;
+
+  /// For [StoryEventKind.chaseEnded] only.
+  final bool? escaped;
+
+  Map<String, dynamic> toJson() => {
+    't': atSeconds,
+    'k': kind.name,
+    if (ref != null) 'ref': ref,
+    if (escaped != null) 'ok': escaped,
+  };
+
+  factory StoryEvent.fromJson(Map<String, dynamic> json) => StoryEvent(
+    atSeconds: (json['t'] as num?)?.toDouble() ?? 0,
+    kind: StoryEventKind.values.firstWhere((k) => k.name == json['k'], orElse: () => StoryEventKind.beat),
+    ref: json['ref'] as String?,
+    escaped: json['ok'] as bool?,
+  );
+}
+
 /// The permanent record of one completed (or abandoned) run.
 class RunRecord {
   const RunRecord({
@@ -60,6 +97,7 @@ class RunRecord {
     this.chasesTotal = 0,
     this.chasesEvaded = 0,
     this.beatsHeard = 0,
+    this.story = const [],
     this.trace = const [],
   });
 
@@ -86,6 +124,11 @@ class RunRecord {
   final int chasesTotal;
   final int chasesEvaded;
   final int beatsHeard;
+
+  /// Everything that happened, in order. Empty for runs recorded before this
+  /// existed, and for free runs, which have no story.
+  final List<StoryEvent> story;
+
   final List<TracePoint> trace;
 
   bool get isMission => missionId != null;
@@ -120,6 +163,7 @@ class RunRecord {
     chasesTotal: chasesTotal,
     chasesEvaded: chasesEvaded,
     beatsHeard: beatsHeard,
+    story: story,
     trace: trace ?? this.trace,
   );
 
@@ -139,6 +183,7 @@ class RunRecord {
     'chasesTotal': chasesTotal,
     'chasesEvaded': chasesEvaded,
     'beatsHeard': beatsHeard,
+    if (story.isNotEmpty) 'story': story.map((e) => e.toJson()).toList(),
     'trace': trace.map((p) => p.toJson()).toList(),
   };
 
@@ -158,6 +203,9 @@ class RunRecord {
     chasesTotal: (json['chasesTotal'] as num?)?.toInt() ?? 0,
     chasesEvaded: (json['chasesEvaded'] as num?)?.toInt() ?? 0,
     beatsHeard: (json['beatsHeard'] as num?)?.toInt() ?? 0,
+    story: (json['story'] as List? ?? [])
+        .map((e) => StoryEvent.fromJson(Map<String, dynamic>.from(e as Map)))
+        .toList(),
     trace: (json['trace'] as List? ?? []).map((e) => TracePoint.fromJson(e as List)).toList(),
   );
 }

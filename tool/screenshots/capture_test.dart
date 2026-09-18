@@ -28,6 +28,7 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
+import 'package:sprawl_run/screens/run_detail_screen.dart';
 import 'package:sprawl_run/screens/run_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
@@ -137,6 +138,32 @@ void main() {
     // Let the description finish typing.
     await tester.pump(const Duration(milliseconds: 2500));
     await _shoot(tester, 'unlock');
+  });
+
+  testWidgets('run story', (tester) async {
+    final state = await _seed(tester);
+    final mission = state.missionById('sp01')!;
+    // A log shaped like a real playthrough: the opening two beats with their
+    // recovery, a pursuit that was shaken, and the target falling at the end.
+    final beats = mission.beats;
+    final record = run(at: DateTime(2026, 7, 6, 19, 40), meters: 3100, seconds: 900, missionId: 'sp01').copyWith();
+    final story = <StoryEvent>[
+      StoryEvent(atSeconds: 2, kind: StoryEventKind.beat, ref: beats[0].id),
+      if (beats[0].unlocksCodex != null) StoryEvent(atSeconds: 3, kind: StoryEventKind.codex, ref: beats[0].unlocksCodex),
+      StoryEvent(atSeconds: 131, kind: StoryEventKind.beat, ref: beats[1].id),
+      if (beats[1].unlocksCodex != null) StoryEvent(atSeconds: 132, kind: StoryEventKind.codex, ref: beats[1].unlocksCodex),
+      const StoryEvent(atSeconds: 428, kind: StoryEventKind.chaseStarted, ref: 'NINSEI DRONE'),
+      const StoryEvent(atSeconds: 518, kind: StoryEventKind.chaseEnded, ref: 'NINSEI DRONE', escaped: true),
+      const StoryEvent(atSeconds: 900, kind: StoryEventKind.goal),
+    ];
+    final withStory = RunRecord.fromJson(record.toJson()..['story'] = story.map((e) => e.toJson()).toList());
+
+    await _pump(tester, RunDetailScreen(run: withStory), state);
+    await tester.pump(const Duration(milliseconds: 400));
+    // Scroll the story into view; the stats and route sit above it.
+    await tester.drag(find.byType(ListView), const Offset(0, -900));
+    await tester.pump(const Duration(milliseconds: 400));
+    await _shoot(tester, 'run-story');
   });
 
   testWidgets('stats', (tester) async {

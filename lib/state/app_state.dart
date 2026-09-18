@@ -87,6 +87,17 @@ class AppState extends ChangeNotifier {
     return out;
   }
 
+  /// Looks a mission up across every loaded pack — for reading an old run's
+  /// story back, where the mission may since have moved or gone.
+  Mission? missionById(String id) {
+    for (final pack in packs) {
+      for (final mission in pack.missions) {
+        if (mission.id == id) return mission;
+      }
+    }
+    return null;
+  }
+
   /// Looks a codex entry up across every loaded pack.
   CodexEntry? codexEntry(String id) {
     for (final pack in packs) {

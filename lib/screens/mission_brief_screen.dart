@@ -137,6 +137,10 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       const SizedBox(height: 24),
                     ],
 
+                    if (mission != null && mission.codex.isNotEmpty) ...[
+                      _IntelSection(mission: mission, recovered: state.profile.unlockedCodex),
+                      const SizedBox(height: 18),
+                    ],
                     const SectionHeader('SET YOUR TARGET'),
                     _GoalPicker(
                       goal: _goal,
@@ -409,6 +413,60 @@ class _PresetChip extends StatelessWidget {
           style: CyType.mono(size: 11, color: selected ? Cy.v0id : Cy.inkDim),
         ),
       ),
+    );
+  }
+}
+
+/// What this mission has to tell you, and how much of it you have heard.
+///
+/// Recovered entries show by name. The rest show only as encrypted — a count
+/// of what is left is motivation; a title would be a spoiler.
+class _IntelSection extends StatelessWidget {
+  const _IntelSection({required this.mission, required this.recovered});
+
+  final Mission mission;
+  final Set<String> recovered;
+
+  @override
+  Widget build(BuildContext context) {
+    final have = mission.codex.where((e) => recovered.contains(e.id)).length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader('INTEL  $have / ${mission.codex.length}', accent: Cy.cyan),
+        for (final entry in mission.codex)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: recovered.contains(entry.id)
+                ? NeonPanel(
+                    accent: Cy.cyan,
+                    cut: 8,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.memory_outlined, size: 16, color: Cy.cyan),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(entry.title, style: CyType.body(size: 14, weight: FontWeight.w700)),
+                        ),
+                        CyberTag(entry.category, color: Cy.cyan),
+                      ],
+                    ),
+                  )
+                : NeonPanel(
+                    accent: Cy.rule,
+                    cut: 8,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.lock_outline, size: 16, color: Cy.ghost),
+                        const SizedBox(width: 10),
+                        Text('▮▮▮▮▮▮  ENCRYPTED', style: CyType.mono(size: 12, color: Cy.ghost, letterSpacing: 1.4)),
+                      ],
+                    ),
+                  ),
+          ),
+      ],
     );
   }
 }

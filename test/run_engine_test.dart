@@ -555,4 +555,62 @@ void main() {
       expect(h.location.stopped, isTrue);
     });
   });
+
+  test('the record keeps the story in order, with when each moment happened', () {
+    fakeAsync((fake) {
+      const entry = CodexEntry(id: 'cdx_x', title: 'X', category: 'K', body: '');
+      final pursuit = ChaseSpec(
+        duration: const Duration(seconds: 30),
+        paceFactor: 1.2,
+        pursuer: 'TEST DRONE',
+        escapedLines: const [],
+        caughtLines: const [],
+      );
+      final h = Harness(
+        fake,
+        mission: missionWith(
+          [beat('b0', fraction: 0.0, codex: 'cdx_x'), beat('b1', seconds: 40, chase: pursuit)],
+          codex: [entry],
+        ),
+        goal: RunGoal.seconds(100),
+        profile: const Profile(chasesEnabled: true),
+      )..begin();
+
+      h.steady(110, 3.0);
+      final record = h.finish();
+
+      expect(record.story.map((e) => e.kind), [
+        StoryEventKind.beat,
+        StoryEventKind.codex,
+        StoryEventKind.beat,
+        StoryEventKind.chaseStarted,
+        StoryEventKind.chaseEnded,
+        StoryEventKind.goal,
+      ]);
+      expect(record.story[0].ref, 'b0');
+      expect(record.story[1].ref, 'cdx_x');
+      expect(record.story[3].ref, 'TEST DRONE');
+      expect(record.story[4].escaped, isNotNull);
+      expect(record.story.map((e) => e.atSeconds), isNonDecreasing_);
+      expect(record.story.last.atSeconds, closeTo(100, 2), reason: 'the target fell at the 100 s mark');
+
+      // Round-trips through JSON intact, and an old record without one is
+      // simply a run with no story.
+      final again = RunRecord.fromJson(record.toJson());
+      expect(again.story.length, record.story.length);
+      expect(again.story[4].escaped, record.story[4].escaped);
+      final json = record.toJson()..remove('story');
+      expect(RunRecord.fromJson(json).story, isEmpty);
+    });
+  });
 }
+
+/// Non-decreasing sequence matcher — run time never goes backwards.
+final Matcher isNonDecreasing_ = predicate<Iterable<double>>((xs) {
+  double? prev;
+  for (final x in xs) {
+    if (prev != null && x < prev) return false;
+    prev = x;
+  }
+  return true;
+}, 'is non-decreasing');

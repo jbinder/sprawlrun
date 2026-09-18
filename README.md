@@ -202,7 +202,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 176 tests
+flutter test                   # 180 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

@@ -87,6 +87,19 @@ void main() {
     expect(find.text('2/10'), findsOneWidget);
   });
 
+  testWidgets('the briefing lists the mission\'s intel: recovered by name, the rest encrypted', (tester) async {
+    await pumpApp(tester, profile: const Profile(unlockedCodex: {'cdx_courier'}));
+
+    await tester.tap(find.text('OPEN BRIEFING'));
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
+
+    expect(find.text('INTEL  1 / 2'), findsOneWidget);
+    expect(find.text('Meat Courier'), findsOneWidget, reason: 'recovered, so named');
+    expect(find.text('The Ninsei Strip'), findsNothing, reason: 'not yet heard — a title would be a spoiler');
+    expect(find.textContaining('ENCRYPTED'), findsOneWidget);
+  });
+
   testWidgets('a locked mission cannot be opened', (tester) async {
     await pumpApp(tester);
 

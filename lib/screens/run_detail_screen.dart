@@ -10,6 +10,7 @@ import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/panels.dart';
 import '../widgets/route_trace.dart';
+import '../widgets/story_log.dart';
 
 /// One stored run, with its GPS trace loaded on demand.
 class RunDetailScreen extends StatefulWidget {
@@ -198,6 +199,29 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                       )
                     else
                       RouteTrace(trace: _trace!, accent: accent, height: 240),
+
+                    if (run.missionId != null) ...[
+                      const SizedBox(height: 18),
+                      const SectionHeader('STORY', accent: Cy.cyan),
+                      if (run.story.isEmpty)
+                        NeonPanel(
+                          accent: Cy.rule,
+                          child: Text(
+                            'No story log for this run — it was recorded before the app kept one.',
+                            style: CyType.body(size: 14, color: Cy.inkDim, height: 1.35),
+                          ),
+                        )
+                      else
+                        NeonPanel(
+                          accent: Cy.rule,
+                          padding: const EdgeInsets.fromLTRB(12, 18, 16, 18),
+                          child: StoryLog(
+                            story: run.story,
+                            mission: context.read<AppState>().missionById(run.missionId!),
+                            codexTitle: (id) => context.read<AppState>().codexEntry(id)?.title,
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ),

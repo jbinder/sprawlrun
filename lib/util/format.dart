@@ -78,6 +78,20 @@ abstract final class Fmt {
 
   static String weekday(DateTime d) => _weekdays[d.weekday - 1];
 
+  static String monthYear(DateTime d) => '${_months[d.month - 1]} ${d.year}';
+
+  /// `15 – 21 SEP 2026`, or `29 SEP – 05 OCT 2026` when the span crosses a
+  /// month. Both ends are inclusive.
+  static String dateRange(DateTime from, DateTime to) {
+    final year = to.year;
+    if (from.year == to.year && from.month == to.month) {
+      return '${_two(from.day)} – ${_two(to.day)} ${_months[to.month - 1]} $year';
+    }
+    return '${date(from)} – ${date(to)} $year';
+  }
+
+  static String _two(int n) => n.toString().padLeft(2, '0');
+
   static String weekdayInitial(DateTime d) => _weekdays[d.weekday - 1][0];
 
   /// `3d 04h` — used for "this week closes in".

@@ -124,15 +124,19 @@ class _Greeting extends StatelessWidget {
   /// should sound like it knows what time it is.
   String get _line {
     final hour = DateTime.now().hour;
-    if (hour < 5)
+    if (hour < 5) {
       return 'The city is at its quietest. Nobody is watching the streets at this hour.';
-    if (hour < 8)
+    }
+    if (hour < 8) {
       return 'Grey light on wet concrete. Best hours to move unnoticed.';
+    }
     if (hour < 12) return 'Day shift is on the grid. Blend in.';
-    if (hour < 17)
+    if (hour < 17) {
       return 'Heat, noise, and forty thousand people between you and anyone tracking you.';
-    if (hour < 21)
+    }
+    if (hour < 21) {
       return 'The signs are coming on. This is when the work starts.';
+    }
     return 'Rain on the strip. Good conditions. Nobody looks up when it rains.';
   }
 

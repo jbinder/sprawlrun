@@ -3,6 +3,7 @@ import 'dart:math';
 import '../models/profile.dart';
 import '../models/run_record.dart';
 import '../models/stats.dart';
+import '../util/format.dart';
 
 /// Every derived number in the app is computed here, from the run log alone.
 ///
@@ -19,6 +20,12 @@ abstract final class StatsService {
   static DateTime monthStart(DateTime d) => DateTime(d.year, d.month);
 
   static DateTime dayStart(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  /// [d] shifted by whole calendar days. Goes through the constructor rather
+  /// than `Duration` so a DST change never lands the result at 23:00.
+  static DateTime addDays(DateTime d, int days) => DateTime(d.year, d.month, d.day + days);
+
+  static DateTime addMonths(DateTime d, int months) => DateTime(d.year, d.month + months);
 
   /// Aggregates every scoring run in `[from, to)`.
   static PeriodStats period(
@@ -62,6 +69,30 @@ abstract final class StatsService {
   static PeriodStats lastDays(List<RunRecord> runs, int days, {required String label, DateTime? now}) {
     final end = _nextDay(dayStart(now ?? DateTime.now()));
     return period(runs, label: label, from: end.subtract(Duration(days: days)), to: end);
+  }
+
+  /// The calendar week starting on [start], a Monday from [weekStart].
+  static PeriodStats calendarWeek(List<RunRecord> runs, DateTime start, {required String label}) =>
+      period(runs, label: label, from: start, to: addDays(start, 7));
+
+  /// The calendar month starting on [start], from [monthStart].
+  static PeriodStats calendarMonth(List<RunRecord> runs, DateTime start, {required String label}) =>
+      period(runs, label: label, from: start, to: addMonths(start, 1));
+
+  /// One [PeriodStats] per calendar month from the first scoring run up to and
+  /// including the month of [now], oldest first. Months without a run are
+  /// present and empty, so the list is a gap-free timeline.
+  static List<PeriodStats> monthlyHistory(List<RunRecord> runs, {DateTime? now}) {
+    final scoring = runs.where((r) => r.countsForStats);
+    if (scoring.isEmpty) return const [];
+    final first = scoring.map((r) => r.startedAt).reduce((a, b) => a.isBefore(b) ? a : b);
+    final last = monthStart(now ?? DateTime.now());
+
+    final out = <PeriodStats>[];
+    for (var month = monthStart(first); !month.isAfter(last); month = addMonths(month, 1)) {
+      out.add(calendarMonth(runs, month, label: Fmt.monthYear(month)));
+    }
+    return out;
   }
 
   static LifetimeStats lifetime(List<RunRecord> runs, StreakGoal goal, {DateTime? now}) {
@@ -138,7 +169,7 @@ abstract final class StatsService {
 
   // -- internals ------------------------------------------------------------
 
-  static DateTime _nextDay(DateTime d) => DateTime(d.year, d.month, d.day + 1);
+  static DateTime _nextDay(DateTime d) => addDays(d, 1);
 
   static bool _isNight(DateTime d) => d.hour >= 22 || d.hour < 5;
   static bool _isDawn(DateTime d) => d.hour >= 4 && d.hour < 7;

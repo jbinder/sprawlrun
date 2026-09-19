@@ -64,6 +64,55 @@ void main() {
     });
   });
 
+  group('calendar periods', () {
+    test('a calendar week runs Monday to Sunday and shifts by whole days', () {
+      final runs = [
+        run(at: DateTime(2026, 7, 20, 6), meters: 1000), // Monday, first minute of the week
+        run(at: DateTime(2026, 7, 26, 23, 30), meters: 2000), // Sunday night, still this week
+        run(at: DateTime(2026, 7, 27, 0, 30), meters: 4000), // next Monday
+      ];
+      final week = StatsService.calendarWeek(runs, DateTime(2026, 7, 20), label: 'W');
+      expect(week.runs, 2);
+      expect(week.distanceMeters, 3000);
+      expect(week.perDay.length, 7);
+      expect(week.perDay.first.day, DateTime(2026, 7, 20));
+      expect(week.perDay.last.day, DateTime(2026, 7, 26));
+    });
+
+    test('a calendar month has exactly as many buckets as days', () {
+      final feb = StatsService.calendarMonth([], DateTime(2028, 2), label: 'M');
+      expect(feb.perDay.length, 29, reason: '2028 is a leap year');
+      final jul = StatsService.calendarMonth([run(at: wednesday)], DateTime(2026, 7), label: 'M');
+      expect(jul.perDay.length, 31);
+      expect(jul.runs, 1);
+    });
+
+    test('addDays and addMonths land on midnight across DST and year ends', () {
+      expect(StatsService.addDays(DateTime(2026, 3, 28), 7), DateTime(2026, 4, 4));
+      expect(StatsService.addDays(DateTime(2026, 10, 24), 7), DateTime(2026, 10, 31));
+      expect(StatsService.addDays(DateTime(2026, 12, 29), 7), DateTime(2027, 1, 5));
+      expect(StatsService.addMonths(DateTime(2026, 12), 1), DateTime(2027, 1));
+      expect(StatsService.addMonths(DateTime(2026, 1), -1), DateTime(2025, 12));
+    });
+
+    test('monthly history spans first run to now with no gaps, oldest first', () {
+      final runs = [
+        run(at: DateTime(2026, 3, 14), meters: 5000),
+        run(at: DateTime(2026, 7, 2), meters: 3000),
+        // Discarded runs do not stretch the timeline backwards.
+        run(at: DateTime(2025, 1, 1), meters: 10, seconds: 5, outcome: RunOutcome.discarded),
+      ];
+      final months = StatsService.monthlyHistory(runs, now: wednesday);
+      expect(months.map((m) => m.label), ['MAR 2026', 'APR 2026', 'MAY 2026', 'JUN 2026', 'JUL 2026']);
+      expect(months.map((m) => m.runs), [1, 0, 0, 0, 1]);
+      expect(months.first.distanceMeters, 5000);
+    });
+
+    test('monthly history is empty without a scoring run', () {
+      expect(StatsService.monthlyHistory([], now: wednesday), isEmpty);
+    });
+  });
+
   group('streaks', () {
     const minutesGoal = StreakGoal(target: 30);
 

@@ -42,7 +42,6 @@ class AppState extends ChangeNotifier {
   LifetimeStats lifetime = LifetimeStats.empty;
   StreakStatus streak = StreakStatus.empty;
   PeriodStats week = PeriodStats.empty;
-  PeriodStats month = PeriodStats.empty;
 
   bool loading = true;
 
@@ -306,6 +305,5 @@ class AppState extends ChangeNotifier {
     lifetime = StatsService.lifetime(runLog, profile.streakGoal);
     streak = StatsService.streak(runLog, profile.streakGoal);
     week = StatsService.lastDays(runLog, 7, label: 'LAST 7 DAYS');
-    month = StatsService.lastDays(runLog, 30, label: 'LAST 30 DAYS');
   }
 }

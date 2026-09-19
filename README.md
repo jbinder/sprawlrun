@@ -114,13 +114,18 @@ still counts, and your handler will have something to say about it.
 
 <table>
 <tr>
-<td width="50%"><img src="docs/screenshots/stats.png" alt="Stats"></td>
-<td width="50%"><img src="docs/screenshots/achievements.png" alt="Achievements"></td>
+<td width="33%"><img src="docs/screenshots/stats.png" alt="Stats"></td>
+<td width="33%"><img src="docs/screenshots/history.png" alt="History"></td>
+<td width="33%"><img src="docs/screenshots/achievements.png" alt="Achievements"></td>
 </tr>
 <tr>
-<td>Distance, time, calories and cleared missions for the last week and month,
-with per-day bars and your full run log. Calories come from the ACSM metabolic
-equations and your body mass — no invented multipliers.</td>
+<td>Distance, time, calories and cleared missions for this week and this month,
+with per-day bars and your full run log. Swipe either card to step back through
+earlier weeks and months, all the way to your first run. Calories come from the
+ACSM metabolic equations and your body mass — no invented multipliers.</td>
+<td>The long view: distance per month since day one, and every month as a dot
+calendar lit by how far you ran. Tap a month or a day to see the runs behind
+it.</td>
 <td><b>46 achievements</b> across six categories and four tiers. Progress is
 recomputed from your run log every time, so it can never drift out of step with
 what you actually did.</td>
@@ -252,7 +257,7 @@ lib/
   data/         JSON repositories (runs, profile, mission packs) + backup
   services/     run_engine · narrator · location · stats · energy · achievements
   state/        AppState — the single source of truth the UI reads
-  screens/      dashboard · brief · run HUD · summary · stats · wall · codex · settings
+  screens/      dashboard · brief · run HUD · summary · stats · history · wall · codex · settings
   widgets/      backdrop · panels · glitch text · rings & bars · route trace
   theme/        palette and typography
 tool/           SFX, icon and screenshot generators

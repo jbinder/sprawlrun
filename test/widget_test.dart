@@ -11,8 +11,11 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/screens/mission_debrief_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
+import 'package:sprawl_run/services/stats_service.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
+import 'package:sprawl_run/widgets/period_card.dart';
+import 'package:sprawl_run/util/format.dart';
 
 import 'support/fakes.dart';
 
@@ -63,6 +66,16 @@ Future<AppState> pumpApp(WidgetTester tester, {Profile? profile}) async {
   // explicit frames is enough for everything to lay out.
   await tester.pump(const Duration(milliseconds: 100));
   return state;
+}
+
+/// Lets a crossfade or a route transition finish. The animation starts on the
+/// frame after the tap, and the switcher drops its outgoing child one frame
+/// after the animation ends, so this needs three frames rather than
+/// `pumpAndSettle` — which never returns while the backdrop grid is animating.
+Future<void> settle(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+  await tester.pump();
 }
 
 void main() {
@@ -210,10 +223,79 @@ void main() {
     await tester.tap(find.text('STATS'));
     await tester.pump(const Duration(milliseconds: 200));
 
-    expect(find.text('LAST 7 DAYS'), findsOneWidget);
-    expect(find.text('LAST 30 DAYS'), findsOneWidget);
+    expect(find.text('THIS WEEK'), findsOneWidget);
+    expect(find.text('THIS MONTH'), findsOneWidget);
+    expect(find.text('HISTORY'), findsOneWidget);
     expect(find.text('LIFETIME'), findsOneWidget);
     expect(find.text('5.00'), findsWidgets, reason: 'distance in km');
+  });
+
+  testWidgets('the week card pages back to the first run and no further', (tester) async {
+    final state = await pumpApp(tester);
+    final now = DateTime.now();
+    // Friday of last week, whatever today is.
+    final lastWeek = StatsService.weekStart(now).subtract(const Duration(days: 3, hours: -9));
+    await tester.runAsync(() async {
+      await state.completeRun(run(at: now, meters: 5000));
+      await state.completeRun(run(at: lastWeek, meters: 3000));
+    });
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('STATS'));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    Finder inWeekCard(Finder f) => find.descendant(
+      of: find.ancestor(of: find.textContaining('WEEK'), matching: find.byType(PeriodCard)).first,
+      matching: f,
+    );
+
+    await tester.tap(inWeekCard(find.byTooltip('Earlier')));
+    await settle(tester);
+    expect(find.text('LAST WEEK'), findsOneWidget);
+    expect(find.text('3.00'), findsWidgets, reason: 'the older run shows on its own week');
+    expect(find.text('THIS WEEK'), findsNothing, reason: 'the outgoing card has been dropped');
+
+    // The oldest run is in this week, so the chevron is disabled and a swipe
+    // to the left goes nowhere.
+    await tester.tap(inWeekCard(find.byTooltip('Earlier')));
+    await settle(tester);
+    await tester.fling(find.text('LAST WEEK'), const Offset(-300, 0), 1000);
+    await settle(tester);
+    expect(find.text('LAST WEEK'), findsOneWidget);
+    expect(find.text('2 WEEKS AGO'), findsNothing);
+
+    // A swipe to the right comes forward again.
+    await tester.fling(find.text('LAST WEEK'), const Offset(300, 0), 1000);
+    await settle(tester);
+    expect(find.text('THIS WEEK'), findsOneWidget);
+    expect(find.text('LAST WEEK'), findsNothing);
+  });
+
+  testWidgets('the history screen lists every month and opens one in detail', (tester) async {
+    final state = await pumpApp(tester);
+    final now = DateTime.now();
+    final threeMonthsAgo = DateTime(now.year, now.month - 3, 10, 9);
+    await tester.runAsync(() async {
+      await state.completeRun(run(at: now, meters: 5000));
+      await state.completeRun(run(at: threeMonthsAgo, meters: 7000));
+    });
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('STATS'));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    await tester.tap(find.text('FULL HISTORY'));
+    await settle(tester);
+
+    expect(find.text('DISTANCE BY MONTH'), findsOneWidget);
+    expect(find.text('BY MONTH'), findsOneWidget);
+    expect(find.text(Fmt.monthYear(now)), findsWidgets);
+    expect(find.text(Fmt.monthYear(threeMonthsAgo)), findsWidgets);
+    expect(find.text('NO RUNS'), findsNWidgets(2), reason: 'the two empty months in between are still listed');
+
+    await tester.tap(find.text(Fmt.monthYear(threeMonthsAgo)).last);
+    await settle(tester);
+    expect(find.text('RUNS'), findsOneWidget);
+    expect(find.text('7.00'), findsWidgets);
+    expect(find.text('FREE RUN'), findsOneWidget, reason: 'exactly the one run from that month');
   });
 
   testWidgets('the streak card reflects the runner\'s own weekly goal', (tester) async {

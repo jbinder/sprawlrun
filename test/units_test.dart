@@ -113,6 +113,13 @@ void main() {
       expect(Fmt.grouped(12345), '12 345');
     });
 
+    test('date ranges collapse the month when both ends share it', () {
+      expect(Fmt.dateRange(DateTime(2026, 9, 15), DateTime(2026, 9, 21)), '15 – 21 SEP 2026');
+      expect(Fmt.dateRange(DateTime(2026, 9, 29), DateTime(2026, 10, 5)), '29 SEP – 05 OCT 2026');
+      expect(Fmt.dateRange(DateTime(2026, 12, 29), DateTime(2027, 1, 4)), '29 DEC – 04 JAN 2027');
+      expect(Fmt.monthYear(DateTime(2026, 7)), 'JUL 2026');
+    });
+
     test('short duration reads naturally either side of an hour', () {
       expect(Fmt.shortDuration(1800), '30m');
       expect(Fmt.shortDuration(4320), '1h 12m');

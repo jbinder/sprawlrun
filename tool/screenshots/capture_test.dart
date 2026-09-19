@@ -27,6 +27,7 @@ import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
 import 'package:sprawl_run/models/run_record.dart';
+import 'package:sprawl_run/screens/history_screen.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/screens/missions_screen.dart';
 import 'package:sprawl_run/screens/run_detail_screen.dart';
@@ -181,6 +182,13 @@ void main() {
     await tester.tap(find.text('STATS'));
     await tester.pump(const Duration(milliseconds: 300));
     await _shoot(tester, 'stats');
+  });
+
+  testWidgets('history', (tester) async {
+    final state = await _seed(tester);
+    await _pump(tester, const HistoryScreen(), state);
+    await tester.pump(const Duration(milliseconds: 300));
+    await _shoot(tester, 'history');
   });
 
   testWidgets('achievements', (tester) async {

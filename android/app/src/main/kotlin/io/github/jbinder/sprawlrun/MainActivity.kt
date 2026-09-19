@@ -9,11 +9,13 @@ import android.os.Build
 import android.view.KeyEvent
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Two platform additions the plugins do not cover: repairing a failed audio
- * focus handoff, and making the mission notification actually visible.
+ * Three platform additions the plugins do not cover: repairing a failed audio
+ * focus handoff, making the mission notification actually visible, and
+ * reading the GPS provider directly (see [GpsStream]).
  *
  * Android's transient audio focus is a loan: the music app pauses when we take
  * it and is supposed to resume when we give it back. Several popular players
@@ -26,6 +28,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     private val audioChannelName = "io.github.jbinder.sprawlrun/audio"
     private val notificationChannelName = "io.github.jbinder.sprawlrun/notifications"
+    private val gpsChannelName = "io.github.jbinder.sprawlrun/gps"
 
     /**
      * Hard-coded in geolocator's GeolocatorLocationService. Matching it is the
@@ -44,6 +47,9 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
 
         ensureMissionChannel()
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, gpsChannelName)
+            .setStreamHandler(GpsStream(this))
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, audioChannelName)
             .setMethodCallHandler { call, result ->

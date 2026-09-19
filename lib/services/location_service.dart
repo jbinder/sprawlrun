@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'geo.dart';
@@ -14,14 +15,20 @@ abstract class LocationSource {
   Future<void> stop();
 }
 
-/// Real GPS, via geolocator.
+/// Real GPS. geolocator answers whether location is usable at all (service on,
+/// permission granted — and asks for it); the fixes themselves come from the
+/// app's own channel to the GPS provider.
 class GpsLocationSource implements LocationSource {
-  StreamSubscription<Position>? _sub;
+  static const _gps = EventChannel('io.github.jbinder.sprawlrun/gps');
+
+  StreamSubscription<Object?>? _sub;
   StreamController<GeoFix>? _controller;
 
   @override
   Future<LocationReadiness> prepare() async {
-    if (!await Geolocator.isLocationServiceEnabled()) return LocationReadiness.serviceDisabled;
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      return LocationReadiness.serviceDisabled;
+    }
 
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -40,42 +47,39 @@ class GpsLocationSource implements LocationSource {
     final controller = StreamController<GeoFix>.broadcast(onCancel: stop);
     _controller = controller;
 
-    // Fixes keep arriving with the screen off because MissionService holds the
-    // app in the foreground with the `location` service type. Without some
+    // Fixes come from the app's own GPS-provider channel, not from
+    // geolocator's stream. geolocator's LocationManager client on Android 12+
+    // prefers the ROM's "fused" provider whenever one is registered, and
+    // `forceLocationManager` does not change that — it only avoids Play
+    // Services. On a de-Googled device the fused provider is whatever the
+    // vendor shipped; on the Xperia this was found on, it accepts the request
+    // and never delivers a fix, so the run watched a healthy, empty stream for
+    // half an hour. Asking the GPS provider by name is what "use AOSP's
+    // LocationManager" was always meant to mean. Google Play Services stays
+    // out of the build either way — see the `com.google.android.gms`
+    // exclusion in android/app/build.gradle.kts.
+    //
+    // Fixes keep arriving with the screen off because MissionService holds
+    // the app in the foreground with the `location` service type. Without some
     // foreground service Android throttles the app to a handful of fixes an
     // hour and the recorded distance quietly collapses.
-    final settings = AndroidSettings(
-      accuracy: LocationAccuracy.best,
-      // Use AOSP's LocationManager rather than the Play Services fused
-      // provider. Google Play Services is proprietary, which would bar the app
-      // from F-Droid and make it dependent on a Google component on de-Googled
-      // ROMs. The build also strips the library outright — see the
-      // `com.google.android.gms` exclusion in android/app/build.gradle.kts.
-      //
-      // The cost is a slightly slower first fix and marginally worse battery
-      // use, because the fused provider blends in sensors and cell data. For a
-      // run that lasts half an hour with the GPS on regardless, that is not a
-      // trade worth making.
-      forceLocationManager: true,
-      distanceFilter: 0,
-      intervalDuration: const Duration(seconds: 1),
-      // No foregroundNotificationConfig on purpose. MissionService is the
-      // app's foreground service for every run and owns the notification, so
-      // it can count the goal down — geolocator's text is fixed for the life
-      // of the stream. Two configs would post two notices for one run.
-    );
-
-    _sub = Geolocator.getPositionStream(locationSettings: settings).listen(
-      (p) => controller.add(
-        GeoFix(
-          lat: p.latitude,
-          lon: p.longitude,
-          timestamp: p.timestamp,
-          accuracy: p.accuracy,
-          speed: p.speed,
-          speedAccuracy: p.speedAccuracy,
-        ),
-      ),
+    _sub = _gps.receiveBroadcastStream().listen(
+      (raw) {
+        final m = Map<Object?, Object?>.from(raw as Map);
+        controller.add(
+          GeoFix(
+            lat: m['lat']! as double,
+            lon: m['lon']! as double,
+            timestamp: DateTime.fromMillisecondsSinceEpoch(
+              m['time']! as int,
+              isUtc: true,
+            ),
+            accuracy: m['accuracy']! as double,
+            speed: m['speed']! as double,
+            speedAccuracy: m['speedAccuracy']! as double,
+          ),
+        );
+      },
       onError: controller.addError,
       cancelOnError: false,
     );

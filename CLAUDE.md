@@ -138,13 +138,22 @@ only third-party binaries in the repo are the three OFL fonts.
 - `android/build.gradle.kts` raises every plugin module to the app's `compileSdk`.
   Several plugins still pin `android-35`; without this the machine needs every
   historical SDK platform installed.
-- `android/app/build.gradle.kts` excludes the `com.google.android.gms` group, and
-  `location_service.dart` sets `forceLocationManager: true`. That pair is what
-  keeps the app free of Play Services. `proguard-rules.pro` exists only to
-  `-dontwarn` the references this leaves dangling. Removing any one of the three
-  silently reintroduces a proprietary dependency — verify with a dexdump for
-  classes under `com/google` before believing otherwise. Re-run that check after
-  adding any plugin, not just after touching these three.
+- `android/app/build.gradle.kts` excludes the `com.google.android.gms` group,
+  and position fixes come from the app's own `GpsStream.kt`, which asks the
+  `LocationManager` for the GPS provider by name. That pair is what keeps the
+  app free of Play Services. `proguard-rules.pro` exists only to `-dontwarn`
+  the references this leaves dangling. Removing any one of the three silently
+  reintroduces a proprietary dependency — verify with a dexdump for classes
+  under `com/google` before believing otherwise. Re-run that check after adding
+  any plugin, not just after touching these three.
+- **Do not go back to geolocator's position stream.** geolocator is kept only
+  for the permission and location-service checks. Its `LocationManager` client
+  prefers the ROM's *fused* provider on Android 12+ regardless of
+  `forceLocationManager`, and on a de-Googled device that provider is whatever
+  the vendor shipped: on one Xperia it accepted requests and never delivered a
+  fix, so a run watched a healthy, empty stream. `appops get <pkg>` tells the
+  two apart — a request that reached the GNSS chip shows
+  `MONITOR_HIGH_POWER_LOCATION`, a fused one only `MONITOR_LOCATION`.
 
 ## Untested on real hardware
 

@@ -42,9 +42,12 @@ class RunRepository {
   }
 
   Future<void> save(RunRecord record) async {
+    // Sorted rather than inserted at the top: the log is newest-first
+    // everywhere else, and a backdated record must not break that.
     final runs = List<RunRecord>.from(await loadAll())
       ..removeWhere((r) => r.id == record.id)
-      ..insert(0, record);
+      ..add(record)
+      ..sort((a, b) => b.startedAt.compareTo(a.startedAt));
     _cache = runs;
     await _writeIndex(runs);
     if (record.trace.isNotEmpty) {

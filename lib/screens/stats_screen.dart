@@ -59,13 +59,114 @@ class StatsScreen extends StatelessWidget {
           'RUN LOG',
           trailing: Text('${state.runLog.length} entries', style: CyType.mono(size: 10, color: Cy.ghost)),
         ),
-        for (final run in state.runLog.take(40)) ...[RunRow(run: run, units: units), const SizedBox(height: 8)],
-        if (state.runLog.length > 40)
+        _RunLog(runs: state.runLog, units: units),
+      ],
+    );
+  }
+}
+
+/// The most recent runs in full, then everything older folded into one
+/// collapsible group per month — so a year of running is a dozen lines, not
+/// a wall.
+class _RunLog extends StatefulWidget {
+  const _RunLog({required this.runs, required this.units});
+
+  /// Newest first, as the repository returns it.
+  final List<RunRecord> runs;
+  final UnitSystem units;
+
+  /// How many of the newest runs are always shown.
+  static const int recent = 10;
+
+  @override
+  State<_RunLog> createState() => _RunLogState();
+}
+
+class _RunLogState extends State<_RunLog> {
+  final Set<DateTime> _open = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final recent = widget.runs.take(_RunLog.recent);
+    final older = widget.runs.skip(_RunLog.recent);
+
+    // Group by calendar month, preserving newest-first order.
+    final groups = <DateTime, List<RunRecord>>{};
+    for (final run in older) {
+      groups.putIfAbsent(StatsService.monthStart(run.startedAt), () => []).add(run);
+    }
+
+    return Column(
+      children: [
+        for (final run in recent) ...[RunRow(run: run, units: widget.units), const SizedBox(height: 8)],
+        for (final entry in groups.entries) ...[
+          _MonthGroup(
+            month: entry.key,
+            runs: entry.value,
+            units: widget.units,
+            open: _open.contains(entry.key),
+            onToggle: () => setState(() {
+              if (!_open.remove(entry.key)) _open.add(entry.key);
+            }),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ],
+    );
+  }
+}
+
+class _MonthGroup extends StatelessWidget {
+  const _MonthGroup({
+    required this.month,
+    required this.runs,
+    required this.units,
+    required this.open,
+    required this.onToggle,
+  });
+
+  final DateTime month;
+  final List<RunRecord> runs;
+  final UnitSystem units;
+  final bool open;
+  final VoidCallback onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final meters = runs.fold(0.0, (s, r) => s + r.distanceMeters);
+    return Column(
+      children: [
+        NeonPanel(
+          cut: 8,
+          fill: open ? Cy.panelHi : Cy.panel,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          onTap: onToggle,
+          child: Row(
+            children: [
+              Container(width: 3, height: 22, color: open ? Cy.cyan : Cy.ghost),
+              const SizedBox(width: 12),
+              Text(Fmt.monthYear(month), style: CyType.display(size: 12, color: open ? Cy.ink : Cy.inkDim)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  '${runs.length} run${runs.length == 1 ? '' : 's'} · ${Fmt.distanceWithUnit(meters, units)}',
+                  textAlign: TextAlign.end,
+                  overflow: TextOverflow.ellipsis,
+                  style: CyType.mono(size: 10, color: Cy.ghost),
+                ),
+              ),
+              const SizedBox(width: 6),
+              Icon(open ? Icons.expand_less : Icons.expand_more, size: 16, color: Cy.inkDim),
+            ],
+          ),
+        ),
+        if (open)
           Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              'Showing the 40 most recent of ${state.runLog.length}. Older runs are in the history.',
-              style: CyType.body(size: 13, color: Cy.ghost),
+            padding: const EdgeInsets.only(top: 8, left: 10),
+            child: Column(
+              children: [
+                for (final run in runs) ...[RunRow(run: run, units: units), const SizedBox(height: 8)],
+              ],
             ),
           ),
       ],

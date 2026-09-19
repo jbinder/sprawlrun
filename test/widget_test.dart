@@ -270,6 +270,41 @@ void main() {
     expect(find.text('LAST WEEK'), findsNothing);
   });
 
+  testWidgets('older runs fold into month groups under the ten most recent', (tester) async {
+    final state = await pumpApp(tester);
+    final now = DateTime.now();
+    await tester.runAsync(() async {
+      // Twelve runs this month, five two months back; only ten stay unfolded.
+      for (var i = 0; i < 12; i++) {
+        await state.completeRun(run(at: DateTime(now.year, now.month, 1, 6 + i), meters: 4000));
+      }
+      for (var i = 0; i < 5; i++) {
+        await state.completeRun(run(at: DateTime(now.year, now.month - 2, 3 + i, 7), meters: 3000));
+      }
+    });
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('STATS'));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    expect(find.text('FREE RUN'), findsNWidgets(10));
+    final thisMonth = find.text(Fmt.monthYear(now)).last;
+    final older = find.text(Fmt.monthYear(DateTime(now.year, now.month - 2)));
+    expect(find.text('2 runs · 8.00 km'), findsOneWidget, reason: 'the remainder of this month is one group');
+    expect(find.text('5 runs · 15.0 km'), findsOneWidget);
+
+    await tester.tap(older);
+    await tester.pump();
+    expect(find.text('FREE RUN'), findsNWidgets(15));
+
+    await tester.tap(thisMonth);
+    await tester.pump();
+    expect(find.text('FREE RUN'), findsNWidgets(17));
+
+    await tester.tap(older);
+    await tester.pump();
+    expect(find.text('FREE RUN'), findsNWidgets(12), reason: 'groups fold independently');
+  });
+
   testWidgets('the history screen lists every month and opens one in detail', (tester) async {
     final state = await pumpApp(tester);
     final now = DateTime.now();

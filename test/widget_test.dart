@@ -202,6 +202,34 @@ void main() {
     expect(find.text('NOTHING RECOVERED YET'), findsOneWidget);
   });
 
+  testWidgets('the codex opens on the active campaign and folds the others', (tester) async {
+    await pumpApp(
+      tester,
+      profile: const Profile(activePackId: 'null_tide', unlockedCodex: {'cdx_courier', 'cdx_drowned_mile'}),
+    );
+    await tester.tap(find.text('CODEX'));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    // Both packs are listed with their own counts; only the active one is open.
+    expect(find.text('NULL TIDE'), findsOneWidget);
+    expect(find.text('SPRAWL PRIME'), findsOneWidget);
+    expect(find.text('ACTIVE'), findsOneWidget);
+    expect(find.text('The Drowned Mile'), findsOneWidget);
+    expect(find.text('Meat Courier'), findsNothing);
+    expect(find.text('PLACES'), findsOneWidget);
+    expect(find.text('TRADE'), findsNothing);
+
+    await tester.tap(find.text('SPRAWL PRIME'));
+    await tester.pump();
+    expect(find.text('Meat Courier'), findsOneWidget);
+    expect(find.text('TRADE'), findsOneWidget);
+
+    await tester.tap(find.text('NULL TIDE'));
+    await tester.pump();
+    expect(find.text('The Drowned Mile'), findsNothing, reason: 'sections fold independently');
+    expect(find.text('Meat Courier'), findsOneWidget);
+  });
+
   testWidgets('the achievement wall lists everything, all locked at the start', (tester) async {
     await pumpApp(tester);
 

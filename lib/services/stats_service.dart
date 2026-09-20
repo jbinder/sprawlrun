@@ -111,13 +111,15 @@ abstract final class StatsService {
     final streak = _streakWeeks(weekly, goal, now: now ?? DateTime.now());
 
     final sortedByDate = List<RunRecord>.from(scoring)..sort((a, b) => a.startedAt.compareTo(b.startedAt));
+    final completed = scoring.where((r) => r.isMission && r.isSuccess).map((r) => r.missionId!).toSet();
 
     return LifetimeStats(
       totalRuns: scoring.length,
       totalDistanceMeters: scoring.fold(0.0, (s, r) => s + r.distanceMeters),
       totalSeconds: scoring.fold(0.0, (s, r) => s + r.elapsedSeconds),
       totalCalories: scoring.fold(0.0, (s, r) => s + r.calories),
-      missionsCompleted: scoring.where((r) => r.isMission && r.isSuccess).map((r) => r.missionId).toSet().length,
+      missionsCompleted: completed.length,
+      completedMissionIds: completed,
       missionsAttempted: scoring.where((r) => r.isMission).map((r) => r.missionId).toSet().length,
       chasesTotal: scoring.fold(0, (s, r) => s + r.chasesTotal),
       chasesEvaded: scoring.fold(0, (s, r) => s + r.chasesEvaded),

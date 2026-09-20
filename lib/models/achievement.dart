@@ -140,6 +140,16 @@ const List<AchievementDef> kAchievements = [
     format: _km,
   ),
   AchievementDef(
+    id: 'dist_150k',
+    title: 'Ring Road',
+    description: 'Cover 150 km across all runs.',
+    category: AchCategory.distance,
+    tier: AchTier.chrome,
+    target: 150000,
+    metric: _totalDistance,
+    format: _km,
+  ),
+  AchievementDef(
     id: 'dist_250k',
     title: 'Arterial',
     description: 'Cover 250 km across all runs.',
@@ -178,6 +188,16 @@ const List<AchievementDef> kAchievements = [
     category: AchCategory.endurance,
     tier: AchTier.street,
     target: 3600,
+    metric: _totalSeconds,
+    format: _hours,
+  ),
+  AchievementDef(
+    id: 'time_5h',
+    title: 'Five Hours In',
+    description: 'Run for 5 hours in total.',
+    category: AchCategory.endurance,
+    tier: AchTier.street,
+    target: 18000,
     metric: _totalSeconds,
     format: _hours,
   ),
@@ -242,6 +262,16 @@ const List<AchievementDef> kAchievements = [
     format: _km,
   ),
   AchievementDef(
+    id: 'single_15k',
+    title: 'Fifteen Clean',
+    description: 'Run 15 km in a single run.',
+    category: AchCategory.distance,
+    tier: AchTier.ice,
+    target: 15000,
+    metric: _longestDistance,
+    format: _km,
+  ),
+  AchievementDef(
     id: 'single_half',
     title: 'Long Haul',
     description: 'Run 21.1 km in a single session.',
@@ -250,6 +280,26 @@ const List<AchievementDef> kAchievements = [
     target: 21100,
     metric: _longestDistance,
     format: _km,
+  ),
+  AchievementDef(
+    id: 'single_30m',
+    title: 'Half Hour Out',
+    description: 'Keep moving for thirty minutes in a single run.',
+    category: AchCategory.endurance,
+    tier: AchTier.street,
+    target: 1800,
+    metric: _longestSeconds,
+    format: _minutes,
+  ),
+  AchievementDef(
+    id: 'single_45m',
+    title: 'Three Quarters',
+    description: 'Keep moving for forty-five minutes in a single run.',
+    category: AchCategory.endurance,
+    tier: AchTier.street,
+    target: 2700,
+    metric: _longestSeconds,
+    format: _minutes,
   ),
   AchievementDef(
     id: 'single_60m',
@@ -268,6 +318,16 @@ const List<AchievementDef> kAchievements = [
     category: AchCategory.endurance,
     tier: AchTier.ice,
     target: 5400,
+    metric: _longestSeconds,
+    format: _minutes,
+  ),
+  AchievementDef(
+    id: 'single_120m',
+    title: 'Two Hours Under',
+    description: 'Keep moving for two hours in a single run.',
+    category: AchCategory.endurance,
+    tier: AchTier.ice,
+    target: 7200,
     metric: _longestSeconds,
     format: _minutes,
   ),
@@ -310,6 +370,46 @@ const List<AchievementDef> kAchievements = [
     category: AchCategory.missions,
     tier: AchTier.legend,
     target: 10,
+    metric: _sprawlPrimeMissions,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'nt_1',
+    title: 'First Tide',
+    description: 'Complete your first NULL TIDE operation.',
+    category: AchCategory.missions,
+    tier: AchTier.street,
+    target: 1,
+    metric: _nullTideMissions,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'nt_5',
+    title: 'Half Drowned',
+    description: 'Complete five NULL TIDE operations.',
+    category: AchCategory.missions,
+    tier: AchTier.chrome,
+    target: 5,
+    metric: _nullTideMissions,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'nt_10',
+    title: 'Tide Turned',
+    description: 'Complete all ten NULL TIDE operations.',
+    category: AchCategory.missions,
+    tier: AchTier.legend,
+    target: 10,
+    metric: _nullTideMissions,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'mission_20',
+    title: 'Two Campaigns Deep',
+    description: 'Complete twenty different missions, across any packs.',
+    category: AchCategory.missions,
+    tier: AchTier.ice,
+    target: 20,
     metric: _missions,
     format: _count,
   ),
@@ -488,6 +588,16 @@ const List<AchievementDef> kAchievements = [
     format: _count,
   ),
   AchievementDef(
+    id: 'runs_100',
+    title: 'Fixture',
+    description: 'Log 100 runs.',
+    category: AchCategory.discipline,
+    tier: AchTier.ice,
+    target: 100,
+    metric: _runs,
+    format: _count,
+  ),
+  AchievementDef(
     id: 'runs_200',
     title: 'Institution',
     description: 'Log 200 runs.',
@@ -504,6 +614,16 @@ const List<AchievementDef> kAchievements = [
     category: AchCategory.discipline,
     tier: AchTier.chrome,
     target: 30,
+    metric: _days,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'days_100',
+    title: 'A Hundred Separate Nights',
+    description: 'Run on 100 different days.',
+    category: AchCategory.discipline,
+    tier: AchTier.ice,
+    target: 100,
     metric: _days,
     format: _count,
   ),
@@ -560,12 +680,32 @@ const List<AchievementDef> kAchievements = [
     format: _kcal,
   ),
   AchievementDef(
+    id: 'week_15k',
+    title: 'Solid Week',
+    description: 'Cover 15 km inside a single week.',
+    category: AchCategory.anomaly,
+    tier: AchTier.chrome,
+    target: 15000,
+    metric: _bestWeek,
+    format: _km,
+  ),
+  AchievementDef(
     id: 'week_30k',
     title: 'Heavy Week',
     description: 'Cover 30 km inside a single week.',
     category: AchCategory.anomaly,
     tier: AchTier.ice,
     target: 30000,
+    metric: _bestWeek,
+    format: _km,
+  ),
+  AchievementDef(
+    id: 'week_50k',
+    title: 'Monster Week',
+    description: 'Cover 50 km inside a single week.',
+    category: AchCategory.anomaly,
+    tier: AchTier.legend,
+    target: 50000,
     metric: _bestWeek,
     format: _km,
   ),
@@ -577,6 +717,19 @@ double _totalSeconds(LifetimeStats s) => s.totalSeconds;
 double _longestDistance(LifetimeStats s) => s.longestRunMeters;
 double _longestSeconds(LifetimeStats s) => s.longestRunSeconds;
 double _missions(LifetimeStats s) => s.missionsCompleted.toDouble();
+double _sprawlPrimeMissions(LifetimeStats s) => _packMissions(s, 'sprawl_prime');
+double _nullTideMissions(LifetimeStats s) => _packMissions(s, 'null_tide');
+
+/// Cleared missions belonging to one pack, recognised by the id prefix its
+/// missions share. `test/campaign_test.dart` holds every bundled pack to this
+/// table, so a pack cannot ship without its achievements matching it.
+double _packMissions(LifetimeStats s, String packId) {
+  final prefix = kPackMissionPrefixes[packId]!;
+  return s.completedMissionIds.where((id) => id.startsWith(prefix)).length.toDouble();
+}
+
+/// Mission id prefix per pack, e.g. `sp01` for SPRAWL PRIME.
+const Map<String, String> kPackMissionPrefixes = {'sprawl_prime': 'sp', 'null_tide': 'nt'};
 double _beats(LifetimeStats s) => s.beatsHeard.toDouble();
 double _perfect(LifetimeStats s) => s.perfectMissions.toDouble();
 double _evaded(LifetimeStats s) => s.chasesEvaded.toDouble();

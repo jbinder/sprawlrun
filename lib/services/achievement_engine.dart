@@ -24,14 +24,21 @@ abstract final class AchievementEngine {
         )
         .toList();
 
+    // Ties fall back to catalogue order: `List.sort` is not stable, and on a
+    // fresh install every card ties at zero progress.
+    final order = {for (var i = 0; i < kAchievements.length; i++) kAchievements[i].id: i};
     views.sort((a, b) {
       if (a.earned != b.earned) return a.earned ? -1 : 1;
       if (a.earned) {
         final at = a.earnedAt, bt = b.earnedAt;
-        if (at != null && bt != null) return bt.compareTo(at);
-        return a.def.tier.index.compareTo(b.def.tier.index);
+        if (at != null && bt != null && at != bt) return bt.compareTo(at);
+        final tier = a.def.tier.index.compareTo(b.def.tier.index);
+        if (tier != 0) return tier;
+      } else {
+        final progress = b.progress.compareTo(a.progress);
+        if (progress != 0) return progress;
       }
-      return b.progress.compareTo(a.progress);
+      return order[a.def.id]!.compareTo(order[b.def.id]!);
     });
     return views;
   }

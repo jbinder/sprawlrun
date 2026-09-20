@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
+import 'package:sprawl_run/models/achievement.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/services/narrator.dart';
 
@@ -42,6 +43,18 @@ void _checks(String path) {
   test('mission ids are unique', () {
     final ids = pack.missions.map((m) => m.id).toList();
     expect(ids.toSet(), hasLength(ids.length));
+  });
+
+  test('the pack has its achievements: a registered id prefix every mission uses', () {
+    // Pack-completion achievements recognise a pack's missions by this prefix,
+    // so a pack without an entry here can never be "completed" on the wall.
+    final prefix = kPackMissionPrefixes[pack.id];
+    expect(prefix, isNotNull, reason: '${pack.id} is missing from kPackMissionPrefixes');
+    for (final m in pack.missions) {
+      expect(m.id, startsWith(prefix!), reason: '${m.id} does not carry the ${pack.id} prefix');
+    }
+    final others = kPackMissionPrefixes.entries.where((e) => e.key != pack.id && e.value == prefix);
+    expect(others, isEmpty, reason: 'another pack shares the prefix $prefix');
   });
 
   test('every mission has the text the UI renders', () {

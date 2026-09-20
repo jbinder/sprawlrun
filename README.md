@@ -126,7 +126,7 @@ ACSM metabolic equations and your body mass — no invented multipliers.</td>
 <td>The long view: distance per month since day one, and every month as a dot
 calendar lit by how far you ran. Tap a month or a day to see the runs behind
 it.</td>
-<td><b>46 achievements</b> across six categories and four tiers. Progress is
+<td><b>59 achievements</b> across six categories and four tiers. Progress is
 recomputed from your run log every time, so it can never drift out of step with
 what you actually did.</td>
 </tr>

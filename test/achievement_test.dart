@@ -55,6 +55,31 @@ void main() {
       expect(second, isEmpty);
     });
 
+    test('pack completion counts only that pack, the cross-pack ladder counts all', () {
+      List<String> earnedWith(List<String> missionIds) {
+        final stats = StatsService.lifetime(
+          [for (final id in missionIds) run(at: now, missionId: id)],
+          const StreakGoal(),
+        );
+        return AchievementEngine.newlyEarned(stats, const {}).map((a) => a.id).toList();
+      }
+
+      final sprawlPrime = [for (var i = 1; i <= 10; i++) 'sp${i.toString().padLeft(2, '0')}'];
+      final nullTide = [for (var i = 1; i <= 10; i++) 'nt${i.toString().padLeft(2, '0')}'];
+
+      expect(earnedWith(sprawlPrime), containsAll(['mission_10', 'mission_5']));
+      expect(earnedWith(sprawlPrime), isNot(contains('nt_1')));
+
+      // Five from each pack is ten missions, but neither campaign is done.
+      final mixed = earnedWith([...sprawlPrime.take(5), ...nullTide.take(5)]);
+      expect(mixed, containsAll(['mission_5', 'nt_1', 'nt_5']));
+      expect(mixed, isNot(contains('mission_10')));
+      expect(mixed, isNot(contains('nt_10')));
+
+      final both = earnedWith([...sprawlPrime, ...nullTide]);
+      expect(both, containsAll(['mission_10', 'nt_10', 'mission_20']));
+    });
+
     test('distance tiers unlock in order as the kilometres add up', () {
       List<String> earnedAfter(double meters) {
         final stats = StatsService.lifetime(

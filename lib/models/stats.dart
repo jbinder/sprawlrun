@@ -53,6 +53,7 @@ class LifetimeStats {
     this.totalSeconds = 0,
     this.totalCalories = 0,
     this.missionsCompleted = 0,
+    this.completedMissionIds = const {},
     this.missionsAttempted = 0,
     this.chasesTotal = 0,
     this.chasesEvaded = 0,
@@ -77,6 +78,10 @@ class LifetimeStats {
   final double totalCalories;
 
   final int missionsCompleted;
+
+  /// Every mission id cleared at least once — what the per-pack achievements
+  /// count from.
+  final Set<String> completedMissionIds;
   final int missionsAttempted;
 
   final int chasesTotal;

@@ -59,7 +59,11 @@ void main() {
     expect(find.text('ACHIEVEMENT UNLOCKED'), findsOneWidget);
     // Finders see widgets at opacity zero; the runner does not. The boot-in
     // has to restart for every card, not just the first.
-    expect(tester.widget<Opacity>(find.byType(Opacity).first).opacity, greaterThan(0.95), reason: 'the second card faded in');
+    expect(
+      tester.widget<Opacity>(find.byType(Opacity).first).opacity,
+      greaterThan(0.95),
+      reason: 'the second card faded in',
+    );
     expect(find.text('TEST LEGEND'), findsOneWidget);
     expect(find.text('LEGEND'), findsOneWidget, reason: 'tier tag');
     expect(find.text('02 / 02'), findsOneWidget);
@@ -104,6 +108,21 @@ void main() {
     await tester.pump(const Duration(seconds: 3));
     await tester.pump();
     expect(done, 1);
+  });
+
+  test('the hold scales with how much there is to read', () {
+    Duration holdForBody(int chars) => UnlockReveal.holdFor(
+      Unlock(kicker: '', title: '', body: 'x' * chars, accent: Cy.cyan, icon: Icons.memory, stamp: ''),
+    );
+    expect(
+      UnlockReveal.holdFor(Unlock.mission('NINSEI')),
+      const Duration(seconds: 12),
+      reason: 'one line still gets a readable minimum',
+    );
+    // A typical codex entry is around 240 characters; the longest shipped is ~410.
+    expect(holdForBody(240), const Duration(milliseconds: 22400));
+    expect(holdForBody(410), const Duration(milliseconds: 32600));
+    expect(holdForBody(1000), const Duration(seconds: 40), reason: 'capped so a card can never feel stuck');
   });
 
   test('a STREET achievement is never revealed in grey', () {

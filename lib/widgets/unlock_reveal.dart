@@ -102,7 +102,7 @@ class UnlockReveal extends StatefulWidget {
     required this.unlocks,
     required this.onDone,
     this.onShow,
-    this.autoAdvance = const Duration(seconds: 7),
+    this.autoAdvance,
   });
 
   final List<Unlock> unlocks;
@@ -111,8 +111,18 @@ class UnlockReveal extends StatefulWidget {
   /// Called as each card appears — the sting lives with whoever owns audio.
   final ValueChanged<Unlock>? onShow;
 
-  /// How long a card holds before moving on by itself. Zero disables it.
-  final Duration autoAdvance;
+  /// How long a card holds before moving on by itself. Null — the default —
+  /// gives each card [holdFor] its text; zero disables auto-advance.
+  final Duration? autoAdvance;
+
+  /// A hold long enough to actually read the card: a fixed allowance for the
+  /// boot animation, title and readout, plus reading time for the body at a
+  /// relaxed pace. A codex entry can run to 400 characters; an achievement is
+  /// one line, and should not sit there for half a minute.
+  static Duration holdFor(Unlock unlock) {
+    final ms = 8000 + unlock.body.length * 60;
+    return Duration(milliseconds: ms.clamp(12000, 40000));
+  }
 
   @override
   State<UnlockReveal> createState() => _UnlockRevealState();
@@ -145,8 +155,9 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
     _hold?.cancel();
     _boot.forward(from: 0);
     widget.onShow?.call(_current);
-    if (widget.autoAdvance > Duration.zero) {
-      _hold = Timer(widget.autoAdvance, _advance);
+    final hold = widget.autoAdvance ?? UnlockReveal.holdFor(_current);
+    if (hold > Duration.zero) {
+      _hold = Timer(hold, _advance);
     }
   }
 

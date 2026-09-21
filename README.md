@@ -14,6 +14,11 @@ you to slow down.*
 
 <br>
 
+<a href="https://f-droid.org/packages/io.github.jbinder.sprawlrun"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80"></a>
+<a href="https://github.com/jbinder/sprawlrun/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" alt="Get it on GitHub" height="80"></a>
+
+<br>
+
 <img src="docs/screenshots/dashboard.png" width="248" alt="Dashboard">
 <img src="docs/screenshots/run-hud.png" width="248" alt="Run HUD during a pursuit">
 <img src="docs/screenshots/briefing.png" width="248" alt="Mission briefing">

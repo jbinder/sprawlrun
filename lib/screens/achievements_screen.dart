@@ -28,37 +28,115 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
     final shown = _filter == null ? wall : wall.where((v) => v.def.category == _filter).toList();
     final earned = wall.where((v) => v.earned).length;
 
+    // Horizontal padding sits on each child rather than on the list, so the
+    // filter rail can run under the screen edge and show it has more.
+    const gutter = EdgeInsets.symmetric(horizontal: 16);
     return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
+      padding: const EdgeInsets.fromLTRB(0, 6, 0, 28),
       children: [
-        _WallHeader(earned: earned, total: wall.length),
+        Padding(padding: gutter, child: _WallHeader(earned: earned, total: wall.length)),
         const SizedBox(height: 16),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
+        _FilterRail(
+          padding: gutter,
+          children: [
+            _FilterChip(
+              label: 'ALL',
+              selected: _filter == null,
+              onTap: () => setState(() => _filter = null),
+            ),
+            for (final category in AchCategory.values) ...[
+              const SizedBox(width: 8),
               _FilterChip(
-                label: 'ALL',
-                selected: _filter == null,
-                onTap: () => setState(() => _filter = null),
+                label: category.label,
+                icon: category.icon,
+                selected: _filter == category,
+                onTap: () => setState(() => _filter = category),
               ),
-              for (final category in AchCategory.values) ...[
-                const SizedBox(width: 8),
-                _FilterChip(
-                  label: category.label,
-                  icon: category.icon,
-                  selected: _filter == category,
-                  onTap: () => setState(() => _filter = category),
-                ),
-              ],
             ],
-          ),
+          ],
         ),
         const SizedBox(height: 18),
         for (final view in shown) ...[
-          _AchievementCard(view: view, stats: state.lifetime),
+          Padding(padding: gutter, child: _AchievementCard(view: view, stats: state.lifetime)),
           const SizedBox(height: 8),
         ],
+      ],
+    );
+  }
+}
+
+/// A horizontally scrolling row that says so: the chips fade out at an edge
+/// that still hides some, with a chevron on the trailing side. Both go away
+/// once the rail is scrolled to that end, so a row that fits shows nothing.
+class _FilterRail extends StatefulWidget {
+  const _FilterRail({required this.children, required this.padding});
+
+  final List<Widget> children;
+  final EdgeInsets padding;
+
+  @override
+  State<_FilterRail> createState() => _FilterRailState();
+}
+
+class _FilterRailState extends State<_FilterRail> {
+  final _controller = ScrollController();
+  bool _moreLeft = false;
+  bool _moreRight = false;
+
+  static const double _fade = 56;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_update);
+    // The extent is only known once laid out.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _update());
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _update() {
+    if (!_controller.hasClients) return;
+    final pos = _controller.position;
+    final left = pos.pixels > 1;
+    final right = pos.pixels < pos.maxScrollExtent - 1;
+    if (left != _moreLeft || right != _moreRight) {
+      setState(() {
+        _moreLeft = left;
+        _moreRight = right;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.centerRight,
+      children: [
+        ShaderMask(
+          shaderCallback: (bounds) => LinearGradient(
+            colors: const [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+            stops: [0, _moreLeft ? _fade / bounds.width : 0, _moreRight ? 1 - _fade / bounds.width : 1, 1],
+          ).createShader(bounds),
+          blendMode: BlendMode.dstIn,
+          child: SingleChildScrollView(
+            controller: _controller,
+            scrollDirection: Axis.horizontal,
+            padding: widget.padding,
+            child: Row(children: widget.children),
+          ),
+        ),
+        if (_moreRight)
+          const IgnorePointer(
+            child: Padding(
+              padding: EdgeInsets.only(right: 2),
+              child: Icon(Icons.chevron_right, size: 16, color: Cy.inkDim),
+            ),
+          ),
       ],
     );
   }

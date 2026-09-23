@@ -1,6 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../data/gpx_export.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
 import '../state/app_state.dart';
@@ -34,6 +39,31 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
   Future<void> _load() async {
     final points = await context.read<AppState>().runs.loadTrace(widget.run.id);
     if (mounted) setState(() => _trace = points);
+  }
+
+  /// Hands the run's trace to the system share sheet as GPX, which is how it
+  /// reaches a map app like OsmAnd. The file goes to the cache directory: the
+  /// copy that matters is whatever the runner saves out of the sheet.
+  Future<void> _shareGpx() async {
+    final trace = _trace;
+    if (trace == null || trace.isEmpty) return;
+    try {
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${GpxExport.fileName(widget.run)}');
+      await file.writeAsString(GpxExport.of(widget.run, trace));
+      if (!mounted) return;
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'application/gpx+xml')],
+          subject: widget.run.missionCodename ?? 'SPRAWL//RUN route',
+        ),
+      );
+    } on Object catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Export failed: $e', style: CyType.body(size: 14, color: Cy.red))),
+      );
+    }
   }
 
   Future<void> _delete() async {
@@ -105,6 +135,15 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                     icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
                   ),
                   const Spacer(),
+                  IconButton(
+                    // Disabled until the trace is in memory, and hidden
+                    // entirely for a run that never recorded one.
+                    onPressed: _trace == null || _trace!.isEmpty ? null : _shareGpx,
+                    icon: const Icon(Icons.ios_share, size: 20),
+                    color: Cy.inkDim,
+                    disabledColor: Cy.ghost.withValues(alpha: 0.4),
+                    tooltip: 'Export route as GPX',
+                  ),
                   IconButton(
                     onPressed: _delete,
                     icon: const Icon(Icons.delete_outline, color: Cy.inkDim),

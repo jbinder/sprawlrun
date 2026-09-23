@@ -150,6 +150,10 @@ Merging only ever adds, so bringing in an old backup cannot relock a mission.
 No storage permission is involved in either direction: export goes out through
 the share sheet, import comes in through the system document picker.
 
+**Single routes travel too.** Any stored run opens onto its map; the share
+action there writes the trace as a **GPX 1.1** track, which OsmAnd, Strava,
+Komoot or any other map app will open.
+
 ## A world worth reading
 
 <table>
@@ -259,7 +263,7 @@ and finishing the last mission of a pack offers the next one that's still open.
 ```
 lib/
   models/       Mission, StoryBeat, RunGoal, RunRecord, Profile, Achievement
-  data/         JSON repositories (runs, profile, mission packs) + backup
+  data/         JSON repositories (runs, profile, mission packs) + backup + GPX
   services/     run_engine · narrator · location · stats · energy · achievements
   state/        AppState — the single source of truth the UI reads
   screens/      dashboard · brief · run HUD · summary · stats · history · wall · codex · settings

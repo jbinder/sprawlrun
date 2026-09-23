@@ -8,7 +8,9 @@ import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
+import 'package:sprawl_run/screens/run_detail_screen.dart';
 import 'package:sprawl_run/screens/mission_debrief_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/services/stats_service.dart';
@@ -200,6 +202,61 @@ void main() {
     await tester.tap(find.text('CODEX'));
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('NOTHING RECOVERED YET'), findsOneWidget);
+  });
+
+  testWidgets('a stored run offers its route as GPX once the trace has loaded', (tester) async {
+    final state = await pumpApp(tester);
+    final record = run(at: DateTime.now(), meters: 5000, seconds: 1800).copyWith(
+      trace: const [
+        TracePoint(lat: 48.20849, lon: 16.37208, elapsedSeconds: 0),
+        TracePoint(lat: 48.20901, lon: 16.37311, elapsedSeconds: 30),
+      ],
+    );
+    await tester.runAsync(() => state.completeRun(record));
+
+    // The screen loads its trace from disk in initState, so it has to be
+    // mounted inside the real async zone — the fake one never completes file
+    // I/O, and the export stays disabled forever.
+    await tester.runAsync(() async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [ChangeNotifierProvider.value(value: state)],
+          child: MaterialApp(theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
+        ),
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pump();
+
+    expect(find.text('LOADING TRACE'), findsNothing);
+    final export = find.ancestor(
+      of: find.byTooltip('Export route as GPX'),
+      matching: find.byType(IconButton),
+    );
+    expect(export, findsOneWidget);
+    expect(tester.widget<IconButton>(export).onPressed, isNotNull, reason: 'enabled once the trace is in memory');
+  });
+
+  testWidgets('a run with no recorded trace cannot be exported', (tester) async {
+    final state = await pumpApp(tester);
+    await tester.runAsync(() => state.completeRun(run(at: DateTime.now(), meters: 5000, seconds: 1800)));
+
+    await tester.runAsync(() async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [ChangeNotifierProvider.value(value: state)],
+          child: MaterialApp(theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
+        ),
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pump();
+
+    final export = find.ancestor(
+      of: find.byTooltip('Export route as GPX'),
+      matching: find.byType(IconButton),
+    );
+    expect(tester.widget<IconButton>(export).onPressed, isNull, reason: 'nothing to write into a GPX file');
   });
 
   testWidgets('the category rail marks whichever edge has more chips', (tester) async {

@@ -324,6 +324,12 @@ Future<void> _pump(WidgetTester tester, Widget home, AppState state, {RunEngine?
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: buildCyberTheme(),
+          // Animations off, so anything that draws itself in — the route
+          // trace, for one — is captured finished rather than mid-flight.
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context).copyWith(disableAnimations: true),
+            child: child!,
+          ),
           home: home,
         ),
       ),

@@ -237,7 +237,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                         child: Text('LOADING TRACE', style: CyType.label()),
                       )
                     else
-                      RouteTrace(trace: _trace!, accent: accent, height: 240),
+                      RouteTrace(trace: _trace!, accent: accent, height: 240, animate: true),
 
                     if (run.missionId != null) ...[
                       const SizedBox(height: 18),

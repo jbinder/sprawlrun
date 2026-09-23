@@ -150,29 +150,16 @@ only third-party binaries in the repo are the three OFL fonts.
   for the permission and location-service checks. Its `LocationManager` client
   prefers the ROM's *fused* provider on Android 12+ regardless of
   `forceLocationManager`, and on a de-Googled device that provider is whatever
-  the vendor shipped: on one Xperia it accepted requests and never delivered a
-  fix, so a run watched a healthy, empty stream. `appops get <pkg>` tells the
-  two apart — a request that reached the GNSS chip shows
-  `MONITOR_HIGH_POWER_LOCATION`, a fused one only `MONITOR_LOCATION`.
+  the vendor shipped: on at least one such device it accepted requests and
+  never delivered a fix, so a run watched a healthy, empty stream.
+  `appops get <pkg>` tells the two apart — a request that reached the GNSS
+  chip shows `MONITOR_HIGH_POWER_LOCATION`, a fused one only
+  `MONITOR_LOCATION`.
 
-## Untested on real hardware
+## Before a release: one real outdoor run
 
-The test suite cannot exercise audio focus or GPS. Both were confirmed on a real
-outdoor run at 0.2.1, so treat a report about either as a regression rather than
-as new information:
-
-- **Audio focus** — confirmed working on device. Two things keep it that way:
-  focus is taken in exactly one place (see the conventions above), and
-  `MusicResumeGuard` presses a media-button PLAY when a player that *was*
-  running is still silent after focus went back. Only the guard's decision logic
-  is unit-tested; that the media key reaches a given player is not, so a report
-  naming a specific music app is still worth taking at face value.
-- **GPS acquisition via the AOSP `LocationManager`** — the same run exercised
-  it, since dropping Play Services means no fused provider. Startup is also
-  verified clean on device (no `NoClassDefFoundError`).
-- **Screen-off tracking has not been re-verified since 0.2.2.** What keeps fixes
-  arriving in a pocket changed then, from geolocator's foreground service to
-  `MissionService` claiming the `location` type. The notification was checked on
-  device with GPS both on and off; that *distance still accumulates* with the
-  screen off has not been, and no test can show it. Until one real outdoor run
-  says otherwise, treat a report of a short or empty trace as this change.
+The test suite cannot exercise audio focus or GPS, so every release is preceded
+by a real run outdoors on a device: fixes arrive and distance accumulates with
+the screen off, music ducks for a line and comes back afterwards, and the story
+beats fire. Treat a report about any of those as a regression, not as new
+information.

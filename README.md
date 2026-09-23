@@ -197,9 +197,9 @@ flutter build apk --release    # or: flutter build appbundle
 Grant location when asked. Missions with a **time** target work fine without it;
 distance targets obviously do not.
 
-Requires **JDK 17**. A newer default JDK (26 on current Arch) breaks AGP's
-`jdkImage` transform; pin it with
-`flutter config --jdk-dir /usr/lib/jvm/java-17-openjdk`.
+Requires **JDK 17**. Newer JDKs break AGP's `jdkImage` transform, so if your
+default JDK is newer, point Flutter at a JDK 17 installation with
+`flutter config --jdk-dir <path-to-jdk-17>`.
 
 Release builds are signed from `android/key.properties` — copy
 `android/key.properties.example` and fill it in. Without that file the release
@@ -219,7 +219,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 214 tests
+flutter test                   # 228 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

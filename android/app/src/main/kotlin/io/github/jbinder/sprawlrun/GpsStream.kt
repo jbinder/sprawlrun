@@ -15,8 +15,8 @@ import io.flutter.plugin.common.EventChannel
  * geolocator's LocationManager client is not used for the stream because on
  * Android 12+ it silently prefers the "fused" provider whenever the ROM offers
  * one. On a de-Googled device that provider is whatever the vendor shipped, and
- * on at least one Xperia it registers requests happily and never delivers a
- * fix — the run sees a healthy, open, empty stream. Asking the GPS provider by
+ * on at least one such device it registers requests happily and never
+ * delivers a fix — the run sees a healthy, open, empty stream. Asking the GPS provider by
  * name is what the app has always meant by "AOSP's LocationManager".
  *
  * The request is tied to the Dart subscription: it starts on listen and is

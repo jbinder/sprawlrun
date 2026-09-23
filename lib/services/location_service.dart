@@ -52,7 +52,7 @@ class GpsLocationSource implements LocationSource {
     // prefers the ROM's "fused" provider whenever one is registered, and
     // `forceLocationManager` does not change that — it only avoids Play
     // Services. On a de-Googled device the fused provider is whatever the
-    // vendor shipped; on the Xperia this was found on, it accepts the request
+    // vendor shipped; on the device this was found on, it accepts the request
     // and never delivers a fix, so the run watched a healthy, empty stream for
     // half an hour. Asking the GPS provider by name is what "use AOSP's
     // LocationManager" was always meant to mean. Google Play Services stays

@@ -202,6 +202,29 @@ void main() {
     expect(find.text('NOTHING RECOVERED YET'), findsOneWidget);
   });
 
+  testWidgets('the category rail marks whichever edge has more chips', (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('WALL'));
+    await tester.pump(const Duration(milliseconds: 200));
+
+    // At rest the rail sits at the start: more to the right, nothing left.
+    expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_left), findsNothing);
+
+    // Drag from a fixed point on the rail, since the chips move underneath it.
+    final onRail = tester.getCenter(find.text('DISTANCE'));
+
+    await tester.dragFrom(onRail, const Offset(-80, 0));
+    await tester.pump();
+    expect(find.byIcon(Icons.chevron_left), findsOneWidget, reason: 'chips are now hidden to the left');
+
+    // All the way to the end: only the leading marker is left.
+    await tester.dragFrom(onRail, const Offset(-2000, 0));
+    await tester.pump();
+    expect(find.byIcon(Icons.chevron_left), findsOneWidget);
+    expect(find.byIcon(Icons.chevron_right), findsNothing);
+  });
+
   testWidgets('the codex opens on the active campaign and folds the others', (tester) async {
     await pumpApp(
       tester,

@@ -115,7 +115,7 @@ class _FilterRailState extends State<_FilterRail> {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      alignment: Alignment.centerRight,
+      alignment: Alignment.center,
       children: [
         ShaderMask(
           shaderCallback: (bounds) => LinearGradient(
@@ -130,14 +130,31 @@ class _FilterRailState extends State<_FilterRail> {
             child: Row(children: widget.children),
           ),
         ),
-        if (_moreRight)
-          const IgnorePointer(
-            child: Padding(
-              padding: EdgeInsets.only(right: 2),
-              child: Icon(Icons.chevron_right, size: 16, color: Cy.inkDim),
-            ),
-          ),
+        if (_moreLeft) const _RailArrow(Icons.chevron_left, Alignment.centerLeft),
+        if (_moreRight) const _RailArrow(Icons.chevron_right, Alignment.centerRight),
       ],
+    );
+  }
+}
+
+/// The `‹` / `›` sitting over a faded edge. Ignores pointers so the chips
+/// underneath stay tappable and the rail still scrolls from here.
+class _RailArrow extends StatelessWidget {
+  const _RailArrow(this.icon, this.alignment);
+
+  final IconData icon;
+  final Alignment alignment;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: alignment,
+      child: IgnorePointer(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: Icon(icon, size: 16, color: Cy.inkDim),
+        ),
+      ),
     );
   }
 }

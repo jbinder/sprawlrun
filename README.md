@@ -51,27 +51,6 @@ comes home.
 
 ---
 
-## Your music, interrupted
-
-Bring whatever you normally listen to. Every few minutes the app takes over the
-audio: a radio squelch, your music drops out, and your handler talks. Then it
-hands your music back.
-
-Five characters, each with their own synthesised voice — dry and unhurried,
-clipped, jittery, or corporate and cold — so you know who is speaking with the
-phone in your pocket.
-
-**Nothing is streamed.** Every voice is generated on your device. The app has no
-internet permission at all.
-
-**And it puts your music back.** Android's transient audio focus is a loan — the
-player pauses when the app takes it and is meant to resume when it is handed
-back. Several popular players only honour that for short interruptions and stay
-silent after a long transmission. Nothing an app can do to its own focus request
-changes that, so this one watches: if music was demonstrably playing before a
-transmission and is still silent a couple of seconds after focus went back, it
-presses play. Switchable off in Settings.
-
 ## Somebody is chasing you
 
 <table>
@@ -173,11 +152,47 @@ Forty entries across the two campaigns.
 </tr>
 </table>
 
+## Everything it does
+
+**Story**
+- Twenty missions across two campaigns, paced to the target you pick
+- Nine characters across the campaigns, each with its own synthesised voice,
+  generated on the device
+- Pursuits scaled to your own pace from the last three minutes — or switched off
+- A codex of forty entries that unlock only once a character has mentioned them
+- Every run keeps a story log; cleared missions open onto a debriefing of every attempt
+- Side-loadable mission packs: drop a JSON file in and it appears
+
+**Running**
+- GPS tracking that keeps going with the screen off, with auto-pause
+- A time or distance target per run, and free runs with no story at all
+- Live HUD: distance, pace, elapsed, goal ring, and the pursuit bar
+- Calories from the ACSM metabolic equations and your body mass
+- Route drawn as a neon trace, replayed at the pace you actually ran it
+
+**Progress**
+- This week and this month at a glance, steppable back to your first run
+- A long-term history: distance per month, and every month as a dot calendar
+- 59 achievements across six categories and four tiers
+- A weekly streak you define yourself — minutes, kilometres or missions
+- Full run log, grouped by month, with every run's detail and trace
+
+**Audio**
+- Your music ducks for a transmission and is forced back if the player sulks
+- Optional ambient synth bed for when you bring no music of your own
+- Adjustable speech rate and effects volume; story voice can be silenced
+
+**Your data**
+- Export and import everything as one JSON file — profile, progress, runs, traces
+- Import either replaces this device or merges, and merging can never relock a mission
+- Any single route exports as a GPX 1.1 track for OsmAnd, Strava or Komoot
+- No accounts, no ads, no analytics, no network permission, no Play Services
+
 ---
 
 <div align="center">
 
-### Twenty missions. Two campaigns. 528 lines of dialogue. No network required.
+### Twenty missions. Two campaigns. 492 lines of dialogue. No network required.
 
 </div>
 

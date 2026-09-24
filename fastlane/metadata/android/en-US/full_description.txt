@@ -4,7 +4,7 @@ SPRAWL//RUN is a gamified running tracker wrapped around two ten-mission cyberpu
 
 YOUR MUSIC, INTERRUPTED
 
-Bring whatever you normally listen to. Every few minutes the app takes over the audio: a radio squelch, your music drops out, and your handler talks. Then it hands your music back. Five characters, each with a distinct synthesised voice, so you know who is speaking with the phone in your pocket.
+Bring whatever you normally listen to. Every few minutes the app takes over the audio: a radio squelch, your music drops out, and your handler talks. Then it hands your music back. Nine characters across the two campaigns, each with a distinct synthesised voice, so you know who is speaking with the phone in your pocket.
 
 SOMEBODY IS CHASING YOU
 

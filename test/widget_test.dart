@@ -237,6 +237,27 @@ void main() {
     expect(tester.widget<IconButton>(export).onPressed, isNotNull, reason: 'enabled once the trace is in memory');
   });
 
+  testWidgets('a run that got no GPS is marked time only in its detail', (tester) async {
+    final state = await pumpApp(tester);
+    await tester.runAsync(() async {
+      // What a GPS failure leaves behind: real elapsed time, no distance.
+      await state.completeRun(run(at: DateTime(2026, 9, 19, 6), meters: 0, seconds: 7338));
+    });
+
+    await tester.runAsync(() async {
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [ChangeNotifierProvider.value(value: state)],
+          child: MaterialApp(theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
+        ),
+      );
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    });
+    await tester.pump();
+
+    expect(find.text('TIME ONLY'), findsOneWidget);
+  });
+
   testWidgets('a run with no recorded trace cannot be exported', (tester) async {
     final state = await pumpApp(tester);
     await tester.runAsync(() => state.completeRun(run(at: DateTime.now(), meters: 5000, seconds: 1800)));

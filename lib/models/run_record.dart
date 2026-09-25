@@ -141,6 +141,16 @@ class RunRecord {
   /// rather than infinity so the UI never has to special-case them.
   double get paceSecondsPerKm => distanceMeters < 10 ? 0 : movingSeconds / (distanceMeters / 1000.0);
 
+  /// No distance worth the name, so pace and moving time say nothing and the
+  /// clock is all this run really knows.
+  ///
+  /// That is what a GPS failure looks like: the runner ran, the fixes never
+  /// came, and `movingSeconds` stayed at zero because it only counts while
+  /// GPS reports movement. Reporting that as `MOVING 00:00` claims the runner
+  /// stood still. Uses the same threshold as [paceSecondsPerKm], and needs no
+  /// trace, which the run log does not load.
+  bool get isTimeOnly => distanceMeters < 10;
+
   double get avgSpeedMps => elapsedSeconds <= 0 ? 0 : distanceMeters / elapsedSeconds;
 
   /// The same run carrying [points]. Used when reassembling a record for

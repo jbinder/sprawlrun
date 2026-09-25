@@ -162,15 +162,19 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                       style: CyType.display(size: 26, color: Cy.ink, shadows: textGlow(accent, blur: 14)),
                     ),
                     const SizedBox(height: 8),
-                    Row(
+                    // Wrapped, not a Row: a long goal plus three tags does not
+                    // fit a narrow phone on one line.
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         CyberTag(
                           run.isSuccess ? 'SUCCESS' : 'FAILED',
                           color: accent,
                           filled: run.isSuccess,
                         ),
-                        const SizedBox(width: 8),
                         CyberTag('TARGET ${run.goal}', color: Cy.ghost),
+                        if (run.isTimeOnly) const CyberTag('TIME ONLY', color: Cy.amber),
                       ],
                     ),
                     const SizedBox(height: 18),

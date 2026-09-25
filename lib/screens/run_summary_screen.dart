@@ -478,7 +478,7 @@ class _SummaryGrid extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                'MOVING ${Fmt.shortDuration(record.movingSeconds)}',
+                record.isTimeOnly ? 'TIME ONLY' : 'MOVING ${Fmt.shortDuration(record.movingSeconds)}',
                 style: CyType.mono(size: 11, color: Cy.ghost),
               ),
             ],

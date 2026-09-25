@@ -60,8 +60,8 @@ Repo: https://github.com/jbinder/sprawlrun.git
 # `3.44.8` resolves to tag 058e0af2c2b57e369d905a03ac9748b0ebf543c6 in
 # flutter/flutter, which is also what .metadata records, so the two agree.
 Builds:
-  - versionName: 0.2.2
-    versionCode: 41
+  - versionName: 0.3.0
+    versionCode: 51
     commit: c8046966f2b788d9b7345264b632859bf52e5f37
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
@@ -93,8 +93,8 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm
     ndk: 28.2.13676358
 
-  - versionName: 0.2.2
-    versionCode: 42
+  - versionName: 0.3.0
+    versionCode: 52
     commit: c8046966f2b788d9b7345264b632859bf52e5f37
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
@@ -126,8 +126,8 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm64
     ndk: 28.2.13676358
 
-  - versionName: 0.2.2
-    versionCode: 43
+  - versionName: 0.3.0
+    versionCode: 53
     commit: c8046966f2b788d9b7345264b632859bf52e5f37
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
@@ -168,8 +168,8 @@ VercodeOperation:
   - '%c * 10 + 1'
   - '%c * 10 + 2'
   - '%c * 10 + 3'
-CurrentVersion: 0.2.2
-CurrentVersionCode: 43
+CurrentVersion: 0.3.0
+CurrentVersionCode: 53
 
 # ---------------------------------------------------------------------------
 # Notes for the reviewer, worth pasting into the merge request description

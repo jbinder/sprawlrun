@@ -20,6 +20,8 @@ Distance, time, calories and cleared missions for the last week and month, with 
 
 60 achievements across six categories, and a weekly streak you define yourself in minutes, kilometres or missions. A week still in progress never breaks a streak — only a finished week that fell short does.
 
+The long view is there when you want it: step back through earlier weeks and months, see distance per month since your first run, and every day you ran laid out as a dot calendar. Any run replays its route at the pace you actually ran it, and exports as a GPX track for OsmAnd or anything else that reads a map.
+
 Everything is yours to take with you. One tap exports the lot — profile, campaign progress, achievements, codex and every run with its GPS trace — as a plain JSON file you can read yourself. Import it back to restore a new phone outright, or merge it in alongside what is already there. No storage permission either way: export goes out through the share sheet, import comes in through the system document picker.
 
 FORTY CODEX ENTRIES

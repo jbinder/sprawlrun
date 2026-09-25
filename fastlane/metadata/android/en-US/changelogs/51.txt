@@ -1,0 +1,19 @@
+NULL TIDE — a second campaign, ten new missions. The southern districts went
+under eleven years ago, something in Pump House Seven has been apologising for
+nine seconds a night ever since, and a salvage broker with a bad knee needs a
+piece of paper carried across the Drowned Mile. Four new voices. Choose your
+campaign on the Ops screen; each keeps its own progress.
+
+Fixed: on a phone without Google Play Services a run could watch a healthy but
+empty GPS stream and never record a metre. Fixes now come from the GPS provider
+directly.
+
+New: the long view. Step back through earlier weeks and months, see distance
+per month since your first run, and every day you ran as a dot calendar.
+
+New: export any run's route as a GPX track, for OsmAnd or anything else that
+reads a map. Opening a run now replays its route at the pace you ran it.
+
+Also: fourteen more achievements, the codex grouped by campaign, cleared
+operations open onto a debriefing of every attempt, and unlock cards stay on
+screen long enough to read.

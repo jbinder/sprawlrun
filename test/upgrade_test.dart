@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/data/migrations.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -101,6 +102,14 @@ void main() {
     test('a field added after 0.1.0 takes its default rather than failing', () async {
       File('${root.path}/profile.json').writeAsStringSync(_profileV1);
       expect((await ProfileRepository(root).load()).resumeMusic, isTrue);
+    });
+
+    test('an unversioned profile is due every migration', () async {
+      File('${root.path}/profile.json').writeAsStringSync(_profileV1);
+      final loaded = await ProfileRepository(root).load();
+
+      expect(loaded.dataVersion, 0);
+      expect(Migrations.apply(loaded, const []), isNotNull, reason: 'it has repairs owing');
     });
 
     test('a 0.1.0 run log survives the upgrade intact', () async {

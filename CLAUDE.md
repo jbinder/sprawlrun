@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 249 tests
+fvm flutter test                                    # 264 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -77,6 +77,19 @@ only third-party binaries in the repo are the three OFL fonts.
   in milliseconds — keep new dependencies injectable.
 - **Derived data stays derived.** Stats, streaks and achievement progress are pure
   functions of the run log. Never cache them as counters that can drift.
+- **Repairs to stored data are migrations, not one-off flags.**
+  `data/migrations.dart` holds numbered steps; `Profile.dataVersion` records
+  how far a device has come, and 0 means "written before migrations existed".
+  Add a step and bump `Migrations.current` — a step must survive being run
+  twice, since a crash between migrating and saving repeats it.
+- **Adding an achievement is safe: `AppState.load` dates it.**
+  `AchievementEngine.backfill` replays the run log and dates each achievement
+  to the run that crossed its threshold — filling in ones whose definition did
+  not exist yet, and never moving a date later. Without it the next completed
+  run sweeps up everything history already satisfied and reveals it as if that
+  one run had earned it, stamped with that day. That shipped once; the runner
+  noticed. The replay only runs when something is undated, because it costs a
+  stats pass per run; keep it that way.
 - **`test/campaign_test.dart` is the contract for story content.** If you add a
   field to the mission format, add validation for it there too — a broken beat
   otherwise only surfaces twenty minutes into a real run.

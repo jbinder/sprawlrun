@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../data/backup.dart';
+import '../data/migrations.dart';
 import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
@@ -49,10 +50,38 @@ class AppState extends ChangeNotifier {
     profile = await profiles.load();
     runLog = await runs.loadAll();
     packs = await missions.loadPacks();
+    await _migrateAndDateAchievements();
     _recompute();
     loading = false;
     await narrator.init(profile);
     notifyListeners();
+  }
+
+  /// Brings stored data up to date, then dates any achievement the runner has
+  /// earned but that has no date yet.
+  ///
+  /// The second half is what keeps a catalogue addition honest: without it the
+  /// next completed run sweeps up everything history already satisfied and
+  /// reveals it as if that one run had earned it. It costs a stats pass per
+  /// run, so it only happens when something is actually undated — a launch
+  /// with nothing to do pays one [StatsService.lifetime] call, which
+  /// [_recompute] would make anyway.
+  Future<void> _migrateAndDateAchievements() async {
+    var next = Migrations.apply(profile, runLog) ?? profile;
+
+    if (runLog.isNotEmpty) {
+      final stats = StatsService.lifetime(runLog, next.streakGoal);
+      if (AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet()).isNotEmpty) {
+        final earlier = AchievementEngine.backfill(runLog, next.streakGoal, next.unlockedAchievements);
+        next = next.copyWith(
+          unlockedAchievements: {...next.unlockedAchievements, ...earlier},
+        );
+      }
+    }
+
+    if (identical(next, profile)) return;
+    profile = next;
+    await profiles.save(profile);
   }
 
   // -- campaign -------------------------------------------------------------

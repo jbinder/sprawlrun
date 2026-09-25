@@ -1,5 +1,8 @@
 import '../models/achievement.dart';
+import '../models/profile.dart';
+import '../models/run_record.dart';
 import '../models/stats.dart';
+import 'stats_service.dart';
 
 /// Turns lifetime stats into the achievement wall.
 ///
@@ -10,6 +13,53 @@ abstract final class AchievementEngine {
   /// Ids earned by [stats] that are not already in [alreadyEarned].
   static List<AchievementDef> newlyEarned(LifetimeStats stats, Set<String> alreadyEarned) =>
       kAchievements.where((a) => !alreadyEarned.contains(a.id) && a.isEarned(stats)).toList();
+
+  /// Unlock dates the run log supports but the profile does not have.
+  ///
+  /// Two cases, both caused by the catalogue growing after the running did:
+  /// an achievement earned before its definition existed has no date at all,
+  /// and one swept up by a later run carries that run's date rather than the
+  /// date it was really earned.
+  ///
+  /// The log is replayed run by run and each achievement dated to the run that
+  /// crossed its threshold. A recorded date is only ever moved *earlier* —
+  /// the replay can prove an achievement was already earned by some run, never
+  /// that it was earned later than the runner was told.
+  ///
+  /// Returns only the changes.
+  static Map<String, DateTime> backfill(
+    List<RunRecord> runLog,
+    StreakGoal goal,
+    Map<String, DateTime> recorded,
+  ) {
+    if (runLog.isEmpty) return const {};
+
+    // Oldest first: the run log is stored newest-first.
+    final chronological = List<RunRecord>.from(runLog)..sort((a, b) => a.startedAt.compareTo(b.startedAt));
+
+    // Only achievements the runner has actually earned can be dated, and once
+    // the last of them is placed the replay can stop. Without this the loop
+    // always walks the entire log looking for achievements that will never be
+    // earned, which is quadratic in the number of runs.
+    final finalStats = StatsService.lifetime(chronological, goal);
+    final out = <String, DateTime>{};
+    final pending = kAchievements.where((a) => a.isEarned(finalStats)).toList();
+    if (pending.isEmpty) return const {};
+    for (var i = 0; i < chronological.length && pending.isNotEmpty; i++) {
+      // Stats as they stood once this run was logged.
+      final stats = StatsService.lifetime(chronological.sublist(0, i + 1), goal);
+      // Dated to the end of the run: that is the moment the threshold was
+      // crossed, and it matches what a live unlock would have recorded.
+      final at = chronological[i].endedAt;
+      pending.removeWhere((def) {
+        if (!def.isEarned(stats)) return false;
+        final known = recorded[def.id];
+        if (known == null || at.isBefore(known)) out[def.id] = at;
+        return true;
+      });
+    }
+    return out;
+  }
 
   /// The whole wall, earned first, then closest-to-earned.
   static List<AchievementView> wall(LifetimeStats stats, Map<String, DateTime> earnedAt) {

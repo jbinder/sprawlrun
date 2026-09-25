@@ -67,6 +67,7 @@ class Profile {
     this.unlockedCodex = const <String>{},
     this.missionAttempts = const <String, int>{},
     this.lastGoalByMission = const <String, Map<String, dynamic>>{},
+    this.dataVersion = 0,
   });
 
   final String callsign;
@@ -108,6 +109,10 @@ class Profile {
   /// from what they already decided rather than the author's suggestion.
   final Map<String, Map<String, dynamic>> lastGoalByMission;
 
+  /// How far `Migrations` has brought this profile. 0 is anything written
+  /// before migrations existed, which is the state that needs all of them.
+  final int dataVersion;
+
   bool get isMetric => units == UnitSystem.metric;
 
   Profile copyWith({
@@ -130,6 +135,7 @@ class Profile {
     Set<String>? unlockedCodex,
     Map<String, int>? missionAttempts,
     Map<String, Map<String, dynamic>>? lastGoalByMission,
+    int? dataVersion,
   }) => Profile(
     callsign: callsign ?? this.callsign,
     weightKg: weightKg ?? this.weightKg,
@@ -150,6 +156,7 @@ class Profile {
     unlockedCodex: unlockedCodex ?? this.unlockedCodex,
     missionAttempts: missionAttempts ?? this.missionAttempts,
     lastGoalByMission: lastGoalByMission ?? this.lastGoalByMission,
+    dataVersion: dataVersion ?? this.dataVersion,
   );
 
   Map<String, dynamic> toJson() => {
@@ -172,6 +179,7 @@ class Profile {
     'unlockedCodex': unlockedCodex.toList(),
     'missionAttempts': missionAttempts,
     'lastGoalByMission': lastGoalByMission,
+    'dataVersion': dataVersion,
   };
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -205,5 +213,8 @@ class Profile {
     lastGoalByMission: ((json['lastGoalByMission'] as Map?) ?? const {}).map(
       (k, v) => MapEntry(k as String, Map<String, dynamic>.from(v as Map)),
     ),
+    // Absent in anything written before migrations existed, which is exactly
+    // the state that still needs them.
+    dataVersion: (json['dataVersion'] as num?)?.toInt() ?? 0,
   );
 }

@@ -9,6 +9,7 @@ import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
+import 'package:sprawl_run/state/app_state.dart';
 
 import 'support/fakes.dart';
 
@@ -229,6 +230,59 @@ void main() {
       final packs = await MissionRepository(externalDir: external, bundle: diskBundle()).loadPacks();
       expect(packs, hasLength(2));
       expect(packs.first.title, 'REVISED', reason: 'replaced in place, keeping its position');
+    });
+  });
+
+  group('achievements earned before their definition existed', () {
+    test('are recorded on load, dated to the run that earned them, and not revealed', () async {
+      final root = tempRoot('backfill');
+      addTearDown(() => root.deleteSync(recursive: true));
+      final profiles = ProfileRepository(root);
+      final runs = RunRepository(Directory('${root.path}/runs'));
+
+      // Two months of history, saved with no achievements recorded at all —
+      // exactly the state a runner is in when the catalogue grows.
+      final march = DateTime(2026, 3, 2, 7);
+      for (var i = 0; i < 3; i++) {
+        await runs.save(run(at: march.add(Duration(days: 7 * i)), meters: 6000, seconds: 2000));
+      }
+      await profiles.save(const Profile(callsign: 'MOLLY'));
+
+      final state = AppState(
+        profiles: profiles,
+        runs: runs,
+        missions: MissionRepository(externalDir: Directory('${root.path}/packs'), bundle: _DiskBundle()),
+        narrator: FakeNarrator(),
+      );
+      await state.load();
+
+      final unlocked = state.profile.unlockedAchievements;
+      expect(unlocked, isNotEmpty, reason: 'history already satisfied several');
+      expect(
+        unlocked['dist_5k'],
+        march.add(const Duration(seconds: 2000)),
+        reason: 'dated to the end of the first run, not to today',
+      );
+      expect(
+        unlocked.values.every((d) => d.isBefore(DateTime(2026, 4))),
+        isTrue,
+        reason: 'nothing may be stamped with the load date',
+      );
+
+      // It survives a restart, and the next run reveals only its own work.
+      final reloaded = AppState(
+        profiles: profiles,
+        runs: runs,
+        missions: MissionRepository(externalDir: Directory('${root.path}/packs'), bundle: _DiskBundle()),
+        narrator: FakeNarrator(),
+      );
+      await reloaded.load();
+      expect(reloaded.profile.unlockedAchievements['dist_5k'], march.add(const Duration(seconds: 2000)));
+
+      final revealed = await reloaded.completeRun(
+        run(at: DateTime(2026, 5, 1, 7), meters: 12000, seconds: 4000),
+      );
+      expect(revealed.newAchievements.map((a) => a.id), isNot(contains('dist_5k')));
     });
   });
 

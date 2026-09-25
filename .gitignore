@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Exported backups: a runner's whole history, including GPS traces.
+sprawlrun-backup-*.json

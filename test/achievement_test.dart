@@ -39,6 +39,74 @@ void main() {
     });
   });
 
+  group('backfilling a catalogue addition', () {
+    final march = DateTime(2026, 3, 2, 7);
+    // Three runs, a week apart, each long enough to move the totals.
+    const length = Duration(seconds: 2000);
+    final log = [
+      run(at: march, meters: 6000, seconds: 2000),
+      run(at: march.add(const Duration(days: 7)), meters: 6000, seconds: 2000),
+      run(at: march.add(const Duration(days: 14)), meters: 6000, seconds: 2000),
+    ];
+    // Achievements are dated to the end of the run that earned them.
+    DateTime endOf(int index) => march.add(Duration(days: 7 * index) + length);
+
+    test('dates each achievement to the run that actually earned it', () {
+      final filled = AchievementEngine.backfill(log, const StreakGoal(), const {});
+
+      // 5 km fell on the first run; 10 km total only by the second.
+      expect(filled['dist_5k'], endOf(0));
+      expect(filled['runs_10'], isNull, reason: 'three runs is not ten');
+      expect(filled['single_5k'], endOf(0), reason: 'one 6 km run does it');
+      expect(filled['time_1h'], endOf(1), reason: '2000 s is under an hour');
+    });
+
+    test('leaves a date alone when the log cannot better it', () {
+      // Recorded before any run: the replay has nothing to prove.
+      final filled = AchievementEngine.backfill(log, const StreakGoal(), {'dist_5k': DateTime(2025)});
+      expect(filled.containsKey('dist_5k'), isFalse);
+    });
+
+    test('moves a date earlier when a later run was wrongly credited', () {
+      // What a catalogue addition did: everything stamped with the last run.
+      final sweptUp = {
+        for (final id in ['dist_5k', 'single_30m', 'time_1h']) id: march.add(const Duration(days: 14)),
+      };
+      final fixed = AchievementEngine.backfill(log, const StreakGoal(), sweptUp);
+
+      expect(fixed['dist_5k'], endOf(0), reason: 'really earned on the first run');
+      expect(fixed['time_1h'], endOf(1));
+      expect(fixed.containsKey('single_30m'), isTrue);
+    });
+
+    test('never moves a date later', () {
+      final veryEarly = {for (final a in kAchievements) a.id: DateTime(2020)};
+      expect(AchievementEngine.backfill(log, const StreakGoal(), veryEarly), isEmpty);
+    });
+
+    test('is empty when there is no history to replay', () {
+      expect(AchievementEngine.backfill(const [], const StreakGoal(), const {}), isEmpty);
+    });
+
+    test('a newest-first log is replayed in the right order', () {
+      final newestFirst = log.reversed.toList();
+      expect(
+        AchievementEngine.backfill(newestFirst, const StreakGoal(), const {}),
+        AchievementEngine.backfill(log, const StreakGoal(), const {}),
+      );
+    });
+
+    test('after backfilling, a further run reveals only what it earned', () {
+      final filled = AchievementEngine.backfill(log, const StreakGoal(), const {});
+      final next = [...log, run(at: march.add(const Duration(days: 21)), meters: 12000, seconds: 4000)];
+      final stats = StatsService.lifetime(next, const StreakGoal());
+
+      final revealed = AchievementEngine.newlyEarned(stats, filled.keys.toSet()).map((a) => a.id);
+      expect(revealed, isNot(contains('dist_5k')), reason: 'earned back in March');
+      expect(revealed, contains('single_10k'), reason: 'the 12 km run is genuinely new');
+    });
+  });
+
   group('earning', () {
     final now = DateTime(2026, 7, 22, 18);
 

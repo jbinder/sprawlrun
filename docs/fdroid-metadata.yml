@@ -62,7 +62,7 @@ Repo: https://github.com/jbinder/sprawlrun.git
 Builds:
   - versionName: 0.3.0
     versionCode: 51
-    commit: c8046966f2b788d9b7345264b632859bf52e5f37
+    commit: 5ce99a51766409692b12f02128bc9e051527f932
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
@@ -95,7 +95,7 @@ Builds:
 
   - versionName: 0.3.0
     versionCode: 52
-    commit: c8046966f2b788d9b7345264b632859bf52e5f37
+    commit: 5ce99a51766409692b12f02128bc9e051527f932
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
@@ -128,7 +128,7 @@ Builds:
 
   - versionName: 0.3.0
     versionCode: 53
-    commit: c8046966f2b788d9b7345264b632859bf52e5f37
+    commit: 5ce99a51766409692b12f02128bc9e051527f932
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
       - flutter@stable

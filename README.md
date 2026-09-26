@@ -158,6 +158,8 @@ Forty entries across the two campaigns.
 - Twenty missions across two campaigns, paced to the target you pick
 - Optional reminders from your handler on the days and at the time you choose,
   written in the voice of the campaign you are playing
+- Optional signal noise: the city talking between runs, silent, never overnight,
+  as often or as rarely as you like
 - Nine characters across the campaigns, each with its own synthesised voice,
   generated on the device
 - Pursuits scaled to your own pace from the last three minutes — or switched off

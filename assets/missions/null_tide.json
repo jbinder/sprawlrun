@@ -5,14 +5,39 @@
   "signals": {
     "reminder": [
       { "from": "MARROW", "text": "Tide table says you have a window. Tide tables have been wrong for eleven years, so I would not spend it sitting down." },
+      { "from": "MARROW", "text": "Nothing is sinking faster than usual. Take the morning if you want it." },
+      { "from": "MARROW", "text": "Water is where it should be, which happens about twice a month. Use it." },
+      { "from": "MARROW", "text": "No work, no crisis, no reason. Go anyway. It helps, apparently." },
+      { "from": "MARROW", "text": "The Mile is passable. I am not promising dry, I am promising passable." },
       { "from": "DREDGE", "text": "Knee is bad, the paper still needs carrying, and you are the one with the legs. Think about it." },
+      { "from": "DREDGE", "text": "If you are going out, go now. Everything down here gets worse after lunch." },
+      { "from": "DREDGE", "text": "I would walk it myself. I have said that about four things today and meant none of them." },
       { "from": "WREN", "text": "The water is low enough to cross today. I am told that is the sort of thing you want to know." },
-      { "from": "MARROW", "text": "Nothing is sinking faster than usual. Take the morning if you want it." }
+      { "from": "WREN", "text": "You have not moved since yesterday. I checked. That is not surveillance, that is concern." },
+      { "from": "LEVEE", "text": "The pumps are holding. Good a morning as you are going to get for it." },
+      { "from": "SYSTEM", "text": "Scheduled reminder. Tidal conditions unremarkable. No excuse identified." }
     ],
     "ambient": [
       { "from": "WREN", "text": "Pump House Seven apologised again last night. Nine seconds, same as always. Sleep well." },
+      { "from": "WREN", "text": "Something under the Mile is keeping time. Not well. But keeping it." },
+      { "from": "WREN", "text": "I counted the lights on the far bank. There is one more than last week. Nobody will tell me whose." },
+      { "from": "WREN", "text": "The gulls have moved inland. The gulls are usually right about this sort of thing." },
       { "from": "LEVEE", "text": "Water came up two centimetres on the Mile this week. Nobody measured it but me." },
-      { "from": "DREDGE", "text": "Salvage board is thin. Everything worth taking is under four metres of water and someone else's name." }
+      { "from": "LEVEE", "text": "Someone has been repainting the depth markers lower. I have repainted them back." },
+      { "from": "LEVEE", "text": "The east sluice is singing again. It does that when the pressure is wrong." },
+      { "from": "LEVEE", "text": "Found a chair on the roof of a flooded house. Someone sat up there a long time." },
+      { "from": "DREDGE", "text": "Salvage board is thin. Everything worth taking is under four metres of water and someone else's name." },
+      { "from": "DREDGE", "text": "A man tried to sell me a door today. A door. Down here." },
+      { "from": "DREDGE", "text": "Insurance assessor came out to the Mile. Took one photograph, left, has not been seen since." },
+      { "from": "DREDGE", "text": "The tide brought back a shoe I threw out in spring. I am choosing not to think about it." },
+      { "from": "MARROW", "text": "Quiet on the water. Quiet is not the same as safe, but it is nicer." },
+      { "from": "MARROW", "text": "Eleven years today since the districts went under. Nobody is marking it. That is its own kind of marking." },
+      { "from": "MARROW", "text": "Somebody has been leaving flowers at the sea wall. Same spot, every week, no name." },
+      { "from": "MARROW", "text": "The ferry is running again. It is not a ferry, it is a man with a boat, but it is running." },
+      { "from": "MARROW", "text": "Half the Mile lost power for an hour and nobody noticed until the pumps changed note." },
+      { "from": "SYSTEM", "text": "Tidal advisory: high water at dawn. Tidal advisories have been indicative at best since the flood." },
+      { "from": "SYSTEM", "text": "Structural notice: the Drowned Mile remains condemned. Population of the Drowned Mile: unchanged." },
+      { "from": "SYSTEM", "text": "Pump network nominal. Seven of nine stations reporting. This is considered nominal." }
     ]
   },
   "missions": [

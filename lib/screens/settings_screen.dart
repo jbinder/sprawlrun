@@ -257,12 +257,35 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                           ],
+                          const _Rule(),
+                          _StepperRow(
+                            label: 'Signal noise',
+                            value: profile.signals.ambientPerWeek == 0
+                                ? 'OFF'
+                                : '${profile.signals.ambientPerWeek} / week',
+                            onDecrease: () => update(
+                              profile.copyWith(
+                                signals: profile.signals.copyWith(
+                                  ambientPerWeek: (profile.signals.ambientPerWeek - 1).clamp(0, 14),
+                                ),
+                              ),
+                            ),
+                            onIncrease: () => update(
+                              profile.copyWith(
+                                signals: profile.signals.copyWith(
+                                  ambientPerWeek: (profile.signals.ambientPerWeek + 1).clamp(0, 14),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                     const _Note(
                       'Messages come from whoever is running your current campaign, and say '
-                      'nothing you have not already been told. They are never read aloud.',
+                      'nothing you have not already been told. They are never read aloud.\n\n'
+                      'Signal noise is the city talking whether or not you are running: silent, '
+                      'never between 22:00 and 07:00, and off until you ask for it.',
                     ),
                     const SizedBox(height: 20),
 

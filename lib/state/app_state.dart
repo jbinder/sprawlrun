@@ -219,14 +219,15 @@ class AppState extends ChangeNotifier {
   /// moves: the settings, the campaign position, or the fact that the runner
   /// has now been out today.
   Future<void> _rescheduleSignals() async {
-    if (!profile.signals.remindersEnabled) {
+    final settings = profile.signals;
+    if (!settings.remindersEnabled && settings.ambientPerWeek <= 0) {
       await _signals.cancelAll();
       return;
     }
     await _signals.schedule(
       SignalPlanner.plan(
         now: DateTime.now(),
-        settings: profile.signals,
+        settings: settings,
         runLog: runLog,
         pack: activePack,
         nextMission: currentMission?.mission,

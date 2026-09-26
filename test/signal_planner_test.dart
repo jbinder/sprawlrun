@@ -169,4 +169,84 @@ void main() {
       expect(p.id, lessThan(SignalPlanner.ambientBase));
     }
   });
+
+  group('signal noise', () {
+    const ambientPool = SignalPool(
+      ambient: [
+        Signal(from: 'PACHINKO', text: 'Someone is selling your gait signature in the night market.'),
+        Signal(from: 'SYSTEM', text: 'Traffic advisory: the Ninsei strip is at capacity.'),
+        Signal(from: 'SIX', text: 'Two couriers retired this week.'),
+      ],
+    );
+
+    List<PlannedSignal> ambientPlan({int perWeek = 5, DateTime? now, SignalPool? pool}) => SignalPlanner.plan(
+      now: now ?? monday,
+      settings: SignalSettings(ambientPerWeek: perWeek),
+      runLog: const [],
+      pack: pack(signals: pool ?? ambientPool),
+    ).where((p) => p.kind == SignalKind.ambient).toList();
+
+    test('off until asked for', () {
+      expect(ambientPlan(perWeek: 0), isEmpty);
+    });
+
+    test('as many a week as the runner asked for', () {
+      expect(ambientPlan(perWeek: 3), hasLength(3));
+      expect(ambientPlan(perWeek: 10), hasLength(10));
+    });
+
+    test('never in the small hours', () {
+      for (final p in ambientPlan(perWeek: 14)) {
+        expect(
+          p.at.hour,
+          inInclusiveRange(SignalPlanner.quietUntilHour, SignalPlanner.quietFromHour - 1),
+          reason: 'fired at ${p.at}',
+        );
+      }
+    });
+
+    test('spread across the week rather than bunched into one day', () {
+      final days = ambientPlan(perWeek: 7).map((p) => p.at.day).toSet();
+      expect(days.length, greaterThan(3), reason: 'all landed on the same day or two');
+    });
+
+    test('sent whether or not the runner has been out', () {
+      // Unlike a reminder: going running does not silence the city.
+      final withRun = SignalPlanner.plan(
+        now: monday,
+        settings: const SignalSettings(ambientPerWeek: 5),
+        runLog: [run(at: monday.subtract(const Duration(hours: 1)))],
+        pack: pack(signals: ambientPool),
+      ).where((p) => p.kind == SignalKind.ambient);
+
+      expect(withRun, hasLength(5));
+    });
+
+    test('re-planning keeps the same schedule', () {
+      final first = ambientPlan();
+      final second = ambientPlan();
+      expect(second.map((p) => p.at), first.map((p) => p.at));
+      expect(second.map((p) => p.text), first.map((p) => p.text));
+    });
+
+    test('nothing is sent when nothing is written', () {
+      expect(ambientPlan(pool: const SignalPool()), isEmpty);
+    });
+
+    test('nothing repeats until the pool is exhausted', () {
+      // The reason the copy has to be plentiful: at two a day a small pool is
+      // noticed as a loop within days.
+      final planned = ambientPlan(perWeek: 3);
+      expect(planned.map((p) => p.text).toSet(), hasLength(3), reason: 'repeated inside one week');
+    });
+
+    test('ids stay in their own range, clear of the reminders', () {
+      final planned = ambientPlan(perWeek: 9);
+      expect(planned.map((p) => p.id).toSet(), hasLength(planned.length));
+      for (final p in planned) {
+        expect(p.id, greaterThanOrEqualTo(SignalPlanner.ambientBase));
+        expect(p.id, lessThan(SignalPlanner.ambientBase + 100));
+      }
+    });
+  });
 }

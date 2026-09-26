@@ -225,6 +225,17 @@ void _checks(String path) {
     });
   });
 
+  test('there is enough to say that nobody notices a loop', () {
+    // Signal noise can run to two a day. A pool smaller than this is heard as
+    // a repeating tape within the first week.
+    expect(
+      pack.signals.ambient.length,
+      greaterThanOrEqualTo(14),
+      reason: 'ambient pool repeats inside a week at the top frequency',
+    );
+    expect(pack.signals.reminder.length, greaterThanOrEqualTo(7), reason: 'a reminder a day for a week');
+  });
+
   test('the pack can always speak, whatever the runner has finished', () {
     // Mission pools are optional — copy gets written over time — but the
     // generic pool is the fallback for a finished campaign and for a runner

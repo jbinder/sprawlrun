@@ -6,13 +6,39 @@
     "reminder": [
       { "from": "KESTREL", "text": "Work is on the board if you want it. Same terms as always: you run, I talk, nobody writes anything down." },
       { "from": "KESTREL", "text": "You have been still long enough that my board lists you as a fixed address. Fix that." },
+      { "from": "KESTREL", "text": "Nothing urgent. That changes about as fast as the weather, so do not read too much into it." },
+      { "from": "KESTREL", "text": "Legs still attached? Good. That is the whole of the qualification." },
+      { "from": "KESTREL", "text": "I have a window this morning. Windows in this city close on their own." },
+      { "from": "KESTREL", "text": "You do not have to take anything. I would just rather you were moving when something comes in." },
+      { "from": "KESTREL", "text": "Half the couriers on my list are asleep. The other half are working. Pick a half." },
       { "from": "SIX", "text": "Rates are up for anyone who can cover ground today. Rates are always up. Nobody ever covers ground." },
-      { "from": "KESTREL", "text": "Nothing urgent. That changes about as fast as the weather, so do not read too much into it." }
+      { "from": "SIX", "text": "Everyone wants a courier who is already running. Nobody wants to pay for the warm-up." },
+      { "from": "SIX", "text": "You are not on anyone's list today. That is worth about an hour of good road." },
+      { "from": "PACHINKO", "text": "Streets are dry, the drones are lazy and I am bored. Three good reasons, pick whichever." },
+      { "from": "PACHINKO", "text": "Come out. The city is doing that thing where it almost looks designed." },
+      { "from": "SYSTEM", "text": "Scheduled reminder. No operation is pending. Movement is advised regardless." }
     ],
     "ambient": [
       { "from": "PACHINKO", "text": "Someone is selling your gait signature in the night market. Badly. It has you at forty-one kilos." },
+      { "from": "PACHINKO", "text": "A man on Ninsei is renting out his shadow. I have not worked out the scam yet and it is keeping me up." },
+      { "from": "PACHINKO", "text": "The noodle stand under the overpass changed hands again. Same pot. Nobody has ever emptied that pot." },
+      { "from": "PACHINKO", "text": "There is a busker downstairs playing a cover of an advertisement. Crowd loves it." },
       { "from": "SYSTEM", "text": "Traffic advisory: the Ninsei strip is at capacity. It is always at capacity. Route accordingly." },
-      { "from": "SIX", "text": "Two couriers retired this week. One of them chose to. Good week, by the averages." }
+      { "from": "SYSTEM", "text": "Air quality nominal. The word nominal is doing a great deal of work in that sentence." },
+      { "from": "SYSTEM", "text": "Public transit is delayed on four lines. Walking remains undelayed." },
+      { "from": "SYSTEM", "text": "Weather: rain, later, probably. This forecast has been accurate for nineteen years by never being specific." },
+      { "from": "SYSTEM", "text": "Municipal notice: the fountain in the plaza is decorative and not potable. This notice is nine years old." },
+      { "from": "SIX", "text": "Two couriers retired this week. One of them chose to. Good week, by the averages." },
+      { "from": "SIX", "text": "Rumour is somebody upstairs is buying movement data. Rumour is always that." },
+      { "from": "SIX", "text": "A client asked me for a courier who does not ask questions. I gave them a list. It was short." },
+      { "from": "SIX", "text": "Somebody left a crate on my step with no name on it. I have decided it is not mine." },
+      { "from": "KESTREL", "text": "Quiet night. I do not trust quiet nights, but I am told other people enjoy them." },
+      { "from": "KESTREL", "text": "One of my regulars got a real job. I have not decided whether to be pleased." },
+      { "from": "KESTREL", "text": "The arcology lit up its whole north face for nobody at four in the morning. Just so you know what we are dealing with." },
+      { "from": "KESTREL", "text": "I am told there is a bird nesting on the relay tower. Everyone is very invested." },
+      { "from": "KESTREL", "text": "Somebody repainted the tunnel mural. Same face, different eyes. I liked the old eyes." },
+      { "from": "KESTREL", "text": "Rent went up. The building has not improved. I mention it only as a fact of the world." },
+      { "from": "KESTREL", "text": "There is a queue outside the clinic again. Nobody in it looks ill. Make of that what you like." }
     ]
   },
   "missions": [

@@ -2,6 +2,19 @@
   "id": "sprawl_prime",
   "title": "SPRAWL PRIME",
   "tagline": "Ten runs through the BAMA corridor. Bring your own legs.",
+  "signals": {
+    "reminder": [
+      { "from": "KESTREL", "text": "Work is on the board if you want it. Same terms as always: you run, I talk, nobody writes anything down." },
+      { "from": "KESTREL", "text": "You have been still long enough that my board lists you as a fixed address. Fix that." },
+      { "from": "SIX", "text": "Rates are up for anyone who can cover ground today. Rates are always up. Nobody ever covers ground." },
+      { "from": "KESTREL", "text": "Nothing urgent. That changes about as fast as the weather, so do not read too much into it." }
+    ],
+    "ambient": [
+      { "from": "PACHINKO", "text": "Someone is selling your gait signature in the night market. Badly. It has you at forty-one kilos." },
+      { "from": "SYSTEM", "text": "Traffic advisory: the Ninsei strip is at capacity. It is always at capacity. Route accordingly." },
+      { "from": "SIX", "text": "Two couriers retired this week. One of them chose to. Good week, by the averages." }
+    ]
+  },
   "missions": [
     {
       "id": "sp01",
@@ -13,6 +26,15 @@
       "brief": "The sky over the market is the colour of a dead screen. Kestrel has a courier job: one package, one pickup, no questions. It pays enough to matter and it is almost certainly a trap, but rent is rent.\n\nKeep moving. Couriers who stand still get inventoried.",
       "debrief": "The package is in your hand and your name is not on anything. Kestrel sounds almost surprised. Somewhere behind you, a drone that was not supposed to be there is still listening.",
       "suggestedGoal": { "type": "time", "value": 900 },
+      "signals": {
+        "reminder": [
+          { "from": "KESTREL", "text": "Package is still sitting in the drop on Ninsei. It does not spoil. The people looking for it do not sleep either." },
+          { "from": "KESTREL", "text": "Courier job is still open. One package, one pickup, no questions. Your legs, your call." }
+        ],
+        "ambient": [
+          { "from": "KESTREL", "text": "Drop is cold, nobody has touched it. Take your time. Not too much time." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_courier",
@@ -147,6 +169,14 @@
       "brief": "The package will not stop transmitting. Kestrel wants it looked at by somebody who works below the Turing Registry's line of sight — which means Pachinko, who runs a clinic out of a converted laundromat and has never once been described as reassuring.\n\nClinic Row does not have an address. It has a direction.",
       "debrief": "Pachinko says the package is not a package. It is a container, and the thing inside it is awake. Somewhere in the last two kilometres you stopped being a courier and became a witness.",
       "suggestedGoal": { "type": "distance", "value": 3000 },
+      "signals": {
+        "reminder": [
+          { "from": "KESTREL", "text": "That thing you are carrying has not stopped transmitting. Standing still is the one thing I would not do with it." }
+        ],
+        "ambient": [
+          { "from": "SYSTEM", "text": "Signal integrity nominal. Signal origin unknown. Signal is, regrettably, in your bag." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_clinic",

@@ -99,4 +99,62 @@ void main() {
     expect(find.text('V9.9.9 · BUILD 999 · OFFLINE'), findsOneWidget);
     expect(find.textContaining('github.com/jbinder/sprawlrun'), findsOneWidget);
   });
+
+  group('signals', () {
+    testWidgets('the schedule stays hidden until reminders are switched on', (tester) async {
+      await pumpSettings(tester);
+
+      expect(find.text('SIGNALS'), findsOneWidget);
+      expect(find.text('Reminders'), findsOneWidget);
+      expect(find.text('Days'), findsNothing, reason: 'nothing to schedule while it is off');
+      expect(find.text('Time'), findsNothing);
+    });
+
+    testWidgets('switching reminders on reveals the days and the time', (tester) async {
+      await pumpSettings(
+        tester,
+        profile: const Profile(signals: SignalSettings(remindersEnabled: true)),
+      );
+
+      expect(find.text('Days'), findsOneWidget);
+      expect(find.text('Time'), findsOneWidget);
+      expect(find.text('07:00'), findsOneWidget, reason: 'the default hour');
+    });
+
+    testWidgets('the time steps in quarter hours and wraps at midnight', (tester) async {
+      final state = await pumpSettings(
+        tester,
+        profile: const Profile(
+          signals: SignalSettings(remindersEnabled: true, minutesFromMidnight: 0),
+        ),
+      );
+
+      final row = find.ancestor(of: find.text('Time'), matching: find.byType(Row)).first;
+      await tester.tap(find.descendant(of: row, matching: find.byIcon(Icons.remove)), warnIfMissed: false);
+      await tester.pump();
+
+      expect(
+        state.profile.signals.minutesFromMidnight,
+        23 * 60 + 45,
+        reason: 'a quarter hour before midnight, not a negative time',
+      );
+    });
+
+    testWidgets('the last remaining day cannot be switched off', (tester) async {
+      // "No days at all" is what the Reminders switch is for; a schedule that
+      // never fires would just look broken.
+      final state = await pumpSettings(
+        tester,
+        profile: const Profile(
+          signals: SignalSettings(remindersEnabled: true, weekdays: {DateTime.wednesday}),
+        ),
+      );
+
+      final row = find.ancestor(of: find.text('Days'), matching: find.byType(Column)).first;
+      await tester.tap(find.descendant(of: row, matching: find.text('W')).first, warnIfMissed: false);
+      await tester.pump();
+
+      expect(state.profile.signals.weekdays, {DateTime.wednesday});
+    });
+  });
 }

@@ -164,6 +164,42 @@ disabled still plays every line.
 Entries appear in the Codex tab only after the beat whose `unlocksCodex` names
 them has actually played. Define an entry in the same mission that unlocks it.
 
+### Signals
+
+Messages a handler sends **between** runs, delivered as notifications. Optional,
+and they can sit on the pack, on a mission, or both.
+
+```jsonc
+"signals": {
+  "reminder": [                       // nudges to go running
+    { "from": "KESTREL", "text": "Courier job is still open. One package, one pickup, no questions." }
+  ],
+  "ambient": [                        // unprompted traffic; the city talking
+    { "from": "PACHINKO", "text": "Someone is selling your gait signature in the night market. Badly." }
+  ]
+}
+```
+
+On the **pack** they are generic: valid at any point, and the only thing left to
+say once the campaign is finished. On a **mission** they belong to that mission
+*while it is the one waiting to be run*, so a runner between operations hears
+about the operation ahead of them. Both pools are drawn on together, which is
+what stops a runner who goes out daily from seeing the same two lines all week.
+
+Three rules, none of which the app can check for you:
+
+- **No spoilers.** A mission's signals may only lean on what its `brief`
+  already tells the runner, or on missions they have finished. They are read
+  before the mission is played, not after.
+- **Never a repeat of a beat.** These are newly written lines. Nobody wants to
+  be told again what they already heard on a run.
+- **Never spoken.** Signals are text in the notification shade and are never
+  passed to the narrator, so they do not have to scan when read aloud.
+
+`from` must be a speaker the narrator knows, the same as a `StoryLine` — it sets
+the name on the notification. Keep the text under 180 characters; Android
+truncates beyond roughly that, and `campaign_test.dart` enforces it.
+
 ## Validating a pack
 
 `test/campaign_test.dart` checks the shipped campaign for ordering, dangling

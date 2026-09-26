@@ -14,6 +14,8 @@ import '../models/run_outcome.dart';
 import '../models/stats.dart';
 import '../services/achievement_engine.dart';
 import '../services/narrator.dart';
+import '../services/signal_planner.dart';
+import '../services/signal_scheduler.dart';
 import '../services/stats_service.dart';
 
 /// The single source of truth the UI reads from.
@@ -27,12 +29,17 @@ class AppState extends ChangeNotifier {
     required this.runs,
     required this.missions,
     required this.narrator,
-  });
+    SignalScheduler? signals,
+  }) : _signals = signals ?? SignalScheduler.noop();
 
   final ProfileRepository profiles;
   final RunRepository runs;
   final MissionRepository missions;
   final Narrator narrator;
+
+  /// Delivers the between-run messages. Defaults to doing nothing, so tests
+  /// and any platform without scheduling behave without special-casing.
+  final SignalScheduler _signals;
 
   late final BackupService backups = BackupService(profiles: profiles, runs: runs);
 
@@ -55,6 +62,7 @@ class AppState extends ChangeNotifier {
     loading = false;
     await narrator.init(profile);
     notifyListeners();
+    await _rescheduleSignals();
   }
 
   /// Brings stored data up to date, then dates any achievement the runner has
@@ -201,6 +209,29 @@ class AppState extends ChangeNotifier {
     await narrator.applyProfile(next);
     _recompute();
     notifyListeners();
+    await _rescheduleSignals();
+  }
+
+  /// Re-plans the messages the handlers will send.
+  ///
+  /// The text of a notification is fixed when it is scheduled — no Dart runs
+  /// when it fires — so the plan is rebuilt whenever anything it depends on
+  /// moves: the settings, the campaign position, or the fact that the runner
+  /// has now been out today.
+  Future<void> _rescheduleSignals() async {
+    if (!profile.signals.remindersEnabled) {
+      await _signals.cancelAll();
+      return;
+    }
+    await _signals.schedule(
+      SignalPlanner.plan(
+        now: DateTime.now(),
+        settings: profile.signals,
+        runLog: runLog,
+        pack: activePack,
+        nextMission: currentMission?.mission,
+      ),
+    );
   }
 
   Future<void> rememberGoal(Mission mission, RunGoal goal) async {
@@ -261,6 +292,8 @@ class AppState extends ChangeNotifier {
     await profiles.save(next);
     _recompute();
     notifyListeners();
+    // Today's reminder is moot now, and the next mission may have changed.
+    await _rescheduleSignals();
 
     // The mission that just became playable, if the campaign moved on.
     String? unlocked;

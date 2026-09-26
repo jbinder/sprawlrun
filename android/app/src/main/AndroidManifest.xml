@@ -21,6 +21,10 @@
     <!-- Android 13+ requires this to show the ongoing "mission active" notice. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <!-- Alarms do not survive a reboot. Without this a reminder set on Friday
+         is silently gone by Monday if the phone restarted in between. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <!-- Deliberately absent: INTERNET. The app is fully offline and has nothing
          to send anywhere. -->
 
@@ -66,6 +70,24 @@
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <!-- Scheduled signals. The plugin ships no receivers of its own, so
+             both are declared here: one fires a pending notification, the
+             other re-arms the schedule after a reboot or an app update,
+             which alarms do not survive on their own. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false"/>
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

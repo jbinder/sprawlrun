@@ -227,6 +227,45 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
+                    const SectionHeader('SIGNALS', accent: Cy.green),
+                    NeonPanel(
+                      child: Column(
+                        children: [
+                          _SwitchRow(
+                            label: 'Reminders',
+                            subtitle: 'Your handler asks whether you are running, on the days you pick',
+                            value: profile.signals.remindersEnabled,
+                            onChanged: (v) => update(
+                              profile.copyWith(signals: profile.signals.copyWith(remindersEnabled: v)),
+                            ),
+                          ),
+                          if (profile.signals.remindersEnabled) ...[
+                            const _Rule(),
+                            _WeekdayRow(
+                              label: 'Days',
+                              selected: profile.signals.weekdays,
+                              onChanged: (days) => update(
+                                profile.copyWith(signals: profile.signals.copyWith(weekdays: days)),
+                              ),
+                            ),
+                            const _Rule(),
+                            _TimeRow(
+                              label: 'Time',
+                              minutesFromMidnight: profile.signals.minutesFromMidnight,
+                              onChanged: (m) => update(
+                                profile.copyWith(signals: profile.signals.copyWith(minutesFromMidnight: m)),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const _Note(
+                      'Messages come from whoever is running your current campaign, and say '
+                      'nothing you have not already been told. They are never read aloud.',
+                    ),
+                    const SizedBox(height: 20),
+
                     const SectionHeader('MISSION PACKS'),
                     NeonPanel(
                       child: Column(
@@ -379,6 +418,117 @@ class _Note extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       Text(text, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4));
+}
+
+/// Seven toggles, Monday first. The app has no picker of any kind, so this
+/// borrows the chip look the achievement wall already uses rather than
+/// introducing Material's own.
+class _WeekdayRow extends StatelessWidget {
+  const _WeekdayRow({required this.label, required this.selected, required this.onChanged});
+
+  final String label;
+  final Set<int> selected;
+  final ValueChanged<Set<int>> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: CyType.body(size: 15, weight: FontWeight.w600)),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            for (var day = DateTime.monday; day <= DateTime.sunday; day++)
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: day == DateTime.sunday ? 0 : 6),
+                  child: _DayChip(
+                    // Monday is 1 and the table is 0-indexed.
+                    letter: Fmt.weekdayInitial(DateTime(2026, 1, 5 + day - 1)),
+                    selected: selected.contains(day),
+                    onTap: () {
+                      final next = Set<int>.from(selected);
+                      // Never leave every day off: that is "reminders off",
+                      // which is the switch above, not a schedule.
+                      if (!next.remove(day)) next.add(day);
+                      if (next.isNotEmpty) onChanged(next);
+                    },
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _DayChip extends StatelessWidget {
+  const _DayChip({required this.letter, required this.selected, required this.onTap});
+
+  final String letter;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        height: 34,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected ? Cy.cyan : Cy.panel,
+          border: Border.all(color: selected ? Cy.cyan : Cy.rule),
+        ),
+        child: Text(
+          letter,
+          style: CyType.mono(size: 11, color: selected ? Cy.v0id : Cy.inkDim, letterSpacing: 1),
+        ),
+      ),
+    );
+  }
+}
+
+/// Hours and minutes on ± buttons, in quarter-hours.
+///
+/// `showTimePicker` would be the only Material sheet in the product, so this
+/// reuses the stepper vocabulary the rest of the screen already speaks.
+class _TimeRow extends StatelessWidget {
+  const _TimeRow({required this.label, required this.minutesFromMidnight, required this.onChanged});
+
+  final String label;
+  final int minutesFromMidnight;
+  final ValueChanged<int> onChanged;
+
+  static const int _step = 15;
+
+  /// Wraps around midnight rather than clamping, so 00:00 is reachable from
+  /// either direction.
+  int _shifted(int by) => (minutesFromMidnight + by + 24 * 60) % (24 * 60);
+
+  @override
+  Widget build(BuildContext context) {
+    final hour = minutesFromMidnight ~/ 60;
+    final minute = minutesFromMidnight % 60;
+    return Row(
+      children: [
+        Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
+        _SmallButton(icon: Icons.remove, onTap: () => onChanged(_shifted(-_step))),
+        SizedBox(
+          width: 104,
+          child: Center(
+            child: Text(
+              '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}',
+              style: CyType.readout(15, Cy.cyan),
+            ),
+          ),
+        ),
+        _SmallButton(icon: Icons.add, onTap: () => onChanged(_shifted(_step))),
+      ],
+    );
+  }
 }
 
 class _SwitchRow extends StatelessWidget {

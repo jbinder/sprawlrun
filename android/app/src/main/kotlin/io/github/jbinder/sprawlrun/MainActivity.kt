@@ -36,6 +36,16 @@ class MainActivity : FlutterActivity() {
      */
     private val missionChannelId = "geolocator_channel_01"
 
+    /**
+     * Channels for the messages handlers send between runs. Created here at
+     * launch rather than left to the notification plugin, for the same reason
+     * [ensureMissionChannel] exists: importance is fixed when a channel is
+     * first created and cannot be raised by a later update, so it is worth
+     * setting deliberately and once.
+     */
+    private val reminderChannelId = "signals_reminder"
+    private val ambientChannelId = "signals_ambient"
+
     private val notificationRequestCode = 4711
 
     private var pendingNotificationResult: MethodChannel.Result? = null
@@ -47,6 +57,7 @@ class MainActivity : FlutterActivity() {
         super.configureFlutterEngine(flutterEngine)
 
         ensureMissionChannel()
+        ensureSignalChannels()
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, gpsChannelName)
             .setStreamHandler(GpsStream(this))
@@ -149,6 +160,34 @@ class MainActivity : FlutterActivity() {
      * the foreground service still runs but its notification is suppressed. No
      * plugin here asks for it, so the app has to.
      */
+    private fun ensureSignalChannels() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
+        val manager = getSystemService(NotificationManager::class.java) ?: return
+
+        // A reminder is an ordinary notification: whatever sound and vibration
+        // the device normally uses. One that cannot be noticed is not a
+        // reminder. Nothing is ever spoken aloud — that is the narrator's job
+        // and signals never reach it.
+        val reminders = NotificationChannel(
+            reminderChannelId,
+            "Reminders",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        reminders.description = "Your handler, asking whether you are running today."
+        manager.createNotificationChannel(reminders)
+
+        // Ambient traffic is flavour, not information, so it never interrupts.
+        val ambient = NotificationChannel(
+            ambientChannelId,
+            "Signal noise",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        ambient.description = "Traffic from the Sprawl. Silent."
+        ambient.enableVibration(false)
+        ambient.setShowBadge(false)
+        manager.createNotificationChannel(ambient)
+    }
+
     private fun requestNotificationPermission(result: MethodChannel.Result) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             result.success(true)

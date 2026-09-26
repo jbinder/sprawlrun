@@ -44,6 +44,67 @@ class StreakGoal {
 
 /// Everything about the runner: identity, settings, and campaign progress.
 ///
+/// When the handlers get in touch between runs.
+///
+/// Times are plain ints rather than `TimeOfDay` so that `models/` stays free of
+/// Flutter imports and the whole thing is JSON-primitive.
+class SignalSettings {
+  const SignalSettings({
+    this.remindersEnabled = false,
+    this.weekdays = const {DateTime.monday, DateTime.wednesday, DateTime.friday},
+    this.minutesFromMidnight = 7 * 60,
+    this.ambientPerWeek = 0,
+  });
+
+  /// Off until the runner asks for it: an app that starts messaging you
+  /// unprompted is an app that gets its notifications muted wholesale.
+  final bool remindersEnabled;
+
+  /// `DateTime.monday`..`DateTime.sunday`.
+  final Set<int> weekdays;
+
+  final int minutesFromMidnight;
+
+  /// Ambient traffic, 0 for none. Quiet hours apply to these and not to
+  /// reminders, which fire at the time the runner chose.
+  final int ambientPerWeek;
+
+  int get hour => minutesFromMidnight ~/ 60;
+  int get minute => minutesFromMidnight % 60;
+
+  /// `07:00`, for the settings readout.
+  String get label => '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+
+  SignalSettings copyWith({
+    bool? remindersEnabled,
+    Set<int>? weekdays,
+    int? minutesFromMidnight,
+    int? ambientPerWeek,
+  }) => SignalSettings(
+    remindersEnabled: remindersEnabled ?? this.remindersEnabled,
+    weekdays: weekdays ?? this.weekdays,
+    minutesFromMidnight: minutesFromMidnight ?? this.minutesFromMidnight,
+    ambientPerWeek: ambientPerWeek ?? this.ambientPerWeek,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'remindersEnabled': remindersEnabled,
+    'weekdays': weekdays.toList()..sort(),
+    'minutesFromMidnight': minutesFromMidnight,
+    'ambientPerWeek': ambientPerWeek,
+  };
+
+  factory SignalSettings.fromJson(Map<String, dynamic> json) => SignalSettings(
+    remindersEnabled: json['remindersEnabled'] as bool? ?? false,
+    weekdays: ((json['weekdays'] as List?) ?? const [])
+        .map((e) => (e as num).toInt())
+        .where((d) => d >= DateTime.monday && d <= DateTime.sunday)
+        .toSet(),
+    minutesFromMidnight: ((json['minutesFromMidnight'] as num?)?.toInt() ?? 7 * 60).clamp(0, 24 * 60 - 1),
+    ambientPerWeek: ((json['ambientPerWeek'] as num?)?.toInt() ?? 0).clamp(0, 21),
+  );
+}
+
 /// Immutable — mutations go through [copyWith] and are persisted as a whole,
 /// which keeps the on-disk state consistent even if the app dies mid-run.
 class Profile {
@@ -67,6 +128,7 @@ class Profile {
     this.unlockedCodex = const <String>{},
     this.missionAttempts = const <String, int>{},
     this.lastGoalByMission = const <String, Map<String, dynamic>>{},
+    this.signals = const SignalSettings(),
     this.dataVersion = 0,
   });
 
@@ -109,6 +171,9 @@ class Profile {
   /// from what they already decided rather than the author's suggestion.
   final Map<String, Map<String, dynamic>> lastGoalByMission;
 
+  /// When the handlers get in touch between runs.
+  final SignalSettings signals;
+
   /// How far `Migrations` has brought this profile. 0 is anything written
   /// before migrations existed, which is the state that needs all of them.
   final int dataVersion;
@@ -135,6 +200,7 @@ class Profile {
     Set<String>? unlockedCodex,
     Map<String, int>? missionAttempts,
     Map<String, Map<String, dynamic>>? lastGoalByMission,
+    SignalSettings? signals,
     int? dataVersion,
   }) => Profile(
     callsign: callsign ?? this.callsign,
@@ -156,6 +222,7 @@ class Profile {
     unlockedCodex: unlockedCodex ?? this.unlockedCodex,
     missionAttempts: missionAttempts ?? this.missionAttempts,
     lastGoalByMission: lastGoalByMission ?? this.lastGoalByMission,
+    signals: signals ?? this.signals,
     dataVersion: dataVersion ?? this.dataVersion,
   );
 
@@ -179,6 +246,7 @@ class Profile {
     'unlockedCodex': unlockedCodex.toList(),
     'missionAttempts': missionAttempts,
     'lastGoalByMission': lastGoalByMission,
+    'signals': signals.toJson(),
     'dataVersion': dataVersion,
   };
 
@@ -213,6 +281,9 @@ class Profile {
     lastGoalByMission: ((json['lastGoalByMission'] as Map?) ?? const {}).map(
       (k, v) => MapEntry(k as String, Map<String, dynamic>.from(v as Map)),
     ),
+    signals: json['signals'] == null
+        ? const SignalSettings()
+        : SignalSettings.fromJson(Map<String, dynamic>.from(json['signals'] as Map)),
     // Absent in anything written before migrations existed, which is exactly
     // the state that still needs them.
     dataVersion: (json['dataVersion'] as num?)?.toInt() ?? 0,

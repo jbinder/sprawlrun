@@ -104,6 +104,14 @@ void main() {
       expect((await ProfileRepository(root).load()).resumeMusic, isTrue);
     });
 
+    test('a 0.1.0 profile is not signed up for signals it never asked for', () async {
+      File('${root.path}/profile.json').writeAsStringSync(_profileV1);
+      final loaded = await ProfileRepository(root).load();
+
+      expect(loaded.signals.remindersEnabled, isFalse, reason: 'an upgrade must not start messaging people');
+      expect(loaded.signals.ambientPerWeek, 0);
+    });
+
     test('an unversioned profile is due every migration', () async {
       File('${root.path}/profile.json').writeAsStringSync(_profileV1);
       final loaded = await ProfileRepository(root).load();

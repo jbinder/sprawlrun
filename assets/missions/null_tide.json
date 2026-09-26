@@ -2,6 +2,19 @@
   "id": "null_tide",
   "title": "NULL TIDE",
   "tagline": "Ten runs across the Drowned Mile. The water remembers.",
+  "signals": {
+    "reminder": [
+      { "from": "MARROW", "text": "Tide table says you have a window. Tide tables have been wrong for eleven years, so I would not spend it sitting down." },
+      { "from": "DREDGE", "text": "Knee is bad, the paper still needs carrying, and you are the one with the legs. Think about it." },
+      { "from": "WREN", "text": "The water is low enough to cross today. I am told that is the sort of thing you want to know." },
+      { "from": "MARROW", "text": "Nothing is sinking faster than usual. Take the morning if you want it." }
+    ],
+    "ambient": [
+      { "from": "WREN", "text": "Pump House Seven apologised again last night. Nine seconds, same as always. Sleep well." },
+      { "from": "LEVEE", "text": "Water came up two centimetres on the Mile this week. Nobody measured it but me." },
+      { "from": "DREDGE", "text": "Salvage board is thin. Everything worth taking is under four metres of water and someone else's name." }
+    ]
+  },
   "missions": [
     {
       "id": "nt01",
@@ -15,6 +28,15 @@
       "suggestedGoal": {
         "type": "time",
         "value": 900
+      },
+      "signals": {
+        "reminder": [
+          { "from": "MARROW", "text": "The Drowned Mile is still where it was and the paper still needs to reach the other side of it." },
+          { "from": "DREDGE", "text": "I would carry it myself. You have met my knee. Whenever you are ready." }
+        ],
+        "ambient": [
+          { "from": "MARROW", "text": "Nothing has moved on the Mile since yesterday. That is the good outcome, in case it was unclear." }
+        ]
       },
       "codex": [
         {

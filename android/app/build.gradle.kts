@@ -50,6 +50,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+
+        // flutter_local_notifications compiles against java.time, which does
+        // not exist below API 26. Desugaring back-fills it; without this the
+        // build fails outright, scheduled notifications or not.
+        isCoreLibraryDesugaringEnabled = true
     }
 
     defaultConfig {
@@ -109,6 +114,13 @@ kotlin {
     compilerOptions {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
+}
+
+dependencies {
+    // Required by the desugaring switch above, nothing more. Not Play
+    // Services: this is a build-time shim from the Android toolchain, and the
+    // `com.google.android.gms` exclusion above still holds.
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
 
 flutter {

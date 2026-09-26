@@ -197,6 +197,15 @@ CurrentVersionCode: 53
 #     - io.github.jbinder.sprawlrun.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION,
 #       self-defined by share_plus so only this app can receive its own
 #       share-result broadcast.
+#     - VIBRATE, merged in by flutter_local_notifications. The app never asks
+#       to vibrate; reminders are left at whatever the device does by default
+#       and ambient signals explicitly disable it.
+#
+# Reminders:
+#   RECEIVE_BOOT_COMPLETED is requested directly. Scheduled alarms do not
+#   survive a reboot, so without it a reminder set before a restart silently
+#   never arrives. Alarms are inexact (AndroidScheduleMode.inexactAllowWhileIdle),
+#   so neither SCHEDULE_EXACT_ALARM nor USE_EXACT_ALARM is needed or asked for.
 #   Without INTERNET, nothing here can reach the network regardless.
 #
 # Backup and restore:

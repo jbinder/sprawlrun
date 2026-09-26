@@ -11,6 +11,7 @@ import 'data/profile_repository.dart';
 import 'data/run_repository.dart';
 import 'services/location_service.dart';
 import 'services/narrator.dart';
+import 'services/signal_scheduler.dart';
 import 'services/run_engine.dart';
 import 'state/app_state.dart';
 import 'theme/cyber_theme.dart';
@@ -31,6 +32,7 @@ Future<void> main() async {
     // Side-loaded mission packs land here; see docs/MISSION_PACKS.md.
     missions: MissionRepository(externalDir: Directory('${root.path}/mission_packs')),
     narrator: narrator,
+    signals: SignalScheduler.platform(),
   );
 
   runApp(

@@ -172,6 +172,65 @@ class CodexEntry {
   );
 }
 
+/// One message a handler sends between runs, shown as a notification.
+///
+/// Deliberately not a [StoryLine]: a `StoryLine` can be handed to the narrator
+/// and spoken aloud, and a signal never is. Keeping the types apart means no
+/// future change can accidentally route one into text-to-speech — the only
+/// path into TTS takes `StoryLine`s.
+class Signal {
+  const Signal({required this.from, required this.text});
+
+  /// A speaker from `VoiceProfile.bySpeaker`. Used for the notification title
+  /// and nothing else; no voice is ever selected from it.
+  final String from;
+
+  final String text;
+
+  factory Signal.fromJson(Map<String, dynamic> json) => Signal(
+    from: json['from'] as String? ?? 'SYSTEM',
+    text: json['text'] as String? ?? '',
+  );
+
+  Map<String, dynamic> toJson() => {'from': from, 'text': text};
+}
+
+/// The signals a pack or a single mission can send.
+///
+/// A pack's pool is generic and always valid. A mission's pool belongs to that
+/// mission *while it is the one waiting to be run*, so it may only lean on what
+/// the brief already shows the runner — never on a beat they have not heard.
+class SignalPool {
+  const SignalPool({this.reminder = const [], this.ambient = const []});
+
+  /// Nudges to go running, tied to the operation that is waiting.
+  final List<Signal> reminder;
+
+  /// Unprompted traffic that makes the city feel inhabited.
+  final List<Signal> ambient;
+
+  bool get isEmpty => reminder.isEmpty && ambient.isEmpty;
+
+  static List<Signal> _signals(Object? raw) => (raw as List? ?? [])
+      .map((e) => Signal.fromJson(Map<String, dynamic>.from(e as Map)))
+      .toList();
+
+  factory SignalPool.fromJson(Map<String, dynamic> json) => SignalPool(
+    reminder: _signals(json['reminder']),
+    ambient: _signals(json['ambient']),
+  );
+
+  Map<String, dynamic> toJson() => {
+    if (reminder.isNotEmpty) 'reminder': reminder.map((s) => s.toJson()).toList(),
+    if (ambient.isNotEmpty) 'ambient': ambient.map((s) => s.toJson()).toList(),
+  };
+}
+
+/// Parses an absent `signals` block as an empty pool, so no pack is obliged to
+/// carry one.
+SignalPool _pool(Object? raw) =>
+    raw == null ? const SignalPool() : SignalPool.fromJson(Map<String, dynamic>.from(raw as Map));
+
 class Mission {
   const Mission({
     required this.id,
@@ -187,6 +246,7 @@ class Mission {
     required this.beats,
     this.codex = const [],
     this.epilogue,
+    this.signals = const SignalPool(),
   });
 
   final String id;
@@ -216,6 +276,9 @@ class Mission {
   final List<StoryBeat> beats;
   final List<CodexEntry> codex;
 
+  /// Messages sent while this mission is the one waiting to be run.
+  final SignalPool signals;
+
   /// Every beat that carries a chase, in trigger order.
   Iterable<StoryBeat> get chaseBeats => beats.where((b) => b.chase != null);
 
@@ -237,6 +300,7 @@ class Mission {
     codex: (json['codex'] as List? ?? [])
         .map((e) => CodexEntry.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
+    signals: _pool(json['signals']),
   );
 }
 
@@ -244,12 +308,22 @@ class Mission {
 /// packs dropped into the documents directory, which is how future story
 /// content arrives without an app update.
 class MissionPack {
-  const MissionPack({required this.id, required this.title, required this.tagline, required this.missions});
+  const MissionPack({
+    required this.id,
+    required this.title,
+    required this.tagline,
+    required this.missions,
+    this.signals = const SignalPool(),
+  });
 
   final String id;
   final String title;
   final String tagline;
   final List<Mission> missions;
+
+  /// Generic messages, valid whatever the runner is playing — and the fallback
+  /// once a campaign is finished.
+  final SignalPool signals;
 
   factory MissionPack.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as String;
@@ -262,6 +336,7 @@ class MissionPack {
       title: json['title'] as String? ?? id,
       tagline: json['tagline'] as String? ?? '',
       missions: missions,
+      signals: _pool(json['signals']),
     );
   }
 }

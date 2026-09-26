@@ -139,6 +139,11 @@ void main() {
           completedMissions: {'sp01', 'sp02'},
           unlockedCodex: {'cdx_ninsei'},
           missionAttempts: {'sp03': 2},
+          signals: SignalSettings(
+            remindersEnabled: true,
+            weekdays: {DateTime.tuesday, DateTime.saturday},
+            minutesFromMidnight: 6 * 60 + 45,
+          ),
         ).copyWith(unlockedAchievements: {'dist_5k': unlockedAt}),
       );
 
@@ -149,6 +154,9 @@ void main() {
       expect(loaded.streakGoal.metric, StreakMetric.kilometres);
       expect(loaded.streakGoal.target, 25);
       expect(loaded.audioInterrupt, AudioInterrupt.duck);
+      expect(loaded.signals.remindersEnabled, isTrue);
+      expect(loaded.signals.weekdays, {DateTime.tuesday, DateTime.saturday});
+      expect(loaded.signals.minutesFromMidnight, 6 * 60 + 45);
       expect(loaded.resumeMusic, isFalse);
       expect(loaded.completedMissions, {'sp01', 'sp02'});
       expect(loaded.unlockedCodex, {'cdx_ninsei'});

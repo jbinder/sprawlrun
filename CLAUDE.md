@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 267 tests
+fvm flutter test                                    # 292 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -135,6 +135,17 @@ only third-party binaries in the repo are the three OFL fonts.
   call that only changes the text goes through `notify` instead. It holds a
   partial wake lock too: being in the foreground does not keep the CPU awake,
   and a frozen process stalls the ticker that fires story beats.
+- **Signals are notifications and are never spoken.** The messages handlers
+  send between runs (`lib/services/signal_planner.dart`) use their own `Signal`
+  type rather than `StoryLine`, precisely so nothing can hand one to the
+  narrator — `speakBeat` takes `StoryLine`s and is the only route into TTS.
+  Keep the types apart. Their text is fixed when the notification is
+  *scheduled*, not when it fires, since no Dart runs at fire time; that is why
+  `AppState` re-plans on load, on a settings change and after every run.
+- **Notification channel importance is frozen at creation.** `signals_reminder`
+  is `IMPORTANCE_DEFAULT` (an ordinary alert) and `signals_ambient` is
+  `IMPORTANCE_LOW` (silent). A later update cannot raise either, only the
+  runner can in Android settings, so changing them means a new channel id.
 - **Three things about that notification are load-bearing**, and none of them
   fail loudly: `FOREGROUND_SERVICE_IMMEDIATE`, or Android 12+ defers it by up
   to ten seconds; `R.drawable.ic_notification` plus `res/raw/keep.xml`, or the

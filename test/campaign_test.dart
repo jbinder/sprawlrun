@@ -198,6 +198,40 @@ void _checks(String path) {
     }
   });
 
+  test('every signal is sendable: a known speaker, short, and never repeated', () {
+    // Signals are notifications, never spoken — but the speaker still has to
+    // be someone the pack actually uses, or the name on the notification is
+    // a character who does not exist.
+    final pools = <String, SignalPool>{
+      'pack': pack.signals,
+      for (final m in pack.missions)
+        if (!m.signals.isEmpty) m.id: m.signals,
+    };
+
+    final seen = <String>{};
+    pools.forEach((owner, pool) {
+      for (final signal in [...pool.reminder, ...pool.ambient]) {
+        expect(
+          VoiceProfile.bySpeaker.keys,
+          contains(signal.from),
+          reason: '$owner: unknown speaker ${signal.from}',
+        );
+        expect(signal.text.trim(), isNotEmpty, reason: owner);
+        // Android truncates a long notification body; anything past this is
+        // written for a screen the runner will not see.
+        expect(signal.text.length, lessThan(180), reason: '$owner: "${signal.text}"');
+        expect(seen.add(signal.text), isTrue, reason: 'duplicated signal: "${signal.text}"');
+      }
+    });
+  });
+
+  test('the pack can always speak, whatever the runner has finished', () {
+    // Mission pools are optional — copy gets written over time — but the
+    // generic pool is the fallback for a finished campaign and for a runner
+    // who never starts one, so it has to exist.
+    expect(pack.signals.reminder, isNotEmpty, reason: 'no generic reminders to fall back on');
+  });
+
   test('the final mission carries an epilogue and nothing else does', () {
     for (final m in pack.missions) {
       if (m.order == 10) {

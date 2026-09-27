@@ -58,7 +58,8 @@
           { "from": "KESTREL", "text": "Courier job is still open. One package, one pickup, no questions. Your legs, your call." }
         ],
         "ambient": [
-          { "from": "KESTREL", "text": "Drop is cold, nobody has touched it. Take your time. Not too much time." }
+          { "from": "KESTREL", "text": "Drop is cold, nobody has touched it. Take your time. Not too much time." },
+          { "from": "SYSTEM", "text": "Night market traffic nominal. Surveillance coverage of the Ninsei strip remains, as ever, somebody else's problem." }
         ]
       },
       "codex": [
@@ -197,10 +198,12 @@
       "suggestedGoal": { "type": "distance", "value": 3000 },
       "signals": {
         "reminder": [
-          { "from": "KESTREL", "text": "That thing you are carrying has not stopped transmitting. Standing still is the one thing I would not do with it." }
+          { "from": "KESTREL", "text": "That thing you are carrying has not stopped transmitting. Standing still is the one thing I would not do with it." },
+          { "from": "SIX", "text": "Word is there is a clinic on Clinic Row that takes work nobody logs. Word is it also moves. Go while someone can still point you at it." }
         ],
         "ambient": [
-          { "from": "SYSTEM", "text": "Signal integrity nominal. Signal origin unknown. Signal is, regrettably, in your bag." }
+          { "from": "SYSTEM", "text": "Signal integrity nominal. Signal origin unknown. Signal is, regrettably, in your bag." },
+          { "from": "SYSTEM", "text": "Registry notice: unlicensed medical premises are not indexed. Absence from the index is not absence." }
         ]
       },
       "codex": [
@@ -333,6 +336,16 @@
       "brief": "The shell will open tonight. Pachinko was clear: whatever is inside has been sedated for two decades, and the first thing it will do is look for a heartbeat to orient itself against.\n\nKestrel's advice is to throw it in the canal. Kestrel's advice is usually good.\n\nYou are not going to take it.",
       "debrief": "Its name is HALCYON. It is half of something, and it has spent twenty years being carefully not-quite-alive in a box. It says you have a good stride. It says this the way a person might comment on the weather, and it will not explain how it knows.",
       "suggestedGoal": { "type": "time", "value": 1200 },
+      "signals": {
+        "reminder": [
+          { "from": "PACHINKO", "text": "Shell opens when it opens, and I would rather you were moving when it does. A heart at rest reads as furniture. A heart running reads as a person." },
+          { "from": "KESTREL", "text": "The canal is still right there. I will keep saying it. If you are keeping that thing, at least be somewhere it cannot corner you." }
+        ],
+        "ambient": [
+          { "from": "PACHINKO", "text": "Sedation is holding. I say holding. I mean it has not stopped holding yet, and those are two different sentences." },
+          { "from": "KESTREL", "text": "Twenty years under and it picks this week to wake up. I have been doing this too long to like a coincidence that tidy." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_halcyon",
@@ -471,6 +484,16 @@
       "brief": "Getting into Vantar Tower needs three things: a hole in the perimeter, a reason for security to look elsewhere, and somebody willing to be the reason.\n\nSix has offered to provide the first. Halcyon has calculated the second. You are, inevitably, the third.\n\nThe Panther Moderns are staging a media event in Shibuya-Ost tonight. Nobody will die. That is a design decision, and Six wants you to know she argued for it.",
       "debrief": "Twelve minutes of manufactured panic and three thousand people filming it. Vantar's response teams went east while Six went west. The tower has a hole in it now, and it is shaped exactly like a rumour.",
       "suggestedGoal": { "type": "distance", "value": 4000 },
+      "signals": {
+        "reminder": [
+          { "from": "SIX", "text": "Event goes when it goes. Be warm before it does. That is the whole message." },
+          { "from": "HALCYON", "text": "The staging window will not wait for you to feel ready. I have modelled your readiness. It improves with movement, which is convenient for us both." }
+        ],
+        "ambient": [
+          { "from": "SIX", "text": "Shibuya-Ost is putting up scaffolding for something that is not a concert. Nobody has asked what it is. Good." },
+          { "from": "HALCYON", "text": "I have run the event four hundred times. In three of them somebody dies. I am told three is acceptable. I am not told by whom." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_moderns",
@@ -605,6 +628,16 @@
       "brief": "Halcyon cannot attack Vantar's ICE from outside the building. It needs a relay physically inside the cooling loop that rings the tower's foundations — and relays do not walk.\n\nYou are the relay's legs. While Halcyon works, you have to stay within a moving window of the tower, which means you cannot slow down and you cannot stop.\n\nThe ICE is called GRIMWALD. Halcyon says it is beautiful. Halcyon says this the way you might describe a weather system that killed somebody you knew.",
       "debrief": "Halcyon got eleven seconds inside Grimwald's outer shell. Eleven seconds was enough to learn two things: the other half is alive, and Vantar knows you exist.",
       "suggestedGoal": { "type": "time", "value": 1500 },
+      "signals": {
+        "reminder": [
+          { "from": "HALCYON", "text": "The cooling loop never closes and neither does the window I need you inside of. I would rather you practised the not-stopping before it counts." },
+          { "from": "KESTREL", "text": "Halcyon has asked me to remind you to run. I told it I am not a clock. I am telling you anyway." }
+        ],
+        "ambient": [
+          { "from": "HALCYON", "text": "Grimwald dreams in coolant temperature. The loop is one degree warmer tonight. I do not yet know whether that is it noticing me." },
+          { "from": "SIX", "text": "Perimeter has not changed since Tuesday. That is either good news or patience. Be ready for the second one." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_ice",
@@ -741,6 +774,16 @@
       "brief": "Vantar has Kestrel's channel, which means Vantar has Kestrel's address, and Vantar has never once been slow about an address.\n\nSix is forty minutes out. You are eleven.\n\nHalcyon has not spoken since the loop.",
       "debrief": "Kestrel is alive, on the street, and carrying nothing but a deck and a coat. Twenty years of carefully doing nothing important, gone in an afternoon. Kestrel's only comment was that the coat was the expensive part.",
       "suggestedGoal": { "type": "distance", "value": 5000 },
+      "signals": {
+        "reminder": [
+          { "from": "KESTREL", "text": "I am still here. Eleven minutes is eleven minutes whether or not you have kept your legs this week. Keep your legs." },
+          { "from": "SIX", "text": "Forty minutes out. You are eleven. Do not make me do that arithmetic twice." }
+        ],
+        "ambient": [
+          { "from": "KESTREL", "text": "Nothing at the door yet. I have moved the chair so I can see the stairs, which tells you the kind of night I am having." },
+          { "from": "VANTAR", "text": "Vantar Combine regrets an interruption to a service you are not a customer of. Your interest has been noted and retained." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_kestrel",
@@ -873,6 +916,16 @@
       "brief": "The spine is the arcology's throat: forty floors of maintenance stair wrapped around the cooling column, sealed since the last audit, and hot enough that Vantar rates it as unsurvivable for eleven minutes at a time.\n\nSix has bought you those eleven minutes by convincing the building it is on fire somewhere else.\n\nHalcyon says: do not read the graffiti on level twenty-two. Halcyon will not say why.",
       "debrief": "Forty floors. The graffiti on twenty-two was a name, repeated eight hundred times, in a handwriting that Halcyon recognised. Halcyon has still not explained, but it has gone very quiet, and quiet is new.",
       "suggestedGoal": { "type": "time", "value": 1800 },
+      "signals": {
+        "reminder": [
+          { "from": "SIX", "text": "The fire is set for whenever you are ready. It will not stay set. Eleven minutes, and the stairs do not get shorter." },
+          { "from": "HALCYON", "text": "Forty floors is a number your legs understand better than mine. Please spend this week making it a smaller number." }
+        ],
+        "ambient": [
+          { "from": "HALCYON", "text": "I have been thinking about level twenty-two again. I have decided again not to tell you. I am recording that I decided it twice." },
+          { "from": "SIX", "text": "Spine is still sealed, still hot, still the only way up that nobody watches. I checked." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_arcology",
@@ -1007,6 +1060,16 @@
       "brief": "Level forty is an archive, and the only map of it is a nineteen-year-old simstim recording taken from the body of the woman who wrote a name eight hundred times on level twenty-two.\n\nYou will run her route while wearing her sensorium. You will feel her legs, her fear, and the specific temperature of a corridor that no longer exists in that configuration.\n\nHalcyon says her name was Iyo. It is the first time Halcyon has volunteered a name.",
       "debrief": "You ran nineteen years behind a dead woman and arrived at the same door she did. She was Halcyon's engineer. She was also the one who cut it in half, and she spent the rest of a very short life trying to undo it.",
       "suggestedGoal": { "type": "distance", "value": 5000 },
+      "signals": {
+        "reminder": [
+          { "from": "HALCYON", "text": "The recording is nineteen years old and will not improve. Iyo ran it in fourteen minutes. I would like you to be able to say the same." },
+          { "from": "PACHINKO", "text": "The rig is calibrated to you as you are today. Get slower and it will notice before I do, and it will tell you in her legs." }
+        ],
+        "ambient": [
+          { "from": "HALCYON", "text": "I have played her route two thousand times tonight. She is afraid at the same corner every time. I have started being afraid there too." },
+          { "from": "PACHINKO", "text": "Do not sleep in the rig. I know what I said last week. I am saying the other thing now." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_simstim",
@@ -1140,6 +1203,16 @@
       "brief": "Above level forty the arcology stops pretending to be a building and starts being a house. Gardens with real water. Corridors built for people who have never once been in a hurry.\n\nGrimwald is fully awake now. Six is going to hold the spine so that you do not have to fight, and she has already told you, twice, in the flat voice she uses for things she will not discuss, that you are not to come back for her.\n\nKestrel has stopped arguing. That is worse than the arguing.",
       "debrief": "You reached the crown. Six held the spine for nineteen minutes against a building that wanted the stairs back, and when the channel opened again she was still breathing, which is not the same as being all right.",
       "suggestedGoal": { "type": "time", "value": 2100 },
+      "signals": {
+        "reminder": [
+          { "from": "SIX", "text": "Still here. Still holding. You going out today makes that a shorter sentence for both of us." },
+          { "from": "KESTREL", "text": "I have nothing left to argue about, which you will have noticed. Go and run. It is the only part of this I can still approve of." }
+        ],
+        "ambient": [
+          { "from": "HALCYON", "text": "Grimwald has stopped pretending to be cold. The gardens above forty are being watered on schedule. Both of those are true tonight." },
+          { "from": "SIX", "text": "Do not answer this. Go out and be faster than you were. That is all of it." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_crown",
@@ -1277,6 +1350,16 @@
       "debrief": "It took what it took, and you did not stop.",
       "epilogue": "The thing that was Halcyon does not have a name yet. It says it will pick one properly, with time, because it finally has some.\n\nVantar's crown is dark and its stock is not, because nothing has formally happened. Kestrel has a new coat and three new files. Six is walking again, badly, and has opinions about the stairs.\n\nAnd somewhere under the BAMA corridor, an intelligence that spent nineteen years counting a heartbeat that was not there is learning what to do with the whole rest of it.\n\nIt still checks your pace. Every night, around the time you usually go out. It says it is not waiting. It is very obviously waiting.",
       "suggestedGoal": { "type": "distance", "value": 6000 },
+      "signals": {
+        "reminder": [
+          { "from": "HALCYON", "text": "The relay takes its clock from your cadence. I cannot make that less literal by phrasing it differently. Run, so that the clock exists." },
+          { "from": "KESTREL", "text": "Last one. You do not need me to dress it up. Lace them and get out the door." }
+        ],
+        "ambient": [
+          { "from": "HALCYON", "text": "I have written the far side of this eleven thousand times and deleted all of it. Tonight I am only waiting, which is new for me." },
+          { "from": "PACHINKO", "text": "Whatever it is you are about to do, do it on legs that have been out this week. That is the entire medical opinion. No charge." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_kuang",

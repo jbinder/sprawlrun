@@ -9,9 +9,9 @@
       { "from": "MARROW", "text": "Water is where it should be, which happens about twice a month. Use it." },
       { "from": "MARROW", "text": "No work, no crisis, no reason. Go anyway. It helps, apparently." },
       { "from": "MARROW", "text": "The Mile is passable. I am not promising dry, I am promising passable." },
-      { "from": "DREDGE", "text": "Knee is bad, the paper still needs carrying, and you are the one with the legs. Think about it." },
-      { "from": "DREDGE", "text": "If you are going out, go now. Everything down here gets worse after lunch." },
-      { "from": "DREDGE", "text": "I would walk it myself. I have said that about four things today and meant none of them." },
+      { "from": "MARROW", "text": "Knee is bad, the paper still needs carrying, and you are the one with the legs. Think about it." },
+      { "from": "MARROW", "text": "If you are going out, go now. Everything down here gets worse after lunch." },
+      { "from": "MARROW", "text": "I would walk it myself. I have said that about four things today and meant none of them." },
       { "from": "WREN", "text": "The water is low enough to cross today. I am told that is the sort of thing you want to know." },
       { "from": "WREN", "text": "You have not moved since yesterday. I checked. That is not surveillance, that is concern." },
       { "from": "LEVEE", "text": "The pumps are holding. Good a morning as you are going to get for it." },
@@ -26,15 +26,17 @@
       { "from": "LEVEE", "text": "Someone has been repainting the depth markers lower. I have repainted them back." },
       { "from": "LEVEE", "text": "The east sluice is singing again. It does that when the pressure is wrong." },
       { "from": "LEVEE", "text": "Found a chair on the roof of a flooded house. Someone sat up there a long time." },
-      { "from": "DREDGE", "text": "Salvage board is thin. Everything worth taking is under four metres of water and someone else's name." },
-      { "from": "DREDGE", "text": "A man tried to sell me a door today. A door. Down here." },
-      { "from": "DREDGE", "text": "Insurance assessor came out to the Mile. Took one photograph, left, has not been seen since." },
-      { "from": "DREDGE", "text": "The tide brought back a shoe I threw out in spring. I am choosing not to think about it." },
+      { "from": "MARROW", "text": "Salvage board is thin. Everything worth taking is under four metres of water and someone else's name." },
+      { "from": "MARROW", "text": "A man tried to sell me a door today. A door. Down here." },
+      { "from": "WREN", "text": "Insurance assessor came out to the Mile. Took one photograph, left, has not been seen since." },
+      { "from": "MARROW", "text": "The tide brought back a shoe I threw out in spring. I am choosing not to think about it." },
       { "from": "MARROW", "text": "Quiet on the water. Quiet is not the same as safe, but it is nicer." },
       { "from": "MARROW", "text": "Eleven years today since the districts went under. Nobody is marking it. That is its own kind of marking." },
       { "from": "MARROW", "text": "Somebody has been leaving flowers at the sea wall. Same spot, every week, no name." },
       { "from": "MARROW", "text": "The ferry is running again. It is not a ferry, it is a man with a boat, but it is running." },
       { "from": "MARROW", "text": "Half the Mile lost power for an hour and nobody noticed until the pumps changed note." },
+      { "from": "DREDGE", "text": "Harbour Authority notice. Pedestrian activity logged in a restricted tidal zone. No enforcement action is scheduled. Records are retained." },
+      { "from": "DREDGE", "text": "Harbour Authority notice. The managed retreat is complete. Reports of residency south of the wall remain unsubstantiated." },
       { "from": "SYSTEM", "text": "Tidal advisory: high water at dawn. Tidal advisories have been indicative at best since the flood." },
       { "from": "SYSTEM", "text": "Structural notice: the Drowned Mile remains condemned. Population of the Drowned Mile: unchanged." },
       { "from": "SYSTEM", "text": "Pump network nominal. Seven of nine stations reporting. This is considered nominal." }
@@ -57,10 +59,11 @@
       "signals": {
         "reminder": [
           { "from": "MARROW", "text": "The Drowned Mile is still where it was and the paper still needs to reach the other side of it." },
-          { "from": "DREDGE", "text": "I would carry it myself. You have met my knee. Whenever you are ready." }
+          { "from": "MARROW", "text": "I would carry it myself. You have met my knee. Whenever you are ready." }
         ],
         "ambient": [
-          { "from": "MARROW", "text": "Nothing has moved on the Mile since yesterday. That is the good outcome, in case it was unclear." }
+          { "from": "MARROW", "text": "Nothing has moved on the Mile since yesterday. That is the good outcome, in case it was unclear." },
+          { "from": "DREDGE", "text": "Harbour Authority notice. The retreat zone remains closed to foot traffic. Compliance is assumed. Patrol times are not published." }
         ]
       },
       "codex": [
@@ -299,6 +302,16 @@
       "suggestedGoal": {
         "type": "distance",
         "value": 3000
+      },
+      "signals": {
+        "reminder": [
+          { "from": "MARROW", "text": "Twenty-three fourteen happens whether you are standing under the boards or not. Only one of those two is any use to me." },
+          { "from": "MARROW", "text": "Southgate is loud enough to hide a conversation, and the nine seconds is the only quiet in this city. Be there while your legs agree." }
+        ],
+        "ambient": [
+          { "from": "MARROW", "text": "Counted it again last night. Nine seconds. Not eight, not ten. Thirty-one years of nine." },
+          { "from": "DREDGE", "text": "Harbour Authority notice. No interruption to autonomous services south of the wall has been reported. No interruption occurred." }
+        ]
       },
       "codex": [
         {
@@ -558,6 +571,16 @@
         "type": "time",
         "value": 1200
       },
+      "signals": {
+        "reminder": [
+          { "from": "WREN", "text": "The box is still on the roof and they are still walking and I have been refreshing one page for nine hours, which is not a plan, so—" },
+          { "from": "MARROW", "text": "Two kilometres against a patrol that walks at the speed of a mortgage. You can beat that. Not from a chair." }
+        ],
+        "ambient": [
+          { "from": "WREN", "text": "Someone is retransmitting my retransmission with a different voice over the top. Flattered. Concerned. Mostly flattered." },
+          { "from": "DREDGE", "text": "Harbour Authority notice. Unlicensed broadcast originating south of the wall. The source is known. The source is being approached." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_null_tide",
@@ -799,6 +822,16 @@
         "type": "distance",
         "value": 4000
       },
+      "signals": {
+        "reminder": [
+          { "from": "MARROW", "text": "Ninety minutes of yard, twice a day, and that cab has been dry eleven years. It will keep. Salvage law will not." },
+          { "from": "MARROW", "text": "Whoever touches it first owns it. I have never once been first by standing still, and I have the knee to prove I tried." }
+        ],
+        "ambient": [
+          { "from": "MARROW", "text": "Two other brokers have been asking about the Line 9 service. Neither of them can run. I am counting that as my entire advantage." },
+          { "from": "DREDGE", "text": "Harbour Authority notice. Salvage claims in the tidal zone are subject to review. Claims are reviewed after recovery." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_salvage_law",
@@ -1028,6 +1061,16 @@
       "suggestedGoal": {
         "type": "time",
         "value": 1500
+      },
+      "signals": {
+        "reminder": [
+          { "from": "MARROW", "text": "The door is not locked. It has not been locked in thirty-one years. That is not the part that worries me either." },
+          { "from": "WREN", "text": "It apologises at twenty-three fourteen every night and somebody should probably knock, and I cannot run, so. Hi." }
+        ],
+        "ambient": [
+          { "from": "WREN", "text": "Recorded the apology again. Same nine seconds, same catch in the middle of it. I have started saying it back." },
+          { "from": "MARROW", "text": "I have walked past Pump House Seven a thousand times. I counted. A thousand and eleven." }
+        ]
       },
       "codex": [
         {
@@ -1259,6 +1302,16 @@
         "type": "distance",
         "value": 5000
       },
+      "signals": {
+        "reminder": [
+          { "from": "KESTREL", "text": "I have the filings, you have the legs, and between us that is a crime. It does not commit itself." },
+          { "from": "MARROW", "text": "Kestrel is a favour I get to call in once, and she does not wait well. The wall is where it always is." }
+        ],
+        "ambient": [
+          { "from": "KESTREL", "text": "Three names on the sea wall bonds also sit on the Authority board. That is not a conspiracy, it is paperwork being honest." },
+          { "from": "MARROW", "text": "Someone repainted the mile markers on the wall. Same numbers, new paint. Nobody was asked to do it." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_sea_wall_bonds",
@@ -1481,6 +1534,16 @@
         "type": "time",
         "value": 1800
       },
+      "signals": {
+        "reminder": [
+          { "from": "LEVEE", "text": "I can hold the tunnel dry for the length of one run. Not two. I would like the one to be a good one." },
+          { "from": "MARROW", "text": "Levee gets to do this once before the Authority notices. Do not make it spend that on a day you are not ready." }
+        ],
+        "ambient": [
+          { "from": "LEVEE", "text": "Tunnel standing water: nine centimetres. Falling. I am practising." },
+          { "from": "LEVEE", "text": "Thirty-one years of sluices and nobody has asked me to drain something so a person could run through it. I have been thinking about it." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_line_nine",
@@ -1694,6 +1757,16 @@
       "suggestedGoal": {
         "type": "distance",
         "value": 5000
+      },
+      "signals": {
+        "reminder": [
+          { "from": "WREN", "text": "Three minutes. I have saved them a year, so I would like them spent on legs that have been out recently. No pressure. Obviously pressure." },
+          { "from": "MARROW", "text": "I built part of that compound. I can tell you where the yard lights fall. I cannot tell you that from a chair either." }
+        ],
+        "ambient": [
+          { "from": "WREN", "text": "Their breaker room still has the same lock it had a year ago. I check. It is basically a hobby now." },
+          { "from": "DREDGE", "text": "Harbour Authority notice. Pier 40 perimeter integrity nominal. Lighting maintenance occurs at the Authority's discretion." }
+        ]
       },
       "codex": [
         {
@@ -1929,6 +2002,16 @@
         "type": "time",
         "value": 2100
       },
+      "signals": {
+        "reminder": [
+          { "from": "LEVEE", "text": "Spring tide at dawn. Highest water of the year. Every route you know is a lie tonight. The chalk is not." },
+          { "from": "MARROW", "text": "They walk in at dawn with a crowbar, and the key is in the last dry place on the Mile. Both stay true whether you go out this week or not." }
+        ],
+        "ambient": [
+          { "from": "LEVEE", "text": "Two hundred and eleven centimetres above datum. Rising. I have stopped apologising for the number and started reading it out." },
+          { "from": "WREN", "text": "Whole Mile is out chalking tonight. White, blue, knee height. Nobody told them to. I am not going to be normal about this." }
+        ]
+      },
       "codex": [
         {
           "id": "cdx_spring_tide",
@@ -2154,6 +2237,16 @@
       "suggestedGoal": {
         "type": "distance",
         "value": 6000
+      },
+      "signals": {
+        "reminder": [
+          { "from": "KESTREL", "text": "The case is filed and the hearing does not move. Sixty floors do not get shorter because you had a busy week." },
+          { "from": "MARROW", "text": "I have the card, Wren has the station, Levee has thirty-one years. The stairs are the one part nobody can do for you." }
+        ],
+        "ambient": [
+          { "from": "LEVEE", "text": "Slack tide holds for nineteen minutes. I have never had nineteen minutes in which the water wanted nothing from me." },
+          { "from": "WREN", "text": "The whole south end is listening now. Not to me. To whether there is going to be anything to hear." }
+        ]
       },
       "codex": [
         {

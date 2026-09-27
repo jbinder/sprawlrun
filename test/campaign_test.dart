@@ -237,10 +237,21 @@ void _checks(String path) {
   });
 
   test('the pack can always speak, whatever the runner has finished', () {
-    // Mission pools are optional — copy gets written over time — but the
-    // generic pool is the fallback for a finished campaign and for a runner
+    // The generic pool is the fallback for a finished campaign and for a runner
     // who never starts one, so it has to exist.
     expect(pack.signals.reminder, isNotEmpty, reason: 'no generic reminders to fall back on');
+  });
+
+  test('every mission has something of its own to say while it is the one waiting', () {
+    // The format allows a mission to carry no signals and fall back on the
+    // generic pool, and a third-party pack may well do that. The shipped
+    // campaigns do not: a signal that names the operation ahead of you is the
+    // whole point of putting this copy in the pack, and a mission without any
+    // is a mission the world goes quiet about.
+    for (final m in pack.missions) {
+      expect(m.signals.reminder, isNotEmpty, reason: '${m.id} has no reminder of its own');
+      expect(m.signals.ambient, isNotEmpty, reason: '${m.id} has no ambient line of its own');
+    }
   });
 
   test('the final mission carries an epilogue and nothing else does', () {

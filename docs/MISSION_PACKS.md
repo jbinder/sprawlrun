@@ -180,6 +180,10 @@ and they can sit on the pack, on a mission, or both.
 }
 ```
 
+A pack pool is required — it is the fallback for a finished campaign. Mission
+pools are optional in the format, but the shipped campaigns give every mission
+two of each, and `campaign_test.dart` holds them to it.
+
 On the **pack** they are generic: valid at any point, and the only thing left to
 say once the campaign is finished. On a **mission** they belong to that mission
 *while it is the one waiting to be run*, so a runner between operations hears

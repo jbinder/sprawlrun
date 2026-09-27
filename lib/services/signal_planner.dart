@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
@@ -50,6 +48,14 @@ abstract final class SignalPlanner {
   /// picked their time on purpose.
   static const int quietFromHour = 22;
   static const int quietUntilHour = 7;
+
+  /// What ambient slots are counted from. Any fixed past date does; this one is
+  /// before the app existed, so no slot number is ever negative.
+  static final DateTime _epoch = DateTime(2020);
+
+  /// The same day read as UTC, for counting whole days without a
+  /// daylight-saving change making one of them 23 hours long.
+  static final DateTime _epochDay = DateTime.utc(_epoch.year, _epoch.month, _epoch.day);
 
   static List<PlannedSignal> plan({
     required DateTime now,
@@ -123,27 +129,37 @@ abstract final class SignalPlanner {
     if (pool.isEmpty) return const [];
 
     final out = <PlannedSignal>[];
-    final slot = horizon.inMinutes ~/ settings.ambientPerWeek;
-    final seed = now.difference(DateTime(2020)).inDays;
+    // Slots are measured in waking minutes, not wall-clock ones, so the quiet
+    // hours are skipped over rather than folded into. Folding was worse than it
+    // looks: seven of the twelve hours in a night slot are quiet, so at two a
+    // day more than half of them were shoved to 07:00 and arrived as a clump.
+    const horizonWaking = 7 * _wakingMinutesPerDay;
+    final slot = horizonWaking ~/ settings.ambientPerWeek;
+    final stride = _stride(pool.length);
 
-    // Deal from a shuffled deck rather than picking each independently: at two
-    // a day, independent picks repeat a line within the week even from a large
-    // pool. This exhausts the pool before anything is said twice.
-    final order = List.generate(pool.length, (i) => i)..shuffle(Random(seed));
+    // Counted from a fixed epoch, not from today. Anchoring to the moment of
+    // planning slides the whole schedule forward on every launch; anchoring to
+    // today's midnight is nearly as bad, because it re-rolls every slot each day
+    // and a slot whose turn has passed is dropped — asking for two a day
+    // delivered one. From an epoch a slot always resolves to the same instant,
+    // so re-planning leaves whatever is already pencilled in where it was.
+    final nowWaking = _wakingMinutesAt(now);
+    final horizonEnd = now.add(horizon);
 
-    for (var i = 0; i < settings.ambientPerWeek; i++) {
-      // One per slot, at a fixed point inside it rather than a random one, so
-      // re-planning an hour later does not shuffle everything already pencilled
-      // in. Odd multipliers keep successive slots from landing at the same
-      // time of day.
-      final within = ((seed * 37 + i * 149) % slot).clamp(0, slot - 1);
-      final at = _awake(now.add(Duration(minutes: slot * i + within)));
-      if (!at.isAfter(now)) continue;
+    for (var k = nowWaking ~/ slot; k <= (nowWaking + horizonWaking) ~/ slot; k++) {
+      // A fixed point inside the slot rather than a random one, derived from the
+      // slot number so it never moves. The multiplier is odd and large, which
+      // keeps successive slots from landing at the same time of day.
+      final within = ((k * 2654435761 + 1013904223) & 0x7fffffff) % slot;
+      final at = _wallClock(k * slot + within);
+      if (!at.isAfter(now) || !at.isBefore(horizonEnd)) continue;
 
-      final signal = pool[order[i % pool.length]];
+      final signal = pool[(k * stride) % pool.length];
       out.add(
         PlannedSignal(
-          id: ambientBase + i,
+          // Slots per horizon never approach a hundred, so the low two digits
+          // are unique across everything planned at once.
+          id: ambientBase + k % 100,
           at: at,
           kind: SignalKind.ambient,
           from: signal.from,
@@ -154,19 +170,29 @@ abstract final class SignalPlanner {
     return out;
   }
 
-  /// Moves an instant out of the quiet hours, forward to the morning.
+  /// Minutes of waking time in a day: the span the quiet hours leave.
+  static const int _wakingMinutesPerDay = (quietFromHour - quietUntilHour) * 60;
+
+  /// The instant that falls [minutes] of waking time after [_epoch].
   ///
-  /// Forward rather than back so nothing is ever pulled into a time that has
-  /// already passed, and the minute is kept so the hour does not become a
-  /// wall of messages at exactly 07:00.
-  static DateTime _awake(DateTime at) {
-    if (at.hour >= quietFromHour) {
-      return DateTime(at.year, at.month, at.day + 1, quietUntilHour, at.minute);
-    }
-    if (at.hour < quietUntilHour) {
-      return DateTime(at.year, at.month, at.day, quietUntilHour, at.minute);
-    }
-    return at;
+  /// Quiet hours do not exist on this clock, which is what makes an even spread
+  /// across a week an even spread across the hours a runner is actually awake.
+  static DateTime _wallClock(int minutes) => DateTime(
+    _epoch.year,
+    _epoch.month,
+    _epoch.day + minutes ~/ _wakingMinutesPerDay,
+    quietUntilHour,
+    minutes % _wakingMinutesPerDay,
+  );
+
+  /// The same clock read backwards. An instant inside the quiet hours reads as
+  /// the moment the next waking day opens, so nothing is ever placed in them.
+  static int _wakingMinutesAt(DateTime at) {
+    final day = DateTime.utc(at.year, at.month, at.day).difference(_epochDay).inDays;
+    final into = at.hour * 60 + at.minute - quietUntilHour * 60;
+    if (into < 0) return day * _wakingMinutesPerDay;
+    if (into >= _wakingMinutesPerDay) return (day + 1) * _wakingMinutesPerDay;
+    return day * _wakingMinutesPerDay + into;
   }
 
   static bool _ranOn(List<RunRecord> runLog, DateTime date) => runLog.any(
@@ -176,6 +202,21 @@ abstract final class SignalPlanner {
         r.startedAt.month == date.month &&
         r.startedAt.day == date.day,
   );
+
+  /// A step through the pool that is coprime with its length, so stepping by it
+  /// visits every line before revisiting one.
+  ///
+  /// This is what stops the noise being noticed as a loop: nothing repeats until
+  /// the pool is exhausted, for a pool of any size. Roughly six-tenths of the
+  /// way along keeps consecutive picks far apart rather than adjacent.
+  static int _stride(int length) {
+    for (var s = (length * 0.618).floor(); s > 1; s--) {
+      if (_gcd(s, length) == 1) return s;
+    }
+    return 1;
+  }
+
+  static int _gcd(int a, int b) => b == 0 ? a : _gcd(b, a % b);
 
   /// Which line a given day gets.
   ///

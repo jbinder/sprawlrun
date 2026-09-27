@@ -191,8 +191,21 @@ void main() {
     });
 
     test('as many a week as the runner asked for', () {
-      expect(ambientPlan(perWeek: 3), hasLength(3));
-      expect(ambientPlan(perWeek: 10), hasLength(10));
+      // Within one: slots are counted from a fixed epoch, so a week rarely
+      // starts on a slot boundary and the slot straddling `now` may already have
+      // been. Asking for ten and getting nine is not worth moving the schedule
+      // around for; asking for ten and getting five was the bug. What the rate
+      // really has to hold over time is the fortnight test below.
+      expect(ambientPlan(perWeek: 3).length, inInclusiveRange(2, 4));
+      expect(ambientPlan(perWeek: 10).length, inInclusiveRange(9, 11));
+      expect(ambientPlan(perWeek: 14).length, inInclusiveRange(13, 15));
+    });
+
+    test('slots already past today are simply gone, not crammed in later', () {
+      // Planned at 10:00, so anything the day had scheduled for the small
+      // hours has been and gone.
+      expect(ambientPlan(perWeek: 3).length, lessThanOrEqualTo(3));
+      expect(ambientPlan(perWeek: 3), isNotEmpty);
     });
 
     test('never in the small hours', () {
@@ -219,14 +232,61 @@ void main() {
         pack: pack(signals: ambientPool),
       ).where((p) => p.kind == SignalKind.ambient);
 
-      expect(withRun, hasLength(5));
+      final withoutRun = ambientPlan(perWeek: 5);
+      expect(withRun.length, withoutRun.length, reason: 'a run should change nothing here');
+      expect(withRun, isNotEmpty);
     });
 
-    test('re-planning keeps the same schedule', () {
+    test('re-planning later the same day does not push them further away', () {
+      // The app re-plans on every launch. Anchoring to the moment of planning
+      // would slide the whole schedule forward each time, so a runner who
+      // opens the app a few times a day would never hear one.
       final first = ambientPlan();
-      final second = ambientPlan();
-      expect(second.map((p) => p.at), first.map((p) => p.at));
-      expect(second.map((p) => p.text), first.map((p) => p.text));
+      final later = ambientPlan(now: monday.add(const Duration(hours: 6)));
+
+      final stillAhead = first.where((p) => p.at.isAfter(monday.add(const Duration(hours: 6))));
+      expect(stillAhead, isNotEmpty, reason: 'nothing left to compare');
+      for (final p in stillAhead) {
+        expect(
+          later.any((q) => q.at == p.at && q.text == p.text),
+          isTrue,
+          reason: '${p.at} moved or changed after re-planning',
+        );
+      }
+    });
+
+    test('two a day still means two a day after a fortnight of re-planning', () {
+      // The regression this guards: with slots measured from the moment of
+      // planning, or from today's midnight, every launch re-rolled the schedule
+      // and any slot whose turn had passed was dropped rather than kept. Asking
+      // for fourteen a week quietly delivered half that. So walk a fortnight,
+      // re-planning four times a day as an ordinary runner would, and count what
+      // would actually have been sent.
+      final start = DateTime(monday.year, monday.month, monday.day);
+      final sent = <DateTime>{};
+      for (var tick = 0; tick < 14 * 4; tick++) {
+        final at = start.add(Duration(hours: 6 * tick));
+        for (final p in ambientPlan(perWeek: 14, now: at)) {
+          // Anything still ahead of the next re-plan survives to fire.
+          if (p.at.isBefore(at.add(const Duration(hours: 6)))) sent.add(p.at);
+        }
+      }
+      expect(sent, hasLength(28), reason: 'lost signals to re-planning');
+    });
+
+    test('a slot pencilled in today is still there tomorrow', () {
+      final today = ambientPlan(perWeek: 14);
+      final tomorrow = ambientPlan(perWeek: 14, now: monday.add(const Duration(days: 1)));
+      final overlap = today.where((p) => p.at.isAfter(monday.add(const Duration(days: 1))));
+
+      expect(overlap, isNotEmpty, reason: 'nothing left to compare');
+      for (final p in overlap) {
+        expect(
+          tomorrow.any((q) => q.at == p.at && q.text == p.text && q.id == p.id),
+          isTrue,
+          reason: '${p.at} moved, changed or was dropped a day later',
+        );
+      }
     });
 
     test('nothing is sent when nothing is written', () {
@@ -237,7 +297,11 @@ void main() {
       // The reason the copy has to be plentiful: at two a day a small pool is
       // noticed as a loop within days.
       final planned = ambientPlan(perWeek: 3);
-      expect(planned.map((p) => p.text).toSet(), hasLength(3), reason: 'repeated inside one week');
+      expect(
+        planned.map((p) => p.text).toSet(),
+        hasLength(planned.length),
+        reason: 'repeated inside one week from a pool of ${ambientPool.ambient.length}',
+      );
     });
 
     test('ids stay in their own range, clear of the reminders', () {

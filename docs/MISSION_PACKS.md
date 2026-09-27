@@ -200,6 +200,11 @@ Three rules, none of which the app can check for you:
 the name on the notification. Keep the text under 180 characters; Android
 truncates beyond roughly that, and `campaign_test.dart` enforces it.
 
+Write plenty of ambient lines. Nothing repeats until the pool is exhausted, so
+the pool size is how long the noise stays fresh: a runner who asks for the
+maximum fourteen a week works through twenty lines in ten days. The shipped packs
+carry twenty generic ones each, and that is a floor rather than a target.
+
 ## Validating a pack
 
 `test/campaign_test.dart` checks the shipped campaign for ordering, dangling

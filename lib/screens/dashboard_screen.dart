@@ -6,10 +6,12 @@ import '../models/achievement.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/stats.dart';
+import '../services/backup_nudge.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
+import '../widgets/backup_controls.dart';
 import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
 import '../widgets/progress.dart';
@@ -38,6 +40,11 @@ class DashboardScreen extends StatelessWidget {
         const SizedBox(height: 16),
         _WeekStrip(week: state.week, units: state.profile.units),
         const SizedBox(height: 22),
+
+        if (state.backupNudge case final nudge?) ...[
+          _BackupNudgeCard(nudge: nudge),
+          const SizedBox(height: 22),
+        ],
 
         if (current != null) ...[
           const SectionHeader('NEXT OPERATION', accent: Cy.magenta),
@@ -643,5 +650,83 @@ class _NextUnlocks extends StatelessWidget {
           ),
       ],
     );
+  }
+}
+
+/// Asks the runner to export, once the log holds enough that losing it would
+/// hurt.
+///
+/// Amber and plain-spoken rather than in-world: this is the app's own business,
+/// and the failure it guards against is real — any uninstall takes the private
+/// data directory with it, and there is no copy anywhere else.
+class _BackupNudgeCard extends StatefulWidget {
+  const _BackupNudgeCard({required this.nudge});
+
+  final BackupNudge nudge;
+
+  @override
+  State<_BackupNudgeCard> createState() => _BackupNudgeCardState();
+}
+
+class _BackupNudgeCardState extends State<_BackupNudgeCard> {
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final runs = widget.nudge.runsAtRisk;
+
+    return NeonPanel(
+      accent: Cy.amber,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.warning_amber_rounded, color: Cy.amber, size: 18),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text('ARCHIVE DRIFT', style: CyType.label(size: 11, color: Cy.amber)),
+              ),
+              InkWell(
+                onTap: _busy ? null : () => state.snoozeBackupNudge(),
+                child: const Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Icon(Icons.close, size: 16, color: Cy.inkDim),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '$runs run${runs == 1 ? '' : 's'} exist${runs == 1 ? 's' : ''} only on this device. '
+            'If it is lost or the app is reinstalled, so are they.',
+            style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
+          ),
+          const SizedBox(height: 14),
+          CyberButton(
+            label: _busy ? 'Working…' : 'EXPORT NOW',
+            icon: Icons.file_upload_outlined,
+            style: CyberButtonStyle.ghost,
+            dense: true,
+            onPressed: _busy ? null : () => _export(state, runs),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _export(AppState state, int runs) async {
+    setState(() => _busy = true);
+    try {
+      final message = await exportBackup(state, runs);
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    } on Object catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Export failed: $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 }

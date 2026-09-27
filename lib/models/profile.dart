@@ -130,6 +130,8 @@ class Profile {
     this.lastGoalByMission = const <String, Map<String, dynamic>>{},
     this.signals = const SignalSettings(),
     this.dataVersion = 0,
+    this.lastExportAt,
+    this.backupNudgeSnoozedAt,
   });
 
   final String callsign;
@@ -178,6 +180,19 @@ class Profile {
   /// before migrations existed, which is the state that needs all of them.
   final int dataVersion;
 
+  /// When a backup was last *attempted*, not when one was last kept.
+  ///
+  /// The export hands the file to the system share sheet, which cannot tell the
+  /// app whether the runner saved it — Android reports a dismissal even after a
+  /// real save with some file managers. Nagging somebody who did back up is
+  /// worse than missing somebody who did not, so an attempt counts. Null means
+  /// no export has ever been made from this device.
+  final DateTime? lastExportAt;
+
+  /// When the runner last dismissed the backup nudge. A dismissal older than
+  /// [lastExportAt] is spent, since the export answered it.
+  final DateTime? backupNudgeSnoozedAt;
+
   bool get isMetric => units == UnitSystem.metric;
 
   Profile copyWith({
@@ -202,6 +217,8 @@ class Profile {
     Map<String, Map<String, dynamic>>? lastGoalByMission,
     SignalSettings? signals,
     int? dataVersion,
+    DateTime? lastExportAt,
+    DateTime? backupNudgeSnoozedAt,
   }) => Profile(
     callsign: callsign ?? this.callsign,
     weightKg: weightKg ?? this.weightKg,
@@ -224,6 +241,8 @@ class Profile {
     lastGoalByMission: lastGoalByMission ?? this.lastGoalByMission,
     signals: signals ?? this.signals,
     dataVersion: dataVersion ?? this.dataVersion,
+    lastExportAt: lastExportAt ?? this.lastExportAt,
+    backupNudgeSnoozedAt: backupNudgeSnoozedAt ?? this.backupNudgeSnoozedAt,
   );
 
   Map<String, dynamic> toJson() => {
@@ -248,6 +267,8 @@ class Profile {
     'lastGoalByMission': lastGoalByMission,
     'signals': signals.toJson(),
     'dataVersion': dataVersion,
+    if (lastExportAt != null) 'lastExportAt': lastExportAt!.toIso8601String(),
+    if (backupNudgeSnoozedAt != null) 'backupNudgeSnoozedAt': backupNudgeSnoozedAt!.toIso8601String(),
   };
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -287,5 +308,7 @@ class Profile {
     // Absent in anything written before migrations existed, which is exactly
     // the state that still needs them.
     dataVersion: (json['dataVersion'] as num?)?.toInt() ?? 0,
+    lastExportAt: DateTime.tryParse(json['lastExportAt'] as String? ?? ''),
+    backupNudgeSnoozedAt: DateTime.tryParse(json['backupNudgeSnoozedAt'] as String? ?? ''),
   );
 }

@@ -13,6 +13,7 @@ import '../models/run_record.dart';
 import '../models/run_outcome.dart';
 import '../models/stats.dart';
 import '../services/achievement_engine.dart';
+import '../services/backup_nudge.dart';
 import '../services/narrator.dart';
 import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
@@ -340,6 +341,21 @@ class AppState extends ChangeNotifier {
 
   /// The whole device state as a JSON document, ready to be written out.
   Future<String> exportBackup() => backups.exportToJson();
+
+  /// Records that a backup was handed to the system.
+  ///
+  /// Called whether or not the runner went on to save the file, because the app
+  /// cannot tell — see `Profile.lastExportAt`.
+  Future<void> noteBackupExported() =>
+      updateProfile(profile.copyWith(lastExportAt: DateTime.now()));
+
+  /// Puts the backup nudge away until another ten runs or four weeks.
+  Future<void> snoozeBackupNudge() =>
+      updateProfile(profile.copyWith(backupNudgeSnoozedAt: DateTime.now()));
+
+  /// Whether to ask the runner to export, and how much is at stake.
+  BackupNudge? get backupNudge =>
+      BackupNudge.of(profile: profile, runLog: runLog, now: DateTime.now());
 
   /// Restores [archive] and rebuilds everything derived from it.
   ///

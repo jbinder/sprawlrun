@@ -189,6 +189,7 @@ Forty entries across the two campaigns.
 **Your data**
 - Export and import everything as one JSON file — profile, progress, runs, traces
 - Import either replaces this device or merges, and merging can never relock a mission
+- A reminder to export once your log holds runs that exist nowhere else, dismissable
 - Any single route exports as a GPX 1.1 track for OsmAnd, Strava or Komoot
 - No accounts, no ads, no analytics, no network permission, no Play Services
 

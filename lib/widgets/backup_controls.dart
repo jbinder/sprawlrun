@@ -10,7 +10,35 @@ import '../data/backup.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../util/format.dart';
 import 'panels.dart';
+
+/// Writes a backup and hands it to the share sheet, returning what to tell the
+/// runner. Throws on failure; the caller owns the message either way.
+///
+/// Shared with the dashboard's backup nudge, which offers the same one tap.
+Future<String> exportBackup(AppState state, int runs) async {
+  final json = await state.exportBackup();
+  // The share sheet needs a real file; the cache directory is the right home
+  // for one, since the copy the runner keeps is the one they save out.
+  final dir = await getTemporaryDirectory();
+  final file = File('${dir.path}/${BackupService.suggestedFileName(DateTime.now())}');
+  await file.writeAsString(json);
+
+  await SharePlus.instance.share(
+    ShareParams(
+      files: [XFile(file.path, mimeType: 'application/json')],
+      subject: 'SPRAWL//RUN backup',
+    ),
+  );
+  // Recorded whether or not the file was kept: the share sheet does not tell
+  // us, and nagging somebody who did save is the worse mistake.
+  await state.noteBackupExported();
+  return 'Backup ready — $runs run${runs == 1 ? '' : 's'}, ${_kb(json.length)}.';
+}
+
+String _kb(int bytes) =>
+    bytes < 1024 ? '$bytes B' : '${(bytes / 1024).toStringAsFixed(bytes < 1024 * 1024 ? 0 : 1)} KB';
 
 /// Export and import buttons for the DATA section of Settings.
 ///
@@ -36,6 +64,7 @@ class _BackupControlsState extends State<BackupControls> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _ExportStatus(state: state),
         Text(
           'A backup holds your settings, campaign progress, achievements, codex and '
           'every run with its GPS trace — everything the app knows. It is plain JSON, '
@@ -74,29 +103,13 @@ class _BackupControlsState extends State<BackupControls> {
   Future<void> _export(AppState state, int runs) async {
     setState(() => _busy = true);
     try {
-      final json = await state.exportBackup();
-      // The share sheet needs a real file; the cache directory is the right
-      // home for one, since the copy the runner keeps is the one they save out.
-      final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/${BackupService.suggestedFileName(DateTime.now())}');
-      await file.writeAsString(json);
-
-      await SharePlus.instance.share(
-        ShareParams(
-          files: [XFile(file.path, mimeType: 'application/json')],
-          subject: 'SPRAWL//RUN backup',
-        ),
-      );
-      _say('Backup ready — $runs run${runs == 1 ? '' : 's'}, ${_kb(json.length)}.');
+      _say(await exportBackup(state, runs));
     } on Object catch (e) {
       _say('Export failed: $e', bad: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
-
-  static String _kb(int bytes) =>
-      bytes < 1024 ? '$bytes B' : '${(bytes / 1024).toStringAsFixed(bytes < 1024 * 1024 ? 0 : 1)} KB';
 
   Future<void> _import(AppState state) async {
     setState(() => _busy = true);
@@ -213,4 +226,49 @@ class _BackupControlsState extends State<BackupControls> {
   }
 
   static String _two(int v) => v.toString().padLeft(2, '0');
+}
+
+/// `Last export: 12 days ago · 4 runs since` — the state of play, stated rather
+/// than nagged. The nudge on the dashboard is what does the asking.
+class _ExportStatus extends StatelessWidget {
+  const _ExportStatus({required this.state});
+
+  final AppState state;
+
+  @override
+  Widget build(BuildContext context) {
+    final last = state.profile.lastExportAt;
+    final atRisk = last == null
+        ? state.runLog.where((r) => r.countsForStats).length
+        : state.runLog.where((r) => r.countsForStats && r.startedAt.isAfter(last)).length;
+
+    // Nothing recorded and nothing exported: a fresh install has no state to
+    // report, and saying so would only be noise.
+    if (last == null && atRisk == 0) return const SizedBox.shrink();
+
+    final parts = [
+      last == null ? 'Never exported' : 'Last export: ${Fmt.ago(DateTime.now().difference(last))}',
+      if (atRisk > 0) '$atRisk run${atRisk == 1 ? '' : 's'} since',
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          Icon(
+            atRisk > 0 ? Icons.warning_amber_rounded : Icons.check_circle_outline,
+            size: 14,
+            color: atRisk > 0 ? Cy.amber : Cy.green,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              parts.join(' · '),
+              style: CyType.mono(size: 12, color: atRisk > 0 ? Cy.amber : Cy.ghost),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

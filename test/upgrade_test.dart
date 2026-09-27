@@ -112,6 +112,16 @@ void main() {
       expect(loaded.signals.ambientPerWeek, 0);
     });
 
+    test('a 0.1.0 profile has never exported, and is asked about it', () async {
+      // Null rather than a date, so the nudge counts the whole log as at risk
+      // rather than treating an upgrade as a backup.
+      File('${root.path}/profile.json').writeAsStringSync(_profileV1);
+      final loaded = await ProfileRepository(root).load();
+
+      expect(loaded.lastExportAt, isNull);
+      expect(loaded.backupNudgeSnoozedAt, isNull);
+    });
+
     test('an unversioned profile is due every migration', () async {
       File('${root.path}/profile.json').writeAsStringSync(_profileV1);
       final loaded = await ProfileRepository(root).load();

@@ -144,7 +144,11 @@ void main() {
             weekdays: {DateTime.tuesday, DateTime.saturday},
             minutesFromMidnight: 6 * 60 + 45,
           ),
-        ).copyWith(unlockedAchievements: {'dist_5k': unlockedAt}),
+        ).copyWith(
+          unlockedAchievements: {'dist_5k': unlockedAt},
+          lastExportAt: DateTime(2026, 7, 20, 18, 5),
+          backupNudgeSnoozedAt: DateTime(2026, 7, 21, 8),
+        ),
       );
 
       final loaded = await ProfileRepository(root).load();
@@ -162,6 +166,8 @@ void main() {
       expect(loaded.unlockedCodex, {'cdx_ninsei'});
       expect(loaded.missionAttempts['sp03'], 2);
       expect(loaded.unlockedAchievements['dist_5k'], unlockedAt);
+      expect(loaded.lastExportAt, DateTime(2026, 7, 20, 18, 5));
+      expect(loaded.backupNudgeSnoozedAt, DateTime(2026, 7, 21, 8));
     });
 
     test('a corrupt profile falls back to defaults rather than blocking launch', () async {

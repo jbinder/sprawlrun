@@ -94,6 +94,20 @@ abstract final class Fmt {
 
   static String weekdayInitial(DateTime d) => _weekdays[d.weekday - 1][0];
 
+  /// `today`, `yesterday`, `12 days ago`, `3 months ago` — for the age of
+  /// something the runner did, where the exact date matters less than whether it
+  /// was recent.
+  static String ago(Duration d) {
+    if (d.inDays >= 365) {
+      final years = d.inDays ~/ 365;
+      return years == 1 ? 'a year ago' : '$years years ago';
+    }
+    if (d.inDays >= 60) return '${d.inDays ~/ 30} months ago';
+    if (d.inDays >= 2) return '${d.inDays} days ago';
+    if (d.inDays == 1) return 'yesterday';
+    return 'today';
+  }
+
   /// `3d 04h` — used for "this week closes in".
   static String countdown(Duration d) {
     if (d.isNegative) return '0h';

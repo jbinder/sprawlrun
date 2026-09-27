@@ -59,6 +59,14 @@ class FakeLocation implements LocationSource {
   int _jitterSign = 1;
 
   void emitRaw(GeoFix fix) => _controller.add(fix);
+
+  /// The provider going away mid-stream — battery-saver location mode, or the
+  /// runner switching GPS off. `GpsStream.kt` reports both this way.
+  void fail(LocationReadiness readiness) =>
+      _controller.addError(LocationUnavailable(readiness));
+
+  /// An ordinary transient stream error, which the runner should never be shown.
+  void glitch() => _controller.addError(Exception('a passing fix error'));
 }
 
 /// Records what would have been spoken, and takes [lineDuration] per line so

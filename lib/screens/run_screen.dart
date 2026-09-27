@@ -322,6 +322,11 @@ class _LocationWarning extends StatelessWidget {
       LocationReadiness.denied => 'Location permission denied. Distance will not be recorded.',
       LocationReadiness.deniedForever =>
         'Location permission is permanently denied. Enable it in system settings to record distance.',
+      // Usually battery-saver location mode, which leaves network location on.
+      // Naming the setting is the difference between a runner fixing it and a
+      // runner assuming the app is broken.
+      LocationReadiness.gpsDisabled =>
+        'GPS is switched off — check battery saver or location mode. Distance will not be recorded.',
       LocationReadiness.ready => '',
     };
     return Container(

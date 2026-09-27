@@ -5,7 +5,29 @@ import 'package:geolocator/geolocator.dart';
 
 import 'geo.dart';
 
-enum LocationReadiness { ready, serviceDisabled, denied, deniedForever }
+/// Why position fixes are not going to arrive, if they are not.
+///
+/// [gpsDisabled] is its own case because nothing else catches it:
+/// `Geolocator.isLocationServiceEnabled()` answers "is location on at all", and
+/// Android's battery-saver location mode leaves network location on while
+/// switching the GPS provider off. Permission is granted, the service is
+/// enabled, and the provider delivers nothing — which recorded a two-hour run
+/// as time-only with no warning before this case existed.
+enum LocationReadiness { ready, serviceDisabled, denied, deniedForever, gpsDisabled }
+
+/// Raised on the fix stream when fixes have stopped being possible.
+///
+/// The platform reports this both when the provider is already off at
+/// subscription and when the runner switches it off mid-run, so it can arrive
+/// long after [LocationSource.prepare] said everything was in order.
+class LocationUnavailable implements Exception {
+  const LocationUnavailable(this.readiness);
+
+  final LocationReadiness readiness;
+
+  @override
+  String toString() => 'LocationUnavailable(${readiness.name})';
+}
 
 /// Anything that can produce position fixes. The run engine only ever sees
 /// this, which keeps it testable without a GPS.
@@ -80,7 +102,14 @@ class GpsLocationSource implements LocationSource {
           ),
         );
       },
-      onError: controller.addError,
+      // Translated rather than passed through, so the engine can tell "the GPS
+      // provider is off" from an ordinary transient fix error and tell the
+      // runner about it. The codes are GpsStream.kt's.
+      onError: (Object e) => controller.addError(switch (e) {
+        PlatformException(code: 'gpsDisabled') => const LocationUnavailable(LocationReadiness.gpsDisabled),
+        PlatformException(code: 'denied') => const LocationUnavailable(LocationReadiness.denied),
+        _ => e,
+      }),
       cancelOnError: false,
     );
 

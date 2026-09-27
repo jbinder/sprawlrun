@@ -231,7 +231,7 @@ class RunEngine extends ChangeNotifier {
       // The run still starts: time-goal missions are perfectly playable with a
       // dead GPS, and refusing to start would strand the runner at the door.
     } else {
-      _fixSub = location.fixes().listen(_onFix, onError: (Object e) => debugPrint('fix error: $e'));
+      _fixSub = location.fixes().listen(_onFix, onError: _onFixError);
     }
 
     _narrationSub = narrator.events.listen((e) {
@@ -378,6 +378,21 @@ class RunEngine extends ChangeNotifier {
   }
 
   // -- position -------------------------------------------------------------
+
+  /// A fix stream that has stopped being able to produce fixes.
+  ///
+  /// Only [LocationUnavailable] reaches the runner: it means no distance will be
+  /// recorded for the rest of the run, which they need to know now rather than
+  /// in the summary. Anything else is a transient the stream recovers from, and
+  /// a banner for it would only teach them to ignore banners. The run continues
+  /// either way — a time goal is perfectly playable with a dead GPS.
+  void _onFixError(Object e) {
+    if (e is LocationUnavailable) {
+      _events.add(LocationTrouble(e.readiness));
+      return;
+    }
+    debugPrint('fix error: $e');
+  }
 
   void _onFix(GeoFix fix) {
     if (fix.accuracy > maxAcceptableAccuracy) return;

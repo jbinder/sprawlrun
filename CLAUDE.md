@@ -179,6 +179,16 @@ only third-party binaries in the repo are the three OFL fonts.
   `appops get <pkg>` tells the two apart — a request that reached the GNSS
   chip shows `MONITOR_HIGH_POWER_LOCATION`, a fused one only
   `MONITOR_LOCATION`.
+- **`isLocationServiceEnabled()` does not mean GPS works.** It answers "is
+  location on at all", and battery-saver location mode leaves network location
+  on while switching the GPS provider off: permission granted, service enabled,
+  readiness `ready`, and not one fix. `GpsStream.kt` reports it as a
+  `gpsDisabled` stream error — both at subscription and via
+  `onProviderDisabled` mid-run — which `location_service.dart` turns into
+  `LocationUnavailable` and the engine into a `LocationTrouble` the run screen
+  can show. Keep the error codes on those two sides in step; nothing checks
+  them for you. A swallowed stream error here recorded a real two-hour run as
+  time-only with nothing on screen to explain it.
 
 ## Before a release: one real outdoor run
 

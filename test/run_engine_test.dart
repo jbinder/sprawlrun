@@ -518,6 +518,53 @@ void main() {
       });
     });
 
+    test('GPS switched off mid-run tells the runner rather than going quiet', () {
+      fakeAsync((fake) {
+        // Battery-saver location mode switches the GPS provider off while
+        // leaving network location on, so `prepare` reports everything ready and
+        // the stream simply stops. Before this was reported, a two-hour run
+        // recorded as time-only with nothing on screen to explain it.
+        final h = Harness(fake, goal: RunGoal.seconds(600))..begin();
+        final seen = <LocationReadiness>[];
+        h.engine.events.listen((e) {
+          if (e is LocationTrouble) seen.add(e.readiness);
+        });
+
+        h.steady(20, 3.0);
+        final recorded = h.engine.distanceMeters;
+        expect(recorded, greaterThan(0));
+
+        h.location.fail(LocationReadiness.gpsDisabled);
+        fake.flushMicrotasks();
+
+        expect(seen, [LocationReadiness.gpsDisabled]);
+        expect(h.engine.phase, RunPhase.running, reason: 'a time goal is still playable');
+
+        // And the run carries on, keeping what it already measured.
+        h.runBlind(60);
+        expect(h.engine.distanceMeters, recorded);
+        expect(h.engine.elapsedSeconds, closeTo(80, 1));
+      });
+    });
+
+    test('a passing fix error is not dressed up as a dead GPS', () {
+      fakeAsync((fake) {
+        // A banner for every transient would teach the runner to ignore banners.
+        final h = Harness(fake, goal: RunGoal.seconds(600))..begin();
+        final seen = <LocationReadiness>[];
+        h.engine.events.listen((e) {
+          if (e is LocationTrouble) seen.add(e.readiness);
+        });
+
+        h.location.glitch();
+        fake.flushMicrotasks();
+        h.steady(10, 3.0);
+
+        expect(seen, isEmpty);
+        expect(h.engine.distanceMeters, greaterThan(0), reason: 'the stream recovered');
+      });
+    });
+
     test('an out-of-order fix does not corrupt the distance', () {
       fakeAsync((fake) {
         final h = Harness(fake)..begin();

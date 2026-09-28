@@ -1,1 +1,1 @@
-Cyberpunk story missions that chase you while you run. Offline, no trackers.
+A running tracker wrapped in a cyberpunk story that chases you. Fully offline.

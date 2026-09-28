@@ -153,6 +153,13 @@ only third-party binaries in the repo are the three OFL fonts.
   take the app down. The tap stream is single-subscription on purpose, because
   Android delivers a tap that *launched* the app during `initialize`, long
   before the UI exists to show it — a broadcast stream would drop it.
+- **After an upgrade the first signal is the *old* build's.** The manifest
+  declares `MY_PACKAGE_REPLACED`, so the plugin re-arms the stored schedule
+  after an install — and what it stored was written by the previous version,
+  payload, style and all. Testing a change to how signals are built means
+  opening the app once first, which re-plans and replaces ids 7000–7199.
+  Otherwise the next notification still behaves the old way and looks like the
+  change did not work. That cost a round trip.
 - **Notification channel importance is frozen at creation.** `signals_reminder`
   is `IMPORTANCE_DEFAULT` (an ordinary alert) and `signals_ambient` is
   `IMPORTANCE_LOW` (silent). A later update cannot raise either, only the

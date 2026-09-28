@@ -45,6 +45,25 @@ void main() {
     });
   });
 
+  testWidgets('the watcher can be torn down and rebuilt without losing taps', (tester) async {
+    // A single-subscription stream throws on a second listen, which would kill
+    // every later tap for the life of the app. Navigating in a way that
+    // remounts the watcher must stay harmless.
+    final taps = StreamController<Signal>.broadcast();
+    addTearDown(taps.close);
+    final state = await _boot(tester, taps.stream);
+
+    await tester.pumpWidget(_app(state));
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpWidget(_app(state));
+    await tester.pumpAndSettle();
+
+    taps.add(long);
+    await tester.pumpAndSettle();
+    expect(find.text(long.text), findsOneWidget);
+  });
+
   testWidgets('a tapped signal is shown in full, and closing it is the end of it', (tester) async {
     final taps = StreamController<Signal>();
     addTearDown(taps.close);

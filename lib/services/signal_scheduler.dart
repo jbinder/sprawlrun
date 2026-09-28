@@ -32,10 +32,10 @@ class SignalScheduler {
 
   /// Signals the runner tapped in the notification shade.
   ///
-  /// Deliberately a single-subscription stream, so a tap that *launched* the
-  /// app is buffered until something is around to show it. A broadcast stream
-  /// would drop it: the tap is delivered while the plugin initialises, long
-  /// before the UI has finished loading the run log.
+  /// Broadcast, so subscribing twice over the life of the app is harmless —
+  /// but a tap that arrives with nobody listening is held and replayed to the
+  /// first subscriber, because a tap that *launched* the app is delivered
+  /// while the plugin initialises, long before the UI has loaded the run log.
   final Stream<Signal> taps;
 
   /// Does nothing, successfully. The default in tests and on any platform
@@ -77,8 +77,23 @@ class SignalScheduler {
     if (defaultTargetPlatform != TargetPlatform.android) return SignalScheduler.noop();
 
     final plugin = FlutterLocalNotificationsPlugin();
-    final taps = StreamController<Signal>();
+    final taps = StreamController<Signal>.broadcast();
     var ready = false;
+
+    // Taps that arrived before anything was listening. A tap that launched the
+    // app lands during `initialize`, with the UI still on the boot screen.
+    final waiting = <Signal>[];
+    taps.onListen = () {
+      final queued = List.of(waiting);
+      waiting.clear();
+      // A microtask, because adding from inside onListen does not reach the
+      // subscriber that is still being set up.
+      for (final signal in queued) {
+        scheduleMicrotask(() {
+          if (taps.hasListener) taps.add(signal);
+        });
+      }
+    };
 
     // Android delivers a tap that launched the app during `initialize`, which
     // is why the controller buffers rather than broadcasts. Using
@@ -90,7 +105,11 @@ class SignalScheduler {
         debugPrint('signal tapped with no readable payload');
         return;
       }
-      taps.add(signal);
+      if (taps.hasListener) {
+        taps.add(signal);
+      } else {
+        waiting.add(signal);
+      }
     }
 
     Future<bool> ensureReady() async {

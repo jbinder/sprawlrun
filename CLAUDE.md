@@ -142,6 +142,17 @@ only third-party binaries in the repo are the three OFL fonts.
   Keep the types apart. Their text is fixed when the notification is
   *scheduled*, not when it fires, since no Dart runs at fire time; that is why
   `AppState` re-plans on load, on a settings change and after every run.
+- **A notification body is one line unless you ask for more.** Android collapses
+  it and truncates the rest, so every signal needs
+  `BigTextStyleInformation`; signals run to 180 characters and most of one was
+  being cut. Tapping opens it in full in the app, which works only because the
+  scheduler puts the text in the notification's `payload` — the plan is never
+  persisted and no Dart runs at fire time, so there is no other route back to
+  what was said. `SignalScheduler.decodePayload` therefore returns null rather
+  than throwing for anything it does not recognise: a tap must not be able to
+  take the app down. The tap stream is single-subscription on purpose, because
+  Android delivers a tap that *launched* the app during `initialize`, long
+  before the UI exists to show it — a broadcast stream would drop it.
 - **Notification channel importance is frozen at creation.** `signals_reminder`
   is `IMPORTANCE_DEFAULT` (an ordinary alert) and `signals_ambient` is
   `IMPORTANCE_LOW` (silent). A later update cannot raise either, only the

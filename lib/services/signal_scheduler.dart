@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../models/mission.dart';
 import 'signal_planner.dart';
 
 /// Hands planned signals to the platform, and takes them back again.
@@ -13,7 +17,11 @@ import 'signal_planner.dart';
 /// nothing rather than throwing. Deciding *what* to send lives in
 /// [SignalPlanner]; this only delivers.
 class SignalScheduler {
-  const SignalScheduler({required this.schedule, required this.cancelAll});
+  const SignalScheduler({
+    required this.schedule,
+    required this.cancelAll,
+    this.taps = const Stream.empty(),
+  });
 
   /// Replaces everything previously scheduled with [signals].
   final Future<void> Function(List<PlannedSignal> signals) schedule;
@@ -21,6 +29,14 @@ class SignalScheduler {
   /// Clears the app's own signals. Never touches the run notice, which is
   /// posted by `MissionService` outside the plugin.
   final Future<void> Function() cancelAll;
+
+  /// Signals the runner tapped in the notification shade.
+  ///
+  /// Deliberately a single-subscription stream, so a tap that *launched* the
+  /// app is buffered until something is around to show it. A broadcast stream
+  /// would drop it: the tap is delivered while the plugin initialises, long
+  /// before the UI has finished loading the run log.
+  final Stream<Signal> taps;
 
   /// Does nothing, successfully. The default in tests and on any platform
   /// where scheduling is not wired up.
@@ -32,11 +48,50 @@ class SignalScheduler {
   static const String reminderChannel = 'signals_reminder';
   static const String ambientChannel = 'signals_ambient';
 
+  /// What a notification carries so a tap can be shown in full.
+  ///
+  /// The planned schedule is never persisted, and the text is fixed when the
+  /// notification is scheduled rather than when it fires, so the payload is the
+  /// only route from a tap back to what was said.
+  static String encodePayload(Signal signal) =>
+      jsonEncode({'from': signal.from, 'text': signal.text});
+
+  /// The reverse, and forgiving: null for anything that is not one of ours.
+  /// A signal scheduled by an older build, or a payload from somewhere else
+  /// entirely, must not take the app down on a tap.
+  static Signal? decodePayload(String? payload) {
+    if (payload == null || payload.isEmpty) return null;
+    try {
+      final decoded = jsonDecode(payload);
+      if (decoded is! Map) return null;
+      final from = decoded['from'];
+      final text = decoded['text'];
+      if (from is! String || text is! String || text.isEmpty) return null;
+      return Signal(from: from, text: text);
+    } on FormatException {
+      return null;
+    }
+  }
+
   factory SignalScheduler.platform() {
     if (defaultTargetPlatform != TargetPlatform.android) return SignalScheduler.noop();
 
     final plugin = FlutterLocalNotificationsPlugin();
+    final taps = StreamController<Signal>();
     var ready = false;
+
+    // Android delivers a tap that launched the app during `initialize`, which
+    // is why the controller buffers rather than broadcasts. Using
+    // `getNotificationAppLaunchDetails` as well would report the same tap
+    // twice, so this is the only route in.
+    void onTap(NotificationResponse response) {
+      final signal = decodePayload(response.payload);
+      if (signal == null) {
+        debugPrint('signal tapped with no readable payload');
+        return;
+      }
+      taps.add(signal);
+    }
 
     Future<bool> ensureReady() async {
       if (ready) return true;
@@ -52,6 +107,7 @@ class SignalScheduler {
           settings: const InitializationSettings(
             android: AndroidInitializationSettings('ic_notification'),
           ),
+          onDidReceiveNotificationResponse: onTap,
         );
         ready = true;
       } on Object catch (e) {
@@ -63,16 +119,19 @@ class SignalScheduler {
     // The channels themselves are created by MainActivity at launch, because
     // importance is frozen at creation and getting it right once matters more
     // than letting the plugin invent one.
-    AndroidNotificationDetails detailsFor(SignalKind kind) => switch (kind) {
-      SignalKind.reminder => const AndroidNotificationDetails(
+    AndroidNotificationDetails detailsFor(PlannedSignal s) => switch (s.kind) {
+      SignalKind.reminder => AndroidNotificationDetails(
         reminderChannel,
         'Reminders',
         channelDescription: 'Your handler, asking whether you are running today.',
         importance: Importance.defaultImportance,
         priority: Priority.defaultPriority,
         icon: 'ic_notification',
+        // Without this Android shows one line and truncates the rest. These
+        // run to 180 characters, so most of a signal was being cut.
+        styleInformation: BigTextStyleInformation(s.text, contentTitle: s.from),
       ),
-      SignalKind.ambient => const AndroidNotificationDetails(
+      SignalKind.ambient => AndroidNotificationDetails(
         ambientChannel,
         'Signal noise',
         channelDescription: 'Traffic from the Sprawl. Silent.',
@@ -81,6 +140,7 @@ class SignalScheduler {
         enableVibration: false,
         playSound: false,
         icon: 'ic_notification',
+        styleInformation: BigTextStyleInformation(s.text, contentTitle: s.from),
       ),
     };
 
@@ -93,6 +153,7 @@ class SignalScheduler {
     }
 
     return SignalScheduler(
+      taps: taps.stream,
       cancelAll: () async {
         if (!await ensureReady()) return;
         try {
@@ -111,7 +172,10 @@ class SignalScheduler {
               title: s.from,
               body: s.text,
               scheduledDate: tz.TZDateTime.from(s.at, tz.UTC),
-              notificationDetails: NotificationDetails(android: detailsFor(s.kind)),
+              notificationDetails: NotificationDetails(android: detailsFor(s)),
+              // The plan is never persisted, so at tap time the app has no
+              // other way back to what this one said.
+              payload: encodePayload(Signal(from: s.from, text: s.text)),
               // Inexact on purpose: exact alarms need SCHEDULE_EXACT_ALARM,
               // which is a permission this app has no business asking for.
               // A reminder a few minutes late is still a reminder.

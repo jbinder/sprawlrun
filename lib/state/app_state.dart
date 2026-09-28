@@ -353,6 +353,10 @@ class AppState extends ChangeNotifier {
   Future<void> snoozeBackupNudge() =>
       updateProfile(profile.copyWith(backupNudgeSnoozedAt: DateTime.now()));
 
+  /// Signals the runner tapped in the notification shade, for the app to show
+  /// in full — the shade truncates, and a dismissed notification is gone.
+  Stream<Signal> get signalTaps => _signals.taps;
+
   /// Whether to ask the runner to export, and how much is at stake.
   BackupNudge? get backupNudge =>
       BackupNudge.of(profile: profile, runLog: runLog, now: DateTime.now());

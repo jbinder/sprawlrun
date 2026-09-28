@@ -11,6 +11,7 @@ import 'theme/cyber_palette.dart';
 import 'theme/cyber_theme.dart';
 import 'widgets/backdrop.dart';
 import 'widgets/glitch_text.dart';
+import 'widgets/signal_popup.dart';
 
 class SprawlRunApp extends StatelessWidget {
   const SprawlRunApp({super.key});
@@ -32,7 +33,10 @@ class _Root extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loading = context.select<AppState, bool>((s) => s.loading);
-    return loading ? const _BootScreen() : const HomeShell();
+    // The watcher only mounts once loading is done, so a tapped signal never
+    // lands over the boot screen. Nothing is lost by waiting: the tap stream
+    // buffers until something subscribes.
+    return loading ? const _BootScreen() : const SignalWatcher(child: HomeShell());
   }
 }
 

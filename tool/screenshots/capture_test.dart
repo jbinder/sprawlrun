@@ -18,6 +18,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:sprawl_run/widgets/glitch_text.dart';
 import 'package:sprawl_run/app.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
@@ -47,11 +48,30 @@ const double _pixelRatio = 3.0;
 final GlobalKey _frame = GlobalKey();
 final Directory _out = Directory('docs/screenshots');
 
+/// The store listing's own copy, which F-Droid shows in this order.
+///
+/// Written here rather than copied by hand, because copying by hand is what
+/// left the published listing on screenshots from 0.1.0 — taken before the
+/// second campaign existed — while `docs/screenshots` moved on without them.
+/// A shot missing from this map is documentation only.
+final Directory _store = Directory('fastlane/metadata/android/en-US/images/phoneScreenshots');
+const Map<String, int> _storeOrder = {
+  'dashboard': 1,
+  'run-hud': 2,
+  'briefing': 3,
+  'target': 4,
+  'stats': 5,
+  'history': 6,
+  'achievements': 7,
+  'codex': 8,
+};
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
     _out.createSync(recursive: true);
+    _store.createSync(recursive: true);
     await _loadFonts();
   });
 
@@ -115,6 +135,12 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
     }
     await _shoot(tester, 'run-hud');
+
+    // The fake narrator holds a timer for the length of every line it speaks,
+    // and the harness fails any test that disposes the tree with one pending.
+    // The clock is frozen now, so the engine's tick advances nothing and no
+    // further beats can fire — this only lets the line in flight run out.
+    await tester.pump(const Duration(minutes: 2));
   });
 
   testWidgets('unlock reveal', (tester) async {
@@ -229,6 +255,10 @@ Future<AppState> _seed(WidgetTester tester) async {
     narrator: FakeNarrator(),
   );
 
+  // Anchored to today so regenerating always shows a live current week.
+  final base = DateTime.now();
+  final today = DateTime(base.year, base.month, base.day, 7, 30);
+
   await tester.runAsync(() async {
     await profiles.save(
       Profile(
@@ -237,6 +267,12 @@ Future<AppState> _seed(WidgetTester tester) async {
         // The run HUD would otherwise call wakelock_plus, which has no
         // implementation in the test harness. It has no visual effect.
         keepScreenOn: false,
+        // A showcase device is one whose runner keeps backups. Without this the
+        // dashboard leads with the ARCHIVE DRIFT nudge, which is a maintenance
+        // warning rather than the app, and it pushes NEXT OPERATION off-screen.
+        // Dated with the runs, which are anchored to today, or every seeded run
+        // counts as unsaved and the nudge comes back.
+        lastExportAt: today,
         completedMissions: const {'sp01', 'sp02', 'sp03'},
         unlockedCodex: const {
           'cdx_courier', 'cdx_ninsei', 'cdx_clinic', //
@@ -259,10 +295,7 @@ Future<AppState> _seed(WidgetTester tester) async {
       ),
     );
 
-    // Six weeks of running, denser in recent weeks, with the story runs mixed
-    // in. Anchored to today so regenerating always shows a live current week.
-    final base = DateTime.now();
-    final today = DateTime(base.year, base.month, base.day, 7, 30);
+    // Six weeks of running, denser in recent weeks, with the story runs mixed in.
     var i = 0;
     for (final spec in _history) {
       await runs.save(
@@ -341,11 +374,25 @@ Future<void> _pump(WidgetTester tester, Widget home, AppState state, {RunEngine?
 }
 
 Future<void> _shoot(WidgetTester tester, String name) async {
+  // Forced rather than waited for: the RGB split fires on a random timer for a
+  // few percent of the time, so an unforced capture loses it as often as not.
+  // Only a fraction of the titles, because all of them tearing at once never
+  // happens in the app. Half-way through the 320ms decay rather than at the
+  // start — at full offset the text is unreadable, and the point is a colour
+  // fringe that reads as deliberate. Late in the decay rather than mid, because
+  // the offset is re-rolled every frame: at 220ms of 320ms even the largest
+  // roll is under 1.5px, so a regenerated shot can never come out illegible.
+  GlitchText.debugGlitchSome();
+  await tester.pump(const Duration(milliseconds: 220));
+
   final boundary = tester.renderObject<RenderRepaintBoundary>(find.byKey(_frame));
   await tester.runAsync(() async {
     final image = await boundary.toImage(pixelRatio: _pixelRatio);
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
-    File('${_out.path}/$name.png').writeAsBytesSync(data!.buffer.asUint8List());
+    final bytes = data!.buffer.asUint8List();
+    File('${_out.path}/$name.png').writeAsBytesSync(bytes);
+    final rank = _storeOrder[name];
+    if (rank != null) File('${_store.path}/${rank}_$name.png').writeAsBytesSync(bytes);
     image.dispose();
   });
 }

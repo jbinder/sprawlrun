@@ -261,7 +261,7 @@ launcher icons and the screenshots above are all produced by code:
 ```bash
 dart run tool/gen_sfx.dart                      # synthesises assets/sfx/*.wav
 dart run tool/gen_icons.dart                    # renders every launcher icon
-flutter test tool/screenshots/capture_test.dart # regenerates docs/screenshots
+flutter test tool/screenshots/capture_test.dart # regenerates docs + store screenshots
 ```
 
 The screenshot tool drives the real widgets with seeded data, so the images in

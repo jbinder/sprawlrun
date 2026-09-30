@@ -28,6 +28,31 @@ class GlitchText extends StatefulWidget {
 
   @override
   State<GlitchText> createState() => _GlitchTextState();
+
+  /// Every mounted instance, so the screenshot tool can reach them.
+  static final Set<_GlitchTextState> _live = {};
+
+  /// Starts a glitch on a fraction of the mounted [GlitchText] widgets.
+  ///
+  /// The RGB split is the signature of how this product looks, but it fires on
+  /// a random timer for 320ms at a time — a few percent of the wall clock — so
+  /// a capture that does not force it is a coin toss, and the published store
+  /// screenshots lost the effect that way. Only a fraction, because every title
+  /// tearing at once never happens in the app and reads as a rendering fault
+  /// rather than a style.
+  ///
+  /// Seeded, so regenerating the screenshots picks the same titles each time.
+  /// Named `debug` in the Flutter sense: it exists for
+  /// `tool/screenshots/capture_test.dart` and nothing in the app calls it.
+  static void debugGlitchSome({double fraction = 0.35, int seed = 4}) {
+    final states = _live.toList();
+    if (states.isEmpty) return;
+    final picked = (states.length * fraction).round().clamp(1, states.length);
+    final order = List.generate(states.length, (i) => i)..shuffle(Random(seed));
+    for (final i in order.take(picked)) {
+      states[i]._controller.forward(from: 0);
+    }
+  }
 }
 
 class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateMixin {
@@ -43,6 +68,7 @@ class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
+    GlitchText._live.add(this);
     _controller.addListener(() {
       if (!mounted) return;
       setState(() => _offset = (1 - _controller.value) * (_random.nextDouble() * 3.5 + 1.2));
@@ -68,6 +94,7 @@ class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateM
 
   @override
   void dispose() {
+    GlitchText._live.remove(this);
     _next?.cancel();
     _controller.dispose();
     super.dispose();

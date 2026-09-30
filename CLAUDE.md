@@ -16,7 +16,7 @@ fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
 fvm dart run tool/gen_icons.dart                    # launcher icons + docs/icon.png
-fvm flutter test tool/screenshots/capture_test.dart # docs/screenshots/*.png
+fvm flutter test tool/screenshots/capture_test.dart # docs/ + fastlane screenshots
 ```
 
 Android builds take 3–6 minutes. Run them in the background with a monitor rather
@@ -66,8 +66,11 @@ it there.
 ## Generated, never hand-edited
 
 `assets/sfx/*.wav`, all launcher icons, the status-bar icon
-(`res/drawable-*/ic_notification.png`), `docs/icon.png` and `docs/screenshots/*`
-are produced by the scripts in `tool/`. Edit the generator and re-run it. The
+(`res/drawable-*/ic_notification.png`), `docs/icon.png`, `docs/screenshots/*`
+and the store's `fastlane/.../phoneScreenshots/*` are produced by the scripts in
+`tool/`. The two screenshot sets are written by the same run, because copying
+them across by hand is what left the published listing on 0.1.0 shots — taken
+before the second campaign existed — until 2026-09-30. Edit the generator and re-run it. The
 only third-party binaries in the repo are the three OFL fonts.
 
 ## Conventions worth preserving

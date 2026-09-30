@@ -48,6 +48,15 @@ const double _pixelRatio = 3.0;
 final GlobalKey _frame = GlobalKey();
 final Directory _out = Directory('docs/screenshots');
 
+/// Long enough for any [TypewriterText] to finish typing itself out.
+///
+/// It types at 90 characters a second and clamps its own duration to twenty
+/// seconds, so nothing can still be mid-type after this. Four seconds was
+/// enough until a mission brief grew past 360 characters, at which point the
+/// published store screenshot showed a sentence cut off mid-word — which reads
+/// as a layout bug rather than an animation.
+const Duration _typedOut = Duration(seconds: 20);
+
 /// The store listing's own copy, which F-Droid shows in this order.
 ///
 /// Written here rather than copied by hand, because copying by hand is what
@@ -85,8 +94,7 @@ void main() {
     final state = await _seed(tester);
     final mission = state.currentMission!.mission;
     await _pump(tester, MissionBriefScreen(mission: mission), state);
-    // Let the briefing finish typing itself out.
-    await tester.pump(const Duration(seconds: 4));
+    await tester.pump(_typedOut);
     await _shoot(tester, 'briefing');
   });
 
@@ -94,7 +102,7 @@ void main() {
     final state = await _seed(tester);
     final mission = state.currentMission!.mission;
     await _pump(tester, MissionBriefScreen(mission: mission), state);
-    await tester.pump(const Duration(seconds: 4));
+    await tester.pump(_typedOut);
     // The picker sits below the briefing text.
     await tester.drag(find.byType(ListView), const Offset(0, -900));
     await tester.pump(const Duration(milliseconds: 300));

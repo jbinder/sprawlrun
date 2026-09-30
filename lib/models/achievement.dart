@@ -517,6 +517,19 @@ const List<AchievementDef> kAchievements = [
   ),
 
   // ---- Discipline ---------------------------------------------------------
+  // The rungs are close together early on purpose: the first weeks are when a
+  // streak is easiest to abandon, and the gap from four weeks to twelve used to
+  // be two months with nothing in it.
+  AchievementDef(
+    id: 'streak_1',
+    title: 'On The Board',
+    description: 'Hit your weekly target for the first time.',
+    category: AchCategory.discipline,
+    tier: AchTier.street,
+    target: 1,
+    metric: _longestStreak,
+    format: _count,
+  ),
   AchievementDef(
     id: 'streak_2',
     title: 'Two Weeks Standing',
@@ -528,12 +541,42 @@ const List<AchievementDef> kAchievements = [
     format: _count,
   ),
   AchievementDef(
+    id: 'streak_3',
+    title: 'Not A Fluke',
+    description: 'Hit your weekly target three weeks running.',
+    category: AchCategory.discipline,
+    tier: AchTier.street,
+    target: 3,
+    metric: _longestStreak,
+    format: _count,
+  ),
+  AchievementDef(
     id: 'streak_4',
     title: 'A Month Of It',
     description: 'Hit your weekly target four weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.street,
     target: 4,
+    metric: _longestStreak,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'streak_6',
+    title: 'Retained',
+    description: 'Hit your weekly target six weeks running.',
+    category: AchCategory.discipline,
+    tier: AchTier.chrome,
+    target: 6,
+    metric: _longestStreak,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'streak_8',
+    title: 'Standing Order',
+    description: 'Hit your weekly target eight weeks running.',
+    category: AchCategory.discipline,
+    tier: AchTier.chrome,
+    target: 8,
     metric: _longestStreak,
     format: _count,
   ),

@@ -110,7 +110,7 @@ ACSM metabolic equations and your body mass — no invented multipliers.</td>
 <td>The long view: distance per month since day one, and every month as a dot
 calendar lit by how far you ran. Tap a month or a day to see the runs behind
 it.</td>
-<td><b>60 achievements</b> across six categories and four tiers. Progress is
+<td><b>64 achievements</b> across six categories and four tiers. Progress is
 recomputed from your run log every time, so it can never drift out of step with
 what you actually did.</td>
 </tr>
@@ -178,7 +178,7 @@ Forty entries across the two campaigns.
 **Progress**
 - This week and this month at a glance, steppable back to your first run
 - A long-term history: distance per month, and every month as a dot calendar
-- 60 achievements across six categories and four tiers
+- 64 achievements across six categories and four tiers
 - A weekly streak you define yourself — minutes, kilometres or missions
 - Full run log, grouped by month, with every run's detail and trace
 
@@ -244,7 +244,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 332 tests
+flutter test                   # 333 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

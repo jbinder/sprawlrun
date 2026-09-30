@@ -195,13 +195,39 @@ void main() {
           run(at: DateTime(2026, 7, 20).subtract(Duration(days: 7 * w)).add(const Duration(hours: 9)), seconds: 2400),
       ];
 
-      // 30 min/week: four weeks in a row clears streak_2 and streak_4.
+      // 30 min/week: four weeks in a row clears every rung up to four.
       final easy = StatsService.lifetime(runs, const StreakGoal(target: 30));
-      expect(AchievementEngine.newlyEarned(easy, const {}).map((a) => a.id), containsAll(['streak_2', 'streak_4']));
+      final earned = AchievementEngine.newlyEarned(easy, const {}).map((a) => a.id);
+      expect(earned, containsAll(['streak_1', 'streak_2', 'streak_3', 'streak_4']));
+      expect(earned, isNot(contains('streak_6')), reason: 'four weeks is not six');
 
       // 120 min/week: the same runs meet nothing, so no streak at all.
       final hard = StatsService.lifetime(runs, const StreakGoal(target: 120));
       expect(AchievementEngine.newlyEarned(hard, const {}).map((a) => a.id), isNot(contains('streak_2')));
+    });
+
+    test('the streak ladder has no gap wider than it is tall', () {
+      // The rungs exist to keep a new streak rewarded often enough to survive.
+      // A jump from four weeks to twelve left two months with nothing in it,
+      // which is exactly where a streak gets abandoned.
+      final rungs = kAchievements
+          .where((a) => a.id.startsWith('streak_'))
+          .map((a) => a.target.toInt())
+          .toList()
+        ..sort();
+
+      expect(rungs.first, 1, reason: 'the first week a runner hits their target should count');
+
+      // Only the early rungs, deliberately. Someone twelve weeks into a streak
+      // is not at risk of abandoning it the way someone in week one is, so the
+      // top of the ladder is allowed to stretch — 12 to 26 to 52 is fine.
+      for (var i = 1; i < rungs.length && rungs[i - 1] < 12; i++) {
+        expect(
+          rungs[i] - rungs[i - 1],
+          lessThanOrEqualTo(rungs[i - 1]),
+          reason: 'nothing between ${rungs[i - 1]} and ${rungs[i]} weeks',
+        );
+      }
     });
 
     test('deleting the run that earned something un-earns it', () {

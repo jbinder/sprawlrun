@@ -150,9 +150,16 @@ only third-party binaries in the repo are the three OFL fonts.
   persisted and no Dart runs at fire time, so there is no other route back to
   what was said. `SignalScheduler.decodePayload` therefore returns null rather
   than throwing for anything it does not recognise: a tap must not be able to
-  take the app down. The tap stream is single-subscription on purpose, because
-  Android delivers a tap that *launched* the app during `initialize`, long
-  before the UI exists to show it — a broadcast stream would drop it.
+  take the app down.
+- **`onDidReceiveNotificationResponse` never fires for a cold start.** The
+  plugin forwards a plain `SELECT_NOTIFICATION` only through `onNewIntent`,
+  which needs an activity that was already running; its `onAttachedToActivity`
+  handles foreground action buttons and nothing else. So a tap that *launched*
+  the app reaches Dart only via `getNotificationAppLaunchDetails`, and that is
+  the usual case — a signal arrives hours after the app was last open and
+  Android has long since killed the process. `SignalTaps` reads both routes and
+  de-duplicates, since a warm tap can be reported twice. Relying on the
+  callback alone looked fine in every test and failed on every real tap.
 - **After an upgrade the first signal is the *old* build's.** The manifest
   declares `MY_PACKAGE_REPLACED`, so the plugin re-arms the stored schedule
   after an install — and what it stored was written by the previous version,

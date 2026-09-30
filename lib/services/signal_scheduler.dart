@@ -30,12 +30,7 @@ class SignalScheduler {
   /// posted by `MissionService` outside the plugin.
   final Future<void> Function() cancelAll;
 
-  /// Signals the runner tapped in the notification shade.
-  ///
-  /// Broadcast, so subscribing twice over the life of the app is harmless —
-  /// but a tap that arrives with nobody listening is held and replayed to the
-  /// first subscriber, because a tap that *launched* the app is delivered
-  /// while the plugin initialises, long before the UI has loaded the run log.
+  /// Signals the runner tapped in the notification shade. See [SignalTaps].
   final Stream<Signal> taps;
 
   /// Does nothing, successfully. The default in tests and on any platform
@@ -77,41 +72,8 @@ class SignalScheduler {
     if (defaultTargetPlatform != TargetPlatform.android) return SignalScheduler.noop();
 
     final plugin = FlutterLocalNotificationsPlugin();
-    final taps = StreamController<Signal>.broadcast();
+    final taps = SignalTaps();
     var ready = false;
-
-    // Taps that arrived before anything was listening. A tap that launched the
-    // app lands during `initialize`, with the UI still on the boot screen.
-    final waiting = <Signal>[];
-    taps.onListen = () {
-      final queued = List.of(waiting);
-      waiting.clear();
-      // A microtask, because adding from inside onListen does not reach the
-      // subscriber that is still being set up.
-      for (final signal in queued) {
-        scheduleMicrotask(() {
-          if (taps.hasListener) taps.add(signal);
-        });
-      }
-    };
-
-    // Android delivers a tap that launched the app during `initialize`, which
-    // is why the controller buffers rather than broadcasts. Using
-    // `getNotificationAppLaunchDetails` as well would report the same tap
-    // twice, so this is the only route in.
-    void onTap(NotificationResponse response) {
-      final signal = decodePayload(response.payload);
-      if (signal == null) {
-        debugPrint('signal tapped with no readable payload');
-        return;
-      }
-      if (taps.hasListener) {
-        taps.add(signal);
-      } else {
-        waiting.add(signal);
-      }
-    }
-
     Future<bool> ensureReady() async {
       if (ready) return true;
       try {
@@ -126,9 +88,23 @@ class SignalScheduler {
           settings: const InitializationSettings(
             android: AndroidInitializationSettings('ic_notification'),
           ),
-          onDidReceiveNotificationResponse: onTap,
+          onDidReceiveNotificationResponse: (response) =>
+              taps.deliver(id: response.id, payload: response.payload),
         );
         ready = true;
+
+        // A tap that *started* the process never reaches the callback above:
+        // the plugin forwards SELECT_NOTIFICATION through `onNewIntent`, which
+        // needs an activity that was already running, and its
+        // `onAttachedToActivity` handles only foreground action buttons. Asking
+        // for the launch details is the sole route for a cold start — which is
+        // the usual case, since a signal arrives hours after the app was last
+        // open and Android has long since killed it.
+        final launch = await plugin.getNotificationAppLaunchDetails();
+        if (launch?.didNotificationLaunchApp ?? false) {
+          final response = launch!.notificationResponse;
+          taps.deliver(id: response?.id, payload: response?.payload);
+        }
       } on Object catch (e) {
         debugPrint('signal scheduler unavailable: $e');
       }
@@ -210,4 +186,68 @@ class SignalScheduler {
       },
     );
   }
+}
+
+/// Collects notification taps and hands them to the app as a stream.
+///
+/// Its own class because the delivery rules are the fiddly part and they need
+/// testing without a device — the first version of them was written inline in
+/// [SignalScheduler.platform], untestable, and was wrong.
+///
+/// Two rules, both learned the hard way:
+///
+/// - **A tap can arrive before anything is listening.** A cold start begins
+///   with the boot screen, and the launch tap is read as soon as the plugin
+///   initialises. Anything that arrives with no listener is held and replayed
+///   to the first one.
+/// - **The same tap can arrive twice.** A cold start is reported by
+///   `getNotificationAppLaunchDetails`, and a warm one by the tap callback; a
+///   launch that is somehow both must still show one dialog.
+class SignalTaps {
+  SignalTaps() {
+    _controller.onListen = _drain;
+  }
+
+  final _controller = StreamController<Signal>.broadcast();
+  final _waiting = <Signal>[];
+  final _seen = <String>{};
+
+  Stream<Signal> get stream => _controller.stream;
+
+  /// Accepts a tap, from either route.
+  ///
+  /// Unreadable payloads are dropped rather than thrown: a notification
+  /// scheduled by an older build carries none, and a tap must never be able to
+  /// take the app down.
+  void deliver({int? id, String? payload}) {
+    // Keyed on both, because ids are reused across re-plans. Within one process
+    // the same notification cannot be tapped twice — it auto-cancels — so a
+    // repeat is always the two routes reporting one tap.
+    if (!_seen.add('$id\u0000$payload')) return;
+
+    final signal = SignalScheduler.decodePayload(payload);
+    if (signal == null) {
+      debugPrint('signal tapped with no readable payload');
+      return;
+    }
+    if (_controller.hasListener) {
+      _controller.add(signal);
+    } else {
+      _waiting.add(signal);
+    }
+  }
+
+  void _drain() {
+    final queued = List.of(_waiting);
+    _waiting.clear();
+    for (final signal in queued) {
+      // A microtask, because adding from inside onListen does not reach the
+      // subscription that is still being set up.
+      scheduleMicrotask(() {
+        if (_controller.hasListener) _controller.add(signal);
+      });
+    }
+  }
+
+  Future<void> close() => _controller.close();
 }

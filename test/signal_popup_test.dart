@@ -45,6 +45,59 @@ void main() {
     });
   });
 
+  group('collecting taps from the platform', () {
+    test('a tap with nobody listening is replayed to the first subscriber', () async {
+      // The cold-start case, and the one that was broken: the launch tap is
+      // read while the app is still on the boot screen.
+      final taps = SignalTaps();
+      addTearDown(taps.close);
+      taps.deliver(id: 7101, payload: SignalScheduler.encodePayload(long));
+
+      expect(await taps.stream.first, isA<Signal>().having((s) => s.text, 'text', long.text));
+    });
+
+    test('one tap reported by both routes shows once', () async {
+      // A cold start is reported by getNotificationAppLaunchDetails and a warm
+      // one by the callback. A launch that is somehow both is still one tap.
+      final taps = SignalTaps();
+      addTearDown(taps.close);
+      final seen = <Signal>[];
+      taps.stream.listen(seen.add);
+
+      final payload = SignalScheduler.encodePayload(long);
+      taps.deliver(id: 7101, payload: payload);
+      taps.deliver(id: 7101, payload: payload);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(seen, hasLength(1));
+    });
+
+    test('two different signals both arrive', () async {
+      final taps = SignalTaps();
+      addTearDown(taps.close);
+      final seen = <Signal>[];
+      taps.stream.listen(seen.add);
+
+      taps.deliver(id: 7101, payload: SignalScheduler.encodePayload(long));
+      taps.deliver(id: 7102, payload: SignalScheduler.encodePayload(const Signal(from: 'SIX', text: 'Rates are up.')));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(seen.map((s) => s.from), ['PACHINKO', 'SIX']);
+    });
+
+    test('an old build\'s notification carries no payload, and is dropped quietly', () async {
+      final taps = SignalTaps();
+      addTearDown(taps.close);
+      final seen = <Signal>[];
+      taps.stream.listen(seen.add);
+
+      taps.deliver(id: 7101, payload: null);
+      await Future<void>.delayed(Duration.zero);
+
+      expect(seen, isEmpty);
+    });
+  });
+
   testWidgets('the watcher can be torn down and rebuilt without losing taps', (tester) async {
     // A single-subscription stream throws on a second listen, which would kill
     // every later tap for the life of the app. Navigating in a way that

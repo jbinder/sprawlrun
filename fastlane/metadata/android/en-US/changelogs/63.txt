@@ -1,0 +1,11 @@
+Your handler can now get in touch between runs. Pick the days and the time, and a reminder arrives in the voice of the campaign you are playing, about the operation you have waiting — newly written for every one of the twenty missions, never a line repeated from a run.
+
+Turn on signal noise as well and the city talks whether or not you are listening: a fixer with a rumour, a tide reading, an advisory from an authority that would rather you stayed indoors. Silent, never between 22:00 and 07:00, as often or as rarely as you like, and off until you ask for it. Tap any message to read the whole of it in the app. Nothing is ever read aloud.
+
+This adds one permission and only one: RECEIVE_BOOT_COMPLETED. Scheduled alarms do not survive a restart, so without it a reminder set before a reboot would simply never arrive. The alarms are inexact, so no exact-alarm permission is asked for either, and there is still no INTERNET permission in the manifest.
+
+New: a reminder to export once your log holds runs that exist nowhere else. Any uninstall takes the private data directory with it, and there is no copy anywhere else unless you made one.
+
+Fixed: a run with GPS switched off now says so on screen. Battery-saver location mode leaves network location on while switching the GPS provider off, so the app saw permission granted, location enabled, and not one fix — and recorded the run as time-only with nothing to explain why.
+
+Also: four more streak achievements, at one, three, six and eight weeks. A new streak used to go unrewarded until the second week and then again until the fourth.

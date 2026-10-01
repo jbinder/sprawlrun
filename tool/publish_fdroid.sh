@@ -196,8 +196,14 @@ TARGET="${FDROIDDATA}/metadata/${PKG}.yml"
 grep -v '^[[:space:]]*#' docs/fdroid-metadata.yml | cat -s | sed '/./,$!d' > "$TARGET"
 python3 -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" "$TARGET" \
   || die 'generated metadata is not valid YAML'
-grep -q "commit: ${TAG}" "$TARGET" \
-  || die "metadata does not reference ${TAG} — update docs/fdroid-metadata.yml"
+# F-Droid requires the full 40-character commit hash, never a tag or branch: a
+# tag can be moved after review, a hash cannot. A reviewer rejected this project
+# once for using a tag, so the gate resolves the tag and checks for its hash —
+# checking for the tag string itself passed exactly the metadata F-Droid refuses.
+TAG_SHA=$(git rev-parse -q --verify "${TAG}^{commit}" 2>/dev/null) \
+  || die "cannot resolve ${TAG} to a commit — create the tag before publishing"
+grep -q "commit: ${TAG_SHA}" "$TARGET" \
+  || die "metadata does not pin ${TAG} (${TAG_SHA}) — update docs/fdroid-metadata.yml"
 ok "wrote ${TARGET}"
 
 # Stripping comments is not enough: fdroiddata enforces canonical formatting

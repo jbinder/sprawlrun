@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 352 tests
+fvm flutter test                                    # 375 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -116,7 +116,11 @@ only third-party binaries in the repo are the three OFL fonts.
   run *with its trace*, which is complete precisely because stats, streaks and
   achievements are derived. Add a field to `Profile` or `RunRecord` and it rides
   along for free; add a new persisted *file* and it will not, so extend
-  `BackupService.collect` and `import` at the same time.
+  `BackupService.collect` and `import` at the same time. There is one such file
+  so far: `signals.json`, the signal log behind the timeline — the only thing
+  on it that is stored, since runs, clears, achievements and intel all project
+  from the run log and profile. Exported as *sent* entries only; the pending
+  plan is rebuilt by whichever device restores it.
 - **`MainActivity` creates `geolocator_channel_01` before geolocator can.**
   geolocator builds that channel at `IMPORTANCE_NONE`, which Android treats as
   blocked: the foreground-service notification never reaches the shade and the
@@ -148,10 +152,11 @@ only third-party binaries in the repo are the three OFL fonts.
 - **A notification body is one line unless you ask for more.** Android collapses
   it and truncates the rest, so every signal needs
   `BigTextStyleInformation`; signals run to 180 characters and most of one was
-  being cut. Tapping opens it in full in the app, which works only because the
-  scheduler puts the text in the notification's `payload` — the plan is never
-  persisted and no Dart runs at fire time, so there is no other route back to
-  what was said. `SignalScheduler.decodePayload` therefore returns null rather
+  being cut. Tapping opens the timeline at that message. The notification's
+  `payload` carries speaker and text, which is how the tap knows *which* entry
+  to scroll to — and, for a notification scheduled before the signal log
+  existed, the only record of what was said, so the timeline shows it at the
+  top rather than not at all. `SignalScheduler.decodePayload` returns null rather
   than throwing for anything it does not recognise: a tap must not be able to
   take the app down.
 - **`onDidReceiveNotificationResponse` never fires for a cold start.** The

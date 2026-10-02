@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import '../models/profile.dart';
 import '../models/run_record.dart';
+import '../models/signal_log.dart';
 import 'profile_repository.dart';
 import 'run_repository.dart';
+import 'signal_log_repository.dart';
 
 /// Everything the app knows about a runner, in one portable JSON document.
 ///
@@ -12,7 +14,12 @@ import 'run_repository.dart';
 /// GPS traces included, is a genuinely complete backup. Restoring one onto an
 /// empty install reproduces the original device exactly.
 class BackupArchive {
-  const BackupArchive({required this.exportedAt, required this.profile, required this.runs});
+  const BackupArchive({
+    required this.exportedAt,
+    required this.profile,
+    required this.runs,
+    this.signals = const [],
+  });
 
   /// Marker in the JSON that identifies the file as ours. Checked on import so
   /// a runner who picks the wrong file gets an explanation rather than a wiped
@@ -29,6 +36,10 @@ class BackupArchive {
   /// Every stored run, traces included.
   final List<RunRecord> runs;
 
+  /// The signals the handlers have sent. Absent from backups written before
+  /// the timeline existed, which simply restore with no signal history.
+  final List<SignalLogEntry> signals;
+
   int get traceCount => runs.where((r) => r.trace.isNotEmpty).length;
 
   Map<String, dynamic> toJson() => {
@@ -37,6 +48,7 @@ class BackupArchive {
     'exportedAt': exportedAt.toIso8601String(),
     'profile': profile.toJson(),
     'runs': runs.map((r) => r.toJson()).toList(),
+    if (signals.isNotEmpty) 'signals': signals.map((e) => e.toJson()).toList(),
   };
 
   /// Parses an exported document.
@@ -84,6 +96,12 @@ class BackupArchive {
       exportedAt: DateTime.tryParse(decoded['exportedAt'] as String? ?? '') ?? DateTime.now(),
       profile: profile,
       runs: runs,
+      // Additive, so no version bump: an older build ignores the field, and a
+      // backup from before it existed restores with an empty history.
+      signals: (decoded['signals'] as List? ?? const [])
+          .map(SignalLogEntry.tryParse)
+          .whereType<SignalLogEntry>()
+          .toList(),
     );
   }
 }
@@ -133,10 +151,15 @@ class ImportReport {
 /// decides where an exported string goes. That keeps the whole round trip
 /// testable without a device.
 class BackupService {
-  BackupService({required this.profiles, required this.runs});
+  BackupService({required this.profiles, required this.runs, this.signalLog});
 
   final ProfileRepository profiles;
   final RunRepository runs;
+
+  /// The one persisted file that is not derived from the run log or the
+  /// profile, so it has to be collected and restored explicitly. Optional only
+  /// so the run-log tests need not build one.
+  final SignalLogRepository? signalLog;
 
   /// A filename that sorts chronologically and survives a share sheet.
   static String suggestedFileName(DateTime at) {
@@ -153,10 +176,14 @@ class BackupService {
     for (final run in index) {
       full.add(run.withTrace(await runs.loadTrace(run.id)));
     }
+    final now = DateTime.now();
     return BackupArchive(
-      exportedAt: DateTime.now(),
+      exportedAt: now,
       profile: await profiles.load(),
       runs: full,
+      // Only what has been sent. The pending plan is rebuilt by whichever
+      // device restores this, from its own settings.
+      signals: await signalLog?.sent(now) ?? const [],
     );
   }
 
@@ -170,6 +197,7 @@ class BackupService {
     if (mode == ImportMode.replace) {
       await runs.replaceAll(archive.runs);
       await profiles.save(archive.profile);
+      await signalLog?.replaceAll(archive.signals, DateTime.now());
       return ImportReport(
         mode: mode,
         runsAdded: archive.runs.length,
@@ -195,6 +223,7 @@ class BackupService {
     final local = await profiles.load();
     final merged = _mergeProfiles(local, archive.profile);
     await profiles.save(merged);
+    await signalLog?.merge(archive.signals, DateTime.now());
 
     return ImportReport(
       mode: mode,

@@ -6,12 +6,13 @@ import 'screens/codex_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/stats_screen.dart';
+import 'screens/timeline_screen.dart';
 import 'state/app_state.dart';
 import 'theme/cyber_palette.dart';
 import 'theme/cyber_theme.dart';
 import 'widgets/backdrop.dart';
 import 'widgets/glitch_text.dart';
-import 'widgets/signal_popup.dart';
+import 'widgets/signal_watcher.dart';
 
 class SprawlRunApp extends StatelessWidget {
   const SprawlRunApp({super.key});
@@ -108,6 +109,12 @@ class _HomeShellState extends State<HomeShell> {
                 onSettings: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
                 ),
+                onTimeline: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    settings: const RouteSettings(name: TimelineScreen.routeName),
+                    builder: (_) => const TimelineScreen(),
+                  ),
+                ),
               ),
               Expanded(
                 child: IndexedStack(
@@ -134,13 +141,18 @@ class _HomeShellState extends State<HomeShell> {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.onSettings});
+  const _TopBar({required this.onSettings, required this.onTimeline});
 
   final VoidCallback onSettings;
+  final VoidCallback onTimeline;
 
   @override
   Widget build(BuildContext context) {
     final callsign = context.select<AppState, String>((s) => s.profile.callsign);
+    // Up here rather than on the dashboard, which is full enough already. Only
+    // shown while the handlers are sending anything — with every signal off
+    // there is nothing of theirs to read back.
+    final signalsOn = context.select<AppState, bool>((s) => s.profile.signals.anyEnabled);
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 10, 8, 6),
       child: Row(
@@ -160,6 +172,12 @@ class _TopBar extends StatelessWidget {
             ],
           ),
           const Spacer(),
+          if (signalsOn)
+            IconButton(
+              onPressed: onTimeline,
+              icon: const Icon(Icons.forum_outlined, color: Cy.inkDim),
+              tooltip: 'The wire',
+            ),
           IconButton(
             onPressed: onSettings,
             icon: const Icon(Icons.settings_outlined, color: Cy.inkDim),

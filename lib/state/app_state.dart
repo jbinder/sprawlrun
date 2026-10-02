@@ -5,11 +5,13 @@ import '../data/migrations.dart';
 import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
+import '../data/signal_log_repository.dart';
 import '../models/achievement.dart';
 import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
+import '../models/signal_log.dart';
 import '../models/run_outcome.dart';
 import '../models/stats.dart';
 import '../services/achievement_engine.dart';
@@ -31,7 +33,11 @@ class AppState extends ChangeNotifier {
     required this.missions,
     required this.narrator,
     SignalScheduler? signals,
-  }) : _signals = signals ?? SignalScheduler.noop();
+    SignalLogRepository? signalLog,
+  }) : _signals = signals ?? SignalScheduler.noop(),
+       // Next to the profile by default, so every caller — tests included —
+       // gets a working log without having to name a directory for it.
+       signalLog = signalLog ?? SignalLogRepository(profiles.root);
 
   final ProfileRepository profiles;
   final RunRepository runs;
@@ -42,11 +48,17 @@ class AppState extends ChangeNotifier {
   /// and any platform without scheduling behave without special-casing.
   final SignalScheduler _signals;
 
-  late final BackupService backups = BackupService(profiles: profiles, runs: runs);
+  /// What the handlers have sent; the timeline's only stored ingredient.
+  final SignalLogRepository signalLog;
+
+  late final BackupService backups = BackupService(profiles: profiles, runs: runs, signalLog: signalLog);
 
   Profile profile = const Profile();
   List<RunRecord> runLog = const [];
   List<MissionPack> packs = const [];
+
+  /// Signals already sent, newest first. Refreshed whenever the plan is.
+  List<SignalLogEntry> signalHistory = const [];
 
   LifetimeStats lifetime = LifetimeStats.empty;
   StreakStatus streak = StreakStatus.empty;
@@ -220,21 +232,31 @@ class AppState extends ChangeNotifier {
   /// moves: the settings, the campaign position, or the fact that the runner
   /// has now been out today.
   Future<void> _rescheduleSignals() async {
+    final now = DateTime.now();
     final settings = profile.signals;
-    if (!settings.remindersEnabled && settings.ambientPerWeek <= 0 && !settings.debriefEnabled) {
+    final List<PlannedSignal> plan;
+    if (!settings.anyEnabled) {
+      plan = const [];
       await _signals.cancelAll();
-      return;
-    }
-    await _signals.schedule(
-      SignalPlanner.plan(
-        now: DateTime.now(),
+    } else {
+      plan = SignalPlanner.plan(
+        now: now,
         settings: settings,
         runLog: runLog,
         pack: activePack,
         nextMission: currentMission?.mission,
         streak: streak,
-      ),
-    );
+      );
+      await _signals.schedule(plan);
+    }
+
+    // Recorded in the same breath as it is scheduled, so the log's idea of
+    // what is pending can never drift from what Android actually holds.
+    final log = await signalLog.record([
+      for (final p in plan) SignalLogEntry(at: p.at, kind: p.kind, from: p.from, text: p.text),
+    ], now);
+    signalHistory = log.where((e) => !e.at.isAfter(now)).toList();
+    notifyListeners();
   }
 
   Future<void> rememberGoal(Mission mission, RunGoal goal) async {
@@ -373,6 +395,9 @@ class AppState extends ChangeNotifier {
     await narrator.applyProfile(profile);
     _recompute();
     notifyListeners();
+    // A restore brings different settings and a different history; the plan
+    // and the timeline both follow from those.
+    await _rescheduleSignals();
     return report;
   }
 

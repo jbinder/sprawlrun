@@ -1,7 +1,10 @@
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
+import '../models/signal_log.dart';
 import '../models/stats.dart';
+
+export '../models/signal_log.dart' show SignalKind;
 
 /// A signal placed at a moment in the future, ready to be handed to the
 /// platform scheduler.
@@ -24,7 +27,6 @@ class PlannedSignal {
   final String text;
 }
 
-enum SignalKind { reminder, ambient, debrief }
 
 /// Decides which signals to send and when.
 ///

@@ -11,7 +11,8 @@ import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/services/signal_scheduler.dart';
 import 'package:sprawl_run/state/app_state.dart';
-import 'package:sprawl_run/widgets/signal_popup.dart';
+import 'package:sprawl_run/screens/timeline_screen.dart';
+import 'package:sprawl_run/widgets/signal_watcher.dart';
 
 import 'support/fakes.dart';
 
@@ -100,71 +101,77 @@ void main() {
 
   testWidgets('the watcher can be torn down and rebuilt without losing taps', (tester) async {
     // A single-subscription stream throws on a second listen, which would kill
-    // every later tap for the life of the app. Navigating in a way that
-    // remounts the watcher must stay harmless.
+    // every later tap for the life of the app.
     final taps = StreamController<Signal>.broadcast();
     addTearDown(taps.close);
     final state = await _boot(tester, taps.stream);
 
     await tester.pumpWidget(_app(state));
-    await tester.pumpAndSettle();
+    await _transition(tester);
     await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(_app(state));
-    await tester.pumpAndSettle();
+    await _transition(tester);
 
     taps.add(long);
-    await tester.pumpAndSettle();
-    expect(find.text(long.text), findsOneWidget);
+    await _transition(tester);
+    expect(find.byType(TimelineScreen), findsOneWidget);
   });
 
-  testWidgets('a tapped signal is shown in full, and closing it is the end of it', (tester) async {
+  testWidgets('a tapped signal opens the timeline with the whole message', (tester) async {
     final taps = StreamController<Signal>();
     addTearDown(taps.close);
     final state = await _boot(tester, taps.stream);
 
     await tester.pumpWidget(_app(state));
-    await tester.pumpAndSettle();
-    expect(find.text(long.text), findsNothing);
+    await _transition(tester);
+    expect(find.byType(TimelineScreen), findsNothing);
 
     taps.add(long);
-    await tester.pumpAndSettle();
+    await _transition(tester);
 
-    expect(find.text('INCOMING'), findsOneWidget);
+    expect(find.byType(TimelineScreen), findsOneWidget);
     expect(find.text('PACHINKO'), findsOneWidget);
     expect(find.text(long.text), findsOneWidget, reason: 'the whole line, not a truncation');
 
-    await tester.tap(find.text('CLOSE'));
-    await tester.pumpAndSettle();
-    expect(find.text(long.text), findsNothing, reason: 'nothing is kept; there is no inbox');
+    // And it stays readable: back out and the signal is not gone with it.
+    await tester.tap(find.byIcon(Icons.arrow_back));
+    await _transition(tester);
+    expect(find.byType(TimelineScreen), findsNothing);
   });
 
   testWidgets('a tap that launched the app is not lost', (tester) async {
     // The tap arrives while the plugin initialises, long before the UI is up.
-    // The stream buffers for exactly this reason.
     final taps = StreamController<Signal>();
     addTearDown(taps.close);
     taps.add(long);
 
     final state = await _boot(tester, taps.stream);
     await tester.pumpWidget(_app(state));
-    await tester.pumpAndSettle();
+    await _transition(tester);
 
     expect(find.text(long.text), findsOneWidget);
   });
 
-  testWidgets('a second signal does not stack a dialog on the first', (tester) async {
+  testWidgets('a second tap replaces an open timeline rather than stacking one', (tester) async {
     final taps = StreamController<Signal>();
     addTearDown(taps.close);
     final state = await _boot(tester, taps.stream);
 
     await tester.pumpWidget(_app(state));
-    await tester.pumpAndSettle();
+    await _transition(tester);
 
     taps.add(long);
+    await _transition(tester);
     taps.add(const Signal(from: 'SIX', text: 'Two couriers retired this week.'));
-    await tester.pumpAndSettle();
+    await _transition(tester);
 
-    expect(find.text('CLOSE'), findsOneWidget, reason: 'one dialog, not two to dismiss');
+    expect(find.byType(TimelineScreen), findsOneWidget);
+    expect(find.text('Two couriers retired this week.'), findsOneWidget);
+
+    // One back press returns home, not to a stale timeline beneath.
+    await tester.tap(find.byIcon(Icons.arrow_back));
+    await _transition(tester);
+    expect(find.byType(TimelineScreen), findsNothing);
   });
 }
 
@@ -197,4 +204,18 @@ class _DiskBundle extends CachingAssetBundle {
 
   @override
   Future<String> loadString(String key, {bool cache = true}) async => File(key).readAsStringSync();
+}
+
+/// Waits out a route transition. Not `pumpAndSettle`: the timeline's grid
+/// backdrop animates forever, so it never settles — the other screen tests
+/// pump fixed durations for the same reason.
+///
+/// Three frames, not two. A pushed route spends its first frame offstage while
+/// the navigator measures heroes, and a pump is one frame however long it is,
+/// so `pump(); pump(600ms)` ends with the screen built but still invisible to
+/// a finder.
+Future<void> _transition(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 50));
+  await tester.pump(const Duration(milliseconds: 600));
 }

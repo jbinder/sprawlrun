@@ -70,6 +70,11 @@ class SignalSettings {
   /// reminders, which fire at the time the runner chose.
   final int ambientPerWeek;
 
+  /// Whether the handlers send anything at all between runs. Gates the
+  /// timeline as well as the schedule: with every signal off there is nothing
+  /// of theirs to read back.
+  bool get anyEnabled => remindersEnabled || ambientPerWeek > 0 || debriefEnabled;
+
   /// Whether the handler sends a readout when the week closes.
   ///
   /// On by default, deliberately unlike [remindersEnabled]. Reminders are

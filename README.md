@@ -160,7 +160,8 @@ Forty entries across the two campaigns.
   written in the voice of the campaign you are playing
 - Optional signal noise: the city talking between runs, silent, never overnight,
   as often or as rarely as you like
-- Tap any of them to read the whole message in the app; nothing is kept afterwards
+- The wire: everything, newest first — your handler's messages, runs, cleared
+  operations, achievements and intel. Tapping a notification opens it there
 - A weekly debrief on Sunday evening — on by default, switchable off — reading
   your week back against your own target while there is still time to save it
 - Nine characters across the campaigns, each with its own synthesised voice,
@@ -246,7 +247,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 352 tests
+flutter test                   # 375 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

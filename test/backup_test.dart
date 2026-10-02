@@ -5,9 +5,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/data/backup.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/data/signal_log_repository.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
+import 'package:sprawl_run/models/signal_log.dart';
 
 import 'support/fakes.dart';
 
@@ -20,6 +22,7 @@ Future<BackupService> seed(
   final service = BackupService(
     profiles: ProfileRepository(root),
     runs: RunRepository(Directory('${root.path}/runs')),
+    signalLog: SignalLogRepository(root),
   );
   await service.profiles.save(profile);
   for (final record in runs) {
@@ -279,6 +282,67 @@ void main() {
       await to.import(BackupArchive.parse(await from.exportToJson()), ImportMode.merge);
 
       expect((await to.profiles.load()).completedMissions, {'sp01', 'sp02', 'sp03'});
+    });
+  });
+
+  group('signal history', () {
+    // The one persisted file that is not derived from the run log or the
+    // profile, so it does not ride along for free and has to be carried
+    // explicitly — CLAUDE.md, "A backup is the whole device".
+    final now = DateTime.now();
+    SignalLogEntry sent(int hoursAgo, String text) => SignalLogEntry(
+      at: now.subtract(Duration(hours: hoursAgo)),
+      kind: SignalKind.ambient,
+      from: 'WREN',
+      text: text,
+    );
+
+    test('travels with a backup and restores onto an empty device', () async {
+      final from = await seed(tempRoot('src'));
+      await from.signalLog!.replaceAll([sent(2, 'one'), sent(30, 'two')], now);
+
+      final archive = BackupArchive.parse(await from.exportToJson());
+      expect(archive.signals.map((e) => e.text), ['one', 'two']);
+
+      final to = await seed(tempRoot('dst'));
+      await to.import(archive, ImportMode.replace);
+      expect((await to.signalLog!.sent(now)).map((e) => e.text), ['one', 'two']);
+    });
+
+    test('only what was sent is exported, not the pending plan', () async {
+      final from = await seed(tempRoot('src'));
+      await from.signalLog!.replaceAll([
+        sent(2, 'sent'),
+        SignalLogEntry(at: now.add(const Duration(hours: 5)), kind: SignalKind.reminder, from: 'KESTREL', text: 'pending'),
+      ], now);
+      final archive = BackupArchive.parse(await from.exportToJson());
+      expect(archive.signals.map((e) => e.text), ['sent']);
+    });
+
+    test('merging keeps both devices\' history without duplicates', () async {
+      final shared = sent(10, 'on both');
+      final from = await seed(tempRoot('src'));
+      await from.signalLog!.replaceAll([shared, sent(3, 'only source')], now);
+
+      final to = await seed(tempRoot('dst'));
+      await to.signalLog!.replaceAll([shared, sent(1, 'only target')], now);
+      await to.import(BackupArchive.parse(await from.exportToJson()), ImportMode.merge);
+
+      expect(
+        (await to.signalLog!.sent(now)).map((e) => e.text),
+        ['only target', 'only source', 'on both'],
+      );
+    });
+
+    test('a backup from before the timeline restores with no history', () async {
+      final legacy = jsonEncode({
+        'format': BackupArchive.magic,
+        'version': 1,
+        'exportedAt': now.toIso8601String(),
+        'profile': const Profile().toJson(),
+        'runs': const [],
+      });
+      expect(BackupArchive.parse(legacy).signals, isEmpty);
     });
   });
 

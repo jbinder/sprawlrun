@@ -135,6 +135,7 @@ RunRecord run({
   int chasesEvaded = 0,
   double calories = 300,
   int beatsHeard = 0,
+  List<StoryEvent> story = const [],
 }) => RunRecord(
   id: at.microsecondsSinceEpoch.toString(),
   startedAt: at,
@@ -150,4 +151,5 @@ RunRecord run({
   chasesTotal: chasesTotal,
   chasesEvaded: chasesEvaded,
   beatsHeard: beatsHeard,
+  story: story,
 );

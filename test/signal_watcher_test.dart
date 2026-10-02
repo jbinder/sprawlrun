@@ -152,6 +152,29 @@ void main() {
     expect(find.text(long.text), findsOneWidget);
   });
 
+  testWidgets('the rail narrows the wire to one kind of thing', (tester) async {
+    // At two signals a day the messages bury everything else; the filter is
+    // how a runner gets past them to a run or an unlock.
+    final taps = StreamController<Signal>();
+    addTearDown(taps.close);
+    final state = await _boot(tester, taps.stream);
+
+    await tester.pumpWidget(_app(state));
+    await _transition(tester);
+    taps.add(long);
+    await _transition(tester);
+    expect(find.text(long.text), findsOneWidget);
+
+    await tester.tap(find.text('RUNS'));
+    await tester.pump();
+    expect(find.text(long.text), findsNothing, reason: 'messages are filtered out');
+    expect(find.text('NOTHING OF THAT KIND'), findsOneWidget, reason: 'no runs yet, and it says so');
+
+    await tester.tap(find.text('MESSAGES'));
+    await tester.pump();
+    expect(find.text(long.text), findsOneWidget);
+  });
+
   testWidgets('a second tap replaces an open timeline rather than stacking one', (tester) async {
     final taps = StreamController<Signal>();
     addTearDown(taps.close);
@@ -194,6 +217,9 @@ Future<AppState> _boot(WidgetTester tester, Stream<Signal> taps) async {
       signals: SignalScheduler(schedule: (_) async {}, cancelAll: () async {}, taps: taps),
     );
     await state.load();
+    // Read here, inside runAsync: THE WIRE asks for the archive when it opens,
+    // and real file I/O started inside the fake-async zone never completes.
+    await state.loadSignalArchive();
   });
   return state;
 }

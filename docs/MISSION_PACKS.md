@@ -227,6 +227,12 @@ week that went that way. `campaign_test.dart` enforces the length and that all
 three outcomes have copy: a runner who missed their target gets a message
 exactly when silence would be least welcome.
 
+**Treat a shipped line as fixed.** The app keeps every signal it has sent in
+an archive the runner can scroll back through, and it stores a reference to
+the line rather than a copy of it. Reword a line in a later version of your
+pack and every past instance of it quietly drops out of that archive. Adding
+new lines is always safe; changing old ones costs runners their history.
+
 Write plenty of ambient lines. Nothing repeats until the pool is exhausted, so
 the pool size is how long the noise stays fresh: a runner who asks for the
 maximum fourteen a week works through twenty lines in ten days. The shipped packs

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/models/achievement.dart';
 import 'package:sprawl_run/models/mission.dart';
+import 'package:sprawl_run/models/signal_log.dart';
 import 'package:sprawl_run/services/narrator.dart';
 
 /// Guards the shipped campaign against the kinds of damage that only show up
@@ -240,6 +241,22 @@ void _checks(String path) {
       reason: 'ambient pool repeats inside a week at the top frequency',
     );
     expect(pack.signals.reminder.length, greaterThanOrEqualTo(7), reason: 'a reminder a day for a week');
+  });
+
+  test('no two signal lines share an archive reference', () {
+    // The archive stores a 32-bit reference to each line instead of its text.
+    // Two lines hashing alike would show the wrong words for one of them; at a
+    // few hundred lines that is vanishingly unlikely, and this makes sure.
+    final lines = [
+      ...pack.signals.reminder,
+      ...pack.signals.ambient,
+      ...pack.signals.debrief.met,
+      ...pack.signals.debrief.missed,
+      ...pack.signals.debrief.idle,
+      for (final m in pack.missions) ...[...m.signals.reminder, ...m.signals.ambient],
+    ].map((s) => s.text).toSet();
+    final refs = lines.map(signalRef).toSet();
+    expect(refs, hasLength(lines.length));
   });
 
   test('a debrief opener leaves room for the figures after it', () {

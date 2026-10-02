@@ -290,46 +290,46 @@ void main() {
     // profile, so it does not ride along for free and has to be carried
     // explicitly — CLAUDE.md, "A backup is the whole device".
     final now = DateTime.now();
-    SignalLogEntry sent(int hoursAgo, String text) => SignalLogEntry(
+    SignalLogEntry sent(int hoursAgo, String ref) => SignalLogEntry(
       at: now.subtract(Duration(hours: hoursAgo)),
       kind: SignalKind.ambient,
       from: 'WREN',
-      text: text,
+      ref: ref,
     );
 
     test('travels with a backup and restores onto an empty device', () async {
       final from = await seed(tempRoot('src'));
-      await from.signalLog!.replaceAll([sent(2, 'one'), sent(30, 'two')], now);
+      await from.signalLog!.replaceAll([sent(2, 'one'), sent(30, 'two')]);
 
       final archive = BackupArchive.parse(await from.exportToJson());
-      expect(archive.signals.map((e) => e.text), ['one', 'two']);
+      expect(archive.signals.map((e) => e.ref), ['one', 'two']);
 
       final to = await seed(tempRoot('dst'));
       await to.import(archive, ImportMode.replace);
-      expect((await to.signalLog!.sent(now)).map((e) => e.text), ['one', 'two']);
+      expect((await to.signalLog!.sent(now)).map((e) => e.ref), ['one', 'two']);
     });
 
     test('only what was sent is exported, not the pending plan', () async {
       final from = await seed(tempRoot('src'));
       await from.signalLog!.replaceAll([
         sent(2, 'sent'),
-        SignalLogEntry(at: now.add(const Duration(hours: 5)), kind: SignalKind.reminder, from: 'KESTREL', text: 'pending'),
-      ], now);
+        SignalLogEntry(at: now.add(const Duration(hours: 5)), kind: SignalKind.reminder, from: 'KESTREL', ref: 'pending'),
+      ]);
       final archive = BackupArchive.parse(await from.exportToJson());
-      expect(archive.signals.map((e) => e.text), ['sent']);
+      expect(archive.signals.map((e) => e.ref), ['sent']);
     });
 
     test('merging keeps both devices\' history without duplicates', () async {
       final shared = sent(10, 'on both');
       final from = await seed(tempRoot('src'));
-      await from.signalLog!.replaceAll([shared, sent(3, 'only source')], now);
+      await from.signalLog!.replaceAll([shared, sent(3, 'only source')]);
 
       final to = await seed(tempRoot('dst'));
-      await to.signalLog!.replaceAll([shared, sent(1, 'only target')], now);
+      await to.signalLog!.replaceAll([shared, sent(1, 'only target')]);
       await to.import(BackupArchive.parse(await from.exportToJson()), ImportMode.merge);
 
       expect(
-        (await to.signalLog!.sent(now)).map((e) => e.text),
+        (await to.signalLog!.sent(now)).map((e) => e.ref),
         ['only target', 'only source', 'on both'],
       );
     });

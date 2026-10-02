@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 375 tests
+fvm flutter test                                    # 390 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -116,11 +116,29 @@ only third-party binaries in the repo are the three OFL fonts.
   run *with its trace*, which is complete precisely because stats, streaks and
   achievements are derived. Add a field to `Profile` or `RunRecord` and it rides
   along for free; add a new persisted *file* and it will not, so extend
-  `BackupService.collect` and `import` at the same time. There is one such file
-  so far: `signals.json`, the signal log behind the timeline — the only thing
-  on it that is stored, since runs, clears, achievements and intel all project
-  from the run log and profile. Exported as *sent* entries only; the pending
-  plan is rebuilt by whichever device restores it.
+  `BackupService.collect` and `import` at the same time. There is one such
+  store so far: `signals/<year>.json`, the archive behind THE WIRE — the only
+  thing on it that is stored, since runs, clears, achievements and intel all
+  project from the run log and profile. Exported as *sent* entries only; the
+  pending plan is rebuilt by whichever device restores it.
+- **The archive is split by year so launching never pays for it.** A re-plan
+  reads and writes only the years that can hold a pending signal — this one,
+  and next year across New Year — so its cost is flat however much history
+  exists; earlier years are never written again. The whole history is read
+  only by `AppState.loadSignalArchive`, which THE WIRE calls when it opens.
+  Measured: a launch re-plan stays around 20 ms from one year of history to
+  ten, while opening THE WIRE grows from 30 ms to 150 ms. Do not make
+  `AppState.load` read the whole archive.
+- **The signal archive stores references, so rewording a line orphans it.**
+  Each entry holds `signalRef(text)` — FNV-1a of the authored line — not the
+  line itself, the same way a run's story log holds beat ids. That is what
+  lets the archive go uncapped at a few dozen bytes an entry. The price: edit
+  a signal's text in a pack and every archived instance of it stops resolving
+  and drops off THE WIRE. Fix typos before a release, not after. And never
+  change `signalRef` itself — `signal_library_test` pins its output against an
+  independently computed value, and a change would orphan every archive in
+  the field at once. Debrief *figures* are stored as numbers, since nobody
+  authored them.
 - **`MainActivity` creates `geolocator_channel_01` before geolocator can.**
   geolocator builds that channel at `IMPORTANCE_NONE`, which Android treats as
   blocked: the foreground-service notification never reaches the shade and the

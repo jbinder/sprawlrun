@@ -36,7 +36,7 @@ void main() {
   );
 
   List<TimelineEntry> build({
-    List<SignalLogEntry> signals = const [],
+    List<SentSignal> signals = const [],
     List<RunRecord> runs = const [],
     Profile profile = const Profile(),
     List<MissionPack>? packs,
@@ -44,7 +44,7 @@ void main() {
 
   test('newest first, everything interleaved', () {
     final entries = build(
-      signals: [SignalLogEntry(at: day.add(const Duration(hours: 3)), kind: SignalKind.ambient, from: 'WREN', text: 'later')],
+      signals: [SentSignal(at: day.add(const Duration(hours: 3)), kind: SignalKind.ambient, from: 'WREN', text: 'later')],
       runs: [run(at: day)],
       profile: Profile(unlockedAchievements: {'dist_5k': day.add(const Duration(hours: 1))}),
     );
@@ -120,7 +120,7 @@ void main() {
 
   test('a signal keeps its speaker, its kind and its whole text', () {
     final entry = build(signals: [
-      SignalLogEntry(at: day, kind: SignalKind.debrief, from: 'MARROW', text: "Week's accounts, and they balance. 40 of 30 min."),
+      SentSignal(at: day, kind: SignalKind.debrief, from: 'MARROW', text: "Week's accounts, and they balance. 40 of 30 min."),
     ]).single;
     expect(entry.title, 'MARROW');
     expect(entry.signalKind, SignalKind.debrief);

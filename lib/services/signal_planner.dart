@@ -4,7 +4,7 @@ import '../models/run_record.dart';
 import '../models/signal_log.dart';
 import '../models/stats.dart';
 
-export '../models/signal_log.dart' show SignalKind;
+export '../models/signal_log.dart' show SignalKind, SignalFigures;
 
 /// A signal placed at a moment in the future, ready to be handed to the
 /// platform scheduler.
@@ -15,6 +15,8 @@ class PlannedSignal {
     required this.kind,
     required this.from,
     required this.text,
+    required this.ref,
+    this.figures,
   });
 
   /// Stable within its reserved range, so a reschedule replaces its own work
@@ -24,7 +26,14 @@ class PlannedSignal {
   final DateTime at;
   final SignalKind kind;
   final String from;
+
+  /// The full text the notification shows.
   final String text;
+
+  /// What the archive stores instead of [text]: a reference to the authored
+  /// line, plus the [figures] for a debrief, which nobody authored.
+  final String ref;
+  final SignalFigures? figures;
 }
 
 
@@ -95,11 +104,13 @@ abstract final class SignalPlanner {
   }) {
     if (!settings.debriefEnabled || streak == null) return const [];
 
-    final outcome = streak.metThisWeek
-        ? DebriefOutcome.met
-        : streak.currentValue > 0
-        ? DebriefOutcome.missed
-        : DebriefOutcome.idle;
+    final figures = SignalFigures(
+      value: streak.currentValue,
+      target: streak.target,
+      unit: streak.unitLabel,
+      weeks: streak.weeks,
+    );
+    final outcome = figures.outcome;
 
     final pool = pack?.signals.debrief.forOutcome(outcome) ?? const [];
     if (pool.isEmpty) return const [];
@@ -117,33 +128,13 @@ abstract final class SignalPlanner {
         at: at,
         kind: SignalKind.debrief,
         from: signal.from,
-        text: '${signal.text} ${debriefFigures(streak, outcome)}',
+        text: '${signal.text} ${figures.sentence}',
+        ref: signalRef(signal.text),
+        figures: figures,
       ),
     ];
   }
 
-  /// The part of a debrief no pack author can write ahead of time.
-  static String debriefFigures(StreakStatus streak, DebriefOutcome outcome) {
-    final unit = streak.unitLabel.toLowerCase();
-    final done = _trim(streak.currentValue);
-    final target = _trim(streak.target);
-    final weeks = streak.weeks == 1 ? 'one week' : '${streak.weeks} weeks';
-
-    return switch (outcome) {
-      DebriefOutcome.met => streak.weeks > 0
-          ? '$done of $target $unit. The streak stands at $weeks.'
-          : '$done of $target $unit.',
-      DebriefOutcome.missed =>
-        '$done of $target $unit, so ${_trim(streak.target - streak.currentValue)} $unit short with the week nearly out.',
-      DebriefOutcome.idle => streak.weeks > 0
-          ? 'Nothing logged. $target $unit would keep a streak that has stood $weeks.'
-          : 'Nothing logged all week. The target is $target $unit.',
-    };
-  }
-
-  /// Whole numbers without a trailing `.0`; one decimal otherwise.
-  static String _trim(double v) =>
-      v == v.roundToDouble() ? v.round().toString() : v.toStringAsFixed(1);
 
   static List<PlannedSignal> _reminders({
     required DateTime now,
@@ -180,6 +171,7 @@ abstract final class SignalPlanner {
           kind: SignalKind.reminder,
           from: signal.from,
           text: signal.text,
+          ref: signalRef(signal.text),
         ),
       );
     }
@@ -239,6 +231,7 @@ abstract final class SignalPlanner {
           kind: SignalKind.ambient,
           from: signal.from,
           text: signal.text,
+          ref: signalRef(signal.text),
         ),
       );
     }

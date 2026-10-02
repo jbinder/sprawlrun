@@ -17,6 +17,7 @@ import '../models/stats.dart';
 import '../services/achievement_engine.dart';
 import '../services/backup_nudge.dart';
 import '../services/narrator.dart';
+import '../services/signal_library.dart';
 import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
 import '../services/stats_service.dart';
@@ -57,8 +58,39 @@ class AppState extends ChangeNotifier {
   List<RunRecord> runLog = const [];
   List<MissionPack> packs = const [];
 
-  /// Signals already sent, newest first. Refreshed whenever the plan is.
-  List<SignalLogEntry> signalHistory = const [];
+  /// Signals already sent, newest first, with their words looked up. Empty
+  /// until [loadSignalArchive] — the whole history is only read when THE WIRE
+  /// asks for it, so launching never pays for years of it — and kept current
+  /// after that whenever the plan changes.
+  List<SentSignal> signalHistory = const [];
+  bool _archiveRequested = false;
+
+  /// Whether [signalHistory] holds the whole archive yet.
+  bool get signalArchiveReady => _archiveReady;
+  bool _archiveReady = false;
+
+  /// Reads the whole signal archive, once per launch. THE WIRE calls this when
+  /// it opens; everything after is answered from memory.
+  Future<void> loadSignalArchive() async {
+    if (_archiveRequested) return;
+    _archiveRequested = true;
+    signalHistory = _library.resolveAll(await signalLog.sent(DateTime.now()));
+    _archiveReady = true;
+    notifyListeners();
+  }
+
+  /// Where the archive's references find their words. Rebuilt only when the
+  /// packs change, which is once per launch.
+  SignalLibrary get _library {
+    if (!identical(_libraryPacks, packs)) {
+      _libraryPacks = packs;
+      _libraryCache = SignalLibrary.fromPacks(packs);
+    }
+    return _libraryCache!;
+  }
+
+  List<MissionPack>? _libraryPacks;
+  SignalLibrary? _libraryCache;
 
   LifetimeStats lifetime = LifetimeStats.empty;
   StreakStatus streak = StreakStatus.empty;
@@ -252,11 +284,13 @@ class AppState extends ChangeNotifier {
 
     // Recorded in the same breath as it is scheduled, so the log's idea of
     // what is pending can never drift from what Android actually holds.
-    final log = await signalLog.record([
-      for (final p in plan) SignalLogEntry(at: p.at, kind: p.kind, from: p.from, text: p.text),
+    await signalLog.record([
+      for (final p in plan) SignalLogEntry(at: p.at, kind: p.kind, from: p.from, ref: p.ref, figures: p.figures),
     ], now);
-    signalHistory = log.where((e) => !e.at.isAfter(now)).toList();
-    notifyListeners();
+    if (_archiveReady) {
+      signalHistory = _library.resolveAll(await signalLog.sent(now));
+      notifyListeners();
+    }
   }
 
   Future<void> rememberGoal(Mission mission, RunGoal goal) async {

@@ -197,7 +197,7 @@ class BackupService {
     if (mode == ImportMode.replace) {
       await runs.replaceAll(archive.runs);
       await profiles.save(archive.profile);
-      await signalLog?.replaceAll(archive.signals, DateTime.now());
+      await signalLog?.replaceAll(archive.signals);
       return ImportReport(
         mode: mode,
         runsAdded: archive.runs.length,
@@ -223,7 +223,7 @@ class BackupService {
     final local = await profiles.load();
     final merged = _mergeProfiles(local, archive.profile);
     await profiles.save(merged);
-    await signalLog?.merge(archive.signals, DateTime.now());
+    await signalLog?.merge(archive.signals);
 
     return ImportReport(
       mode: mode,

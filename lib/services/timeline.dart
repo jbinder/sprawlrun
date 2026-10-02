@@ -45,7 +45,7 @@ class TimelineEntry {
 /// the first.
 abstract final class Timeline {
   static List<TimelineEntry> build({
-    required List<SignalLogEntry> signals,
+    required List<SentSignal> signals,
     required List<RunRecord> runs,
     required Profile profile,
     required List<MissionPack> packs,

@@ -10,6 +10,7 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
+import '../widgets/filter_rail.dart';
 import '../widgets/panels.dart';
 import 'run_detail_screen.dart';
 
@@ -35,42 +36,94 @@ class TimelineScreen extends StatefulWidget {
   State<TimelineScreen> createState() => _TimelineScreenState();
 }
 
+/// What the rail can narrow THE WIRE down to. At two signals a day the
+/// messages outnumber everything else several times over, so a runner looking
+/// for a run or an unlock needs a way past them.
+enum _WireFilter {
+  all('ALL', null),
+  messages('MESSAGES', Icons.forum_outlined),
+  runs('RUNS', Icons.directions_run),
+  unlocks('UNLOCKS', Icons.military_tech_outlined);
+
+  const _WireFilter(this.label, this.icon);
+  final String label;
+  final IconData? icon;
+
+  bool admits(TimelineEntry e) => switch (this) {
+    all => true,
+    messages => e.kind == TimelineKind.signal,
+    runs => e.kind == TimelineKind.run,
+    unlocks => e.kind == TimelineKind.achievement || e.kind == TimelineKind.codex,
+  };
+}
+
 class _TimelineScreenState extends State<TimelineScreen> {
   final GlobalKey _focusKey = GlobalKey();
   bool _scrolled = false;
+  _WireFilter _filter = _WireFilter.all;
+
+  @override
+  void initState() {
+    super.initState();
+    // The archive is read here rather than at launch: it is the only screen
+    // that needs years of it. Runs and unlocks show at once; messages join a
+    // moment later, the first time per launch.
+    context.read<AppState>().loadSignalArchive();
+  }
+
+  /// The projection, kept until one of its inputs changes. Building it is
+  /// cheap — about two milliseconds over ten years of daily runs — but this
+  /// screen rebuilds on every filter tap and every AppState notification, and
+  /// there is no reason to pay for it each time.
+  List<TimelineEntry>? _built;
+  Object? _builtFrom;
+
+  List<TimelineEntry> _project(AppState state) {
+    // Records compare field by field, and the lists and profile compare by
+    // identity — which is exactly "has AppState replaced any of these".
+    final from = (state.signalHistory, state.runLog, state.profile, state.packs);
+    if (_built == null || from != _builtFrom) {
+      _builtFrom = from;
+      _built = Timeline.build(
+        signals: state.signalHistory,
+        runs: state.runLog,
+        profile: state.profile,
+        packs: state.packs,
+      );
+    }
+    return _built!;
+  }
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    var entries = Timeline.build(
-      signals: state.signalHistory,
-      runs: state.runLog,
-      profile: state.profile,
-      packs: state.packs,
-    );
+    var entries = _project(state);
 
     // The newest matching signal is the one just tapped; repeats of a line are
     // weeks apart. Should it be missing — scheduled by a build from before the
-    // log existed — it is shown at the top rather than not at all.
+    // archive existed — it is shown at the top rather than not at all. Held as
+    // the entry itself rather than an index, so it survives filtering.
     final focus = widget.focus;
-    var focusIndex = -1;
+    TimelineEntry? focused;
     if (focus != null) {
-      focusIndex = entries.indexWhere(
-        (e) => e.kind == TimelineKind.signal && e.title == focus.from && e.body == focus.text,
-      );
-      if (focusIndex < 0) {
-        entries = [
-          TimelineEntry(at: DateTime.now(), kind: TimelineKind.signal, title: focus.from, body: focus.text),
-          ...entries,
-        ];
-        focusIndex = 0;
+      focused = entries
+          .where((e) => e.kind == TimelineKind.signal && e.title == focus.from && e.body == focus.text)
+          .firstOrNull;
+      if (focused == null) {
+        focused = TimelineEntry(at: DateTime.now(), kind: TimelineKind.signal, title: focus.from, body: focus.text);
+        entries = [focused, ...entries];
       }
     }
 
+    final total = entries.length;
+    entries = entries.where(_filter.admits).toList();
     final rows = _rows(entries);
-    final focusRow = focusIndex < 0 ? -1 : rows.indexWhere((r) => identical(r, entries[focusIndex]));
+    final focusRow = focused == null ? -1 : rows.indexWhere((r) => identical(r, focused));
 
-    if (focusRow >= 0 && !_scrolled) {
+    // Not until the archive is in: before that, a tapped signal is shown as a
+    // placeholder at the top, and the real entry it is replaced by is the one
+    // to scroll to.
+    if (focusRow >= 0 && !_scrolled && state.signalArchiveReady) {
       _scrolled = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final target = _focusKey.currentContext;
@@ -95,19 +148,40 @@ class _TimelineScreenState extends State<TimelineScreen> {
                       icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
                     ),
                     const Spacer(),
-                    Text('THE WIRE · ${entries.length}', style: CyType.label(size: 10)),
+                    Text('THE WIRE · $total', style: CyType.label(size: 10)),
                   ],
                 ),
               ),
+              FilterRail(
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                children: [
+                  for (final f in _WireFilter.values) ...[
+                    if (f != _WireFilter.values.first) const SizedBox(width: 8),
+                    RailChip(
+                      label: f.label,
+                      icon: f.icon,
+                      selected: _filter == f,
+                      onTap: () => setState(() => _filter = f),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 4),
               Expanded(
                 child: entries.isEmpty
-                    ? const Padding(
-                        padding: EdgeInsets.all(18),
-                        child: EmptyState(
-                          title: 'Nothing yet',
-                          body: 'Runs, messages from your handler and everything you unlock will appear here.',
-                          icon: Icons.timeline,
-                        ),
+                    ? Padding(
+                        padding: const EdgeInsets.all(18),
+                        child: total == 0
+                            ? const EmptyState(
+                                title: 'Nothing yet',
+                                body: 'Runs, messages from your handler and everything you unlock will appear here.',
+                                icon: Icons.timeline,
+                              )
+                            : const EmptyState(
+                                title: 'Nothing of that kind',
+                                body: 'Nothing on the wire matches this filter yet.',
+                                icon: Icons.filter_alt_off_outlined,
+                              ),
                       )
                     // Lazy: a long history is thousands of rows, and only the
                     // top of it is ever looked at.

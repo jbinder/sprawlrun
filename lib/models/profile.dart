@@ -54,6 +54,7 @@ class SignalSettings {
     this.weekdays = const {DateTime.monday, DateTime.wednesday, DateTime.friday},
     this.minutesFromMidnight = 7 * 60,
     this.ambientPerWeek = 0,
+    this.debriefEnabled = false,
   });
 
   /// Off until the runner asks for it: an app that starts messaging you
@@ -69,6 +70,9 @@ class SignalSettings {
   /// reminders, which fire at the time the runner chose.
   final int ambientPerWeek;
 
+  /// Whether the handler sends a readout when the week closes.
+  final bool debriefEnabled;
+
   int get hour => minutesFromMidnight ~/ 60;
   int get minute => minutesFromMidnight % 60;
 
@@ -80,11 +84,13 @@ class SignalSettings {
     Set<int>? weekdays,
     int? minutesFromMidnight,
     int? ambientPerWeek,
+    bool? debriefEnabled,
   }) => SignalSettings(
     remindersEnabled: remindersEnabled ?? this.remindersEnabled,
     weekdays: weekdays ?? this.weekdays,
     minutesFromMidnight: minutesFromMidnight ?? this.minutesFromMidnight,
     ambientPerWeek: ambientPerWeek ?? this.ambientPerWeek,
+    debriefEnabled: debriefEnabled ?? this.debriefEnabled,
   );
 
   Map<String, dynamic> toJson() => {
@@ -92,6 +98,7 @@ class SignalSettings {
     'weekdays': weekdays.toList()..sort(),
     'minutesFromMidnight': minutesFromMidnight,
     'ambientPerWeek': ambientPerWeek,
+    'debriefEnabled': debriefEnabled,
   };
 
   factory SignalSettings.fromJson(Map<String, dynamic> json) => SignalSettings(
@@ -102,6 +109,7 @@ class SignalSettings {
         .toSet(),
     minutesFromMidnight: ((json['minutesFromMidnight'] as num?)?.toInt() ?? 7 * 60).clamp(0, 24 * 60 - 1),
     ambientPerWeek: ((json['ambientPerWeek'] as num?)?.toInt() ?? 0).clamp(0, 21),
+    debriefEnabled: json['debriefEnabled'] as bool? ?? false,
   );
 }
 

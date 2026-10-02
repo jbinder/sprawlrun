@@ -200,8 +200,57 @@ class Signal {
 /// A pack's pool is generic and always valid. A mission's pool belongs to that
 /// mission *while it is the one waiting to be run*, so it may only lean on what
 /// the brief already shows the runner — never on a beat they have not heard.
+/// How a week went, which decides what the handler opens with.
+enum DebriefOutcome {
+  /// The weekly target was reached.
+  met,
+
+  /// Runs happened, but not enough of them.
+  missed,
+
+  /// Nothing was logged at all.
+  idle,
+}
+
+/// What the handler says when the week closes.
+///
+/// Only the opening line is authored. The figures that follow are the app's,
+/// because they are different every week and cannot be written in advance — see
+/// `SignalPlanner.debriefFigures`.
+class DebriefPool {
+  const DebriefPool({this.met = const [], this.missed = const [], this.idle = const []});
+
+  final List<Signal> met;
+  final List<Signal> missed;
+  final List<Signal> idle;
+
+  bool get isEmpty => met.isEmpty && missed.isEmpty && idle.isEmpty;
+
+  List<Signal> forOutcome(DebriefOutcome outcome) => switch (outcome) {
+    DebriefOutcome.met => met,
+    DebriefOutcome.missed => missed,
+    DebriefOutcome.idle => idle,
+  };
+
+  factory DebriefPool.fromJson(Map<String, dynamic> json) => DebriefPool(
+    met: SignalPool._signals(json['met']),
+    missed: SignalPool._signals(json['missed']),
+    idle: SignalPool._signals(json['idle']),
+  );
+
+  Map<String, dynamic> toJson() => {
+    if (met.isNotEmpty) 'met': met.map((s) => s.toJson()).toList(),
+    if (missed.isNotEmpty) 'missed': missed.map((s) => s.toJson()).toList(),
+    if (idle.isNotEmpty) 'idle': idle.map((s) => s.toJson()).toList(),
+  };
+}
+
 class SignalPool {
-  const SignalPool({this.reminder = const [], this.ambient = const []});
+  const SignalPool({
+    this.reminder = const [],
+    this.ambient = const [],
+    this.debrief = const DebriefPool(),
+  });
 
   /// Nudges to go running, tied to the operation that is waiting.
   final List<Signal> reminder;
@@ -209,7 +258,11 @@ class SignalPool {
   /// Unprompted traffic that makes the city feel inhabited.
   final List<Signal> ambient;
 
-  bool get isEmpty => reminder.isEmpty && ambient.isEmpty;
+  /// The weekly readout. Pack-level only — a debrief is about the runner's week,
+  /// not about whichever operation happens to be waiting.
+  final DebriefPool debrief;
+
+  bool get isEmpty => reminder.isEmpty && ambient.isEmpty && debrief.isEmpty;
 
   static List<Signal> _signals(Object? raw) => (raw as List? ?? [])
       .map((e) => Signal.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -218,11 +271,15 @@ class SignalPool {
   factory SignalPool.fromJson(Map<String, dynamic> json) => SignalPool(
     reminder: _signals(json['reminder']),
     ambient: _signals(json['ambient']),
+    debrief: json['debrief'] == null
+        ? const DebriefPool()
+        : DebriefPool.fromJson(Map<String, dynamic>.from(json['debrief'] as Map)),
   );
 
   Map<String, dynamic> toJson() => {
     if (reminder.isNotEmpty) 'reminder': reminder.map((s) => s.toJson()).toList(),
     if (ambient.isNotEmpty) 'ambient': ambient.map((s) => s.toJson()).toList(),
+    if (!debrief.isEmpty) 'debrief': debrief.toJson(),
   };
 }
 

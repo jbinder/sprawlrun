@@ -1,6 +1,7 @@
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
+import '../models/stats.dart';
 
 /// A signal placed at a moment in the future, ready to be handed to the
 /// platform scheduler.
@@ -23,7 +24,7 @@ class PlannedSignal {
   final String text;
 }
 
-enum SignalKind { reminder, ambient }
+enum SignalKind { reminder, ambient, debrief }
 
 /// Decides which signals to send and when.
 ///
@@ -38,6 +39,12 @@ abstract final class SignalPlanner {
   /// hundred above. The run notice is 75416 and must not be disturbed.
   static const int reminderBase = 7000;
   static const int ambientBase = 7100;
+  static const int debriefBase = 7200;
+
+  /// When the weekly readout lands: Sunday evening, while the week can still be
+  /// saved. A debrief that arrives on Monday is a post-mortem; this one is a
+  /// last call, which is the more useful of the two.
+  static const int debriefHour = 19;
 
   /// How far ahead to schedule. The app re-plans on every launch, on every
   /// settings change and after every run, so a week is ample slack for a
@@ -63,12 +70,78 @@ abstract final class SignalPlanner {
     required List<RunRecord> runLog,
     MissionPack? pack,
     Mission? nextMission,
+    StreakStatus? streak,
   }) {
     return [
       ..._reminders(now: now, settings: settings, runLog: runLog, pack: pack, nextMission: nextMission),
       ..._ambient(now: now, settings: settings, pack: pack, nextMission: nextMission),
+      ..._debrief(now: now, settings: settings, pack: pack, streak: streak),
     ];
   }
+
+  /// The week's readout, for the Sunday evening of the week [now] falls in.
+  ///
+  /// Exactly one Sunday is always inside the seven-day horizon, so this plans
+  /// one or nothing. The text is fixed when it is scheduled rather than when it
+  /// fires — no Dart runs then — which is accurate because finishing a run
+  /// re-plans, so the figures are always as of the runner's last run.
+  static List<PlannedSignal> _debrief({
+    required DateTime now,
+    required SignalSettings settings,
+    MissionPack? pack,
+    StreakStatus? streak,
+  }) {
+    if (!settings.debriefEnabled || streak == null) return const [];
+
+    final outcome = streak.metThisWeek
+        ? DebriefOutcome.met
+        : streak.currentValue > 0
+        ? DebriefOutcome.missed
+        : DebriefOutcome.idle;
+
+    final pool = pack?.signals.debrief.forOutcome(outcome) ?? const [];
+    if (pool.isEmpty) return const [];
+
+    // Sunday of the current week, counting from Monday as the stats do.
+    final today = DateTime(now.year, now.month, now.day);
+    final sunday = today.add(Duration(days: DateTime.sunday - today.weekday));
+    final at = DateTime(sunday.year, sunday.month, sunday.day, debriefHour);
+    if (!at.isAfter(now)) return const [];
+
+    final signal = pool[_indexFor(at, pool.length)];
+    return [
+      PlannedSignal(
+        id: debriefBase,
+        at: at,
+        kind: SignalKind.debrief,
+        from: signal.from,
+        text: '${signal.text} ${debriefFigures(streak, outcome)}',
+      ),
+    ];
+  }
+
+  /// The part of a debrief no pack author can write ahead of time.
+  static String debriefFigures(StreakStatus streak, DebriefOutcome outcome) {
+    final unit = streak.unitLabel.toLowerCase();
+    final done = _trim(streak.currentValue);
+    final target = _trim(streak.target);
+    final weeks = streak.weeks == 1 ? 'one week' : '${streak.weeks} weeks';
+
+    return switch (outcome) {
+      DebriefOutcome.met => streak.weeks > 0
+          ? '$done of $target $unit. The streak stands at $weeks.'
+          : '$done of $target $unit.',
+      DebriefOutcome.missed =>
+        '$done of $target $unit, so ${_trim(streak.target - streak.currentValue)} $unit short with the week nearly out.',
+      DebriefOutcome.idle => streak.weeks > 0
+          ? 'Nothing logged. $target $unit would keep a streak that has stood $weeks.'
+          : 'Nothing logged all week. The target is $target $unit.',
+    };
+  }
+
+  /// Whole numbers without a trailing `.0`; one decimal otherwise.
+  static String _trim(double v) =>
+      v == v.roundToDouble() ? v.round().toString() : v.toStringAsFixed(1);
 
   static List<PlannedSignal> _reminders({
     required DateTime now,

@@ -40,7 +40,24 @@
       { "from": "SYSTEM", "text": "Tidal advisory: high water at dawn. Tidal advisories have been indicative at best since the flood." },
       { "from": "SYSTEM", "text": "Structural notice: the Drowned Mile remains condemned. Population of the Drowned Mile: unchanged." },
       { "from": "SYSTEM", "text": "Pump network nominal. Seven of nine stations reporting. This is considered nominal." }
-    ]
+    ],
+    "debrief": {
+      "met": [
+        { "from": "MARROW", "text": "Week's accounts, and they balance." },
+        { "from": "WREN", "text": "Okay so you actually did the thing and I logged all of it, obviously." },
+        { "from": "LEVEE", "text": "The week closes. I have been counting." }
+      ],
+      "missed": [
+        { "from": "MARROW", "text": "Tide is nearly out on the week." },
+        { "from": "MARROW", "text": "Short, and I would rather tell you now than on Monday." },
+        { "from": "LEVEE", "text": "The week is closing and the number is not where it should be." }
+      ],
+      "idle": [
+        { "from": "MARROW", "text": "Nothing from you this week. Not judging. Counting." },
+        { "from": "WREN", "text": "You went quiet. I checked twice. Then I checked again." },
+        { "from": "LEVEE", "text": "No movement recorded this week. The water moved. It always does." }
+      ]
+    }
   },
   "missions": [
     {

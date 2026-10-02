@@ -278,6 +278,15 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
+                          const _Rule(),
+                          _SwitchRow(
+                            label: 'Weekly debrief',
+                            subtitle: 'Sunday evening, while the week can still be saved',
+                            value: profile.signals.debriefEnabled,
+                            onChanged: (v) => update(
+                              profile.copyWith(signals: profile.signals.copyWith(debriefEnabled: v)),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -285,7 +294,9 @@ class SettingsScreen extends StatelessWidget {
                       'Messages come from whoever is running your current campaign, and say '
                       'nothing you have not already been told. They are never read aloud.\n\n'
                       'Signal noise is the city talking whether or not you are running: silent, '
-                      'never between 22:00 and 07:00, and off until you ask for it.',
+                      'never between 22:00 and 07:00, and off until you ask for it.\n\n'
+                      'The debrief reads back your week against the target you set, in the same '
+                      'voice.',
                     ),
                     const SizedBox(height: 20),
 

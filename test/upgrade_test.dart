@@ -110,6 +110,7 @@ void main() {
 
       expect(loaded.signals.remindersEnabled, isFalse, reason: 'an upgrade must not start messaging people');
       expect(loaded.signals.ambientPerWeek, 0);
+      expect(loaded.signals.debriefEnabled, isFalse);
     });
 
     test('a 0.1.0 profile has never exported, and is asked about it', () async {

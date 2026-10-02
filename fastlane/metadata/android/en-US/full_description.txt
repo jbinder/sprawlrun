@@ -22,6 +22,7 @@ EVERYTHING IT DOES
 - Pursuits scaled to your own pace from the last three minutes, or switched off
 - Nine synthesised voices that duck your music and hand it back
 - Handler reminders on your own schedule, plus optional ambient signal noise — tap one to read it in full
+- An optional Sunday-evening debrief: your week read back against your own target, in the same voice
 - 64 achievements across six categories, plus a weekly streak you set yourself in minutes, kilometres or missions — an unfinished week never breaks it
 - Distance, time, calories and cleared missions by week and month, with per-day bars and your full run log
 - The long view: earlier weeks and months, distance per month since your first run, every day you ran as a dot calendar

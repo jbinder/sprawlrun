@@ -204,6 +204,29 @@ Three rules, none of which the app can check for you:
 the name on the notification. Keep the text under 180 characters; Android
 truncates beyond roughly that, and `campaign_test.dart` enforces it.
 
+### The weekly debrief
+
+A third pool, pack-level only, because a debrief is about the runner's week
+rather than whichever operation is waiting:
+
+```jsonc
+"signals": {
+  "debrief": {
+    "met":    [ { "from": "KESTREL", "text": "Week's closed and you are on the right side of it." } ],
+    "missed": [ { "from": "SIX",     "text": "Short. There is still road left, and it is still Sunday." } ],
+    "idle":   [ { "from": "KESTREL", "text": "Nothing on the board from you this week." } ]
+  }
+}
+```
+
+Only the **opening line** is yours. The app appends the figures — how far
+against the target, how long the streak has stood — because those are different
+every week and cannot be written in advance. So keep an opener under ninety
+characters, say nothing specific about the numbers, and let it work for any
+week that went that way. `campaign_test.dart` enforces the length and that all
+three outcomes have copy: a runner who missed their target gets a message
+exactly when silence would be least welcome.
+
 Write plenty of ambient lines. Nothing repeats until the pool is exhausted, so
 the pool size is how long the noise stays fresh: a runner who asks for the
 maximum fourteen a week works through twenty lines in ten days. The shipped packs

@@ -42,6 +42,7 @@ class SignalScheduler {
 
   static const String reminderChannel = 'signals_reminder';
   static const String ambientChannel = 'signals_ambient';
+  static const String debriefChannel = 'signals_debrief';
 
   /// What a notification carries so a tap can be shown in full.
   ///
@@ -126,6 +127,18 @@ class SignalScheduler {
         // run to 180 characters, so most of a signal was being cut.
         styleInformation: BigTextStyleInformation(s.text, contentTitle: s.from),
       ),
+      // Its own channel rather than the reminder one, so a runner who wants the
+      // weekly readout but not the nudges — or the other way round — can say so
+      // in Android's own settings without the app needing a second switch.
+      SignalKind.debrief => AndroidNotificationDetails(
+        debriefChannel,
+        'Weekly debrief',
+        channelDescription: 'How your week went, when it closes.',
+        importance: Importance.defaultImportance,
+        priority: Priority.defaultPriority,
+        icon: 'ic_notification',
+        styleInformation: BigTextStyleInformation(s.text, contentTitle: s.from),
+      ),
       SignalKind.ambient => AndroidNotificationDetails(
         ambientChannel,
         'Signal noise',
@@ -142,7 +155,7 @@ class SignalScheduler {
     Future<void> clear() async {
       // By id rather than cancelAll(), so nothing else the app may post is
       // caught in the sweep.
-      for (var id = SignalPlanner.reminderBase; id < SignalPlanner.ambientBase + 100; id++) {
+      for (var id = SignalPlanner.reminderBase; id < SignalPlanner.debriefBase + 100; id++) {
         await plugin.cancel(id: id);
       }
     }

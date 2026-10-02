@@ -39,7 +39,24 @@
       { "from": "KESTREL", "text": "Somebody repainted the tunnel mural. Same face, different eyes. I liked the old eyes." },
       { "from": "KESTREL", "text": "Rent went up. The building has not improved. I mention it only as a fact of the world." },
       { "from": "KESTREL", "text": "There is a queue outside the clinic again. Nobody in it looks ill. Make of that what you like." }
-    ]
+    ],
+    "debrief": {
+      "met": [
+        { "from": "KESTREL", "text": "Week's closed and you are on the right side of it." },
+        { "from": "SIX", "text": "You covered ground. Noted, and that is the whole of the ceremony." },
+        { "from": "PACHINKO", "text": "Look at you. A person who does the thing they said they would do." }
+      ],
+      "missed": [
+        { "from": "KESTREL", "text": "Week is nearly out, and the board does not care how busy you were." },
+        { "from": "SIX", "text": "Short. There is still road left, and it is still Sunday." },
+        { "from": "KESTREL", "text": "I am not here to lecture. I am here to read you the number." }
+      ],
+      "idle": [
+        { "from": "KESTREL", "text": "Nothing on the board from you this week." },
+        { "from": "SIX", "text": "Quiet week. The city noticed. It notices everything." },
+        { "from": "SYSTEM", "text": "Weekly summary. No activity recorded." }
+      ]
+    }
   },
   "missions": [
     {

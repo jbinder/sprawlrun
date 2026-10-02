@@ -45,6 +45,7 @@ class MainActivity : FlutterActivity() {
      */
     private val reminderChannelId = "signals_reminder"
     private val ambientChannelId = "signals_ambient"
+    private val debriefChannelId = "signals_debrief"
 
     private val notificationRequestCode = 4711
 
@@ -186,6 +187,16 @@ class MainActivity : FlutterActivity() {
         ambient.enableVibration(false)
         ambient.setShowBadge(false)
         manager.createNotificationChannel(ambient)
+
+        // The weekly readout gets its own channel so a runner can keep it while
+        // silencing the nudges, or the reverse, in Android's own settings.
+        val debrief = NotificationChannel(
+            debriefChannelId,
+            "Weekly debrief",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        debrief.description = "How your week went, when it closes."
+        manager.createNotificationChannel(debrief)
     }
 
     private fun requestNotificationPermission(result: MethodChannel.Result) {

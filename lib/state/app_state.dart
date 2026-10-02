@@ -221,7 +221,7 @@ class AppState extends ChangeNotifier {
   /// has now been out today.
   Future<void> _rescheduleSignals() async {
     final settings = profile.signals;
-    if (!settings.remindersEnabled && settings.ambientPerWeek <= 0) {
+    if (!settings.remindersEnabled && settings.ambientPerWeek <= 0 && !settings.debriefEnabled) {
       await _signals.cancelAll();
       return;
     }
@@ -232,6 +232,7 @@ class AppState extends ChangeNotifier {
         runLog: runLog,
         pack: activePack,
         nextMission: currentMission?.mission,
+        streak: streak,
       ),
     );
   }

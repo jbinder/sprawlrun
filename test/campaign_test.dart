@@ -210,7 +210,13 @@ void _checks(String path) {
 
     final seen = <String>{};
     pools.forEach((owner, pool) {
-      for (final signal in [...pool.reminder, ...pool.ambient]) {
+      for (final signal in [
+        ...pool.reminder,
+        ...pool.ambient,
+        ...pool.debrief.met,
+        ...pool.debrief.missed,
+        ...pool.debrief.idle,
+      ]) {
         expect(
           VoiceProfile.bySpeaker.keys,
           contains(signal.from),
@@ -234,6 +240,29 @@ void _checks(String path) {
       reason: 'ambient pool repeats inside a week at the top frequency',
     );
     expect(pack.signals.reminder.length, greaterThanOrEqualTo(7), reason: 'a reminder a day for a week');
+  });
+
+  test('a debrief opener leaves room for the figures after it', () {
+    // The sent text is the opener plus a generated sentence of numbers, which
+    // runs to about seventy characters. An opener that fills the budget on its
+    // own would push the whole thing past what a notification shows.
+    for (final outcome in DebriefOutcome.values) {
+      for (final signal in pack.signals.debrief.forOutcome(outcome)) {
+        expect(signal.text.length, lessThan(90), reason: '${outcome.name}: "${signal.text}"');
+      }
+    }
+  });
+
+  test('the handler has something to say however the week went', () {
+    // All three outcomes, or a runner who misses their target gets silence
+    // exactly when a word would help most.
+    for (final outcome in DebriefOutcome.values) {
+      expect(
+        pack.signals.debrief.forOutcome(outcome),
+        isNotEmpty,
+        reason: 'no debrief copy for a week that was ${outcome.name}',
+      );
+    }
   });
 
   test('the pack can always speak, whatever the runner has finished', () {

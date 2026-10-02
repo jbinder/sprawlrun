@@ -143,6 +143,7 @@ void main() {
             remindersEnabled: true,
             weekdays: {DateTime.tuesday, DateTime.saturday},
             minutesFromMidnight: 6 * 60 + 45,
+            debriefEnabled: true,
           ),
         ).copyWith(
           unlockedAchievements: {'dist_5k': unlockedAt},
@@ -161,6 +162,7 @@ void main() {
       expect(loaded.signals.remindersEnabled, isTrue);
       expect(loaded.signals.weekdays, {DateTime.tuesday, DateTime.saturday});
       expect(loaded.signals.minutesFromMidnight, 6 * 60 + 45);
+      expect(loaded.signals.debriefEnabled, isTrue);
       expect(loaded.resumeMusic, isFalse);
       expect(loaded.completedMissions, {'sp01', 'sp02'});
       expect(loaded.unlockedCodex, {'cdx_ninsei'});

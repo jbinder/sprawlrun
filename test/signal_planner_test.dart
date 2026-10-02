@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:sprawl_run/models/stats.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/services/signal_planner.dart';
 
@@ -311,6 +312,85 @@ void main() {
         expect(p.id, greaterThanOrEqualTo(SignalPlanner.ambientBase));
         expect(p.id, lessThan(SignalPlanner.ambientBase + 100));
       }
+    });
+  });
+
+  group('weekly debrief', () {
+    const debriefPool = SignalPool(
+      debrief: DebriefPool(
+        met: [Signal(from: 'KESTREL', text: 'Week is closed.')],
+        missed: [Signal(from: 'KESTREL', text: 'Week is nearly out.')],
+        idle: [Signal(from: 'SIX', text: 'Quiet week.')],
+      ),
+    );
+
+    StreakStatus streakOf({double done = 0, double target = 30, int weeks = 0}) => StreakStatus(
+      weeks: weeks,
+      longestWeeks: weeks,
+      currentValue: done,
+      target: target,
+      unitLabel: 'MIN',
+      weekEndsIn: const Duration(days: 2),
+      recentWeeks: const [],
+    );
+
+    List<PlannedSignal> debriefs({DateTime? now, StreakStatus? streak, bool enabled = true, SignalPool? pool}) =>
+        SignalPlanner.plan(
+          now: now ?? monday,
+          settings: SignalSettings(debriefEnabled: enabled),
+          runLog: const [],
+          pack: pack(signals: pool ?? debriefPool),
+          streak: streak ?? streakOf(),
+        ).where((p) => p.kind == SignalKind.debrief).toList();
+
+    test('off until asked for', () {
+      expect(debriefs(enabled: false), isEmpty);
+    });
+
+    test('one a week, on the Sunday evening of the week in hand', () {
+      final planned = debriefs();
+      expect(planned, hasLength(1));
+      expect(planned.single.at.weekday, DateTime.sunday);
+      expect(planned.single.at.hour, SignalPlanner.debriefHour);
+      expect(planned.single.at.isAfter(monday), isTrue);
+    });
+
+    test('nothing once that Sunday evening has gone', () {
+      // Planned from Sunday night, the week is over and the next one gets its
+      // own debrief when the app next re-plans.
+      final sundayLate = monday.add(const Duration(days: 6, hours: 10)); // Sunday 20:00
+      expect(debriefs(now: sundayLate), isEmpty);
+    });
+
+    test('the opener matches how the week actually went', () {
+      expect(debriefs(streak: streakOf(done: 40)).single.text, startsWith('Week is closed.'));
+      expect(debriefs(streak: streakOf(done: 12)).single.text, startsWith('Week is nearly out.'));
+      expect(debriefs(streak: streakOf()).single.text, startsWith('Quiet week.'));
+    });
+
+    test('the figures say where the runner stands', () {
+      expect(debriefs(streak: streakOf(done: 40, weeks: 3)).single.text, contains('40 of 30 min'));
+      expect(debriefs(streak: streakOf(done: 40, weeks: 3)).single.text, contains('3 weeks'));
+      expect(debriefs(streak: streakOf(done: 12)).single.text, contains('18 min short'));
+      expect(debriefs(streak: streakOf()).single.text, contains('30 min'));
+    });
+
+    test('a single week reads as one week, not 1 weeks', () {
+      expect(debriefs(streak: streakOf(done: 40, weeks: 1)).single.text, contains('one week'));
+    });
+
+    test('halves survive, whole numbers do not grow a decimal', () {
+      expect(debriefs(streak: streakOf(done: 2.5, target: 10)).single.text, contains('2.5 of 10'));
+    });
+
+    test('nothing is sent when nothing is written', () {
+      expect(debriefs(pool: const SignalPool()), isEmpty);
+    });
+
+    test('its id is its own, clear of reminders and noise', () {
+      final planned = debriefs().single;
+      expect(planned.id, SignalPlanner.debriefBase);
+      expect(planned.id, greaterThanOrEqualTo(SignalPlanner.ambientBase + 100));
     });
   });
 }

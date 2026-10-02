@@ -202,8 +202,15 @@ python3 -c "import yaml,sys; yaml.safe_load(open(sys.argv[1]))" "$TARGET" \
 # checking for the tag string itself passed exactly the metadata F-Droid refuses.
 TAG_SHA=$(git rev-parse -q --verify "${TAG}^{commit}" 2>/dev/null) \
   || die "cannot resolve ${TAG} to a commit — create the tag before publishing"
-grep -q "commit: ${TAG_SHA}" "$TARGET" \
-  || die "metadata does not pin ${TAG} (${TAG_SHA}) — update docs/fdroid-metadata.yml"
+PIN=$(sed -n -E 's/^[[:space:]]*commit:[[:space:]]*([0-9a-f]{40})[[:space:]]*$/\1/p' "$TARGET" | sort -u)
+[[ $(wc -l <<<"$PIN") == 1 && -n $PIN ]] \
+  || die 'the three build entries must pin one and the same 40-character commit hash'
+# The pin cannot equal the tag's own commit: the pin lives in a commit that is
+# made *after* the one it names, and nothing can contain its own hash. What must
+# hold is that the pinned commit is real and is in the tagged history — that is
+# what stops a stale pin from a previous release going out unnoticed.
+git merge-base --is-ancestor "$PIN" "$TAG_SHA" 2>/dev/null \
+  || die "metadata pins ${PIN}, which is not an ancestor of ${TAG} (${TAG_SHA}) — update docs/fdroid-metadata.yml"
 ok "wrote ${TARGET}"
 
 # Stripping comments is not enough: fdroiddata enforces canonical formatting

@@ -110,7 +110,18 @@ void main() {
 
       expect(loaded.signals.remindersEnabled, isFalse, reason: 'an upgrade must not start messaging people');
       expect(loaded.signals.ambientPerWeek, 0);
-      expect(loaded.signals.debriefEnabled, isFalse);
+    });
+
+    test('a 0.1.0 profile gets the weekly debrief, and only that', () async {
+      // The one message an upgrade does start unasked. Reminders are several a
+      // week and stay off; a debrief is one, reports the runner's own target
+      // back to them, and is switchable off in Settings.
+      File('${root.path}/profile.json').writeAsStringSync(_profileV1);
+      final loaded = await ProfileRepository(root).load();
+
+      expect(loaded.signals.debriefEnabled, isTrue);
+      expect(loaded.signals.remindersEnabled, isFalse);
+      expect(loaded.signals.ambientPerWeek, 0);
     });
 
     test('a 0.1.0 profile has never exported, and is asked about it', () async {

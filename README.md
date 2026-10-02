@@ -161,8 +161,8 @@ Forty entries across the two campaigns.
 - Optional signal noise: the city talking between runs, silent, never overnight,
   as often or as rarely as you like
 - Tap any of them to read the whole message in the app; nothing is kept afterwards
-- An optional weekly debrief on Sunday evening: your week read back against your
-  own target, while there is still time to save it
+- A weekly debrief on Sunday evening — on by default, switchable off — reading
+  your week back against your own target while there is still time to save it
 - Nine characters across the campaigns, each with its own synthesised voice,
   generated on the device
 - Pursuits scaled to your own pace from the last three minutes — or switched off
@@ -246,7 +246,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 350 tests
+flutter test                   # 352 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

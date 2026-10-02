@@ -45,8 +45,20 @@ void main() {
     cancels = 0;
   });
 
-  test('a runner who has not asked for reminders is never scheduled anything', () async {
+  test('a fresh runner gets the weekly debrief and nothing else', () async {
+    // The debrief is the one thing on by default. Reminders and noise are both
+    // several messages a week and stay off until asked for.
     await boot();
+    expect(scheduled, hasLength(1));
+    expect(
+      scheduled.single.every((s) => s.kind == SignalKind.debrief),
+      isTrue,
+      reason: 'nothing but the debrief until the runner asks',
+    );
+  });
+
+  test('turning everything off schedules nothing at all', () async {
+    await boot(profile: const Profile(signals: SignalSettings(debriefEnabled: false)));
     expect(scheduled, isEmpty);
     expect(cancels, 1, reason: 'and anything left over from before is cleared');
   });
@@ -57,12 +69,16 @@ void main() {
       state.profile.copyWith(signals: const SignalSettings(remindersEnabled: true)),
     );
 
-    expect(scheduled, hasLength(1));
-    expect(scheduled.single, isNotEmpty, reason: 'the bundled packs carry generic reminders');
+    final plan = scheduled.last;
     expect(
-      scheduled.single.every((s) => s.kind == SignalKind.reminder),
-      isTrue,
-      reason: 'ambient is not part of this stage',
+      plan.where((s) => s.kind == SignalKind.reminder),
+      isNotEmpty,
+      reason: 'the bundled packs carry generic reminders',
+    );
+    expect(
+      plan.any((s) => s.kind == SignalKind.ambient),
+      isFalse,
+      reason: 'noise is a separate switch',
     );
   });
 
@@ -75,8 +91,16 @@ void main() {
       state.profile.copyWith(signals: state.profile.signals.copyWith(remindersEnabled: false)),
     );
 
-    expect(scheduled, isEmpty);
-    expect(cancels, 1);
+    expect(
+      scheduled.last.any((s) => s.kind == SignalKind.reminder),
+      isFalse,
+      reason: 'the nudges stop',
+    );
+    expect(
+      scheduled.last.every((s) => s.kind == SignalKind.debrief),
+      isTrue,
+      reason: 'but the debrief is a separate switch and stays on',
+    );
   });
 
   test('finishing a run re-plans, so today is not asked about again', () async {
@@ -87,7 +111,7 @@ void main() {
 
     expect(scheduled, hasLength(1), reason: 'the plan is rebuilt after every run');
     expect(
-      scheduled.single.any((s) => s.at.day == DateTime.now().day),
+      scheduled.single.any((s) => s.kind == SignalKind.reminder && s.at.day == DateTime.now().day),
       isFalse,
       reason: 'already been out today',
     );

@@ -54,7 +54,7 @@ class SignalSettings {
     this.weekdays = const {DateTime.monday, DateTime.wednesday, DateTime.friday},
     this.minutesFromMidnight = 7 * 60,
     this.ambientPerWeek = 0,
-    this.debriefEnabled = false,
+    this.debriefEnabled = true,
   });
 
   /// Off until the runner asks for it: an app that starts messaging you
@@ -71,6 +71,12 @@ class SignalSettings {
   final int ambientPerWeek;
 
   /// Whether the handler sends a readout when the week closes.
+  ///
+  /// On by default, deliberately unlike [remindersEnabled]. Reminders are
+  /// several messages a week that an upgrade has no business starting unasked;
+  /// a debrief is one, it reports the runner's own target back to them, and it
+  /// is the kind of thing nobody goes looking for in settings. It can be
+  /// switched off there, or silenced on its own Android channel.
   final bool debriefEnabled;
 
   int get hour => minutesFromMidnight ~/ 60;
@@ -109,7 +115,7 @@ class SignalSettings {
         .toSet(),
     minutesFromMidnight: ((json['minutesFromMidnight'] as num?)?.toInt() ?? 7 * 60).clamp(0, 24 * 60 - 1),
     ambientPerWeek: ((json['ambientPerWeek'] as num?)?.toInt() ?? 0).clamp(0, 21),
-    debriefEnabled: json['debriefEnabled'] as bool? ?? false,
+    debriefEnabled: json['debriefEnabled'] as bool? ?? true,
   );
 }
 

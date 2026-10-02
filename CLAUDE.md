@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 333 tests
+fvm flutter test                                    # 337 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -217,6 +217,15 @@ only third-party binaries in the repo are the three OFL fonts.
   can show. Keep the error codes on those two sides in step; nothing checks
   them for you. A swallowed stream error here recorded a real two-hour run as
   time-only with nothing on screen to explain it.
+- **The location warning has to clear as well as appear.** `GpsStream.kt`
+  registers the `LocationListener` *before* reporting a disabled provider, and
+  `RunEngine` subscribes to `fixes()` whether or not `prepare` said yes —
+  returning early, or subscribing only on success, leaves nothing watching, so
+  the provider can come back on and no fix ever arrives to say so. The warning
+  then sticks for the whole run, which it did on the 0.4.0 release run. Recovery
+  is `LocationRestored`, emitted on the first fix of *any* accuracy, since the
+  warning is about no fixes at all; `LocationTrouble` is raised once per change,
+  because a provider will report itself off repeatedly.
 
 ## Before a release: one real outdoor run
 

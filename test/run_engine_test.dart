@@ -547,6 +547,85 @@ void main() {
       });
     });
 
+    test('the warning clears when GPS comes back mid-run', () {
+      fakeAsync((fake) {
+        // Found on a real run: the warning appeared when GPS was switched off
+        // and then stayed for the rest of the run even though fixes resumed.
+        final h = Harness(fake, goal: RunGoal.seconds(600))..begin();
+        final seen = <Object>[];
+        h.engine.events.listen((e) {
+          if (e is LocationTrouble || e is LocationRestored) seen.add(e);
+        });
+
+        h.location.fail(LocationReadiness.gpsDisabled);
+        fake.flushMicrotasks();
+        expect(seen, hasLength(1));
+        expect(seen.single, isA<LocationTrouble>());
+
+        h.steady(10, 3.0);
+        expect(seen, hasLength(2));
+        expect(seen.last, isA<LocationRestored>(), reason: 'fixes are arriving again');
+        expect(h.engine.distanceMeters, greaterThan(0));
+      });
+    });
+
+    test('an inaccurate fix still counts as the provider coming back', () {
+      fakeAsync((fake) {
+        // The warning says no fixes are arriving, not that they are poor, so a
+        // fix too rough to record still means the trouble is over.
+        final h = Harness(fake, goal: RunGoal.seconds(600))..begin();
+        final seen = <Object>[];
+        h.engine.events.listen((e) {
+          if (e is LocationRestored) seen.add(e);
+        });
+
+        h.location.fail(LocationReadiness.gpsDisabled);
+        fake.flushMicrotasks();
+        h.location.emitRaw(GeoFix(lat: 52.52, lon: 13.4, timestamp: h.now(), accuracy: 9999));
+        fake.flushMicrotasks();
+
+        expect(seen, hasLength(1));
+      });
+    });
+
+    test('the provider complaining twice warns once', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(600))..begin();
+        final seen = <Object>[];
+        h.engine.events.listen((e) {
+          if (e is LocationTrouble) seen.add(e);
+        });
+
+        h.location.fail(LocationReadiness.gpsDisabled);
+        h.location.fail(LocationReadiness.gpsDisabled);
+        fake.flushMicrotasks();
+
+        expect(seen, hasLength(1));
+      });
+    });
+
+    test('location switched on part-way through a run is noticed', () {
+      fakeAsync((fake) {
+        // `prepare` said no, so the run started warned — but the fix stream is
+        // subscribed anyway, because the runner can fix it from the shade
+        // without ever leaving the run screen.
+        final h = Harness(fake, goal: RunGoal.seconds(600));
+        h.location.readiness = LocationReadiness.serviceDisabled;
+        h.begin();
+        final seen = <Object>[];
+        h.engine.events.listen((e) {
+          if (e is LocationRestored) seen.add(e);
+        });
+
+        h.runBlind(30);
+        expect(seen, isEmpty, reason: 'nothing has arrived yet');
+
+        h.steady(10, 3.0);
+        expect(seen, hasLength(1));
+        expect(h.engine.distanceMeters, greaterThan(0), reason: 'and it records from then on');
+      });
+    });
+
     test('a passing fix error is not dressed up as a dead GPS', () {
       fakeAsync((fake) {
         // A banner for every transient would teach the runner to ignore banners.

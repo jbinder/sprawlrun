@@ -79,9 +79,20 @@ class CodexUnlocked extends RunEvent {
   final String entryId;
 }
 
+/// Fixes have stopped being possible, and why.
 class LocationTrouble extends RunEvent {
   const LocationTrouble(this.readiness);
   final LocationReadiness readiness;
+}
+
+/// Fixes are arriving again after a [LocationTrouble].
+///
+/// Its own event rather than `LocationTrouble(ready)`, which would be a
+/// contradiction in terms. Emitted on the first fix of any quality, because the
+/// warning is about there being no fixes at all — and that is also the moment
+/// the warning stops being true, since nothing is recorded until a fix lands.
+class LocationRestored extends RunEvent {
+  const LocationRestored();
 }
 
 /// Drives a single run: consumes position fixes, maintains distance/time/pace,
@@ -165,6 +176,11 @@ class RunEngine extends ChangeNotifier {
     story.add(StoryEvent(atSeconds: elapsedSeconds, kind: kind, ref: ref, escaped: escaped));
   }
 
+  /// Whether the runner is currently being shown a location warning. Held so
+  /// the warning is raised and cleared once each, on the change rather than on
+  /// every fix or every repeated complaint from the provider.
+  bool _locationTroubled = false;
+
   final _events = StreamController<RunEvent>.broadcast();
   Stream<RunEvent> get events => _events.stream;
 
@@ -227,12 +243,15 @@ class RunEngine extends ChangeNotifier {
 
     final readiness = await location.prepare();
     if (readiness != LocationReadiness.ready) {
+      _locationTroubled = true;
       _events.add(LocationTrouble(readiness));
       // The run still starts: time-goal missions are perfectly playable with a
       // dead GPS, and refusing to start would strand the runner at the door.
-    } else {
-      _fixSub = location.fixes().listen(_onFix, onError: _onFixError);
     }
+    // Subscribed either way. The runner can switch location on part-way through
+    // a run, and the stream is the only thing that would notice; subscribing
+    // only when things started well meant the warning could never clear.
+    _fixSub = location.fixes().listen(_onFix, onError: _onFixError);
 
     _narrationSub = narrator.events.listen((e) {
       currentLine = e.line;
@@ -334,6 +353,7 @@ class RunEngine extends ChangeNotifier {
     beatsHeard = 0;
     trace.clear();
     codexUnlocked.clear();
+    _locationTroubled = false;
     transcript.clear();
     story.clear();
     _accumulated = Duration.zero;
@@ -388,6 +408,10 @@ class RunEngine extends ChangeNotifier {
   /// either way — a time goal is perfectly playable with a dead GPS.
   void _onFixError(Object e) {
     if (e is LocationUnavailable) {
+      // Repeats are swallowed: the provider can report itself off more than
+      // once, and the runner needs telling only when the state changes.
+      if (_locationTroubled) return;
+      _locationTroubled = true;
       _events.add(LocationTrouble(e.readiness));
       return;
     }
@@ -395,6 +419,12 @@ class RunEngine extends ChangeNotifier {
   }
 
   void _onFix(GeoFix fix) {
+    // Before the accuracy gate: a fix of any quality means the provider is
+    // delivering again, and the warning says fixes are not arriving at all.
+    if (_locationTroubled) {
+      _locationTroubled = false;
+      _events.add(const LocationRestored());
+    }
     if (fix.accuracy > maxAcceptableAccuracy) return;
     _lastFixAt = _now();
 

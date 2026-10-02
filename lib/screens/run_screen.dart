@@ -147,6 +147,8 @@ class _RunScreenState extends State<RunScreen> {
         _flash(title == null ? 'INTEL INTERCEPTED' : 'INTEL INTERCEPTED — ${title.toUpperCase()}');
       case LocationTrouble(:final readiness):
         setState(() => _locationTrouble = readiness);
+      case LocationRestored():
+        setState(() => _locationTrouble = null);
     }
   }
 

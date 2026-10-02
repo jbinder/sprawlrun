@@ -31,10 +31,6 @@ class GpsStream(private val context: Context) : EventChannel.StreamHandler {
 
     override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
         onCancel(null)
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            events.error("gpsDisabled", "The GPS provider is switched off.", null)
-            return
-        }
         val l = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 events.success(
@@ -73,6 +69,20 @@ class GpsStream(private val context: Context) : EventChannel.StreamHandler {
             listener = l
         } catch (e: SecurityException) {
             events.error("denied", "Location permission is missing.", null)
+            return
+        } catch (e: IllegalArgumentException) {
+            events.error("gpsDisabled", "This device has no GPS provider.", null)
+            return
+        }
+
+        // Reported only after the request is registered, never instead of it.
+        // Returning early here is what made the warning stick for a whole run:
+        // with no listener the provider could be switched back on and nothing
+        // was watching, so no fix ever arrived to say the trouble was over.
+        // A disabled provider accepts the request and starts delivering when it
+        // is enabled again.
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            events.error("gpsDisabled", "The GPS provider is switched off.", null)
         }
     }
 

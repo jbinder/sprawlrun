@@ -493,6 +493,109 @@ void main() {
     });
   });
 
+  group('splits on a free run', () {
+    List<SplitReached> splitsOf(Harness h) {
+      final seen = <SplitReached>[];
+      h.engine.events.listen((e) {
+        if (e is SplitReached) seen.add(e);
+      });
+      return seen;
+    }
+
+    test('each kilometre is read out, with its own time', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(1800))..begin();
+        final splits = splitsOf(h);
+
+        // 3 m/s is 333 seconds a kilometre.
+        h.steady(700, 3.0);
+        fake.flushMicrotasks();
+
+        expect(splits.map((s) => s.count), [1, 2]);
+        for (final s in splits) {
+          expect(s.splitSeconds, closeTo(333, 3));
+        }
+        // The exact seconds depend on where the first fix lands, so the shape
+        // is what is pinned here; the wording itself is split_readout_test's.
+        final said = h.narrator.spokenText.where((t) => t.startsWith('Kilometre')).toList();
+        expect(said, hasLength(2));
+        expect(said[0], matches(RegExp(r'^Kilometre 1\. Split 5 minutes \d+\. Total 5 minutes \d+\.$')));
+        expect(said[1], matches(RegExp(r'^Kilometre 2\. Split 5 minutes \d+\. Total 11 minutes \d+\.$')));
+        expect(h.narrator.beats.expand((b) => b).every((l) => l.speaker == 'SYSTEM'), isTrue);
+      });
+    });
+
+    test('in miles for a runner who uses them', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(1800), profile: const Profile(units: UnitSystem.imperial))
+          ..begin();
+        final splits = splitsOf(h);
+
+        h.steady(600, 3.0); // 1.8 km: past one mile, short of two
+        fake.flushMicrotasks();
+
+        expect(splits.map((s) => s.count), [1]);
+        expect(splits.single.metric, isFalse);
+        expect(h.narrator.spokenText.single, startsWith('Mile 1.'));
+      });
+    });
+
+    test('never on a mission — the story has the narrator', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, mission: missionWith(const []), goal: RunGoal.seconds(1800))..begin();
+        final splits = splitsOf(h);
+
+        h.steady(700, 3.0);
+        fake.flushMicrotasks();
+
+        expect(splits, isEmpty);
+        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre')), isEmpty);
+      });
+    });
+
+    test('silent when switched off', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(1800), profile: const Profile(splitsEnabled: false))..begin();
+        final splits = splitsOf(h);
+        h.steady(700, 3.0);
+        fake.flushMicrotasks();
+        expect(splits, isEmpty);
+        expect(h.narrator.spokenText, isEmpty);
+      });
+    });
+
+    test('a jump across two boundaries is one readout, not a backlog', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(1800))..begin();
+        final splits = splitsOf(h);
+
+        h.steady(60, 3.0);
+        // A burst of distance between two ticks — a GPS jump, say.
+        h.engine.distanceMeters = 2500;
+        h.steady(1, 3.0);
+        fake.flushMicrotasks();
+
+        expect(splits.map((s) => s.count), [2], reason: 'where the runner is now, said once');
+        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre')), hasLength(1));
+      });
+    });
+
+    test('nothing during an auto-pause, and the pause does not count toward the split', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(3600))..begin();
+        final splits = splitsOf(h);
+
+        h.steady(200, 3.0); // 600 m
+        h.steady(120, 0); // stopped long enough to auto-pause
+        h.steady(150, 3.0); // on past the kilometre
+        fake.flushMicrotasks();
+
+        expect(splits.map((s) => s.count), [1]);
+        expect(splits.single.splitSeconds, lessThan(400), reason: 'the stopped minutes are not in it');
+      });
+    });
+  });
+
   group('degraded conditions', () {
     test('a run still starts with no location permission', () {
       fakeAsync((fake) {

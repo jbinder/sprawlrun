@@ -101,7 +101,9 @@ void main() {
 
     test('a field added after 0.1.0 takes its default rather than failing', () async {
       File('${root.path}/profile.json').writeAsStringSync(_profileV1);
-      expect((await ProfileRepository(root).load()).resumeMusic, isTrue);
+      final loaded = await ProfileRepository(root).load();
+      expect(loaded.resumeMusic, isTrue);
+      expect(loaded.splitsEnabled, isTrue, reason: 'free runs read out splits unless switched off');
     });
 
     test('a 0.1.0 profile is not signed up for signals it never asked for', () async {

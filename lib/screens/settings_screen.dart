@@ -223,6 +223,15 @@ class SettingsScreen extends StatelessWidget {
                             value: profile.keepScreenOn,
                             onChanged: (v) => update(profile.copyWith(keepScreenOn: v)),
                           ),
+                          const _Rule(),
+                          _SwitchRow(
+                            label: profile.isMetric ? 'Kilometre splits' : 'Mile splits',
+                            subtitle: profile.isMetric
+                                ? 'On free runs, each kilometre read out with its time'
+                                : 'On free runs, each mile read out with its time',
+                            value: profile.splitsEnabled,
+                            onChanged: (v) => update(profile.copyWith(splitsEnabled: v)),
+                          ),
                         ],
                       ),
                     ),

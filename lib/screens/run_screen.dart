@@ -141,6 +141,9 @@ class _RunScreenState extends State<RunScreen> {
         _flash(escaped ? 'EVADED — $pursuer' : 'CAUGHT — $pursuer');
       case GoalReached():
         _flash('TARGET REACHED');
+      case SplitReached(:final count, :final splitSeconds, :final metric):
+        // The voice carries the detail; the flash is for a glance down.
+        _flash('${metric ? 'KM' : 'MILE'} $count · ${Fmt.clock(splitSeconds)}');
       case CodexUnlocked(:final entryId):
         // The voice carries this one; the flash is for whoever glances down.
         final title = widget.mission?.codex.where((e) => e.id == entryId).firstOrNull?.title;

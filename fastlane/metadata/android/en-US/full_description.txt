@@ -20,6 +20,7 @@ EVERYTHING IT DOES
 
 - Twenty missions across two campaigns, paced to whatever target you pick
 - Pursuits scaled to your own pace from the last three minutes, or switched off
+- Free runs read out each kilometre or mile with its split and your total time
 - Nine synthesised voices that duck your music and hand it back
 - Handler reminders on your own schedule, plus optional ambient signal noise
 - The wire: every message, run, cleared operation, achievement and piece of intel in one stream, which a tapped notification opens straight into

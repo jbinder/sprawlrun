@@ -136,6 +136,7 @@ void main() {
           streakGoal: StreakGoal(metric: StreakMetric.kilometres, target: 25),
           audioInterrupt: AudioInterrupt.duck,
           resumeMusic: false,
+          splitsEnabled: false,
           completedMissions: {'sp01', 'sp02'},
           unlockedCodex: {'cdx_ninsei'},
           missionAttempts: {'sp03': 2},
@@ -164,6 +165,7 @@ void main() {
       expect(loaded.signals.minutesFromMidnight, 6 * 60 + 45);
       expect(loaded.signals.debriefEnabled, isTrue);
       expect(loaded.resumeMusic, isFalse);
+      expect(loaded.splitsEnabled, isFalse);
       expect(loaded.completedMissions, {'sp01', 'sp02'});
       expect(loaded.unlockedCodex, {'cdx_ninsei'});
       expect(loaded.missionAttempts['sp03'], 2);

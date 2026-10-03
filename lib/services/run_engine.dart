@@ -10,6 +10,7 @@ import '../models/run_record.dart';
 import 'energy.dart';
 import 'geo.dart';
 import 'location_service.dart';
+import 'split_readout.dart';
 import 'narrator.dart';
 
 enum RunPhase {
@@ -72,6 +73,18 @@ class ChaseEnded extends RunEvent {
 
 class GoalReached extends RunEvent {
   const GoalReached();
+}
+
+/// A free run passed another kilometre (or mile).
+class SplitReached extends RunEvent {
+  const SplitReached({required this.count, required this.splitSeconds, required this.metric});
+
+  /// How many whole units have now been covered.
+  final int count;
+
+  /// How long the last one took.
+  final double splitSeconds;
+  final bool metric;
 }
 
 class CodexUnlocked extends RunEvent {
@@ -191,6 +204,11 @@ class RunEngine extends ChangeNotifier {
   DateTime? _stillSince;
   DateTime? _lastBeatEndedAt;
   bool _beatPlaying = false;
+
+  /// Whole kilometres (or miles) already read out, and the elapsed time when
+  /// the last of them was — so the next split is measured from there.
+  int _splitsDone = 0;
+  double _lastSplitAt = 0;
   double _lastTracePointAt = -999;
   double _distanceAtLastTick = 0;
   int _implausibleStreak = 0;
@@ -363,6 +381,8 @@ class RunEngine extends ChangeNotifier {
     _stillSince = null;
     _lastBeatEndedAt = null;
     _beatPlaying = false;
+    _splitsDone = 0;
+    _lastSplitAt = 0;
     _lastTracePointAt = -999;
     _distanceAtLastTick = 0;
     _implausibleStreak = 0;
@@ -524,7 +544,40 @@ class RunEngine extends ChangeNotifier {
     _checkGoal();
     _updateChase();
     _maybeFireBeat();
+    _maybeReadSplit();
     notifyListeners();
+  }
+
+  /// Reads out each kilometre (or mile) as a free run passes it.
+  ///
+  /// Free runs only. A mission's story beats go through the same narrator
+  /// queue, so a split there would delay a beat, and a dry readout in the
+  /// middle of a scene would break it. It goes through `speakBeat` all the
+  /// same, rather than a path of its own: that is what queues it behind
+  /// anything already speaking and takes and returns audio focus, which is
+  /// the part that has needed fixing on real runs before.
+  void _maybeReadSplit() {
+    if (mission != null || !profile.splitsEnabled || phase != RunPhase.running) return;
+    final metric = profile.isMetric;
+    final reached = (distanceMeters / (metric ? 1000.0 : 1609.344)).floor();
+    if (reached <= _splitsDone) return;
+
+    // A jump in the GPS can cross two boundaries between ticks. One readout for
+    // where the runner now is — a backlog of stale ones queued behind each
+    // other would still be talking a minute later — with the time shared out.
+    final split = (elapsedSeconds - _lastSplitAt) / (reached - _splitsDone);
+    _splitsDone = reached;
+    _lastSplitAt = elapsedSeconds;
+
+    _events.add(SplitReached(count: reached, splitSeconds: split, metric: metric));
+    unawaited(
+      narrator.speakBeat([
+        StoryLine(
+          speaker: 'SYSTEM',
+          text: SplitReadout.line(count: reached, metric: metric, splitSeconds: split, totalSeconds: elapsedSeconds),
+        ),
+      ]),
+    );
   }
 
   void _checkGoal() {

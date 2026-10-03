@@ -141,6 +141,7 @@ class Profile {
     this.chasesEnabled = true,
     this.autoPause = true,
     this.keepScreenOn = true,
+    this.splitsEnabled = true,
     this.activePackId,
     this.completedMissions = const <String>{},
     this.unlockedAchievements = const <String, DateTime>{},
@@ -177,6 +178,11 @@ class Profile {
   final bool chasesEnabled;
   final bool autoPause;
   final bool keepScreenOn;
+
+  /// Whether a free run reads out each kilometre (or mile) as it passes.
+  /// Missions never do: their story beats share the narrator, and a dry
+  /// readout mid-scene would both delay a beat and break the mood.
+  final bool splitsEnabled;
 
   /// The mission pack the ops screen shows. Null means the first loaded pack,
   /// which is also what every profile from before packs were selectable
@@ -228,6 +234,7 @@ class Profile {
     bool? chasesEnabled,
     bool? autoPause,
     bool? keepScreenOn,
+    bool? splitsEnabled,
     String? activePackId,
     Set<String>? completedMissions,
     Map<String, DateTime>? unlockedAchievements,
@@ -252,6 +259,7 @@ class Profile {
     chasesEnabled: chasesEnabled ?? this.chasesEnabled,
     autoPause: autoPause ?? this.autoPause,
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
+    splitsEnabled: splitsEnabled ?? this.splitsEnabled,
     activePackId: activePackId ?? this.activePackId,
     completedMissions: completedMissions ?? this.completedMissions,
     unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
@@ -278,6 +286,7 @@ class Profile {
     'chasesEnabled': chasesEnabled,
     'autoPause': autoPause,
     'keepScreenOn': keepScreenOn,
+    'splitsEnabled': splitsEnabled,
     if (activePackId != null) 'activePackId': activePackId,
     'completedMissions': completedMissions.toList(),
     'unlockedAchievements': unlockedAchievements.map((k, v) => MapEntry(k, v.toIso8601String())),
@@ -309,6 +318,7 @@ class Profile {
     chasesEnabled: json['chasesEnabled'] as bool? ?? true,
     autoPause: json['autoPause'] as bool? ?? true,
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,
+    splitsEnabled: json['splitsEnabled'] as bool? ?? true,
     activePackId: json['activePackId'] as String?,
     completedMissions: ((json['completedMissions'] as List?) ?? const []).map((e) => e as String).toSet(),
     unlockedAchievements: ((json['unlockedAchievements'] as Map?) ?? const {}).map(

@@ -29,6 +29,7 @@ EVERYTHING IT DOES
 - The long view: earlier weeks and months, distance per month since your first run, every day you ran as a dot calendar
 - Calories from the ACSM metabolic equations and your real body mass, not an invented multiplier
 - Forty codex entries, each unlocking only once a character has mentioned it — no reading ahead
+- Your own mission packs: one JSON file each, imported from Settings, with the format documented in the repository
 - Every run keeps its GPS trace, replays its route at the pace you ran it, and exports as a GPX track for OsmAnd
 - One tap exports the lot as plain JSON — profile, progress, achievements, codex, every run with its trace. Import restores a new phone outright, or merges
 - A nudge to export once your log holds runs that exist nowhere else

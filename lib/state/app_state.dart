@@ -441,6 +441,26 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Imports a pack from the text of a picked file. Throws
+  /// [PackImportException] for anything that is not a playable pack.
+  ///
+  /// Re-plans the signals afterwards: a pack brings handler copy of its own,
+  /// and one that replaces the active pack changes what the handlers say.
+  Future<MissionPack> importMissionPack(String source) async {
+    final pack = await missions.importPack(source);
+    await reloadMissionPacks();
+    await _rescheduleSignals();
+    return pack;
+  }
+
+  /// Removes an imported pack. Progress through it is kept, so importing it
+  /// again later picks up where the runner left off.
+  Future<void> removeMissionPack(String id) async {
+    await missions.removePack(id);
+    await reloadMissionPacks();
+    await _rescheduleSignals();
+  }
+
   List<AchievementView> get achievementWall =>
       AchievementEngine.wall(lifetime, profile.unlockedAchievements);
 

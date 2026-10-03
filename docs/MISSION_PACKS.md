@@ -10,15 +10,20 @@ you add later, so it doubles as a worked example.
 1. **Bundled**: every path listed in `MissionRepository.bundledPacks`
    (`lib/data/mission_repository.dart`) and declared under `assets:` in
    `pubspec.yaml`.
-2. **Side-loaded**: any `*.json` inside the app's documents directory at
-   `sprawlrun/mission_packs/`, loaded alphabetically after the bundled ones.
+2. **Imported**: **Settings → Mission packs → Import pack** opens the system
+   file picker. No rebuild, no app update, no storage permission.
 
-Side-loading needs no rebuild — drop the file in and hit **Settings → Mission
-packs → Reload packs**. A pack whose `id` matches a bundled pack replaces it,
-which is how you patch shipped content.
+An imported pack is stored under its own `id`, so importing a revised version
+replaces the old one — that is the edit-and-reload loop while writing a pack.
+A pack whose `id` matches a bundled pack replaces that too, which is how you
+patch shipped content; removing it brings the shipped version back. Removing a
+pack never touches progress, which is recorded by mission id, so importing it
+again picks up where the runner left off.
 
-A malformed pack never breaks the app: it is skipped, and the parse error is
-listed in Settings.
+The `id` may only use letters, digits, `-` and `_`, since it becomes the file
+name. A file that is not a pack, has no missions, or repeats a mission id is
+refused at import with the reason, and nothing is stored. A pack that imports
+but later fails to load is skipped, with the error listed in Settings.
 
 ## Shape
 

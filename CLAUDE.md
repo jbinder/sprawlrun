@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 390 tests
+fvm flutter test                                    # 403 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -50,6 +50,11 @@ These four cost an hour between them. All are harness behaviour, not app bugs:
 
 - **Real file I/O in a widget test hangs** unless it runs inside
   `tester.runAsync(...)`. The fake-async zone never completes those futures.
+  When the I/O starts *from the UI* — a dialog's answer resuming a handler
+  that then writes files — wrapping the tap is not enough, because the
+  continuation resumes inside the fake zone. Alternate
+  `tester.runAsync(() => Future.delayed(...))` with `tester.pump()` in a short
+  loop until the effect lands; `settings_test`'s pack removal does this.
 - **Awaiting a broadcast `StreamSubscription.cancel()` hangs under `fakeAsync`.**
   `RunEngine` deliberately fire-and-forgets its cancels in `_detachStreams()`.
   Don't "fix" that by adding `await`.

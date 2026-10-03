@@ -9,6 +9,7 @@ import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
+import '../widgets/pack_controls.dart';
 import '../widgets/panels.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -301,48 +302,7 @@ class SettingsScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     const SectionHeader('MISSION PACKS'),
-                    NeonPanel(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (final pack in state.packs) ...[
-                            Row(
-                              children: [
-                                const Icon(Icons.inventory_2_outlined, size: 15, color: Cy.cyanDim),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(pack.title, style: CyType.body(size: 15, weight: FontWeight.w700)),
-                                      Text(pack.tagline, style: CyType.body(size: 13, color: Cy.ghost)),
-                                    ],
-                                  ),
-                                ),
-                                CyberTag('${pack.missions.length} OPS', color: Cy.ghost),
-                              ],
-                            ),
-                            const _Rule(),
-                          ],
-                          for (final error in state.missions.loadErrors) ...[
-                            Text(error, style: CyType.mono(size: 11, color: Cy.red)),
-                            const SizedBox(height: 6),
-                          ],
-                          _Note(
-                            'Drop additional packs as .json into the app documents folder under '
-                            'sprawlrun/mission_packs/ and reload. See docs/MISSION_PACKS.md for the format.',
-                          ),
-                          const SizedBox(height: 12),
-                          CyberButton(
-                            label: 'Reload packs',
-                            icon: Icons.refresh,
-                            style: CyberButtonStyle.ghost,
-                            dense: true,
-                            onPressed: state.reloadMissionPacks,
-                          ),
-                        ],
-                      ),
-                    ),
+                    const NeonPanel(child: PackControls()),
                     const SizedBox(height: 20),
 
                     const SectionHeader('DATA', accent: Cy.red),

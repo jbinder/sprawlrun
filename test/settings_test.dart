@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -70,6 +71,40 @@ void main() {
     expect(find.text('EXPORT BACKUP'), findsOneWidget);
     expect(find.text('IMPORT BACKUP'), findsOneWidget);
     expect(find.text('RESET ALL PROGRESS'), findsOneWidget);
+  });
+
+  testWidgets('packs are imported, marked as such, and removable — the shipped ones are not', (tester) async {
+    final state = await pumpSettings(tester);
+    expect(find.text('IMPORT PACK'), findsOneWidget);
+    expect(find.text('RELOAD PACKS'), findsNothing, reason: 'it pointed at a folder nobody can reach');
+    expect(find.text('IMPORTED'), findsNothing, reason: 'the shipped packs cannot be removed');
+
+    await tester.runAsync(() => state.importMissionPack(jsonEncode({
+      'id': 'ghost_line',
+      'title': 'GHOST LINE',
+      'missions': [
+        {'id': 'gl01', 'order': 1, 'codename': 'OP 1', 'title': 'Op 1', 'suggestedGoal': {'type': 'time', 'value': 900}},
+      ],
+    })));
+    await tester.pump();
+    expect(find.text('IMPORTED'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Remove GHOST LINE'));
+    await tester.pump();
+    expect(find.text('REMOVE GHOST LINE'), findsOneWidget);
+    expect(find.textContaining('import it again and you pick up where you were'), findsOneWidget);
+
+    // Removal lists, reads and deletes files. Real file I/O never completes on
+    // its own inside the fake-async zone (CLAUDE.md, "Test traps"), and the
+    // dialog's answer resumes inside it — so let real time pass and then flush
+    // the zone, a few times over, once per step of the chain.
+    await tester.tap(find.text('REMOVE'));
+    for (var i = 0; i < 20 && state.packs.any((p) => p.id == 'ghost_line'); i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    expect(find.text('IMPORTED'), findsNothing);
+    expect(state.packs.map((p) => p.id), isNot(contains('ghost_line')));
   });
 
   testWidgets('the resume-music repair is offered only when pausing', (tester) async {

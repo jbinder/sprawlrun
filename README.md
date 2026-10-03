@@ -169,7 +169,8 @@ Forty entries across the two campaigns.
 - Pursuits scaled to your own pace from the last three minutes — or switched off
 - A codex of forty entries that unlock only once a character has mentioned them
 - Every run keeps a story log; cleared missions open onto a debriefing of every attempt
-- Side-loadable mission packs: drop a JSON file in and it appears
+- Importable mission packs: pick a JSON file and it appears; import a newer version to
+  update it, remove it without losing progress
 
 **Running**
 - GPS tracking that keeps going with the screen off, with auto-pause
@@ -247,7 +248,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 390 tests
+flutter test                   # 403 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -272,9 +273,8 @@ this README cannot drift from what the app actually looks like.
 
 ## Adding missions
 
-A mission pack is one JSON file. Drop it into the app's documents directory under
-`sprawlrun/mission_packs/` and hit **Settings → Mission packs → Reload** — no
-rebuild, no app update. See **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** for
+A mission pack is one JSON file. Import it with **Settings → Mission packs →
+Import pack** — no rebuild, no app update, no storage permission. See **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** for
 the format, and `assets/missions/sprawl_prime.json` or `null_tide.json` for a
 worked example.
 

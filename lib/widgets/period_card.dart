@@ -137,11 +137,15 @@ class PeriodCard extends StatelessWidget {
 
     if (pager == null) return card;
     return GestureDetector(
-      // A fling left reveals the older period, mirroring how the chevrons read.
+      // Older periods sit to the left — the left chevron is "Earlier", and the
+      // day bars run old to new from left to right — and what lies to the left
+      // is brought in by dragging the finger *rightwards*, as in any gallery.
+      // So a fling right goes older and a fling left comes forward. This was
+      // the other way round until a runner noticed the swipe fought the arrows.
       onHorizontalDragEnd: (details) {
         final v = details.primaryVelocity ?? 0;
-        if (v < -_flingVelocity) pager!.onOlder?.call();
-        if (v > _flingVelocity) pager!.onNewer?.call();
+        if (v > _flingVelocity) pager!.onOlder?.call();
+        if (v < -_flingVelocity) pager!.onNewer?.call();
       },
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 220),

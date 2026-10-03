@@ -384,19 +384,25 @@ void main() {
     expect(find.text('THIS WEEK'), findsNothing, reason: 'the outgoing card has been dropped');
 
     // The oldest run is in this week, so the chevron is disabled and a swipe
-    // to the left goes nowhere.
+    // towards older periods — to the right — goes nowhere.
     await tester.tap(inWeekCard(find.byTooltip('Earlier')));
     await settle(tester);
-    await tester.fling(find.text('LAST WEEK'), const Offset(-300, 0), 1000);
+    await tester.fling(find.text('LAST WEEK'), const Offset(300, 0), 1000);
     await settle(tester);
     expect(find.text('LAST WEEK'), findsOneWidget);
     expect(find.text('2 WEEKS AGO'), findsNothing);
 
-    // A swipe to the right comes forward again.
-    await tester.fling(find.text('LAST WEEK'), const Offset(300, 0), 1000);
+    // A swipe to the left comes forward again, the way the right chevron does.
+    await tester.fling(find.text('LAST WEEK'), const Offset(-300, 0), 1000);
     await settle(tester);
     expect(find.text('THIS WEEK'), findsOneWidget);
     expect(find.text('LAST WEEK'), findsNothing);
+
+    // And a swipe to the right goes back, the way the left chevron does. The
+    // swipe once ran against the arrows; this pins them to agree.
+    await tester.fling(find.text('THIS WEEK'), const Offset(300, 0), 1000);
+    await settle(tester);
+    expect(find.text('LAST WEEK'), findsOneWidget);
   });
 
   testWidgets('older runs fold into month groups under the ten most recent', (tester) async {

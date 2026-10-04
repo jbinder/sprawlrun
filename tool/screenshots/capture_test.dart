@@ -11,6 +11,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -193,9 +194,21 @@ void main() {
       const StoryEvent(atSeconds: 518, kind: StoryEventKind.chaseEnded, ref: 'NINSEI DRONE', escaped: true),
       const StoryEvent(atSeconds: 900, kind: StoryEventKind.goal),
     ];
-    final withStory = RunRecord.fromJson(record.toJson()..['story'] = story.map((e) => e.toJson()).toList());
+    final withStory = RunRecord.fromJson(record.toJson()..['story'] = story.map((e) => e.toJson()).toList())
+        .copyWith(trace: _sampleRoute(seconds: 900, meters: 3100, fastFrom: 428, fastTo: 518));
+    // Stored where the app keeps routes: the screen loads it from there.
+    await tester.runAsync(() => state.runs.save(withStory));
 
     await _pump(tester, RunDetailScreen(run: withStory), state);
+    // That load is real file I/O, which never completes inside the fake-async
+    // zone — the shot used to be taken on LOADING TRACE. Each step of it
+    // resumes inside the zone, so alternate real time with frames until the
+    // route is in (CLAUDE.md, "Test traps").
+    for (var i = 0; i < 40 && find.text('LOADING TRACE').evaluate().isNotEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
+    expect(find.text('LOADING TRACE'), findsNothing, reason: 'the route never loaded');
     await tester.pump(const Duration(milliseconds: 400));
     // Scroll the story into view; the stats and route sit above it.
     await tester.drag(find.byType(ListView), const Offset(0, -900));
@@ -245,6 +258,46 @@ void main() {
 // ---------------------------------------------------------------------------
 
 /// A runner several weeks into the campaign, so no screen is empty.
+/// A believable loop for a run with no real GPS behind it: a wobbling closed
+/// circuit of [meters] over [seconds], a point every three seconds as the
+/// recorder takes them, and quicker between [fastFrom] and [fastTo] — the
+/// pursuit — so the speed colouring has something true to show.
+List<TracePoint> _sampleRoute({
+  required int seconds,
+  required double meters,
+  required int fastFrom,
+  required int fastTo,
+}) {
+  const lat0 = 35.6595, lon0 = 139.7005; // where the campaign's media district would be
+  final mPerDegLat = 111320.0;
+  final mPerDegLon = 111320.0 * math.cos(lat0 * math.pi / 180);
+
+  double speedAt(int t) => t >= fastFrom && t <= fastTo ? 4.4 : 3.1;
+  // Distance covered by second t, scaled so the loop closes at [meters].
+  final raw = <double>[0];
+  for (var t = 1; t <= seconds; t++) {
+    raw.add(raw.last + speedAt(t));
+  }
+  final scale = meters / raw.last;
+
+  // An irregular closed loop: a circle with a few harmonics, so it reads as
+  // streets rather than geometry. Its perimeter is close enough to [meters].
+  final radius = meters / (2 * math.pi);
+  return [
+    for (var t = 0; t <= seconds; t += 3)
+      () {
+        final a = 2 * math.pi * raw[t] * scale / meters;
+        final r = radius * (1 + 0.18 * math.sin(3 * a) + 0.07 * math.cos(5 * a + 1));
+        return TracePoint(
+          lat: lat0 + r * math.sin(a) / mPerDegLat,
+          lon: lon0 + r * 1.3 * math.cos(a) / mPerDegLon,
+          elapsedSeconds: t.toDouble(),
+          speedMps: speedAt(t),
+        );
+      }(),
+  ];
+}
+
 Future<AppState> _seed(WidgetTester tester) async {
   // The run screen asks for notification permission before it starts the run,
   // and an unanswered platform call never returns in the harness — so the HUD

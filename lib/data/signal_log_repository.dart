@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 
@@ -75,9 +76,7 @@ class SignalLogRepository {
   Future<List<SignalLogEntry>> loadAll() async {
     await _migrateLegacy();
     if (!_allLoaded) {
-      for (final year in await _yearsOnDisk()) {
-        await _load(year);
-      }
+      await _loadClosedYears();
       _allLoaded = true;
     }
     return _sorted(_years.values.expand((e) => e));
@@ -132,9 +131,8 @@ class SignalLogRepository {
     final file = _fileFor(year);
     if (!await file.exists()) return _years[year] = const [];
     try {
-      final raw = await file.readAsString();
-      final entries = _sorted((jsonDecode(raw) as List).map(SignalLogEntry.tryParse).whereType<SignalLogEntry>());
-      _written[year] = _encode(entries);
+      final (entries, json) = _parseYear(await file.readAsString());
+      _written[year] = json;
       return _years[year] = entries;
     } on Object {
       // One damaged year costs that year, not the archive — and is kept aside
@@ -142,6 +140,58 @@ class SignalLogRepository {
       await quarantine(file);
       return _years[year] = const [];
     }
+  }
+
+  /// Reads every year not yet in memory, parsing them off the UI thread.
+  ///
+  /// Parsing is nearly all the cost of opening the archive — about 90 ms of
+  /// the 120–170 measured for ten years of it, against 10 for decoding and 20
+  /// for re-encoding — and all of it used to run on the thread that draws THE
+  /// WIRE as it slides in. One isolate takes every year at once: spawning one
+  /// per year would cost more than it saved. The current year is usually in
+  /// memory already from the launch re-plan, which reads it on this thread;
+  /// one year is cheap.
+  Future<void> _loadClosedYears() async {
+    final raws = <int, String>{};
+    for (final year in await _yearsOnDisk()) {
+      if (_years.containsKey(year)) continue;
+      final file = _fileFor(year);
+      if (await file.exists()) raws[year] = await file.readAsString();
+    }
+    if (raws.isEmpty) return;
+
+    final parsed = await Isolate.run(() => _parseYears(raws));
+    for (final MapEntry(key: year, value: result) in parsed.entries) {
+      if (result == null) {
+        // As in [_load]: one damaged year costs that year, and is kept aside.
+        await quarantine(_fileFor(year));
+        _years[year] = const [];
+      } else {
+        _years[year] = result.$1;
+        _written[year] = result.$2;
+      }
+    }
+  }
+
+  /// Runs in the background isolate: only plain data in, plain data out.
+  /// Null for a year that would not parse.
+  static Map<int, (List<SignalLogEntry>, String)?> _parseYears(Map<int, String> raws) => {
+    for (final MapEntry(key: year, value: raw) in raws.entries)
+      year: () {
+        try {
+          return _parseYear(raw);
+        } on Object {
+          return null;
+        }
+      }(),
+  };
+
+  /// A year's entries, newest first, and the text they encode back to — kept
+  /// so an unchanged year is never rewritten. Throws for a file that is not a
+  /// list at all; a single malformed entry is skipped.
+  static (List<SignalLogEntry>, String) _parseYear(String raw) {
+    final entries = _sorted((jsonDecode(raw) as List).map(SignalLogEntry.tryParse).whereType<SignalLogEntry>());
+    return (entries, _encode(entries));
   }
 
   Future<void> _store(int year, Iterable<SignalLogEntry> entries) async {

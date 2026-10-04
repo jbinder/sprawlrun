@@ -133,8 +133,10 @@ only third-party binaries in the repo are the three OFL fonts.
   exists; earlier years are never written again. The whole history is read
   only by `AppState.loadSignalArchive`, which THE WIRE calls when it opens.
   Measured: a launch re-plan stays around 20 ms from one year of history to
-  ten, while opening THE WIRE grows from 30 ms to 150 ms. Do not make
-  `AppState.load` read the whole archive.
+  ten, while opening THE WIRE grows from 30 ms to 150 ms. That second figure
+  is wall-clock: the closed years are parsed in one `Isolate.run`, so the UI
+  thread is never blocked for more than ~4 ms by it (it was ~20 ms per year,
+  a dropped frame each). Do not make `AppState.load` read the whole archive.
 - **The signal archive stores references, so rewording a line orphans it.**
   Each entry holds `signalRef(text)` — FNV-1a of the authored line — not the
   line itself, the same way a run's story log holds beat ids. That is what

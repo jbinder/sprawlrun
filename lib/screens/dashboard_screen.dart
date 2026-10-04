@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../data/active_run_store.dart';
 import '../data/mission_repository.dart';
 import '../models/achievement.dart';
 import '../models/mission.dart';
@@ -18,6 +19,7 @@ import '../widgets/progress.dart';
 import 'mission_brief_screen.dart';
 import 'mission_debrief_screen.dart';
 import 'missions_screen.dart';
+import 'run_summary_screen.dart';
 
 /// The home screen: who you are, how the week is going, and the one mission
 /// you are allowed to play next.
@@ -36,6 +38,10 @@ class DashboardScreen extends StatelessWidget {
       children: [
         _Greeting(callsign: state.profile.callsign),
         const SizedBox(height: 16),
+        if (state.interruptedRun case final saved?) ...[
+          _InterruptedRunCard(saved: saved),
+          const SizedBox(height: 16),
+        ],
         _StreakCard(streak: state.streak),
         const SizedBox(height: 16),
         _WeekStrip(week: state.week, units: state.profile.units),
@@ -728,5 +734,128 @@ class _BackupNudgeCardState extends State<_BackupNudgeCard> {
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+}
+
+/// A run the app died in the middle of, offered back. Swiping the app away no
+/// longer ends a run, but the process can still be killed — and before this, a
+/// run that never reached its finish was simply gone.
+class _InterruptedRunCard extends StatefulWidget {
+  const _InterruptedRunCard({required this.saved});
+
+  final ActiveRunSnapshot saved;
+
+  @override
+  State<_InterruptedRunCard> createState() => _InterruptedRunCardState();
+}
+
+class _InterruptedRunCardState extends State<_InterruptedRunCard> {
+  bool _busy = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<AppState>();
+    final run = widget.saved.record;
+    final what = run.missionCodename ?? 'Free run';
+
+    return NeonPanel(
+      accent: Cy.amber,
+      lit: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.restore, color: Cy.amber, size: 18),
+              const SizedBox(width: 10),
+              Text('RUN INTERRUPTED', style: CyType.label(size: 11, color: Cy.amber)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            '$what · ${Fmt.distanceWithUnit(run.distanceMeters, state.profile.units)} · '
+            '${Fmt.clock(run.elapsedSeconds)}',
+            style: CyType.body(size: 16, weight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'The app was closed before this run was finished, last saved ${Fmt.dateTime(run.endedAt)}. '
+            'Keep it as it stood then, or let it go.',
+            style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
+          ),
+          const SizedBox(height: 14),
+          CyberButton(
+            label: _busy ? 'Working…' : 'Keep run',
+            icon: Icons.save_outlined,
+            dense: true,
+            onPressed: _busy ? null : () => _keep(state),
+          ),
+          const SizedBox(height: 8),
+          CyberButton(
+            label: 'Discard',
+            style: CyberButtonStyle.ghost,
+            dense: true,
+            onPressed: _busy ? null : () => _discard(state),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _keep(AppState state) async {
+    setState(() => _busy = true);
+    try {
+      final id = widget.saved.record.missionId;
+      final mission = id == null ? null : state.missionById(id);
+      final report = await state.keepInterruptedRun();
+      if (!mounted || report == null) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(builder: (_) => RunSummaryScreen(report: report, mission: mission)),
+      );
+    } on Object catch (e) {
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not keep the run: $e')));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _discard(AppState state) async {
+    final sure = await showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: NeonPanel(
+          accent: Cy.red,
+          lit: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('DISCARD THIS RUN', style: CyType.display(size: 16, color: Cy.red)),
+              const SizedBox(height: 10),
+              Text(
+                'It will not count toward anything, and it cannot be brought back.',
+                style: CyType.body(size: 14, color: Cy.ink, height: 1.4),
+              ),
+              const SizedBox(height: 18),
+              CyberButton(
+                label: 'Discard',
+                style: CyberButtonStyle.danger,
+                dense: true,
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+              const SizedBox(height: 10),
+              CyberButton(
+                label: 'Cancel',
+                style: CyberButtonStyle.ghost,
+                dense: true,
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (sure == true) await state.discardInterruptedRun();
   }
 }

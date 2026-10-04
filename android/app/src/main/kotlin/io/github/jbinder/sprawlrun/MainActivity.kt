@@ -9,6 +9,9 @@ import android.os.Build
 import android.view.KeyEvent
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.embedding.engine.FlutterEngineCache
+import io.flutter.embedding.engine.dart.DartExecutor
+import java.lang.ref.WeakReference
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
@@ -24,8 +27,41 @@ import io.flutter.plugin.common.MethodChannel
  * detects the failure and presses PLAY on the runner's behalf.
  *
  * Neither audio call needs a permission, and neither can reach the network.
+ *
+ * **The Flutter engine outlives this activity while a run is active.** The
+ * run — clock, route, story — lives in Dart, in this engine. By default a
+ * FlutterActivity owns its engine and destroys it in onDestroy, so swiping the
+ * app away from recents threw away a run in progress, track and all; a runner
+ * lost a whole run that way. Now the engine is created once, kept in
+ * [FlutterEngineCache], and destroyed with the activity only when
+ * [MissionService] is not running. The service keeps the process alive, so
+ * the run carries on headless — GPS, ticks, lines, notification — and opening
+ * the app again, from the notification or the launcher, attaches to the same
+ * engine and lands back on the live run.
+ *
+ * That is why every channel is installed once per engine, against the
+ * application context, in [provideFlutterEngine] — not in
+ * configureFlutterEngine, which runs again for every activity that attaches.
+ * The run calls these channels with no activity at all (GPS fixes, notice
+ * updates, the music nudge), and re-registering GPS's stream handler under a
+ * live subscription would orphan its LocationListener. Only the permission
+ * request needs an activity, and it uses whichever one is [attached].
  */
 class MainActivity : FlutterActivity() {
+    companion object {
+        private const val ENGINE_ID = "sprawlrun"
+
+        /** The activity on screen, for the one call that needs an Activity. */
+        private var attached: WeakReference<MainActivity>? = null
+
+        // In the companion so the engine-lifetime channel handlers that call
+        // it hold no reference to whichever activity happened to create them.
+        private fun hasNotificationPermission(context: Context): Boolean =
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
+    }
+
     private val audioChannelName = "io.github.jbinder.sprawlrun/audio"
     private val notificationChannelName = "io.github.jbinder.sprawlrun/notifications"
     private val gpsChannelName = "io.github.jbinder.sprawlrun/gps"
@@ -51,17 +87,58 @@ class MainActivity : FlutterActivity() {
 
     private var pendingNotificationResult: MethodChannel.Result? = null
 
-    private val audio: AudioManager
-        get() = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+    override fun provideFlutterEngine(context: Context): FlutterEngine {
+        FlutterEngineCache.getInstance().get(ENGINE_ID)?.let { return it }
 
-    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
-        super.configureFlutterEngine(flutterEngine)
+        val app = context.applicationContext
+        // Plugins register themselves from the constructor.
+        val engine = FlutterEngine(app)
+        installChannels(engine, app)
+        engine.dartExecutor.executeDartEntrypoint(DartExecutor.DartEntrypoint.createDefault())
+        FlutterEngineCache.getInstance().put(ENGINE_ID, engine)
+        return engine
+    }
 
-        ensureMissionChannel()
-        ensureSignalChannels()
+    /** Decided as the activity goes, from whether a run is in progress. */
+    private var destroyEngine = false
+
+    override fun shouldDestroyEngineWithHost(): Boolean = destroyEngine
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        attached = WeakReference(this)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        attached = WeakReference(this)
+        super.onResume()
+    }
+
+    override fun onDestroy() {
+        // Only here, never as a standing answer: Flutter also asks when a
+        // second activity takes the engine over, and answering true then is
+        // an AssertionError.
+        destroyEngine = !MissionService.running
+        val engine = flutterEngine
+        if (attached?.get() === this) attached = null
+        // A permission dialog left open by an activity that is going would
+        // otherwise leave the run start waiting on it for ever.
+        pendingNotificationResult?.success(false)
+        pendingNotificationResult = null
+        super.onDestroy()
+        if (destroyEngine && engine != null && FlutterEngineCache.getInstance().get(ENGINE_ID) === engine) {
+            FlutterEngineCache.getInstance().remove(ENGINE_ID)
+        }
+    }
+
+    private fun installChannels(flutterEngine: FlutterEngine, app: Context) {
+        ensureMissionChannel(app)
+        ensureSignalChannels(app)
+
+        val audio = app.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, gpsChannelName)
-            .setStreamHandler(GpsStream(this))
+            .setStreamHandler(GpsStream(app))
 
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, audioChannelName)
             .setMethodCallHandler { call, result ->
@@ -91,12 +168,19 @@ class MainActivity : FlutterActivity() {
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, notificationChannelName)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
-                    "requestPermission" -> requestNotificationPermission(result)
+                    "requestPermission" -> {
+                        val activity = attached?.get()
+                        if (activity == null) {
+                            result.success(hasNotificationPermission(app))
+                        } else {
+                            activity.requestNotificationPermission(result)
+                        }
+                    }
 
                     // Every run, GPS or not — see MissionService.
                     "startMissionNotice" -> {
                         MissionService.start(
-                            this,
+                            app,
                             call.argument<String>("text") ?: "",
                             call.argument<Boolean>("tracking") ?: false
                         )
@@ -106,7 +190,7 @@ class MainActivity : FlutterActivity() {
                     // Same call: the service updates in place once started.
                     "updateMissionNotice" -> {
                         MissionService.start(
-                            this,
+                            app,
                             call.argument<String>("text") ?: "",
                             call.argument<Boolean>("tracking") ?: false
                         )
@@ -114,7 +198,7 @@ class MainActivity : FlutterActivity() {
                     }
 
                     "stopMissionNotice" -> {
-                        MissionService.stop(this)
+                        MissionService.stop(app)
                         result.success(null)
                     }
 
@@ -142,9 +226,9 @@ class MainActivity : FlutterActivity() {
      * has seen, including across delete and recreate, so an existing install has
      * to be fixed from system settings or by reinstalling.
      */
-    private fun ensureMissionChannel() {
+    private fun ensureMissionChannel(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-        val manager = getSystemService(NotificationManager::class.java) ?: return
+        val manager = context.getSystemService(NotificationManager::class.java) ?: return
         val channel = NotificationChannel(
             missionChannelId,
             "Active mission",
@@ -161,9 +245,9 @@ class MainActivity : FlutterActivity() {
      * the foreground service still runs but its notification is suppressed. No
      * plugin here asks for it, so the app has to.
      */
-    private fun ensureSignalChannels() {
+    private fun ensureSignalChannels(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-        val manager = getSystemService(NotificationManager::class.java) ?: return
+        val manager = context.getSystemService(NotificationManager::class.java) ?: return
 
         // A reminder is an ordinary notification: whatever sound and vibration
         // the device normally uses. One that cannot be noticed is not a
@@ -200,15 +284,11 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun requestNotificationPermission(result: MethodChannel.Result) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+        if (hasNotificationPermission(this)) {
             result.success(true)
             return
         }
         val permission = android.Manifest.permission.POST_NOTIFICATIONS
-        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-            result.success(true)
-            return
-        }
         // A second request while one is in flight would strand the first
         // result, and MethodChannel.Result must be answered exactly once.
         if (pendingNotificationResult != null) {

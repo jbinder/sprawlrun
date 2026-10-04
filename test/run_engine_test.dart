@@ -493,6 +493,34 @@ void main() {
     });
   });
 
+  group('snapshot', () {
+    test('is the run so far, as finishing now would record it, and ends nothing', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(1800))..begin();
+        h.steady(300, 3.0);
+
+        final snap = h.engine.snapshot();
+        expect(snap.distanceMeters, closeTo(900, 30));
+        expect(snap.elapsedSeconds, closeTo(300, 2), reason: 'counts the segment still open');
+        expect(snap.outcome, RunOutcome.failed, reason: 'short of the goal, like finishing now');
+        expect(snap.trace, isNotEmpty);
+        expect(h.engine.phase, RunPhase.running, reason: 'a snapshot must not stop the run');
+
+        h.steady(60, 3.0);
+        expect(h.engine.distanceMeters, greaterThan(snap.distanceMeters), reason: 'the run carries on');
+        expect(snap.id, h.engine.snapshot().id, reason: 'every snapshot of one run is the same run');
+      });
+    });
+
+    test('a run past its goal snapshots as a success', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(120))..begin();
+        h.steady(150, 3.0);
+        expect(h.engine.snapshot().outcome, RunOutcome.success);
+      });
+    });
+  });
+
   group('splits on a free run', () {
     List<SplitReached> splitsOf(Harness h) {
       final seen = <SplitReached>[];

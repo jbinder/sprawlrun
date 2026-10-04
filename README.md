@@ -173,7 +173,8 @@ Forty entries across the two campaigns.
   update it, remove it without losing progress
 
 **Running**
-- GPS tracking that keeps going with the screen off, with auto-pause
+- GPS tracking that keeps going with the screen off, or with the app swiped away, with
+  auto-pause; a run the app dies in is kept and offered back
 - A time or distance target per run, and free runs with no story at all
 - Kilometre (or mile) splits read out on free runs, with the split and total time —
   switchable off
@@ -250,7 +251,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 415 tests
+flutter test                   # 427 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

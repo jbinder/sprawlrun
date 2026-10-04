@@ -318,12 +318,25 @@ class RunEngine extends ChangeNotifier {
     await location.stop();
     await narrator.stopAll();
 
-    final elapsed = _accumulated.inMilliseconds / 1000.0;
+    final record = _record(elapsed: _accumulated.inMilliseconds / 1000.0);
+
+    notifyListeners();
+    return record;
+  }
+
+  /// The run so far, as [finish] would record it if called now — without
+  /// ending anything. What the app saves while the run is going, so that a
+  /// run cut off by the process dying can still be kept.
+  RunRecord snapshot() => _record(elapsed: elapsedSeconds);
+
+  /// The one place a record is assembled, so a snapshot and a finished run
+  /// cannot disagree about what a run is.
+  RunRecord _record({required double elapsed}) {
     final outcome = goalReached
         ? RunOutcome.success
         : (elapsed < 60 && distanceMeters < 100 ? RunOutcome.discarded : RunOutcome.failed);
 
-    final record = RunRecord(
+    return RunRecord(
       id: '${startedAt?.microsecondsSinceEpoch ?? _now().microsecondsSinceEpoch}',
       startedAt: startedAt ?? _now(),
       endedAt: _now(),
@@ -342,9 +355,6 @@ class RunEngine extends ChangeNotifier {
       story: List.unmodifiable(story),
       trace: List.unmodifiable(trace),
     );
-
-    notifyListeners();
-    return record;
   }
 
   /// Abandons an in-flight run without recording it.

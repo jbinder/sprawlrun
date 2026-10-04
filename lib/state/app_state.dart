@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/backup.dart';
 import '../data/migrations.dart';
+import '../data/active_run_store.dart';
 import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
@@ -35,12 +36,21 @@ class AppState extends ChangeNotifier {
     required this.narrator,
     SignalScheduler? signals,
     SignalLogRepository? signalLog,
+    ActiveRunStore? activeRun,
   }) : _signals = signals ?? SignalScheduler.noop(),
+       activeRun = activeRun ?? ActiveRunStore(profiles.root),
        // Next to the profile by default, so every caller — tests included —
        // gets a working log without having to name a directory for it.
        signalLog = signalLog ?? SignalLogRepository(profiles.root);
 
   final ProfileRepository profiles;
+
+  /// The run in progress, kept on disk while it is going. See [interruptedRun].
+  final ActiveRunStore activeRun;
+
+  /// A run a previous launch never finished — the app died mid-run. Offered
+  /// back on the home screen to keep or discard; null when there is none.
+  ActiveRunSnapshot? interruptedRun;
   final RunRepository runs;
   final MissionRepository missions;
   final Narrator narrator;
@@ -102,6 +112,13 @@ class AppState extends ChangeNotifier {
     profile = await profiles.load();
     runLog = await runs.loadAll();
     packs = await missions.loadPacks();
+    interruptedRun = await activeRun.load();
+    // Finished and recorded, but the app died before the copy was cleared:
+    // nothing was lost, and offering it back would record it twice.
+    if (interruptedRun case final saved? when runLog.any((r) => r.id == saved.record.id)) {
+      await activeRun.clearIf(saved.record.id);
+      interruptedRun = null;
+    }
     await _migrateAndDateAchievements();
     _recompute();
     loading = false;
@@ -303,6 +320,30 @@ class AppState extends ChangeNotifier {
 
   /// Files a finished run: stores it, advances the campaign, banks any codex
   /// entries heard along the way, and awards whatever that made true.
+  /// Keeps a run the app died in the middle of, exactly as finishing it would
+  /// have — streaks, achievements and intel included. Its end is when it was
+  /// last saved, which is as far as anyone can know it went.
+  Future<RunOutcomeReport?> keepInterruptedRun() async {
+    final saved = interruptedRun;
+    if (saved == null) return null;
+    final id = saved.record.missionId;
+    final report = await completeRun(
+      saved.record,
+      mission: id == null ? null : missionById(id),
+      codexHeard: saved.codexHeard,
+    );
+    await discardInterruptedRun();
+    return report;
+  }
+
+  Future<void> discardInterruptedRun() async {
+    final saved = interruptedRun;
+    if (saved == null) return;
+    interruptedRun = null;
+    await activeRun.clearIf(saved.record.id);
+    notifyListeners();
+  }
+
   Future<RunOutcomeReport> completeRun(
     RunRecord record, {
     Mission? mission,

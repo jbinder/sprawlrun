@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 415 tests
+fvm flutter test                                    # 427 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -124,7 +124,8 @@ only third-party binaries in the repo are the three OFL fonts.
   `BackupService.collect` and `import` at the same time. There is one such
   store so far: `signals/<year>.json`, the archive behind THE WIRE — the only
   thing on it that is stored, since runs, clears, achievements and intel all
-  project from the run log and profile. Exported as *sent* entries only; the
+  project from the run log and profile. (`active_run.json` is deliberately
+  left out: it exists only while a run does.) Exported as *sent* entries only; the
   pending plan is rebuilt by whichever device restores it.
 - **The archive is split by year so launching never pays for it.** A re-plan
   reads and writes only the years that can hold a pending signal — this one,
@@ -209,6 +210,31 @@ only third-party binaries in the repo are the three OFL fonts.
   resolves to 0, and Android silently replaces the whole notification with its
   own "app is running" placeholder; and that icon being a transparent
   silhouette, since only its alpha channel survives.
+
+## A run must survive the app being closed
+
+A runner lost a whole run by swiping the app away mid-run: `onTaskRemoved`
+stopped the service, and the Flutter engine — where the run lives — died with
+the activity. Two things now prevent that, and both are needed:
+
+- **The engine outlives the activity while a run is active.** `MainActivity`
+  provides its engine from `FlutterEngineCache` and destroys it only when
+  `MissionService.running` is false, decided in `onDestroy` (Flutter also asks
+  when another activity takes the engine over, and answering true then is an
+  `AssertionError`). Every platform channel is installed once per engine, with
+  the application context, in `provideFlutterEngine` — not in
+  `configureFlutterEngine`, which runs again per activity and would orphan the
+  GPS listener under a live run. Don't reintroduce `stopSelf()` in
+  `onTaskRemoved`.
+- **The run in progress is on disk.** The run screen saves
+  `RunEngine.snapshot()` to `active_run.json` every 15 s of running, and at once
+  when the goal is met, and clears it after the finish is recorded. A snapshot
+  left on the next launch is a run the process died in, offered back on the home
+  screen to keep or discard. `clearIf` takes the run's id, so a late decision
+  about an old run never deletes a newer run's copy.
+
+Neither is reachable from the test suite: swipe a live run away on a device
+before believing the first one works.
 
 ## Gradle config that looks wrong but isn't
 

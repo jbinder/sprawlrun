@@ -48,12 +48,23 @@ class MissionService : Service() {
          *  any plausible run. */
         private const val WAKE_LOCK_TIMEOUT_MS = 6L * 60 * 60 * 1000
 
+        /**
+         * Whether a run is in progress. MainActivity reads it as it is
+         * destroyed: while true, the Flutter engine — and the run in it — is
+         * kept alive rather than destroyed with the activity. Set as soon as a
+         * start is asked for, not when Android gets round to delivering it.
+         */
+        @Volatile
+        var running = false
+            private set
+
         const val EXTRA_TEXT = "text"
         const val EXTRA_TRACKING = "tracking"
 
         /** [tracking] is whether the run has location — it decides the service
          *  type, and Android will not let that be claimed without the grant. */
         fun start(context: Context, text: String, tracking: Boolean) {
+            running = true
             val intent = Intent(context, MissionService::class.java)
                 .putExtra(EXTRA_TEXT, text)
                 .putExtra(EXTRA_TRACKING, tracking)
@@ -65,6 +76,7 @@ class MissionService : Service() {
         }
 
         fun stop(context: Context) {
+            running = false
             context.stopService(Intent(context, MissionService::class.java))
         }
     }
@@ -117,6 +129,7 @@ class MissionService : Service() {
     }
 
     override fun onDestroy() {
+        running = false
         started = false
         claimedLocation = false
         releaseWakeLock()
@@ -124,9 +137,10 @@ class MissionService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        // Swiping the app away ends the run; leaving the notice behind would
-        // advertise a mission that is no longer being timed.
-        stopSelf()
+        // Swiping the app away does NOT end the run. It used to — stopSelf()
+        // here, and MainActivity destroying the engine — and a runner lost a
+        // whole run that way. The engine now outlives the activity while this
+        // service runs, so the run carries on and the notice stays honest.
         super.onTaskRemoved(rootIntent)
     }
 

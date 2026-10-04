@@ -6,6 +6,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../models/goal.dart';
 import '../models/mission.dart';
+import '../data/active_run_store.dart';
 import '../models/profile.dart';
 import '../services/location_service.dart';
 import '../services/mission_notice.dart';
@@ -45,6 +46,14 @@ class _RunScreenState extends State<RunScreen> {
   // dispose, where looking the engine up again is not safe.
   RunEngine? _engine;
   AppState? _app;
+
+  /// Elapsed seconds at the last save of the run in progress, and whether
+  /// one is being written right now.
+  double _savedAt = -1;
+  bool _saving = false;
+  bool _savedGoal = false;
+
+  static const _saveEvery = 15.0;
 
   @override
   void initState() {
@@ -98,6 +107,32 @@ class _RunScreenState extends State<RunScreen> {
       setState(() => _locationTrouble = readiness);
     }
     engine.addListener(_pushNotice);
+    engine.addListener(_saveProgress);
+  }
+
+  /// Keeps the run on disk while it goes, so the process dying — which no
+  /// longer happens on a swipe, but still can — costs at most the last few
+  /// seconds rather than the whole run. Driven by the engine, not a timer of
+  /// its own, so it carries on while the app runs with no screen attached.
+  void _saveProgress() {
+    final engine = _engine;
+    final app = _app;
+    if (engine == null || app == null || _finishing || _saving) return;
+    if (engine.phase != RunPhase.running && engine.phase != RunPhase.autoPaused && engine.phase != RunPhase.paused) {
+      return;
+    }
+    final goalJustMet = engine.goalReached && !_savedGoal;
+    if (!goalJustMet && engine.elapsedSeconds - _savedAt < _saveEvery) return;
+
+    _saving = true;
+    _savedAt = engine.elapsedSeconds;
+    _savedGoal = engine.goalReached;
+    final snapshot = ActiveRunSnapshot(record: engine.snapshot(), codexHeard: List.of(engine.codexUnlocked));
+    unawaited(
+      app.activeRun.save(snapshot).catchError((Object e) => debugPrint('Saving the run in progress failed: $e')).whenComplete(
+        () => _saving = false,
+      ),
+    );
   }
 
   /// The notice's opening line, from the goal alone — the engine has not
@@ -168,6 +203,7 @@ class _RunScreenState extends State<RunScreen> {
     _bannerTimer?.cancel();
     _events?.cancel();
     _engine?.removeListener(_pushNotice);
+    _engine?.removeListener(_saveProgress);
     // Covers every way off this screen: finishing, abandoning, or backing out.
     unawaited(_notice?.stop() ?? Future<void>.value());
     unawaited(WakelockPlus.disable());
@@ -191,6 +227,13 @@ class _RunScreenState extends State<RunScreen> {
     final codex = List<String>.from(engine.codexUnlocked);
     final record = await engine.finish();
     final report = await app.completeRun(record, mission: widget.mission, codexHeard: codex);
+    // Recorded for good now; the copy kept against a crash has done its job.
+    // A save still in flight could land after this and leave it behind, so
+    // wait it out first.
+    while (_saving) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+    }
+    await app.activeRun.clearIf(record.id);
 
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(

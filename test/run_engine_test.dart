@@ -521,7 +521,7 @@ void main() {
     });
   });
 
-  group('splits on a free run', () {
+  group('splits', () {
     List<SplitReached> splitsOf(Harness h) {
       final seen = <SplitReached>[];
       h.engine.events.listen((e) {
@@ -568,7 +568,7 @@ void main() {
       });
     });
 
-    test('never on a mission — the story has the narrator', () {
+    test('on a mission too, when the story is quiet', () {
       fakeAsync((fake) {
         final h = Harness(fake, mission: missionWith(const []), goal: RunGoal.seconds(1800))..begin();
         final splits = splitsOf(h);
@@ -576,8 +576,45 @@ void main() {
         h.steady(700, 3.0);
         fake.flushMicrotasks();
 
-        expect(splits, isEmpty);
-        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre')), isEmpty);
+        expect(splits.map((s) => s.count), [1, 2]);
+        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre')), hasLength(2));
+      });
+    });
+
+    test('on a mission, held through a pursuit and timed as it was run', () {
+      fakeAsync((fake) {
+        // The pursuit opens at 300 s and lasts two minutes; at 3 m/s the first
+        // kilometre falls at about 333 s, right in the middle of it.
+        final pursuit = ChaseSpec(
+          duration: const Duration(seconds: 120),
+          paceFactor: 1.2,
+          pursuer: 'TEST DRONE',
+          escapedLines: const [StoryLine(speaker: 'SIX', text: 'escaped')],
+          caughtLines: const [StoryLine(speaker: 'SIX', text: 'caught')],
+        );
+        final h = Harness(
+          fake,
+          mission: missionWith([beat('b0', fraction: 0.25, chase: pursuit)]),
+          goal: RunGoal.seconds(1200),
+        )..begin();
+        final splits = splitsOf(h);
+
+        h.steady(360, 3.0);
+        fake.flushMicrotasks();
+        expect(h.engine.activeChase, isNotNull);
+        expect(splits.map((s) => s.count), [1], reason: 'the crossing is still seen on screen');
+        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre')), isEmpty,
+            reason: 'nothing talks over the pursuit');
+
+        h.steady(120, 3.0);
+        fake.flushMicrotasks();
+        expect(h.engine.activeChase, isNull);
+        final said = h.narrator.spokenText.where((t) => t.startsWith('Kilometre')).toList();
+        expect(said, hasLength(1), reason: 'read out once the pursuit and its lines are over');
+        expect(said.single, matches(RegExp(r'^Kilometre 1\. Split 5 minutes \d+\.')),
+            reason: 'timed at the crossing, not when it could finally be said');
+        expect(h.narrator.spokenText.indexOf('caught'), lessThan(h.narrator.spokenText.indexOf(said.single)),
+            reason: 'after the pursuit\'s own lines, not before');
       });
     });
 

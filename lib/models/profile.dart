@@ -179,9 +179,9 @@ class Profile {
   final bool autoPause;
   final bool keepScreenOn;
 
-  /// Whether a free run reads out each kilometre (or mile) as it passes.
-  /// Missions never do: their story beats share the narrator, and a dry
-  /// readout mid-scene would both delay a beat and break the mood.
+  /// Whether each kilometre (or mile) is read out as it passes. On a mission
+  /// the readout waits for any beat or pursuit to finish: a dry readout
+  /// mid-scene would both delay the story and break the mood.
   final bool splitsEnabled;
 
   /// The mission pack the ops screen shows. Null means the first loaded pack,

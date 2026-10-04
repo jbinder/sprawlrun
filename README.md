@@ -176,8 +176,8 @@ Forty entries across the two campaigns.
 - GPS tracking that keeps going with the screen off, or with the app swiped away, with
   auto-pause; a run the app dies in is kept and offered back
 - A time or distance target per run, and free runs with no story at all
-- Kilometre (or mile) splits read out on free runs, with the split and total time —
-  switchable off
+- Kilometre (or mile) splits read out with the split and total time — on a mission they
+  wait for the scene to end; switchable off
 - Live HUD: distance, pace, elapsed, goal ring, and the pursuit bar
 - Calories from the ACSM metabolic equations and your body mass
 - Route drawn as a neon trace, replayed at the pace you actually ran it
@@ -251,7 +251,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 427 tests
+flutter test                   # 428 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

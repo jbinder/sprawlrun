@@ -205,10 +205,15 @@ class RunEngine extends ChangeNotifier {
   DateTime? _lastBeatEndedAt;
   bool _beatPlaying = false;
 
-  /// Whole kilometres (or miles) already read out, and the elapsed time when
-  /// the last of them was — so the next split is measured from there.
+  /// Whole kilometres (or miles) crossed, and the elapsed time of the last
+  /// crossing.
   int _splitsDone = 0;
   double _lastSplitAt = 0;
+
+  /// The same for the last one read out. Behind the two above while a
+  /// readout waits for the story to finish.
+  int _spokenSplits = 0;
+  double _spokenSplitAt = 0;
   double _lastTracePointAt = -999;
   double _distanceAtLastTick = 0;
   int _implausibleStreak = 0;
@@ -393,6 +398,8 @@ class RunEngine extends ChangeNotifier {
     _beatPlaying = false;
     _splitsDone = 0;
     _lastSplitAt = 0;
+    _spokenSplits = 0;
+    _spokenSplitAt = 0;
     _lastTracePointAt = -999;
     _distanceAtLastTick = 0;
     _implausibleStreak = 0;
@@ -558,37 +565,50 @@ class RunEngine extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Reads out each kilometre (or mile) as a free run passes it.
+  /// Reads out each kilometre (or mile) as the run passes it.
   ///
-  /// Free runs only. A mission's story beats go through the same narrator
-  /// queue, so a split there would delay a beat, and a dry readout in the
-  /// middle of a scene would break it. It goes through `speakBeat` all the
+  /// On a mission the story comes first: a split never cuts into a beat or a
+  /// pursuit, and waits for it to end. Crossings are still timed the moment
+  /// they happen — only the readout waits — so a kilometre passed mid-scene is
+  /// not announced slower than it was run. It goes through `speakBeat` all the
   /// same, rather than a path of its own: that is what queues it behind
-  /// anything already speaking and takes and returns audio focus, which is
-  /// the part that has needed fixing on real runs before.
+  /// anything already speaking and takes and returns audio focus, which is the
+  /// part that has needed fixing on real runs before.
   void _maybeReadSplit() {
-    if (mission != null || !profile.splitsEnabled || phase != RunPhase.running) return;
+    if (!profile.splitsEnabled || phase != RunPhase.running) return;
     final metric = profile.isMetric;
     final reached = (distanceMeters / (metric ? 1000.0 : 1609.344)).floor();
-    if (reached <= _splitsDone) return;
+    if (reached > _splitsDone) {
+      // The flash on screen is per crossing, so it times from the last one.
+      final split = (elapsedSeconds - _lastSplitAt) / (reached - _splitsDone);
+      _splitsDone = reached;
+      _lastSplitAt = elapsedSeconds;
+      _events.add(SplitReached(count: reached, splitSeconds: split, metric: metric));
+    }
 
-    // A jump in the GPS can cross two boundaries between ticks. One readout for
+    if (_splitsDone <= _spokenSplits) return;
+    // The story's turn: wait for the scene and the chase to be over.
+    if (_beatPlaying || activeChase != null) return;
+
+    // A jump in the GPS can cross two boundaries between ticks, and a long
+    // scene can hold a readout past the next one. Either way: one readout for
     // where the runner now is — a backlog of stale ones queued behind each
     // other would still be talking a minute later — with the time shared out.
-    final split = (elapsedSeconds - _lastSplitAt) / (reached - _splitsDone);
-    _splitsDone = reached;
-    _lastSplitAt = elapsedSeconds;
-
-    _events.add(SplitReached(count: reached, splitSeconds: split, metric: metric));
+    final split = (_lastSplitAt - _spokenSplitAt) / (_splitsDone - _spokenSplits);
+    final total = _lastSplitAt;
+    final count = _splitsDone;
+    _spokenSplits = _splitsDone;
+    _spokenSplitAt = _lastSplitAt;
     unawaited(
       narrator.speakBeat([
         StoryLine(
           speaker: 'SYSTEM',
-          text: SplitReadout.line(count: reached, metric: metric, splitSeconds: split, totalSeconds: elapsedSeconds),
+          text: SplitReadout.line(count: count, metric: metric, splitSeconds: split, totalSeconds: total),
         ),
       ]),
     );
   }
+
 
   void _checkGoal() {
     if (goalReached) return;

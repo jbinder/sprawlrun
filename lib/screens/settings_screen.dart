@@ -227,8 +227,8 @@ class SettingsScreen extends StatelessWidget {
                           _SwitchRow(
                             label: profile.isMetric ? 'Kilometre splits' : 'Mile splits',
                             subtitle: profile.isMetric
-                                ? 'On free runs, each kilometre read out with its time'
-                                : 'On free runs, each mile read out with its time',
+                                ? 'Each kilometre read out with its time — on a mission, between scenes'
+                                : 'Each mile read out with its time — on a mission, between scenes',
                             value: profile.splitsEnabled,
                             onChanged: (v) => update(profile.copyWith(splitsEnabled: v)),
                           ),

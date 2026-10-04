@@ -480,8 +480,6 @@ class _Telemetry extends StatelessWidget {
   }
 }
 
-/// The story, on screen, for anyone running without headphones — and as a
-/// transcript for anything missed while the wind was loud.
 /// What a free run promises about the runner's own audio. Splits are the one
 /// thing that speaks on a free run, so silence is only promised without them.
 String freeRunAudioNote(Profile profile) => profile.splitsEnabled
@@ -489,6 +487,8 @@ String freeRunAudioNote(Profile profile) => profile.splitsEnabled
         'will cut into your audio.'
     : 'Free run — nothing will interrupt your audio.';
 
+/// The story, on screen, for anyone running without headphones — and as a
+/// transcript for anything missed while the wind was loud.
 class _TransmissionPanel extends StatelessWidget {
   const _TransmissionPanel({required this.engine});
 
@@ -517,7 +517,12 @@ class _TransmissionPanel extends StatelessWidget {
       );
     }
 
-    return NeonPanel(
+    // The panel only has room for the last few lines, and a single beat can
+    // be five — so after the goal's beat, everything before it had scrolled
+    // out of reach. Tapping opens the whole run's transcript.
+    final hidden = engine.transcript.length > (line != null ? 0 : 3);
+
+    final panel = NeonPanel(
       accent: line != null ? Cy.speaker(line.speaker) : Cy.rule,
       lit: line != null,
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -538,6 +543,10 @@ class _TransmissionPanel extends StatelessWidget {
               ),
               const Spacer(),
               Text('${engine.beatsHeard} RX', style: CyType.mono(size: 9, color: Cy.ghost)),
+              if (hidden) ...[
+                const SizedBox(width: 10),
+                Text('ALL ${engine.transcript.length} ›', style: CyType.mono(size: 9, color: Cy.cyanDim)),
+              ],
             ],
           ),
           const SizedBox(height: 10),
@@ -570,6 +579,90 @@ class _TransmissionPanel extends StatelessWidget {
                 ),
               ),
         ],
+      ),
+    );
+
+    if (!hidden) return panel;
+    return Semantics(
+      button: true,
+      label: 'Show all ${engine.transcript.length} transmissions',
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => showDialog<void>(context: context, builder: (_) => _TranscriptDialog(engine: engine)),
+        child: panel,
+      ),
+    );
+  }
+}
+
+/// Every line heard this run, newest at the bottom, and still updating if a
+/// beat arrives while it is open.
+class _TranscriptDialog extends StatelessWidget {
+  const _TranscriptDialog({required this.engine});
+
+  final RunEngine engine;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+      child: NeonPanel(
+        lit: true,
+        child: ListenableBuilder(
+          listenable: engine,
+          builder: (context, _) {
+            final lines = engine.transcript.reversed.toList();
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text('TRANSCRIPT', style: CyType.display(size: 16, color: Cy.cyan)),
+                    const Spacer(),
+                    Text('${lines.length} LINES', style: CyType.mono(size: 10, color: Cy.ghost)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Flexible(
+                  // Reversed, so it opens on the newest line rather than the
+                  // first one of the run.
+                  child: ListView.builder(
+                    reverse: true,
+                    shrinkWrap: true,
+                    itemCount: lines.length,
+                    itemBuilder: (context, i) {
+                      final l = lines[i];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: RichText(
+                          text: TextSpan(
+                            style: CyType.body(size: 14, color: Cy.ink, height: 1.35),
+                            children: [
+                              TextSpan(
+                                text: '${l.speaker.toUpperCase()}  ',
+                                style: CyType.mono(size: 11, color: Cy.speaker(l.speaker)),
+                              ),
+                              TextSpan(text: l.text),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 12),
+                CyberButton(
+                  label: 'Back to the run',
+                  style: CyberButtonStyle.ghost,
+                  dense: true,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

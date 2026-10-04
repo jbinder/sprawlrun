@@ -482,6 +482,13 @@ class _Telemetry extends StatelessWidget {
 
 /// The story, on screen, for anyone running without headphones — and as a
 /// transcript for anything missed while the wind was loud.
+/// What a free run promises about the runner's own audio. Splits are the one
+/// thing that speaks on a free run, so silence is only promised without them.
+String freeRunAudioNote(Profile profile) => profile.splitsEnabled
+    ? 'Free run — only a short readout at each ${profile.isMetric ? 'kilometre' : 'mile'} '
+        'will cut into your audio.'
+    : 'Free run — nothing will interrupt your audio.';
+
 class _TransmissionPanel extends StatelessWidget {
   const _TransmissionPanel({required this.engine});
 
@@ -501,7 +508,7 @@ class _TransmissionPanel extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                'Free run — nothing will interrupt your audio.',
+                freeRunAudioNote(engine.profile),
                 style: CyType.body(size: 14, color: Cy.ghost),
               ),
             ),

@@ -246,6 +246,14 @@ void main() {
 
 /// A runner several weeks into the campaign, so no screen is empty.
 Future<AppState> _seed(WidgetTester tester) async {
+  // The run screen asks for notification permission before it starts the run,
+  // and an unanswered platform call never returns in the harness — so the HUD
+  // shots showed a run stuck on STANDBY at 00:00 until this answered it.
+  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+    const MethodChannel('io.github.jbinder.sprawlrun/notifications'),
+    (call) async => true,
+  );
+
   tester.view.physicalSize = _logicalSize * _pixelRatio;
   tester.view.devicePixelRatio = _pixelRatio;
   addTearDown(tester.view.reset);

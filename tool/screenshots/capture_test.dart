@@ -21,6 +21,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:sprawl_run/widgets/glitch_text.dart';
 import 'package:sprawl_run/app.dart';
+import 'package:sprawl_run/screens/dashboard_screen.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
@@ -306,6 +307,10 @@ Future<AppState> _seed(WidgetTester tester) async {
     const MethodChannel('io.github.jbinder.sprawlrun/notifications'),
     (call) async => true,
   );
+
+  // Evening, the hour the run-HUD shot is set at — and the night city's line.
+  debugGreetingHour = 21;
+  addTearDown(() => debugGreetingHour = null);
 
   tester.view.physicalSize = _logicalSize * _pixelRatio;
   tester.view.devicePixelRatio = _pixelRatio;

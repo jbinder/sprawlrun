@@ -41,7 +41,9 @@ class GlitchText extends StatefulWidget {
   /// tearing at once never happens in the app and reads as a rendering fault
   /// rather than a style.
   ///
-  /// Seeded, so regenerating the screenshots picks the same titles each time.
+  /// Seeded, so regenerating the screenshots picks the same titles each time —
+  /// and tears them the same way, since each one's offset is drawn from its
+  /// own random too.
   /// Named `debug` in the Flutter sense: it exists for
   /// `tool/screenshots/capture_test.dart` and nothing in the app calls it.
   static void debugGlitchSome({double fraction = 0.35, int seed = 4}) {
@@ -50,7 +52,9 @@ class GlitchText extends StatefulWidget {
     final picked = (states.length * fraction).round().clamp(1, states.length);
     final order = List.generate(states.length, (i) => i)..shuffle(Random(seed));
     for (final i in order.take(picked)) {
-      states[i]._controller.forward(from: 0);
+      states[i]
+        .._random = Random(seed + i)
+        .._controller.forward(from: 0);
     }
   }
 }
@@ -61,7 +65,7 @@ class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateM
     duration: const Duration(milliseconds: 320),
   );
 
-  final Random _random = Random();
+  Random _random = Random();
   double _offset = 0;
   Timer? _next;
 

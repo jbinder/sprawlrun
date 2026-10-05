@@ -128,6 +128,12 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
+/// Pins the hour the greeting reads. Left to the real clock, every screenshot
+/// regeneration changed the dashboard shot for nothing but the time of day it
+/// happened to run at. Named `debug` in the Flutter sense: it exists for
+/// `tool/screenshots/capture_test.dart` and nothing in the app sets it.
+int? debugGreetingHour;
+
 class _Greeting extends StatelessWidget {
   const _Greeting({required this.callsign});
 
@@ -136,7 +142,7 @@ class _Greeting extends StatelessWidget {
   /// Flavour that tracks the clock — the Sprawl is a night city, and the app
   /// should sound like it knows what time it is.
   String get _line {
-    final hour = DateTime.now().hour;
+    final hour = debugGreetingHour ?? DateTime.now().hour;
     if (hour < 5) {
       return 'The city is at its quietest. Nobody is watching the streets at this hour.';
     }
@@ -154,7 +160,7 @@ class _Greeting extends StatelessWidget {
   }
 
   String get _salutation {
-    final hour = DateTime.now().hour;
+    final hour = debugGreetingHour ?? DateTime.now().hour;
     if (hour < 5) return 'STILL AWAKE';
     if (hour < 12) return 'MORNING';
     if (hour < 18) return 'AFTERNOON';

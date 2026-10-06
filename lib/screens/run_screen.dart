@@ -108,6 +108,23 @@ class _RunScreenState extends State<RunScreen> {
     }
     engine.addListener(_pushNotice);
     engine.addListener(_saveProgress);
+    _notice!.onAction(_onNoticeAction);
+  }
+
+  /// The notification's buttons. They do exactly what the run screen's own
+  /// controls do: Stop goes through [_end], so short of the goal it asks first
+  /// — which is why the Stop button opens the app.
+  void _onNoticeAction(NoticeAction action) {
+    final engine = _engine;
+    if (engine == null || _finishing) return;
+    switch (action) {
+      case NoticeAction.pause:
+        engine.pause();
+      case NoticeAction.resume:
+        engine.resume();
+      case NoticeAction.stop:
+        unawaited(_end(confirmed: engine.goalReached));
+    }
   }
 
   /// Keeps the run on disk while it goes, so the process dying — which no
@@ -144,7 +161,13 @@ class _RunScreenState extends State<RunScreen> {
   /// What the notification says: how much of the target is left, in whichever
   /// unit the runner chose it in.
   String _describeProgress(RunEngine engine, AppState app) {
+    if (engine.phase == RunPhase.paused) return 'Paused — ${_describeLeft(engine, app)}';
+    if (engine.phase == RunPhase.autoPaused) return 'Auto-paused — ${_describeLeft(engine, app)}';
     if (engine.goalReached) return 'Target reached — still running.';
+    return _describeLeft(engine, app);
+  }
+
+  String _describeLeft(RunEngine engine, AppState app) {
     final left = engine.remaining;
     return widget.goal.isTime
         ? '${Fmt.clock(left)} left'
@@ -162,7 +185,9 @@ class _RunScreenState extends State<RunScreen> {
     final text = _describeProgress(engine, app);
     if (text == _noticeText) return;
     _noticeText = text;
-    unawaited(notice.update(text));
+    // As on screen: an auto-pause offers Resume too.
+    final paused = engine.phase == RunPhase.paused || engine.phase == RunPhase.autoPaused;
+    unawaited(notice.update(text, paused: paused));
   }
 
   void _onEvent(RunEvent event) {
@@ -204,6 +229,7 @@ class _RunScreenState extends State<RunScreen> {
     _events?.cancel();
     _engine?.removeListener(_pushNotice);
     _engine?.removeListener(_saveProgress);
+    _notice?.onAction(null);
     // Covers every way off this screen: finishing, abandoning, or backing out.
     unawaited(_notice?.stop() ?? Future<void>.value());
     unawaited(WakelockPlus.disable());

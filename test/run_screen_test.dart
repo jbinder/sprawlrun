@@ -17,13 +17,32 @@ import 'package:sprawl_run/theme/cyber_theme.dart';
 
 import 'support/fakes.dart';
 
+const _notifications = MethodChannel('io.github.jbinder.sprawlrun/notifications');
+
 /// A run screen with a live run behind it, the way the app starts one.
 class _Run {
-  _Run(this.state, this.engine, this._clock);
+  _Run(this.state, this.engine, this._clock, this.noticeCalls);
 
   final AppState state;
   final RunEngine engine;
   final _Clock _clock;
+
+  /// Everything the screen told the notification, oldest first.
+  final List<MethodCall> noticeCalls;
+
+  /// The last update sent to the notification.
+  Map<Object?, Object?> get lastNotice =>
+      noticeCalls.lastWhere((c) => c.method == 'updateMissionNotice').arguments as Map<Object?, Object?>;
+
+  /// A tap on one of the notification's buttons, as Android delivers it.
+  Future<void> tapNotice(WidgetTester tester, String action) async {
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      _notifications.name,
+      _notifications.codec.encodeMethodCall(MethodCall('noticeAction', action)),
+      (_) {},
+    );
+    await tester.pump();
+  }
 
   /// Moves the run on by whole seconds, at a steady pace.
   Future<void> run(WidgetTester tester, int seconds, {double mps = 3.0}) async {
@@ -49,10 +68,11 @@ Future<_Run> _startRun(WidgetTester tester) async {
 
   // The run asks for notification permission before it starts, and an
   // unanswered platform call never returns in the harness.
-  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-    const MethodChannel('io.github.jbinder.sprawlrun/notifications'),
-    (call) async => true,
-  );
+  final noticeCalls = <MethodCall>[];
+  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(_notifications, (call) async {
+    noticeCalls.add(call);
+    return true;
+  });
 
   final profiles = ProfileRepository(root);
   final state = AppState(
@@ -95,7 +115,7 @@ Future<_Run> _startRun(WidgetTester tester) async {
     await tester.pump(const Duration(seconds: 1));
   }
   expect(engine.phase, RunPhase.running);
-  return _Run(state, engine, clock);
+  return _Run(state, engine, clock, noticeCalls);
 }
 
 /// Ends the run so its ticker stops, and lets the line in flight run out.
@@ -138,6 +158,62 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('TRANSCRIPT'), findsNothing);
 
+    await _stop(tester, run);
+  });
+
+  // The notification's buttons work without opening the app — including after
+  // it has been swiped away, when the run carries on with no screen at all.
+  testWidgets('Pause and Resume on the notification pause and resume the run', (tester) async {
+    final run = await _startRun(tester);
+    await run.run(tester, 30);
+    expect(run.lastNotice['paused'], isFalse);
+
+    await run.tapNotice(tester, 'pause');
+    await run.run(tester, 1, mps: 0);
+    expect(run.engine.phase, RunPhase.paused);
+    expect(run.lastNotice['paused'], isTrue, reason: 'the button now offers Resume');
+    expect(run.lastNotice['text'], startsWith('Paused'));
+    expect(find.text('RESUME'), findsOneWidget, reason: 'the screen agrees');
+
+    // The clock stands still while paused, and a fix does not resume a pause
+    // the runner chose.
+    final held = run.engine.elapsedSeconds;
+    await run.run(tester, 20);
+    expect(run.engine.phase, RunPhase.paused);
+    expect(run.engine.elapsedSeconds, held);
+
+    await run.tapNotice(tester, 'resume');
+    await run.run(tester, 2);
+    expect(run.engine.phase, RunPhase.running);
+    expect(run.lastNotice['paused'], isFalse);
+
+    await _stop(tester, run);
+  });
+
+  testWidgets('Stop on the notification asks first, short of the goal', (tester) async {
+    final run = await _startRun(tester);
+    await run.run(tester, 30);
+
+    await run.tapNotice(tester, 'stop');
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('ABORT?'), findsOneWidget, reason: 'the same question the screen asks');
+    expect(run.engine.phase, RunPhase.running, reason: 'nothing ends until the runner says so');
+
+    await tester.tap(find.text('KEEP GOING'));
+    // The first frame after a route pops only starts its animation.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('ABORT?'), findsNothing);
+    expect(run.engine.phase, RunPhase.running);
+
+    await _stop(tester, run);
+  });
+
+  testWidgets('an unknown button is ignored, not thrown', (tester) async {
+    final run = await _startRun(tester);
+    await run.tapNotice(tester, 'self-destruct');
+    expect(tester.takeException(), isNull);
+    expect(run.engine.phase, RunPhase.running);
     await _stop(tester, run);
   });
 

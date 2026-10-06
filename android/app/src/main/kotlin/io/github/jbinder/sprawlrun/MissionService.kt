@@ -58,16 +58,35 @@ class MissionService : Service() {
         var running = false
             private set
 
+        /**
+         * Delivers the notification's buttons to the run. Set once per Flutter
+         * engine by MainActivity, to a call on the engine's own channel — so a
+         * button still reaches the run when the app has been swiped away and
+         * no activity exists.
+         */
+        @Volatile
+        var onAction: ((String) -> Unit)? = null
+
+        const val ACTION_PAUSE = "pause"
+        const val ACTION_RESUME = "resume"
+        const val ACTION_STOP = "stop"
+
+        /** On the activity intent the Stop button opens: see MainActivity. */
+        const val EXTRA_NOTICE_ACTION = "io.github.jbinder.sprawlrun.noticeAction"
+
+        const val EXTRA_PAUSED = "paused"
+
         const val EXTRA_TEXT = "text"
         const val EXTRA_TRACKING = "tracking"
 
         /** [tracking] is whether the run has location — it decides the service
          *  type, and Android will not let that be claimed without the grant. */
-        fun start(context: Context, text: String, tracking: Boolean) {
+        fun start(context: Context, text: String, tracking: Boolean, paused: Boolean = false) {
             running = true
             val intent = Intent(context, MissionService::class.java)
                 .putExtra(EXTRA_TEXT, text)
                 .putExtra(EXTRA_TRACKING, tracking)
+                .putExtra(EXTRA_PAUSED, paused)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
@@ -89,6 +108,9 @@ class MissionService : Service() {
      *  promoted once the answer arrives. */
     private var claimedLocation = false
 
+    /** Whether the run is paused, so the button offers Resume instead. */
+    private var paused = false
+
     /** Shown for the instant before the first tick arrives. */
     private val defaultText get() = "Mission active — keep moving."
 
@@ -102,8 +124,18 @@ class MissionService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // A tap on Pause or Resume. Handed to the run, which pauses and then
+        // pushes the new state back through the usual update — the
+        // notification is only ever drawn from what the run says.
+        val action = intent?.action
+        if (action == ACTION_PAUSE || action == ACTION_RESUME) {
+            if (started) onAction?.invoke(action)
+            return START_NOT_STICKY
+        }
+
         val text = intent?.getStringExtra(EXTRA_TEXT) ?: defaultText
         val tracking = intent?.getBooleanExtra(EXTRA_TRACKING, false) ?: false
+        paused = intent?.getBooleanExtra(EXTRA_PAUSED, false) ?: false
 
         if (started && tracking == claimedLocation) {
             // A tick, not a new run and not a change of type. notify() replaces
@@ -161,7 +193,48 @@ class MissionService : Service() {
             // to ten seconds unless it is told not to. For a run that is ten
             // seconds of the runner wondering whether the mission started.
             .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+            // No icons: Android has not drawn action icons since 7.0, and an
+            // icon resolved only here would be one more resource for the
+            // shrinker to strip (see CLAUDE.md).
+            .addAction(
+                if (paused) {
+                    NotificationCompat.Action.Builder(0, "Resume", serviceIntent(ACTION_RESUME)).build()
+                } else {
+                    NotificationCompat.Action.Builder(0, "Pause", serviceIntent(ACTION_PAUSE)).build()
+                }
+            )
+            .addAction(NotificationCompat.Action.Builder(0, "Stop", buildStopIntent()).build())
             .build()
+    }
+
+    /** Pause and Resume go straight to this service: no app to open. */
+    private fun serviceIntent(action: String): PendingIntent =
+        PendingIntent.getService(
+            this,
+            action.hashCode(),
+            Intent(this, MissionService::class.java).setAction(action),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+    /**
+     * Stop opens the app. Ending a run short of its goal asks first — the run
+     * screen's Stop does too — and a notification cannot ask anything. Past
+     * the goal the run screen finishes at once, as its own button does.
+     */
+    private fun buildStopIntent(): PendingIntent? {
+        val intent = packageManager.getLaunchIntentForPackage(packageName) ?: return null
+        intent.setPackage(null)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+        intent.putExtra(EXTRA_NOTICE_ACTION, ACTION_STOP)
+        return PendingIntent.getActivity(
+            this,
+            // Distinct from the tap's request code, or the two PendingIntents
+            // would be one and FLAG_UPDATE_CURRENT would merge the extra into
+            // a plain tap.
+            1,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun buildBringToFrontIntent(): PendingIntent? {

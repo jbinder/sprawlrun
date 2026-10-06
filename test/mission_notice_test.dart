@@ -44,7 +44,15 @@ void main() {
     await notice.update('23:59 left');
 
     expect(calls.map((c) => c.method), ['startMissionNotice', 'updateMissionNotice']);
-    expect(calls.last.arguments, {'text': '23:59 left', 'tracking': true});
+    expect(calls.last.arguments, {'text': '23:59 left', 'tracking': true, 'paused': false});
+  });
+
+  test('a paused run tells the notification, so its button offers Resume', () async {
+    final calls = record();
+    final notice = MissionNotice.platform();
+    await notice.start('24:00 left', tracking: true);
+    await notice.update('Paused — 23:59 left', paused: true);
+    expect(calls.last.arguments, {'text': 'Paused — 23:59 left', 'tracking': true, 'paused': true});
   });
 
   test('a run started without location never claims to have it', () async {
@@ -53,7 +61,7 @@ void main() {
     await notice.start('24:00 left', tracking: false);
     await notice.update('23:59 left');
 
-    expect(calls.last.arguments, {'text': '23:59 left', 'tracking': false});
+    expect(calls.last.arguments, {'text': '23:59 left', 'tracking': false, 'paused': false});
   });
 
   test('stop needs nothing from the caller', () async {

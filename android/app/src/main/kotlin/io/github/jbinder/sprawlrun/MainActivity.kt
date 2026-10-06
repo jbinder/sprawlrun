@@ -3,6 +3,7 @@ package io.github.jbinder.sprawlrun
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
@@ -107,6 +108,24 @@ class MainActivity : FlutterActivity() {
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         attached = WeakReference(this)
         super.onCreate(savedInstanceState)
+        forwardNoticeAction(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        forwardNoticeAction(intent)
+    }
+
+    /**
+     * The notification's Stop button opens the app with an extra, so the run
+     * screen can ask before ending a run short of its goal. Removed once
+     * handled: Android redelivers an activity's intent on recreation, and a
+     * rotation must not ask again.
+     */
+    private fun forwardNoticeAction(intent: Intent?) {
+        val action = intent?.getStringExtra(MissionService.EXTRA_NOTICE_ACTION) ?: return
+        intent.removeExtra(MissionService.EXTRA_NOTICE_ACTION)
+        if (MissionService.running) MissionService.onAction?.invoke(action)
     }
 
     override fun onResume() {
@@ -165,7 +184,12 @@ class MainActivity : FlutterActivity() {
                 }
             }
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, notificationChannelName)
+        val notifications = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, notificationChannelName)
+        // The notification's buttons, into the run. One engine per process, so
+        // one listener; it is never cleared, since the engine outlives every
+        // activity that attaches to it.
+        MissionService.onAction = { action -> notifications.invokeMethod("noticeAction", action) }
+        notifications
             .setMethodCallHandler { call, result ->
                 when (call.method) {
                     "requestPermission" -> {
@@ -182,7 +206,8 @@ class MainActivity : FlutterActivity() {
                         MissionService.start(
                             app,
                             call.argument<String>("text") ?: "",
-                            call.argument<Boolean>("tracking") ?: false
+                            call.argument<Boolean>("tracking") ?: false,
+                            call.argument<Boolean>("paused") ?: false
                         )
                         result.success(null)
                     }
@@ -192,7 +217,8 @@ class MainActivity : FlutterActivity() {
                         MissionService.start(
                             app,
                             call.argument<String>("text") ?: "",
-                            call.argument<Boolean>("tracking") ?: false
+                            call.argument<Boolean>("tracking") ?: false,
+                            call.argument<Boolean>("paused") ?: false
                         )
                         result.success(null)
                     }

@@ -12,6 +12,7 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import 'panels.dart';
+import '../util/clock.dart';
 
 /// Writes a backup and hands it to the share sheet, returning what to tell the
 /// runner. Throws on failure; the caller owns the message either way.
@@ -247,7 +248,7 @@ class _ExportStatus extends StatelessWidget {
     if (last == null && atRisk == 0) return const SizedBox.shrink();
 
     final parts = [
-      last == null ? 'Never exported' : 'Last export: ${Fmt.ago(DateTime.now().difference(last))}',
+      last == null ? 'Never exported' : 'Last export: ${Fmt.ago(appNow().difference(last))}',
       if (atRisk > 0) '$atRisk run${atRisk == 1 ? '' : 's'} since',
     ];
 

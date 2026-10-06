@@ -15,6 +15,7 @@ import '../widgets/period_card.dart';
 import '../widgets/run_row.dart';
 import 'history_screen.dart';
 import 'period_detail_screen.dart';
+import '../util/clock.dart';
 
 /// Week, month, lifetime, and the run log.
 ///
@@ -204,7 +205,7 @@ class _PeriodPagerState extends State<_PeriodPager> {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    final now = DateTime.now();
+    final now = appNow();
     final current = _startOf(now);
     final start = _shift(current, -_back);
     final end = _shift(start, 1);
@@ -251,7 +252,7 @@ class _HistoryTeaser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final runLog = context.select<AppState, List<RunRecord>>((s) => s.runLog);
-    final today = StatsService.dayStart(DateTime.now());
+    final today = StatsService.dayStart(appNow());
     final thisWeek = StatsService.weekStart(today);
     final window = StatsService.period(
       runLog,

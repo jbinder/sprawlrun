@@ -78,6 +78,12 @@ them across by hand is what left the published listing on 0.1.0 shots — taken
 before the second campaign existed — until 2026-09-30. Edit the generator and re-run it. The
 only third-party binaries in the repo are the three OFL fonts.
 
+Regenerating is repeatable: the tool pins `appNow()` (`lib/util/clock.dart`) to
+a Sunday evening and seeds its data from that instant, so two runs produce
+byte-identical images whatever the day. Anything on screen derived from the
+time — this week, streaks, "ago", the greeting — must read `appNow()`, not
+`DateTime.now()`, or the store shots start drifting with the weekday again.
+
 ## Conventions worth preserving
 
 - **`RunEngine` owns no persistence and no UI.** It takes a `LocationSource`, a

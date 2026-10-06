@@ -12,6 +12,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/history_widgets.dart';
 import '../widgets/panels.dart';
 import 'period_detail_screen.dart';
+import '../util/clock.dart';
 
 /// The whole log at a glance: distance per month since the first run, then
 /// every month as a dot calendar. Months and lit days open in detail.
@@ -22,7 +23,7 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final units = state.profile.units;
-    final today = StatsService.dayStart(DateTime.now());
+    final today = StatsService.dayStart(appNow());
     // Oldest first for the bars, newest first for the blocks below them.
     final months = StatsService.monthlyHistory(state.runLog, now: today);
     final scale = DotScale.of(months.expand((m) => m.perDay));

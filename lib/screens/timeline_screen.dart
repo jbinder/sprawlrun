@@ -13,6 +13,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/filter_rail.dart';
 import '../widgets/panels.dart';
 import 'run_detail_screen.dart';
+import '../util/clock.dart';
 
 /// THE WIRE — everything that has come over it, newest first: the handlers'
 /// messages, runs, cleared operations, achievements and intel. Called the
@@ -110,7 +111,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
           .where((e) => e.kind == TimelineKind.signal && e.title == focus.from && e.body == focus.text)
           .firstOrNull;
       if (focused == null) {
-        focused = TimelineEntry(at: DateTime.now(), kind: TimelineKind.signal, title: focus.from, body: focus.text);
+        focused = TimelineEntry(at: appNow(), kind: TimelineKind.signal, title: focus.from, body: focus.text);
         entries = [focused, ...entries];
       }
     }
@@ -231,7 +232,7 @@ class _DayHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    final now = appNow();
     final today = DateTime(now.year, now.month, now.day);
     final label = switch (today.difference(day).inDays) {
       0 => 'TODAY',

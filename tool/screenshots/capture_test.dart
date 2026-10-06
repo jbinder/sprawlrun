@@ -21,7 +21,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:sprawl_run/widgets/glitch_text.dart';
 import 'package:sprawl_run/app.dart';
-import 'package:sprawl_run/screens/dashboard_screen.dart';
+import 'package:sprawl_run/util/clock.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
@@ -299,6 +299,10 @@ List<TracePoint> _sampleRoute({
   ];
 }
 
+/// When the screenshots claim to be taken. A Sunday, so the sample weeks are
+/// all whole.
+final _shotsTakenAt = DateTime(2026, 9, 27, 21, 0);
+
 Future<AppState> _seed(WidgetTester tester) async {
   // The run screen asks for notification permission before it starts the run,
   // and an unanswered platform call never returns in the harness — so the HUD
@@ -308,9 +312,13 @@ Future<AppState> _seed(WidgetTester tester) async {
     (call) async => true,
   );
 
-  // Evening, the hour the run-HUD shot is set at — and the night city's line.
-  debugGreetingHour = 21;
-  addTearDown(() => debugGreetingHour = null);
+  // The app's "now", pinned: a Sunday evening, so every week in the sample
+  // data is complete — on a real Monday the current week was nearly empty and
+  // the streak card read "1 MIN to go" — and the hour of the run-HUD shot,
+  // which is also the night city's greeting. Every shot is then the same
+  // whenever and wherever the tool runs.
+  debugNow = _shotsTakenAt;
+  addTearDown(() => debugNow = null);
 
   tester.view.physicalSize = _logicalSize * _pixelRatio;
   tester.view.devicePixelRatio = _pixelRatio;
@@ -330,7 +338,7 @@ Future<AppState> _seed(WidgetTester tester) async {
   );
 
   // Anchored to today so regenerating always shows a live current week.
-  final base = DateTime.now();
+  final base = _shotsTakenAt;
   final today = DateTime(base.year, base.month, base.day, 7, 30);
 
   await tester.runAsync(() async {

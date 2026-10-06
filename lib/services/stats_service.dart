@@ -4,6 +4,7 @@ import '../models/profile.dart';
 import '../models/run_record.dart';
 import '../models/stats.dart';
 import '../util/format.dart';
+import '../util/clock.dart';
 
 /// Every derived number in the app is computed here, from the run log alone.
 ///
@@ -67,7 +68,7 @@ abstract final class StatsService {
 
   /// Rolling window ending now — "the last 7 days", not "since Monday".
   static PeriodStats lastDays(List<RunRecord> runs, int days, {required String label, DateTime? now}) {
-    final end = _nextDay(dayStart(now ?? DateTime.now()));
+    final end = _nextDay(dayStart(now ?? appNow()));
     return period(runs, label: label, from: end.subtract(Duration(days: days)), to: end);
   }
 
@@ -86,7 +87,7 @@ abstract final class StatsService {
     final scoring = runs.where((r) => r.countsForStats);
     if (scoring.isEmpty) return const [];
     final first = scoring.map((r) => r.startedAt).reduce((a, b) => a.isBefore(b) ? a : b);
-    final last = monthStart(now ?? DateTime.now());
+    final last = monthStart(now ?? appNow());
 
     final out = <PeriodStats>[];
     for (var month = monthStart(first); !month.isAfter(last); month = addMonths(month, 1)) {
@@ -108,7 +109,7 @@ abstract final class StatsService {
     }
 
     final weekly = _weeklyTotals(scoring);
-    final streak = _streakWeeks(weekly, goal, now: now ?? DateTime.now());
+    final streak = _streakWeeks(weekly, goal, now: now ?? appNow());
 
     final sortedByDate = List<RunRecord>.from(scoring)..sort((a, b) => a.startedAt.compareTo(b.startedAt));
     final completed = scoring.where((r) => r.isMission && r.isSuccess).map((r) => r.missionId!).toSet();
@@ -144,7 +145,7 @@ abstract final class StatsService {
   }
 
   static StreakStatus streak(List<RunRecord> runs, StreakGoal goal, {DateTime? now}) {
-    final at = now ?? DateTime.now();
+    final at = now ?? appNow();
     final weekly = _weeklyTotals(runs.where((r) => r.countsForStats).toList());
     final (current, longest) = _streakWeeks(weekly, goal, now: at);
 

@@ -22,6 +22,7 @@ import '../services/signal_library.dart';
 import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
 import '../services/stats_service.dart';
+import '../util/clock.dart';
 
 /// The single source of truth the UI reads from.
 ///
@@ -84,7 +85,7 @@ class AppState extends ChangeNotifier {
   Future<void> loadSignalArchive() async {
     if (_archiveRequested) return;
     _archiveRequested = true;
-    signalHistory = _library.resolveAll(await signalLog.sent(DateTime.now()));
+    signalHistory = _library.resolveAll(await signalLog.sent(appNow()));
     _archiveReady = true;
     notifyListeners();
   }
@@ -457,7 +458,7 @@ class AppState extends ChangeNotifier {
 
   /// Whether to ask the runner to export, and how much is at stake.
   BackupNudge? get backupNudge =>
-      BackupNudge.of(profile: profile, runLog: runLog, now: DateTime.now());
+      BackupNudge.of(profile: profile, runLog: runLog, now: appNow());
 
   /// Restores [archive] and rebuilds everything derived from it.
   ///

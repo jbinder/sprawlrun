@@ -31,8 +31,14 @@ class _Run {
   final List<MethodCall> noticeCalls;
 
   /// The last update sent to the notification.
-  Map<Object?, Object?> get lastNotice =>
-      noticeCalls.lastWhere((c) => c.method == 'updateMissionNotice').arguments as Map<Object?, Object?>;
+  Map<Object?, Object?> get lastNotice => lastNoticeOrNull!;
+
+  Map<Object?, Object?>? get lastNoticeOrNull {
+    for (final c in noticeCalls.reversed) {
+      if (c.method == 'updateMissionNotice') return c.arguments as Map<Object?, Object?>;
+    }
+    return null;
+  }
 
   /// A tap on one of the notification's buttons, as Android delivers it.
   Future<void> tapNotice(WidgetTester tester, String action) async {
@@ -59,7 +65,7 @@ class _Clock {
   final location = FakeLocation();
 }
 
-Future<_Run> _startRun(WidgetTester tester) async {
+Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500}) async {
   final root = tempRoot('runscreen');
   addTearDown(() => root.deleteSync(recursive: true));
   tester.view.physicalSize = const Size(1179, 2556);
@@ -106,7 +112,7 @@ Future<_Run> _startRun(WidgetTester tester) async {
           data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(0.85)),
           child: child!,
         ),
-        home: RunScreen(mission: mission, goal: const RunGoal(GoalType.time, 1500)),
+        home: RunScreen(mission: mission, goal: RunGoal(GoalType.time, goalSeconds)),
       ),
     ),
   );
@@ -205,6 +211,25 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('ABORT?'), findsNothing);
     expect(run.engine.phase, RunPhase.running);
+
+    await _stop(tester, run);
+  });
+
+  // A finished run used to keep the red Abort button too, relabelled "End",
+  // doing exactly what Complete does — it read as if a won run could be
+  // cancelled.
+  testWidgets('past the goal, Complete replaces Abort — on screen and on the notification', (tester) async {
+    final run = await _startRun(tester, goalSeconds: 60);
+    expect(find.text('ABORT'), findsOneWidget);
+    expect(run.lastNoticeOrNull?['goalReached'], isNot(isTrue));
+
+    await run.run(tester, 70);
+    expect(run.engine.goalReached, isTrue);
+    expect(find.text('COMPLETE OPERATION'), findsOneWidget);
+    expect(find.text('ABORT'), findsNothing);
+    expect(find.text('END'), findsNothing);
+    expect(find.text('PAUSE'), findsOneWidget, reason: 'running on past the goal still counts');
+    expect(run.lastNotice['goalReached'], isTrue, reason: 'the notification says Complete, not Stop');
 
     await _stop(tester, run);
   });

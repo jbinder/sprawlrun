@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 432 tests
+fvm flutter test                                    # 434 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -245,7 +245,8 @@ The notification's Pause/Resume and Stop ride on the same arrangement:
 `MissionService.onAction` is set once per engine in `installChannels` and calls
 `noticeAction` on the engine's channel, so the buttons reach the run with no
 activity attached. Pause and Resume go to the service directly; Stop opens the
-app with an extra, because ending short of the goal asks first. The actions
+app with an extra, because ending short of the goal asks first; past the goal
+it is labelled Complete and finishes at once, as the screen's Complete does. The actions
 have no icons on purpose — Android has not drawn them since 7.0, and an icon
 resolved only there is one more thing for the shrinker to strip.
 

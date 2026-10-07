@@ -207,7 +207,8 @@ class MainActivity : FlutterActivity() {
                             app,
                             call.argument<String>("text") ?: "",
                             call.argument<Boolean>("tracking") ?: false,
-                            call.argument<Boolean>("paused") ?: false
+                            call.argument<Boolean>("paused") ?: false,
+                            call.argument<Boolean>("goalReached") ?: false
                         )
                         result.success(null)
                     }
@@ -218,7 +219,8 @@ class MainActivity : FlutterActivity() {
                             app,
                             call.argument<String>("text") ?: "",
                             call.argument<Boolean>("tracking") ?: false,
-                            call.argument<Boolean>("paused") ?: false
+                            call.argument<Boolean>("paused") ?: false,
+                            call.argument<Boolean>("goalReached") ?: false
                         )
                         result.success(null)
                     }

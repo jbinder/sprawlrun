@@ -187,7 +187,7 @@ class _RunScreenState extends State<RunScreen> {
     _noticeText = text;
     // As on screen: an auto-pause offers Resume too.
     final paused = engine.phase == RunPhase.paused || engine.phase == RunPhase.autoPaused;
-    unawaited(notice.update(text, paused: paused));
+    unawaited(notice.update(text, paused: paused, goalReached: engine.goalReached));
   }
 
   void _onEvent(RunEvent event) {
@@ -779,15 +779,21 @@ class _Controls extends StatelessWidget {
                   onPressed: paused ? engine.resume : engine.pause,
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: CyberButton(
-                  label: engine.goalReached ? 'End' : 'Abort',
-                  icon: Icons.stop_rounded,
-                  style: CyberButtonStyle.danger,
-                  onPressed: () => onEnd(confirmed: engine.goalReached),
+              // Past the goal there is nothing left to abort. The red button
+              // used to stay, relabelled "End", and did exactly what Complete
+              // does — a second, alarming way to finish a run that read as if
+              // a finished run could be cancelled.
+              if (!engine.goalReached) ...[
+                const SizedBox(width: 10),
+                Expanded(
+                  child: CyberButton(
+                    label: 'Abort',
+                    icon: Icons.stop_rounded,
+                    style: CyberButtonStyle.danger,
+                    onPressed: () => onEnd(confirmed: false),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ],

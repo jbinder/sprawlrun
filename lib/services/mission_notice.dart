@@ -26,8 +26,9 @@ class MissionNotice {
   final Future<void> Function(String text, {required bool tracking}) start;
 
   /// Replaces the text in place. Cheap enough to call on every tick.
-  /// [paused] decides whether the button offers Pause or Resume.
-  final Future<void> Function(String text, {bool paused}) update;
+  /// [paused] decides whether the button offers Pause or Resume, and
+  /// [goalReached] whether the other one says Stop or Complete.
+  final Future<void> Function(String text, {bool paused, bool goalReached}) update;
 
   /// Ends it. Safe to call when nothing was ever started.
   final Future<void> Function() stop;
@@ -58,8 +59,12 @@ class MissionNotice {
         started = tracking;
         return call('startMissionNotice', {'text': text, 'tracking': tracking});
       },
-      update: (text, {bool paused = false}) =>
-          call('updateMissionNotice', {'text': text, 'tracking': started, 'paused': paused}),
+      update: (text, {bool paused = false, bool goalReached = false}) => call('updateMissionNotice', {
+        'text': text,
+        'tracking': started,
+        'paused': paused,
+        'goalReached': goalReached,
+      }),
       stop: () => call('stopMissionNotice'),
       onAction: (handler) => channel.setMethodCallHandler(
         handler == null

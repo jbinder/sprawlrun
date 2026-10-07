@@ -75,18 +75,26 @@ class MissionService : Service() {
         const val EXTRA_NOTICE_ACTION = "io.github.jbinder.sprawlrun.noticeAction"
 
         const val EXTRA_PAUSED = "paused"
+        const val EXTRA_GOAL_REACHED = "goalReached"
 
         const val EXTRA_TEXT = "text"
         const val EXTRA_TRACKING = "tracking"
 
         /** [tracking] is whether the run has location — it decides the service
          *  type, and Android will not let that be claimed without the grant. */
-        fun start(context: Context, text: String, tracking: Boolean, paused: Boolean = false) {
+        fun start(
+            context: Context,
+            text: String,
+            tracking: Boolean,
+            paused: Boolean = false,
+            goalReached: Boolean = false
+        ) {
             running = true
             val intent = Intent(context, MissionService::class.java)
                 .putExtra(EXTRA_TEXT, text)
                 .putExtra(EXTRA_TRACKING, tracking)
                 .putExtra(EXTRA_PAUSED, paused)
+                .putExtra(EXTRA_GOAL_REACHED, goalReached)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
@@ -110,6 +118,9 @@ class MissionService : Service() {
 
     /** Whether the run is paused, so the button offers Resume instead. */
     private var paused = false
+
+    /** Whether the goal is met, so Stop becomes Complete: nothing to abort. */
+    private var goalReached = false
 
     /** Shown for the instant before the first tick arrives. */
     private val defaultText get() = "Mission active — keep moving."
@@ -136,6 +147,7 @@ class MissionService : Service() {
         val text = intent?.getStringExtra(EXTRA_TEXT) ?: defaultText
         val tracking = intent?.getBooleanExtra(EXTRA_TRACKING, false) ?: false
         paused = intent?.getBooleanExtra(EXTRA_PAUSED, false) ?: false
+        goalReached = intent?.getBooleanExtra(EXTRA_GOAL_REACHED, false) ?: false
 
         if (started && tracking == claimedLocation) {
             // A tick, not a new run and not a change of type. notify() replaces
@@ -203,7 +215,11 @@ class MissionService : Service() {
                     NotificationCompat.Action.Builder(0, "Pause", serviceIntent(ACTION_PAUSE)).build()
                 }
             )
-            .addAction(NotificationCompat.Action.Builder(0, "Stop", buildStopIntent()).build())
+            // Past the goal it finishes at once (see buildStopIntent), so it
+            // says so rather than offering to stop a run that is already won.
+            .addAction(
+                NotificationCompat.Action.Builder(0, if (goalReached) "Complete" else "Stop", buildStopIntent()).build()
+            )
             .build()
     }
 

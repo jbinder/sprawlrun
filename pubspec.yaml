@@ -1,7 +1,7 @@
 name: sprawl_run
 description: "SPRAWL//RUN — a gamified cyberpunk running tracker. Offline story missions, GPS tracking, achievements, streaks."
 publish_to: 'none'
-version: 0.4.0+6
+version: 0.5.0+7
 
 environment:
   sdk: ^3.12.2

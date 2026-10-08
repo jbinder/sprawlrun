@@ -1,0 +1,11 @@
+THE WIRE: every message your handler sent, every run, cleared operation, achievement and piece of intel in one stream, newest first. A tapped notification opens straight onto its message; a line that arrived at 02:00 and was swiped away is still there to read.
+
+A Sunday-evening debrief reads your week back against your own target, in the voice of the campaign you are playing. On by default, one message a week, switchable off.
+
+Kilometre (or mile) splits read out with the split and your total time. On a mission they wait for the scene or pursuit to end, and are still timed when you crossed the line.
+
+Pause, resume or stop from the notification. A run now keeps going if you swipe the app away, and is saved as it goes: if the app is killed mid-run, the next launch offers the run back to keep or discard.
+
+Mission packs can be imported from Settings through the file picker, updated by importing a newer version, and removed without losing progress.
+
+Fixed: the GPS warning now clears when fixes come back; the history swipe goes the same way as its arrows; the run screen keeps its whole transcript a tap away; past the goal, Complete replaces Abort.

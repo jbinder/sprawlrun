@@ -60,9 +60,9 @@ Repo: https://github.com/jbinder/sprawlrun.git
 # `3.44.8` resolves to tag 058e0af2c2b57e369d905a03ac9748b0ebf543c6 in
 # flutter/flutter, which is also what .metadata records, so the two agree.
 Builds:
-  - versionName: 0.4.0
-    versionCode: 61
-    commit: 69d8f0c933ba5aa03ede25dcac4631f4210cb720
+  - versionName: 0.5.0
+    versionCode: 71
+    commit: 53aba74f9ac680fd01659aaae8f8569d7530e889
     output: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
     srclibs:
       - flutter@stable
@@ -93,9 +93,9 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm
     ndk: 28.2.13676358
 
-  - versionName: 0.4.0
-    versionCode: 62
-    commit: 69d8f0c933ba5aa03ede25dcac4631f4210cb720
+  - versionName: 0.5.0
+    versionCode: 72
+    commit: 53aba74f9ac680fd01659aaae8f8569d7530e889
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     srclibs:
       - flutter@stable
@@ -126,9 +126,9 @@ Builds:
       - $$flutter$$/bin/flutter build apk --release --split-per-abi --target-platform=android-arm64
     ndk: 28.2.13676358
 
-  - versionName: 0.4.0
-    versionCode: 63
-    commit: 69d8f0c933ba5aa03ede25dcac4631f4210cb720
+  - versionName: 0.5.0
+    versionCode: 73
+    commit: 53aba74f9ac680fd01659aaae8f8569d7530e889
     output: build/app/outputs/flutter-apk/app-x86_64-release.apk
     srclibs:
       - flutter@stable
@@ -168,8 +168,8 @@ VercodeOperation:
   - '%c * 10 + 1'
   - '%c * 10 + 2'
   - '%c * 10 + 3'
-CurrentVersion: 0.4.0
-CurrentVersionCode: 63
+CurrentVersion: 0.5.0
+CurrentVersionCode: 73
 
 # ---------------------------------------------------------------------------
 # Notes for the reviewer, worth pasting into the merge request description

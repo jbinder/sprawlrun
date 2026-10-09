@@ -19,10 +19,12 @@ class StreakGoal {
   final StreakMetric metric;
   final double target;
 
+  /// The target as Settings shows it, under the label "Weekly target" — so no
+  /// "/ week" of its own, which only repeated the label.
   String get label => switch (metric) {
-    StreakMetric.minutes => '${target.round()} min / week',
-    StreakMetric.kilometres => '${target.toStringAsFixed(1)} km / week',
-    StreakMetric.missions => '${target.round()} mission${target == 1 ? '' : 's'} / week',
+    StreakMetric.minutes => '${target.round()} min',
+    StreakMetric.kilometres => '${target.toStringAsFixed(1)} km',
+    StreakMetric.missions => '${target.round()} mission${target == 1 ? '' : 's'}',
   };
 
   String get unitLabel => switch (metric) {

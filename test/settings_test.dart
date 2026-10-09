@@ -64,6 +64,13 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
 }
 
 void main() {
+  testWidgets('the weekly target shows just the amount — its label already says weekly', (tester) async {
+    await pumpSettings(tester, profile: const Profile(streakGoal: StreakGoal(target: 45)));
+    expect(find.text('Weekly target'), findsOneWidget);
+    expect(find.text('45 min'), findsOneWidget);
+    expect(find.textContaining('min / week'), findsNothing);
+  });
+
   testWidgets('the data section offers both directions of a backup', (tester) async {
     await pumpSettings(tester);
 

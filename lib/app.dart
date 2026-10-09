@@ -11,6 +11,7 @@ import 'state/app_state.dart';
 import 'theme/cyber_palette.dart';
 import 'theme/cyber_theme.dart';
 import 'widgets/backdrop.dart';
+import 'widgets/edge_fade.dart';
 import 'widgets/glitch_text.dart';
 import 'widgets/signal_watcher.dart';
 
@@ -23,6 +24,8 @@ class SprawlRunApp extends StatelessWidget {
       title: 'SPRAWL//RUN',
       debugShowCheckedModeBanner: false,
       theme: buildCyberTheme(),
+      // Fades a list's edge while there is more beyond it; see edge_fade.dart.
+      scrollBehavior: const CyberScrollBehavior(),
       home: const _Root(),
     );
   }

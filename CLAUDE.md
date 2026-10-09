@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 435 tests
+fvm flutter test                                    # 438 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -114,6 +114,12 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   configured gain type, pauses the runner's music and never hands it back. That
   was a real bug — a chase-start sting killed the music for the whole chase.
   Construct any new player the same way.
+- **Every vertical scroller fades the edge that still hides content.** It is
+  `CyberScrollBehavior` (`widgets/edge_fade.dart`), set on `MaterialApp` and on
+  the screenshot tool's, not a wrapper per screen — so a new screen gets it
+  without asking. Horizontal scrollers are left to `FilterRail`, which fades and
+  adds a chevron. A test that builds its own `MaterialApp` without it will not
+  see the fade, which is fine unless the test is about the fade.
 - **Persisted JSON is written through `writeAtomically`.** `writeAsString`
   truncates before it streams, so a process death mid-write leaves a torn file
   that no longer parses — and both repositories read an unparseable file as

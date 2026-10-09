@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:sprawl_run/widgets/glitch_text.dart';
 import 'package:sprawl_run/app.dart';
 import 'package:sprawl_run/util/clock.dart';
+import 'package:sprawl_run/widgets/edge_fade.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
@@ -439,6 +440,7 @@ Future<void> _pump(WidgetTester tester, Widget home, AppState state, {RunEngine?
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: buildCyberTheme(),
+          scrollBehavior: const CyberScrollBehavior(),
           // Animations off, so anything that draws itself in — the route
           // trace, for one — is captured finished rather than mid-flight.
           builder: (context, child) => MediaQuery(

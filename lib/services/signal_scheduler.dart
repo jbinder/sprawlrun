@@ -24,10 +24,17 @@ class SignalScheduler {
   });
 
   /// Replaces everything previously scheduled with [signals].
+  ///
+  /// Only what is still *waiting* is replaced. A signal that has already
+  /// arrived and sits unread in the shade stays there: this runs on every
+  /// launch, and it used to cancel every id in the range — which also removes
+  /// a notification on screen, so opening the app without tapping one swept
+  /// away the message the runner had not read yet.
   final Future<void> Function(List<PlannedSignal> signals) schedule;
 
-  /// Clears the app's own signals. Never touches the run notice, which is
-  /// posted by `MissionService` outside the plugin.
+  /// Clears the app's own signals that are still waiting. Never touches the
+  /// run notice, which is posted by `MissionService` outside the plugin, nor a
+  /// signal already delivered.
   final Future<void> Function() cancelAll;
 
   /// Signals the runner tapped in the notification shade. See [SignalTaps].
@@ -39,6 +46,41 @@ class SignalScheduler {
     schedule: (_) async {},
     cancelAll: () async {},
   );
+
+  /// Whether [id] is one of the signal ids, as opposed to anything else the
+  /// app posts.
+  static bool isSignalId(int id) => id >= SignalPlanner.reminderBase && id < SignalPlanner.debriefBase + 100;
+
+  /// The ids a re-plan cancels: the app's signals still waiting to fire, out
+  /// of everything the plugin has pending.
+  static List<int> cancellable(Iterable<int> pending) => [for (final id in pending) if (isSignalId(id)) id];
+
+  /// [plan], moved off any notification id still on screen.
+  ///
+  /// A delivered notification keeps its id until it is dismissed, and a new
+  /// signal posted under the same id replaces it when it fires — so even
+  /// without being cancelled, an unread message would vanish once the next
+  /// plan reused its slot. A clashing signal moves to a free id in its own
+  /// band (reminders, noise, debrief), so it can never land on another kind's
+  /// range. A band with no free id at all keeps the clash rather than drop a
+  /// signal.
+  static List<PlannedSignal> sparingShown(List<PlannedSignal> plan, Set<int> shown) {
+    if (shown.isEmpty) return plan;
+    final taken = {...shown, for (final s in plan) s.id};
+    return [
+      for (final s in plan)
+        if (!shown.contains(s.id))
+          s
+        else
+          () {
+            final base = s.id - (s.id - SignalPlanner.reminderBase) % 100;
+            for (var id = base; id < base + 100; id++) {
+              if (taken.add(id)) return s.withId(id);
+            }
+            return s;
+          }(),
+    ];
+  }
 
   static const String reminderChannel = 'signals_reminder';
   static const String ambientChannel = 'signals_ambient';
@@ -152,11 +194,36 @@ class SignalScheduler {
       ),
     };
 
+    // Cancels only what is still waiting. By id rather than cancelAll(), so
+    // nothing else the app may post is caught in the sweep.
     Future<void> clear() async {
-      // By id rather than cancelAll(), so nothing else the app may post is
-      // caught in the sweep.
-      for (var id = SignalPlanner.reminderBase; id < SignalPlanner.debriefBase + 100; id++) {
+      final List<int> ids;
+      try {
+        ids = cancellable((await plugin.pendingNotificationRequests()).map((p) => p.id));
+      } on PlatformException catch (e) {
+        // Without the list, fall back to sweeping the range: a duplicate
+        // reminder would be worse than a message cleared from the shade.
+        debugPrint('listing pending signals failed, sweeping: $e');
+        for (var id = SignalPlanner.reminderBase; id < SignalPlanner.debriefBase + 100; id++) {
+          await plugin.cancel(id: id);
+        }
+        return;
+      }
+      for (final id in ids) {
         await plugin.cancel(id: id);
+      }
+    }
+
+    // The signal ids still on screen, so the new plan steers clear of them.
+    Future<Set<int>> shown() async {
+      try {
+        final active = await plugin
+            .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+            ?.getActiveNotifications();
+        return {for (final n in active ?? const <ActiveNotification>[]) if (n.id != null && isSignalId(n.id!)) n.id!};
+      } on PlatformException catch (e) {
+        debugPrint('listing shown signals failed: $e');
+        return const {};
       }
     }
 
@@ -174,7 +241,7 @@ class SignalScheduler {
         if (!await ensureReady()) return;
         try {
           await clear();
-          for (final s in signals) {
+          for (final s in sparingShown(signals, await shown())) {
             await plugin.zonedSchedule(
               id: s.id,
               title: s.from,

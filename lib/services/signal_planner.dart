@@ -34,6 +34,11 @@ class PlannedSignal {
   /// line, plus the [figures] for a debrief, which nobody authored.
   final String ref;
   final SignalFigures? figures;
+
+  /// The same signal under another notification id — see
+  /// `SignalScheduler.sparingShown`.
+  PlannedSignal withId(int newId) =>
+      PlannedSignal(id: newId, at: at, kind: kind, from: from, text: text, ref: ref, figures: figures);
 }
 
 

@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 438 tests
+fvm flutter test                                    # 444 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -206,6 +206,13 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   Android has long since killed the process. `SignalTaps` reads both routes and
   de-duplicates, since a warm tap can be reported twice. Relying on the
   callback alone looked fine in every test and failed on every real tap.
+- **A re-plan cancels only what is still pending.** It runs on every launch,
+  and Android's `cancel(id)` also removes a notification already on screen —
+  so sweeping the whole id range made opening the app (without tapping the
+  notification) wipe the unread message. `SignalScheduler` cancels the ids
+  `pendingNotificationRequests` lists, and `sparingShown` moves a new signal
+  off any id still in the shade, since a later notification under the same id
+  would replace it when it fires.
 - **After an upgrade the first signal is the *old* build's.** The manifest
   declares `MY_PACKAGE_REPLACED`, so the plugin re-arms the stored schedule
   after an install — and what it stored was written by the previous version,

@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 444 tests
+fvm flutter test                                    # 454 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -91,6 +91,12 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   in milliseconds — keep new dependencies injectable.
 - **Derived data stays derived.** Stats, streaks and achievement progress are pure
   functions of the run log. Never cache them as counters that can drift.
+- **A streak week is judged against the target it had.** Stats, the 12-week
+  strip and the streak achievements take `profile.streakTargets` (the dated
+  `streakGoalChanges`), never `profile.streakGoal` alone — judging every past
+  week against today's target once showed a real 4-week streak as 0 after the
+  target was raised. Settings changes it through `Profile.withStreakGoal`,
+  which records the change from the current week on.
 - **Repairs to stored data are migrations, not one-off flags.**
   `data/migrations.dart` holds numbered steps; `Profile.dataVersion` records
   how far a device has come, and 0 means "written before migrations existed".

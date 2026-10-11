@@ -64,6 +64,20 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
 }
 
 void main() {
+  testWidgets('changing the weekly target records the change, so past weeks keep theirs', (tester) async {
+    final state = await pumpSettings(tester, profile: const Profile(streakGoal: StreakGoal(target: 30)));
+    final plus = find.descendant(
+      of: find.ancestor(of: find.text('Weekly target'), matching: find.byType(Row)).first,
+      matching: find.byIcon(Icons.add),
+    );
+    await tester.tap(plus);
+    await tester.pump();
+
+    expect(state.profile.streakGoal.target, greaterThan(30));
+    expect(state.profile.streakGoalChanges.first.goal.target, 30, reason: 'what applied before the change');
+    expect(state.profile.streakGoalChanges.last.goal, state.profile.streakGoal);
+  });
+
   testWidgets('the weekly target shows just the amount — its label already says weekly', (tester) async {
     await pumpSettings(tester, profile: const Profile(streakGoal: StreakGoal(target: 45)));
     expect(find.text('Weekly target'), findsOneWidget);

@@ -96,7 +96,7 @@ abstract final class StatsService {
     return out;
   }
 
-  static LifetimeStats lifetime(List<RunRecord> runs, StreakGoal goal, {DateTime? now}) {
+  static LifetimeStats lifetime(List<RunRecord> runs, WeeklyTargets goals, {DateTime? now}) {
     final scoring = runs.where((r) => r.countsForStats).toList();
     if (scoring.isEmpty) return LifetimeStats.empty;
 
@@ -109,7 +109,7 @@ abstract final class StatsService {
     }
 
     final weekly = _weeklyTotals(scoring);
-    final streak = _streakWeeks(weekly, goal, now: now ?? appNow());
+    final streak = _streakWeeks(weekly, goals, now: now ?? appNow());
 
     final sortedByDate = List<RunRecord>.from(scoring)..sort((a, b) => a.startedAt.compareTo(b.startedAt));
     final completed = scoring.where((r) => r.isMission && r.isSuccess).map((r) => r.missionId!).toSet();
@@ -144,19 +144,21 @@ abstract final class StatsService {
     );
   }
 
-  static StreakStatus streak(List<RunRecord> runs, StreakGoal goal, {DateTime? now}) {
+  static StreakStatus streak(List<RunRecord> runs, WeeklyTargets goals, {DateTime? now}) {
     final at = now ?? appNow();
     final weekly = _weeklyTotals(runs.where((r) => r.countsForStats).toList());
-    final (current, longest) = _streakWeeks(weekly, goal, now: at);
+    final (current, longest) = _streakWeeks(weekly, goals, now: at);
 
     final thisWeek = weekStart(at);
+    final goal = goals.goalFor(thisWeek);
     final currentValue = _valueFor(weekly[thisWeek], goal);
     final nextWeek = thisWeek.add(const Duration(days: 7));
 
+    // Each past week lit by the target it had, not by today's.
     final recent = <bool>[];
     for (var i = 11; i >= 0; i--) {
       final week = thisWeek.subtract(Duration(days: 7 * i));
-      recent.add(_valueFor(weekly[week], goal) >= goal.target);
+      recent.add(_met(weekly[week], goals.goalFor(week)));
     }
 
     return StreakStatus(
@@ -200,21 +202,24 @@ abstract final class StatsService {
     };
   }
 
-  /// Returns (current streak, longest streak) in weeks.
+  static bool _met(_WeekTotal? week, StreakGoal goal) => _valueFor(week, goal) >= goal.target;
+
+  /// Returns (current streak, longest streak) in weeks, each week judged
+  /// against the target in force that week.
   ///
   /// The current week is only *counted* once its target is met, but a week
   /// still in progress never breaks the streak — otherwise every Monday
   /// morning would wipe out months of work.
-  static (int, int) _streakWeeks(Map<DateTime, _WeekTotal> weekly, StreakGoal goal, {required DateTime now}) {
+  static (int, int) _streakWeeks(Map<DateTime, _WeekTotal> weekly, WeeklyTargets goals, {required DateTime now}) {
     final thisWeek = weekStart(now);
 
     var current = 0;
     var cursor = thisWeek;
-    if (_valueFor(weekly[cursor], goal) >= goal.target) {
+    if (_met(weekly[cursor], goals.goalFor(cursor))) {
       current = 1;
     }
     cursor = cursor.subtract(const Duration(days: 7));
-    while (_valueFor(weekly[cursor], goal) >= goal.target) {
+    while (_met(weekly[cursor], goals.goalFor(cursor))) {
       current++;
       cursor = cursor.subtract(const Duration(days: 7));
     }
@@ -226,7 +231,7 @@ abstract final class StatsService {
     var run = 0;
     var week = weeks.first;
     while (!week.isAfter(thisWeek)) {
-      if (_valueFor(weekly[week], goal) >= goal.target) {
+      if (_met(weekly[week], goals.goalFor(week))) {
         run++;
         longest = max(longest, run);
       } else {

@@ -141,9 +141,9 @@ class AppState extends ChangeNotifier {
     var next = Migrations.apply(profile, runLog) ?? profile;
 
     if (runLog.isNotEmpty) {
-      final stats = StatsService.lifetime(runLog, next.streakGoal);
+      final stats = StatsService.lifetime(runLog, next.streakTargets);
       if (AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet()).isNotEmpty) {
-        final earlier = AchievementEngine.backfill(runLog, next.streakGoal, next.unlockedAchievements);
+        final earlier = AchievementEngine.backfill(runLog, next.streakTargets, next.unlockedAchievements);
         next = next.copyWith(
           unlockedAchievements: {...next.unlockedAchievements, ...earlier},
         );
@@ -380,7 +380,7 @@ class AppState extends ChangeNotifier {
 
     // Achievements are evaluated against the stats the new run produces, using
     // the streak goal the runner has set right now.
-    final stats = StatsService.lifetime(runLog, next.streakGoal);
+    final stats = StatsService.lifetime(runLog, next.streakTargets);
     final earned = AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet());
     if (earned.isNotEmpty) {
       final now = DateTime.now();
@@ -507,8 +507,8 @@ class AppState extends ChangeNotifier {
       AchievementEngine.wall(lifetime, profile.unlockedAchievements);
 
   void _recompute() {
-    lifetime = StatsService.lifetime(runLog, profile.streakGoal);
-    streak = StatsService.streak(runLog, profile.streakGoal);
+    lifetime = StatsService.lifetime(runLog, profile.streakTargets);
+    streak = StatsService.streak(runLog, profile.streakTargets);
     week = StatsService.lastDays(runLog, 7, label: 'LAST 7 DAYS');
   }
 }

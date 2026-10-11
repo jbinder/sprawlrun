@@ -39,7 +39,7 @@ abstract final class Migrations {
   }
 
   static Profile _redateAchievements(Profile profile, List<RunRecord> runLog) {
-    final earlier = AchievementEngine.backfill(runLog, profile.streakGoal, profile.unlockedAchievements);
+    final earlier = AchievementEngine.backfill(runLog, profile.streakTargets, profile.unlockedAchievements);
     if (earlier.isEmpty) return profile;
     return profile.copyWith(
       unlockedAchievements: {...profile.unlockedAchievements, ...earlier},

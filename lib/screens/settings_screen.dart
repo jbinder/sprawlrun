@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
 import '../services/app_version.dart';
+import '../services/stats_service.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../util/clock.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
@@ -88,8 +90,9 @@ class SettingsScreen extends StatelessWidget {
                               StreakMetric.missions: 'OPS',
                             },
                             onChanged: (v) => update(
-                              profile.copyWith(
-                                streakGoal: profile.streakGoal.copyWith(
+                              profile.withStreakGoal(
+                                thisWeek: StatsService.weekStart(appNow()),
+                                profile.streakGoal.copyWith(
                                   metric: v,
                                   // Each metric needs its own sensible default;
                                   // 30 kilometres a week is not 30 minutes.
@@ -107,16 +110,18 @@ class SettingsScreen extends StatelessWidget {
                             label: 'Weekly target',
                             value: profile.streakGoal.label,
                             onDecrease: () => update(
-                              profile.copyWith(
-                                streakGoal: profile.streakGoal.copyWith(
+                              profile.withStreakGoal(
+                                thisWeek: StatsService.weekStart(appNow()),
+                                profile.streakGoal.copyWith(
                                   target: (profile.streakGoal.target - _streakStep(profile.streakGoal.metric))
                                       .clamp(_streakStep(profile.streakGoal.metric), 2000),
                                 ),
                               ),
                             ),
                             onIncrease: () => update(
-                              profile.copyWith(
-                                streakGoal: profile.streakGoal.copyWith(
+                              profile.withStreakGoal(
+                                thisWeek: StatsService.weekStart(appNow()),
+                                profile.streakGoal.copyWith(
                                   target: (profile.streakGoal.target + _streakStep(profile.streakGoal.metric))
                                       .clamp(_streakStep(profile.streakGoal.metric), 2000),
                                 ),

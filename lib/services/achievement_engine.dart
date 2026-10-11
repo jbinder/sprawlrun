@@ -29,7 +29,7 @@ abstract final class AchievementEngine {
   /// Returns only the changes.
   static Map<String, DateTime> backfill(
     List<RunRecord> runLog,
-    StreakGoal goal,
+    WeeklyTargets goal,
     Map<String, DateTime> recorded,
   ) {
     if (runLog.isEmpty) return const {};

@@ -104,6 +104,7 @@ void main() {
       final loaded = await ProfileRepository(root).load();
       expect(loaded.resumeMusic, isTrue);
       expect(loaded.splitsEnabled, isTrue, reason: 'free runs read out splits unless switched off');
+      expect(loaded.streakGoalChanges, isEmpty, reason: 'no recorded changes: every week judged as before');
     });
 
     test('a 0.1.0 profile is not signed up for signals it never asked for', () async {

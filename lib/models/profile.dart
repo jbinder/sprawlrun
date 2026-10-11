@@ -12,8 +12,66 @@ enum AudioInterrupt {
   duck,
 }
 
+/// Which weekly target applied in a given week.
+///
+/// A streak is judged week by week, and each week against the target that was
+/// in force *then*. Judging every past week against today's target meant that
+/// raising it — once by accident, to 135 min — erased a whole streak with
+/// every run still in the log.
+///
+/// A plain [StreakGoal] is the simplest answer: the same target every week.
+abstract interface class WeeklyTargets {
+  /// The target for the week starting [weekStart] (a Monday, midnight).
+  StreakGoal goalFor(DateTime weekStart);
+
+  /// The target in force now.
+  StreakGoal get current;
+}
+
+/// One change of the weekly target: [goal] applies from the week starting
+/// [from] until the next change.
+class StreakGoalChange {
+  const StreakGoalChange({required this.from, required this.goal});
+
+  final DateTime from;
+  final StreakGoal goal;
+
+  Map<String, dynamic> toJson() => {'from': from.toIso8601String(), 'goal': goal.toJson()};
+
+  /// Null for anything malformed, so one bad entry costs only itself.
+  static StreakGoalChange? tryParse(Object? raw) {
+    if (raw is! Map) return null;
+    final from = DateTime.tryParse(raw['from'] as String? ?? '');
+    final goal = raw['goal'];
+    if (from == null || goal is! Map) return null;
+    return StreakGoalChange(from: from, goal: StreakGoal.fromJson(Map<String, dynamic>.from(goal)));
+  }
+}
+
+/// The targets a runner has had, oldest first. Before the first recorded
+/// change — and always, for a profile written before changes were recorded —
+/// the earliest known target applies.
+class StreakGoalHistory implements WeeklyTargets {
+  const StreakGoalHistory({required this.current, required this.changes});
+
+  @override
+  final StreakGoal current;
+  final List<StreakGoalChange> changes;
+
+  @override
+  StreakGoal goalFor(DateTime weekStart) {
+    if (changes.isEmpty) return current;
+    var goal = changes.first.goal;
+    for (final c in changes) {
+      if (c.from.isAfter(weekStart)) break;
+      goal = c.goal;
+    }
+    return goal;
+  }
+}
+
 /// The weekly commitment that keeps a streak alive.
-class StreakGoal {
+class StreakGoal implements WeeklyTargets {
   const StreakGoal({this.metric = StreakMetric.minutes, this.target = 30});
 
   final StreakMetric metric;
@@ -35,6 +93,19 @@ class StreakGoal {
 
   StreakGoal copyWith({StreakMetric? metric, double? target}) =>
       StreakGoal(metric: metric ?? this.metric, target: target ?? this.target);
+
+  /// The same target every week.
+  @override
+  StreakGoal goalFor(DateTime weekStart) => this;
+
+  @override
+  StreakGoal get current => this;
+
+  @override
+  bool operator ==(Object other) => other is StreakGoal && other.metric == metric && other.target == target;
+
+  @override
+  int get hashCode => Object.hash(metric, target);
 
   Map<String, dynamic> toJson() => {'metric': metric.name, 'target': target};
 
@@ -134,6 +205,7 @@ class Profile {
     this.weightKg = 72,
     this.units = UnitSystem.metric,
     this.streakGoal = const StreakGoal(),
+    this.streakGoalChanges = const [],
     this.audioInterrupt = AudioInterrupt.pause,
     this.resumeMusic = true,
     this.voiceEnabled = true,
@@ -160,6 +232,31 @@ class Profile {
   final double weightKg;
   final UnitSystem units;
   final StreakGoal streakGoal;
+
+  /// Every change of [streakGoal], oldest first, so each week of a streak is
+  /// judged against the target of its own time — see [WeeklyTargets]. Empty
+  /// for a profile from before changes were recorded, which then judges every
+  /// week against [streakGoal] as it always did.
+  final List<StreakGoalChange> streakGoalChanges;
+
+  /// What stats and achievements judge the streak by.
+  WeeklyTargets get streakTargets => StreakGoalHistory(current: streakGoal, changes: streakGoalChanges);
+
+  /// Sets the weekly target from the week starting [thisWeek] on, leaving
+  /// every earlier week judged against what applied then. Several changes in
+  /// one week are one change; changing back undoes it.
+  Profile withStreakGoal(StreakGoal next, {required DateTime thisWeek}) {
+    if (next == streakGoal) return this;
+    // The first change ever also records what came before, from the start of
+    // time, or earlier weeks would fall back to the new target.
+    final changes = streakGoalChanges.isEmpty
+        ? [StreakGoalChange(from: DateTime(2000), goal: streakGoal)]
+        : [...streakGoalChanges.where((c) => c.from.isBefore(thisWeek))];
+    if (changes.isEmpty || changes.last.goal != next) {
+      changes.add(StreakGoalChange(from: thisWeek, goal: next));
+    }
+    return copyWith(streakGoal: next, streakGoalChanges: changes);
+  }
 
   final AudioInterrupt audioInterrupt;
 
@@ -227,6 +324,7 @@ class Profile {
     double? weightKg,
     UnitSystem? units,
     StreakGoal? streakGoal,
+    List<StreakGoalChange>? streakGoalChanges,
     AudioInterrupt? audioInterrupt,
     bool? resumeMusic,
     bool? voiceEnabled,
@@ -252,6 +350,7 @@ class Profile {
     weightKg: weightKg ?? this.weightKg,
     units: units ?? this.units,
     streakGoal: streakGoal ?? this.streakGoal,
+    streakGoalChanges: streakGoalChanges ?? this.streakGoalChanges,
     audioInterrupt: audioInterrupt ?? this.audioInterrupt,
     resumeMusic: resumeMusic ?? this.resumeMusic,
     voiceEnabled: voiceEnabled ?? this.voiceEnabled,
@@ -279,6 +378,7 @@ class Profile {
     'weightKg': weightKg,
     'units': units.name,
     'streakGoal': streakGoal.toJson(),
+    'streakGoalChanges': [for (final c in streakGoalChanges) c.toJson()],
     'audioInterrupt': audioInterrupt.name,
     'resumeMusic': resumeMusic,
     'voiceEnabled': voiceEnabled,
@@ -308,6 +408,9 @@ class Profile {
     streakGoal: json['streakGoal'] == null
         ? const StreakGoal()
         : StreakGoal.fromJson(Map<String, dynamic>.from(json['streakGoal'] as Map)),
+    streakGoalChanges: [
+      for (final raw in json['streakGoalChanges'] as List? ?? const []) ?StreakGoalChange.tryParse(raw),
+    ]..sort((a, b) => a.from.compareTo(b.from)),
     audioInterrupt: AudioInterrupt.values.firstWhere(
       (a) => a.name == json['audioInterrupt'],
       orElse: () => AudioInterrupt.pause,

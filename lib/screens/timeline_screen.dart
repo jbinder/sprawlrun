@@ -20,9 +20,11 @@ import '../util/clock.dart';
 /// timeline in code, which is what it is to a programmer; the runner sees the
 /// in-world name, alongside OPS, WALL and CODEX.
 ///
-/// Read-only scrollback, not an inbox — nothing is unread, nothing needs
-/// clearing. It exists because a signal swiped from the shade was otherwise
-/// gone for good, and because only here can a runner see the shape of a week.
+/// Scrollback rather than an inbox: opening it marks every signal read, and
+/// nothing needs clearing by hand. What arrived since the last visit is marked
+/// NEW for this one. It exists because a signal swiped from the shade was
+/// otherwise gone for good, and because only here can a runner see the shape
+/// of a week.
 class TimelineScreen extends StatefulWidget {
   const TimelineScreen({super.key, this.focus});
 
@@ -63,13 +65,27 @@ class _TimelineScreenState extends State<TimelineScreen> {
   bool _scrolled = false;
   _WireFilter _filter = _WireFilter.all;
 
+  /// Signals after this were new when THE WIRE opened. Taken from the profile
+  /// before opening marks them read, so the marks stay for this whole visit.
+  DateTime? _newAfter;
+
   @override
   void initState() {
     super.initState();
+    final state = context.read<AppState>();
+    _newAfter = state.profile.wireReadAt;
+    // After the first frame, since it notifies, and not awaited: the save
+    // needs nothing from this screen.
+    WidgetsBinding.instance.addPostFrameCallback((_) => state.markSignalsRead());
     // The archive is read here rather than at launch: it is the only screen
     // that needs years of it. Runs and unlocks show at once; messages join a
     // moment later, the first time per launch.
-    context.read<AppState>().loadSignalArchive();
+    state.loadSignalArchive();
+  }
+
+  bool _isNew(TimelineEntry e) {
+    final after = _newAfter;
+    return after != null && e.kind == TimelineKind.signal && e.at.isAfter(after);
   }
 
   /// The projection, kept until one of its inputs changes. Building it is
@@ -197,6 +213,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                             key: i == focusRow ? _focusKey : null,
                             entry: entry,
                             focused: i == focusRow,
+                            isNew: _isNew(entry),
                             units: state.profile.units,
                           );
                         },
@@ -247,10 +264,19 @@ class _DayHeader extends StatelessWidget {
 }
 
 class _EntryRow extends StatelessWidget {
-  const _EntryRow({super.key, required this.entry, required this.focused, required this.units});
+  const _EntryRow({
+    super.key,
+    required this.entry,
+    required this.focused,
+    required this.isNew,
+    required this.units,
+  });
 
   final TimelineEntry entry;
   final bool focused;
+
+  /// Sent since THE WIRE was last opened.
+  final bool isNew;
   final UnitSystem units;
 
   (IconData, Color, String) get _look => switch (entry.kind) {
@@ -285,6 +311,14 @@ class _EntryRow extends StatelessWidget {
               Row(
                 children: [
                   Expanded(child: Text(entry.title, style: CyType.label(size: 11, color: color))),
+                  if (isNew) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                      decoration: BoxDecoration(border: Border.all(color: Cy.magenta)),
+                      child: Text('NEW', style: CyType.label(size: 9, color: Cy.magenta)),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   Text('$label · $time', style: CyType.mono(size: 10, color: Cy.ghost)),
                 ],
               ),

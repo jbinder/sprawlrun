@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -93,6 +95,39 @@ class HomeShell extends StatefulWidget {
 class _HomeShellState extends State<HomeShell> {
   int _index = 0;
 
+  // The dot on THE WIRE's icon has to appear while the app sits open, but a
+  // signal fires without running any Dart. So the shell looks again when the
+  // next one is due, and whenever the app comes back to the foreground.
+  late final AppLifecycleListener _lifecycle;
+  Timer? _signalTimer;
+  DateTime? _signalTimerFor;
+
+  void _checkSignals() => context.read<AppState>().refreshUnreadSignals();
+
+  void _armSignalTimer(DateTime? at) {
+    if (at == _signalTimerFor) return;
+    _signalTimerFor = at;
+    _signalTimer?.cancel();
+    _signalTimer = null;
+    if (at == null) return;
+    // A second late, so the signal is unambiguously in the past by then.
+    final wait = at.difference(DateTime.now()) + const Duration(seconds: 1);
+    _signalTimer = Timer(wait.isNegative ? Duration.zero : wait, _checkSignals);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onResume: _checkSignals);
+  }
+
+  @override
+  void dispose() {
+    _signalTimer?.cancel();
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
   static const _destinations = [
     (icon: Icons.hexagon_outlined, active: Icons.hexagon, label: 'OPS'),
     (icon: Icons.query_stats_outlined, active: Icons.query_stats, label: 'STATS'),
@@ -102,6 +137,7 @@ class _HomeShellState extends State<HomeShell> {
 
   @override
   Widget build(BuildContext context) {
+    _armSignalTimer(context.select<AppState, DateTime?>((s) => s.nextSignalAt));
     return Scaffold(
       body: GridBackdrop(
         child: SafeArea(
@@ -156,6 +192,7 @@ class _TopBar extends StatelessWidget {
     // shown while the handlers are sending anything — with every signal off
     // there is nothing of theirs to read back.
     final signalsOn = context.select<AppState, bool>((s) => s.profile.signals.anyEnabled);
+    final unread = context.select<AppState, bool>((s) => s.hasUnreadSignals);
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 10, 8, 6),
       child: Row(
@@ -178,8 +215,14 @@ class _TopBar extends StatelessWidget {
           if (signalsOn)
             IconButton(
               onPressed: onTimeline,
-              icon: const Icon(Icons.forum_outlined, color: Cy.inkDim),
-              tooltip: 'The wire',
+              // A dot, not a count: it says something came in, not how much.
+              icon: Badge(
+                isLabelVisible: unread,
+                smallSize: 8,
+                backgroundColor: Cy.magenta,
+                child: const Icon(Icons.forum_outlined, color: Cy.inkDim),
+              ),
+              tooltip: unread ? 'The wire — new signals' : 'The wire',
             ),
           IconButton(
             onPressed: onSettings,

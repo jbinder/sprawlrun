@@ -226,6 +226,7 @@ class Profile {
     this.dataVersion = 0,
     this.lastExportAt,
     this.backupNudgeSnoozedAt,
+    this.wireReadAt,
   });
 
   final String callsign;
@@ -317,6 +318,15 @@ class Profile {
   /// [lastExportAt] is spent, since the export answered it.
   final DateTime? backupNudgeSnoozedAt;
 
+  /// When THE WIRE was last opened. Every signal sent after it is new: it
+  /// lights a dot on THE WIRE's icon and is marked on THE WIRE itself.
+  ///
+  /// One moment rather than a flag per signal, because opening THE WIRE reads
+  /// everything at once. Null only until `AppState.load` first sees the
+  /// profile — or a restored backup from before this existed — and starts it
+  /// at that moment, so years of earlier signals never light up as new.
+  final DateTime? wireReadAt;
+
   bool get isMetric => units == UnitSystem.metric;
 
   Profile copyWith({
@@ -345,6 +355,7 @@ class Profile {
     int? dataVersion,
     DateTime? lastExportAt,
     DateTime? backupNudgeSnoozedAt,
+    DateTime? wireReadAt,
   }) => Profile(
     callsign: callsign ?? this.callsign,
     weightKg: weightKg ?? this.weightKg,
@@ -371,6 +382,7 @@ class Profile {
     dataVersion: dataVersion ?? this.dataVersion,
     lastExportAt: lastExportAt ?? this.lastExportAt,
     backupNudgeSnoozedAt: backupNudgeSnoozedAt ?? this.backupNudgeSnoozedAt,
+    wireReadAt: wireReadAt ?? this.wireReadAt,
   );
 
   Map<String, dynamic> toJson() => {
@@ -399,6 +411,7 @@ class Profile {
     'dataVersion': dataVersion,
     if (lastExportAt != null) 'lastExportAt': lastExportAt!.toIso8601String(),
     if (backupNudgeSnoozedAt != null) 'backupNudgeSnoozedAt': backupNudgeSnoozedAt!.toIso8601String(),
+    if (wireReadAt != null) 'wireReadAt': wireReadAt!.toIso8601String(),
   };
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -444,5 +457,6 @@ class Profile {
     dataVersion: (json['dataVersion'] as num?)?.toInt() ?? 0,
     lastExportAt: DateTime.tryParse(json['lastExportAt'] as String? ?? ''),
     backupNudgeSnoozedAt: DateTime.tryParse(json['backupNudgeSnoozedAt'] as String? ?? ''),
+    wireReadAt: DateTime.tryParse(json['wireReadAt'] as String? ?? ''),
   );
 }

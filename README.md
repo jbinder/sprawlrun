@@ -161,7 +161,8 @@ Forty entries across the two campaigns.
 - Optional signal noise: the city talking between runs, silent, never overnight,
   as often or as rarely as you like
 - The wire: everything, newest first — your handler's messages, runs, cleared
-  operations, achievements and intel. Tapping a notification opens it there
+  operations, achievements and intel. Tapping a notification opens it there,
+  and a dot on its icon says a signal came in since you last looked
 - A weekly debrief on Sunday evening — on by default, switchable off — reading
   your week back against your own target while there is still time to save it
 - Nine characters across the campaigns, each with its own synthesised voice,

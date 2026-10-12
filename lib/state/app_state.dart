@@ -90,6 +90,45 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Whether a signal has been sent since THE WIRE was last opened — the dot
+  /// on its icon. See [Profile.wireReadAt].
+  bool hasUnreadSignals = false;
+
+  /// When the next scheduled signal is due, so the shell can look again the
+  /// moment it fires: Android shows it without running any Dart, so nothing
+  /// else would tell an app sitting open on the dashboard. Null with nothing
+  /// scheduled.
+  DateTime? nextSignalAt;
+  List<DateTime> _plannedTimes = const [];
+
+  /// Rechecks [hasUnreadSignals] against the archive and moves [nextSignalAt]
+  /// on. Cheap: it reads only what the launch re-plan already holds.
+  Future<void> refreshUnreadSignals() async {
+    final now = DateTime.now();
+    final readAt = profile.wireReadAt;
+    final unread = readAt != null && await signalLog.anySent(after: readAt, now: now);
+    // THE WIRE was opened while the archive was being read: its answer wins.
+    if (profile.wireReadAt != readAt) return;
+    final next = _plannedTimes.where((t) => t.isAfter(now)).firstOrNull;
+    if (unread == hasUnreadSignals && next == nextSignalAt) return;
+    hasUnreadSignals = unread;
+    nextSignalAt = next;
+    notifyListeners();
+  }
+
+  /// Marks every signal read, as opening THE WIRE does. Returns the moment it
+  /// was last opened, so THE WIRE can mark what is new for this one visit.
+  ///
+  /// The profile changes in memory at once; only the save is awaited.
+  Future<DateTime?> markSignalsRead() async {
+    final before = profile.wireReadAt;
+    profile = profile.copyWith(wireReadAt: DateTime.now());
+    hasUnreadSignals = false;
+    notifyListeners();
+    await profiles.save(profile);
+    return before;
+  }
+
   /// Where the archive's references find their words. Rebuilt only when the
   /// packs change, which is once per launch.
   SignalLibrary get _library {
@@ -139,6 +178,7 @@ class AppState extends ChangeNotifier {
   /// [_recompute] would make anyway.
   Future<void> _migrateAndDateAchievements() async {
     var next = Migrations.apply(profile, runLog) ?? profile;
+    next = _startWireReadAt(next);
 
     if (runLog.isNotEmpty) {
       final stats = StatsService.lifetime(runLog, next.streakTargets);
@@ -154,6 +194,16 @@ class AppState extends ChangeNotifier {
     profile = next;
     await profiles.save(profile);
   }
+
+  /// Starts [Profile.wireReadAt] at now if it has never been set: on the first
+  /// launch of a build that has it, and after restoring a backup from one
+  /// that did not. Everything archived until then counts as read — otherwise
+  /// the whole history would light up as new.
+  ///
+  /// Not a numbered migration because a restore bypasses those: a backup
+  /// from 0.5.0 already carries the latest data version, and no `wireReadAt`.
+  static Profile _startWireReadAt(Profile p) =>
+      p.wireReadAt == null ? p.copyWith(wireReadAt: DateTime.now()) : p;
 
   // -- campaign -------------------------------------------------------------
 
@@ -309,6 +359,8 @@ class AppState extends ChangeNotifier {
       signalHistory = _library.resolveAll(await signalLog.sent(now));
       notifyListeners();
     }
+    _plannedTimes = [for (final p in plan) p.at]..sort();
+    await refreshUnreadSignals();
   }
 
   Future<void> rememberGoal(Mission mission, RunGoal goal) async {
@@ -467,6 +519,10 @@ class AppState extends ChangeNotifier {
   Future<ImportReport> importBackup(BackupArchive archive, ImportMode mode) async {
     final report = await backups.import(archive, mode);
     profile = await profiles.load();
+    if (profile.wireReadAt == null) {
+      profile = _startWireReadAt(profile);
+      await profiles.save(profile);
+    }
     runLog = await runs.loadAll();
     await narrator.applyProfile(profile);
     _recompute();

@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 454 tests
+fvm flutter test                                    # 463 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -155,6 +155,15 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   is wall-clock: the closed years are parsed in one `Isolate.run`, so the UI
   thread is never blocked for more than ~4 ms by it (it was ~20 ms per year,
   a dropped frame each). Do not make `AppState.load` read the whole archive.
+- **What is new on THE WIRE is one timestamp, not a flag per signal.**
+  `Profile.wireReadAt` is when THE WIRE was last opened; every signal sent
+  after it is new, of whatever kind. Opening THE WIRE is the only thing that
+  marks them read. It is started at the current moment wherever a profile
+  arrives without one — first launch after the update *and* a restored backup
+  from before it, which carries the latest `dataVersion` and so never meets a
+  numbered migration. Android shows a signal without running Dart, so the
+  shell re-checks when the next one is due and on resume; nothing else would
+  light the dot while the app sits open.
 - **The signal archive stores references, so rewording a line orphans it.**
   Each entry holds `signalRef(text)` — FNV-1a of the authored line — not the
   line itself, the same way a run's story log holds beat ids. That is what

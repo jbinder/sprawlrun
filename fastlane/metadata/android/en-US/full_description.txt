@@ -24,7 +24,7 @@ EVERYTHING IT DOES
 - Nine synthesised voices that duck your music and hand it back
 - Pause, resume or stop from the notification; a run keeps going if you swipe the app away, and is kept even if the app is killed
 - Handler reminders on your own schedule, plus optional ambient signal noise
-- The wire: every message, run, cleared operation, achievement and piece of intel in one stream, which a tapped notification opens straight into
+- The wire: every message, run, cleared operation, achievement and piece of intel in one stream, which a tapped notification opens straight into; a dot on its icon says a signal came in since you last looked
 - A Sunday-evening debrief reading your week back against your own target, in the same voice — switchable off
 - 64 achievements across six categories, plus a weekly streak you set yourself in minutes, kilometres or missions — an unfinished week never breaks it
 - Distance, time, calories and cleared missions by week and month, with per-day bars and your full run log

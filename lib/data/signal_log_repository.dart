@@ -86,6 +86,20 @@ class SignalLogRepository {
   Future<List<SignalLogEntry>> sent(DateTime now) async =>
       (await loadAll()).where((e) => !e.at.isAfter(now)).toList();
 
+  /// Whether any signal was sent after [after] and by [now] — what lights the
+  /// dot on THE WIRE's icon.
+  ///
+  /// Reads only the years in between, which is almost always just this one,
+  /// already in memory from the launch re-plan. Only a WIRE last opened
+  /// before New Year reaches back into a closed year.
+  Future<bool> anySent({required DateTime after, required DateTime now}) async {
+    await _migrateLegacy();
+    for (var year = after.year; year <= now.year; year++) {
+      if ((await _load(year)).any((e) => e.at.isAfter(after) && !e.at.isAfter(now))) return true;
+    }
+    return false;
+  }
+
   /// Replaces the whole archive, for restoring a backup onto this device.
   Future<void> replaceAll(List<SignalLogEntry> entries) async {
     await _migrateLegacy();

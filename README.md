@@ -176,7 +176,8 @@ Forty entries across the two campaigns.
 **Running**
 - GPS tracking that keeps going with the screen off, or with the app swiped away, with
   auto-pause; a run the app dies in is kept and offered back
-- Pause, resume or stop from the notification, without unlocking into the app
+- Pause, resume or stop from the notification, without unlocking into the app;
+  a run left paused is brought up after 15, 30 and 60 minutes, then left alone
 - A time or distance target per run, and free runs with no story at all
 - Kilometre (or mile) splits read out with the split and total time — on a mission they
   wait for the scene to end; switchable off

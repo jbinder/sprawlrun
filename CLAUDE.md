@@ -237,7 +237,9 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   change did not work. That cost a round trip.
 - **Notification channel importance is frozen at creation.** `signals_reminder`
   is `IMPORTANCE_DEFAULT` (an ordinary alert) and `signals_ambient` is
-  `IMPORTANCE_LOW` (silent). A later update cannot raise either, only the
+  `IMPORTANCE_LOW` (silent). So is `run_paused`, the paused-run reminder
+  `MissionService` posts itself — audible because the run's own channel is
+  silent by design. A later update cannot raise any of them, only the
   runner can in Android settings, so changing them means a new channel id.
 - **Three things about that notification are load-bearing**, and none of them
   fail loudly: `FOREGROUND_SERVICE_IMMEDIATE`, or Android 12+ defers it by up

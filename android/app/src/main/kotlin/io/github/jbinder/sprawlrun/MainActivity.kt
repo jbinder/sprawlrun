@@ -309,6 +309,16 @@ class MainActivity : FlutterActivity() {
         )
         debrief.description = "How your week went, when it closes."
         manager.createNotificationChannel(debrief)
+
+        // Audible, unlike the run's own notice: a reminder nobody hears is no
+        // reminder. Only ever posted while a run sits paused.
+        val paused = NotificationChannel(
+            MissionService.PAUSED_CHANNEL_ID,
+            "Paused run",
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        paused.description = "A nudge when a run has been paused for a while."
+        manager.createNotificationChannel(paused)
     }
 
     private fun requestNotificationPermission(result: MethodChannel.Result) {

@@ -7,8 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.PowerManager
+import android.os.SystemClock
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
@@ -30,6 +33,10 @@ import androidx.core.app.NotificationManagerCompat
  *
  * The partial wake lock is not redundant with being in the foreground: a
  * foreground service does not keep the CPU awake by itself.
+ *
+ * It also reminds the runner of a run left paused (see [PAUSE_REMINDERS]). That
+ * lives here rather than in Dart because this is where the paused state already
+ * arrives, and it has to keep working with the app swiped away.
  */
 class MissionService : Service() {
     companion object {
@@ -40,6 +47,25 @@ class MissionService : Service() {
 
         /** geolocator uses 75415. Distinct so the two can never collide. */
         const val NOTIFICATION_ID = 75416
+
+        /** The paused-run reminder: an ordinary, audible notification, unlike
+         *  the run's own, which is silent by design and so cannot remind
+         *  anyone of anything. Created by MainActivity, importance and all. */
+        const val PAUSED_CHANNEL_ID = "run_paused"
+        const val PAUSED_NOTIFICATION_ID = 75417
+
+        /**
+         * When a paused run is brought up, in minutes since it paused, and what
+         * is said. Auto-pause counts: finishing a run and forgetting to stop it
+         * ends in one, and that is the case most worth catching. Three and no
+         * more, so a run forgotten at night does not ping until morning — which
+         * is also why there are no quiet hours.
+         */
+        private val PAUSE_REMINDERS = listOf(
+            15L to "You've gone quiet, runner. The clock's stopped — move, or call it in.",
+            30L to "Half an hour dark. Still out there? Pick it back up or close the run.",
+            60L to "An hour on hold. Last call from me — finish it or get moving.",
+        )
 
         private const val WAKE_LOCK_TAG = "sprawlrun:mission"
 
@@ -122,6 +148,14 @@ class MissionService : Service() {
     /** Whether the goal is met, so Stop becomes Complete: nothing to abort. */
     private var goalReached = false
 
+    /** Runs the paused-run reminders. Main looper: they only post a
+     *  notification, and the service lives on the main thread anyway. */
+    private val reminders = Handler(Looper.getMainLooper())
+
+    /** Posted for each reminder, so a resume can take back the ones not due
+     *  yet without touching anything else on the looper. */
+    private val reminderToken = Any()
+
     /** Shown for the instant before the first tick arrives. */
     private val defaultText get() = "Mission active — keep moving."
 
@@ -146,8 +180,13 @@ class MissionService : Service() {
 
         val text = intent?.getStringExtra(EXTRA_TEXT) ?: defaultText
         val tracking = intent?.getBooleanExtra(EXTRA_TRACKING, false) ?: false
+        val wasPaused = paused
         paused = intent?.getBooleanExtra(EXTRA_PAUSED, false) ?: false
         goalReached = intent?.getBooleanExtra(EXTRA_GOAL_REACHED, false) ?: false
+        // Timed from the moment of pausing, so only the change matters: a run
+        // that keeps reporting itself paused does not restart the clock.
+        if (paused && !wasPaused) schedulePauseReminders()
+        if (!paused && wasPaused) cancelPauseReminders()
 
         if (started && tracking == claimedLocation) {
             // A tick, not a new run and not a change of type. notify() replaces
@@ -173,6 +212,8 @@ class MissionService : Service() {
     }
 
     override fun onDestroy() {
+        // Finished or aborted: nothing left to remind anyone of.
+        cancelPauseReminders()
         running = false
         started = false
         claimedLocation = false
@@ -221,6 +262,51 @@ class MissionService : Service() {
                 NotificationCompat.Action.Builder(0, if (goalReached) "Complete" else "Stop", buildStopIntent()).build()
             )
             .build()
+    }
+
+    /** On the uptime clock, which stops in deep sleep — harmless here, since
+     *  the run's wake lock keeps the CPU up for as long as this service runs. */
+    private fun schedulePauseReminders() {
+        reminders.removeCallbacksAndMessages(reminderToken)
+        for ((minutes, line) in PAUSE_REMINDERS) {
+            reminders.postAtTime(
+                { postPauseReminder(minutes, line) },
+                reminderToken,
+                SystemClock.uptimeMillis() + minutes * 60_000
+            )
+        }
+    }
+
+    private fun cancelPauseReminders() {
+        reminders.removeCallbacksAndMessages(reminderToken)
+        NotificationManagerCompat.from(this).cancel(PAUSED_NOTIFICATION_ID)
+    }
+
+    /** One notification id, so each reminder replaces the last rather than
+     *  stacking up. */
+    private fun postPauseReminder(minutes: Long, line: String) {
+        if (!paused || !running) return
+        val notification = NotificationCompat.Builder(this, PAUSED_CHANNEL_ID)
+            .setContentTitle("Run paused · $minutes min")
+            .setContentText(line)
+            // Two lines at most, but collapsed it would still be cut.
+            .setStyle(NotificationCompat.BigTextStyle().bigText(line))
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentIntent(buildBringToFrontIntent())
+            .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // The same buttons, with the same labels, as the run's own notice.
+            .addAction(NotificationCompat.Action.Builder(0, "Resume", serviceIntent(ACTION_RESUME)).build())
+            .addAction(
+                NotificationCompat.Action.Builder(0, if (goalReached) "Complete" else "Stop", buildStopIntent()).build()
+            )
+            .build()
+        try {
+            NotificationManagerCompat.from(this).notify(PAUSED_NOTIFICATION_ID, notification)
+        } catch (e: SecurityException) {
+            // Notifications not granted: the run carries on regardless.
+        }
     }
 
     /** Pause and Resume go straight to this service: no app to open. */

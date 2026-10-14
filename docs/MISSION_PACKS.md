@@ -32,9 +32,19 @@ but later fails to load is skipped, with the error listed in Settings.
   "id": "sprawl_prime",              // stable; used for replacement
   "title": "SPRAWL PRIME",
   "tagline": "Ten runs through the BAMA corridor.",
+  "season": "samhain",               // optional; see below
   "missions": [ /* Mission */ ]
 }
 ```
+
+`season` makes a pack a seasonal event. It is offered only while that season
+is in force — `samhain` runs from 10 October to 2 November — and only if the
+runner has seasonal events switched on; outside it the pack is hidden, but
+progress through it is kept and carries on the next year. While it is hidden
+nothing changes for a run already recorded against it. A seasonal pack's
+`signals` cut in on whichever campaign the runner is playing rather than
+replacing it. A season the app does not know is never in force, so a pack naming one imports but is never offered; `campaign_test` checks the id. Leave the field out
+for an ordinary campaign. The shipped example is `assets/missions/samhain.json`.
 
 ### Mission
 

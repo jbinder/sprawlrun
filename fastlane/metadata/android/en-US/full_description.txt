@@ -2,7 +2,7 @@ Your running app should not be a spreadsheet. It should be chasing you.
 
 SPRAWL//RUN is a gamified running tracker wrapped around two ten-mission cyberpunk campaigns. In Sprawl Prime you are a courier in a rain-slick megacity: a job on the Ninsei strip turns into carrying something that will not stop transmitting, and ends forty floors up a corporate arcology with an intelligence that has spent nineteen years counting a heartbeat that was not there. In Null Tide the southern districts are under water, something in a pump house has been apologising for nine seconds a night, and a salvage broker needs a piece of paper carried across the Drowned Mile before the sea comes home.
 
-Bring whatever you normally listen to. Every few minutes the app takes over the audio: a radio squelch, your music drops out, and your handler talks. Then it hands your music back. Nine characters across the two campaigns, each with a distinct synthesised voice, so you know who is speaking with the phone in your pocket.
+Bring whatever you normally listen to. Every few minutes the app takes over the audio: a radio squelch, your music drops out, and your handler talks. Then it hands your music back. Eleven characters across the story packs, each with a distinct synthesised voice, so you know who is speaking with the phone in your pocket.
 
 SOMEBODY IS CHASING YOU
 
@@ -16,21 +16,26 @@ THE CITY CARRIES ON WITHOUT YOU
 
 Your handler can get in touch between runs, on the days and at the hour you choose, in the voice of the campaign you are playing and about the operation waiting for you. Switch on signal noise as well and the world talks whether or not you are listening: a fixer with a rumour, a tide reading, an advisory from an authority that would rather you stayed indoors. Silent, never overnight, as often or as rarely as you like.
 
+EVERY OCTOBER, THE DEAD COME BACK ONLINE
+
+From 10 October to All Souls the city dresses for it: the neon turns to pumpkin and violet, a graveyard rises on the skyline under a low moon, ghosts drift across the screen and the sound effects take on bells and whispers. A four-run operation opens for the season only, Samhain Protocol, about a courier three years dead whose last delivery is still on the board. Unfinished, it waits for next October. One switch in Settings turns the whole thing off.
+
 EVERYTHING IT DOES
 
 - Twenty missions across two campaigns, paced to whatever target you pick
+- Seasonal events: a Halloween look, sound and four-mission operation from 10 October to 2 November, switchable off
 - Pursuits scaled to your own pace from the last three minutes, or switched off
 - Each kilometre or mile read out with its split and your total time — between scenes on a mission
-- Nine synthesised voices that duck your music and hand it back
+- Eleven synthesised voices that duck your music and hand it back
 - Pause, resume or stop from the notification, with a reminder if a run sits paused; a run keeps going if you swipe the app away, and is kept even if the app is killed
 - Handler reminders on your own schedule, plus optional ambient signal noise
 - The wire: every message, run, cleared operation, achievement and piece of intel in one stream, which a tapped notification opens straight into; a dot on its icon says a signal came in since you last looked
 - A Sunday-evening debrief reading your week back against your own target, in the same voice — switchable off
-- 64 achievements across six categories, plus a weekly streak you set yourself in minutes, kilometres or missions — an unfinished week never breaks it
+- 69 achievements across seven categories, plus a weekly streak you set yourself in minutes, kilometres or missions — an unfinished week never breaks it
 - Distance, time, calories and cleared missions by week and month, with per-day bars and your full run log
 - The long view: earlier weeks and months, distance per month since your first run, every day you ran as a dot calendar
 - Calories from the ACSM metabolic equations and your real body mass, not an invented multiplier
-- Forty codex entries, each unlocking only once a character has mentioned it — no reading ahead
+- Forty-eight codex entries, each unlocking only once a character has mentioned it — no reading ahead
 - Your own mission packs: one JSON file each, imported from Settings, with the format documented in the repository
 - Every run keeps its GPS trace, replays its route at the pace you ran it, and exports as a GPX track for OsmAnd
 - One tap exports the lot as plain JSON — profile, progress, achievements, codex, every run with its trace. Import restores a new phone outright, or merges

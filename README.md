@@ -6,7 +6,8 @@
 
 ### Your running app should not be a spreadsheet. It should be chasing you.
 
-Two campaigns, twenty story missions through a rain-slick megacity. GPS-tracked,
+Two campaigns, twenty story missions through a rain-slick megacity — and every
+October, a third that only opens while the dead are on the network. GPS-tracked,
 voice-acted by your phone, and built around one idea: *somebody is waiting for
 you to slow down.*
 
@@ -110,7 +111,7 @@ ACSM metabolic equations and your body mass — no invented multipliers.</td>
 <td>The long view: distance per month since day one, and every month as a dot
 calendar lit by how far you ran. Tap a month or a day to see the runs behind
 it.</td>
-<td><b>64 achievements</b> across six categories and four tiers. Progress is
+<td><b>69 achievements</b> across seven categories and four tiers. Progress is
 recomputed from your run log every time, so it can never drift out of step with
 what you actually did.</td>
 </tr>
@@ -145,17 +146,29 @@ that nobody admits exists.
 Entries unlock only once a character has actually mentioned them to you — the
 codex is a record of what you have been told, not a wiki you can read ahead in.
 
-Forty entries across the two campaigns.
+Forty-eight entries across the three packs.
 
 </td>
 <td width="42%"><img src="docs/screenshots/codex.png" alt="Codex"></td>
 </tr>
 </table>
 
+## Every October, the dead come back online
+
+From 10 October to All Souls the city dresses for it: the neon turns to
+pumpkin and violet, a graveyard rises on the skyline under a low moon, ghosts
+drift across the screen and the sound effects take on bells and whispers. A
+four-run operation opens for the season only, **SAMHAIN PROTOCOL**, about a
+courier three years dead whose last delivery is still on the board. Its
+handlers cut in on whichever campaign you are playing, and progress keeps until
+next October if you do not finish. One switch in Settings turns it all off.
+
 ## Everything it does
 
 **Story**
 - Twenty missions across two campaigns, paced to the target you pick
+- Seasonal events: from 10 October to 2 November the app takes on a Halloween
+  look and sound, with a four-mission operation of its own — switchable off
 - Optional reminders from your handler on the days and at the time you choose,
   written in the voice of the campaign you are playing
 - Optional signal noise: the city talking between runs, silent, never overnight,
@@ -165,10 +178,10 @@ Forty entries across the two campaigns.
   and a dot on its icon says a signal came in since you last looked
 - A weekly debrief on Sunday evening — on by default, switchable off — reading
   your week back against your own target while there is still time to save it
-- Nine characters across the campaigns, each with its own synthesised voice,
+- Eleven characters across the packs, each with its own synthesised voice,
   generated on the device
 - Pursuits scaled to your own pace from the last three minutes — or switched off
-- A codex of forty entries that unlock only once a character has mentioned them
+- A codex of forty-eight entries that unlock only once a character has mentioned them
 - Every run keeps a story log; cleared missions open onto a debriefing of every attempt
 - Importable mission packs: pick a JSON file and it appears; import a newer version to
   update it, remove it without losing progress
@@ -188,7 +201,7 @@ Forty entries across the two campaigns.
 **Progress**
 - This week and this month at a glance, steppable back to your first run
 - A long-term history: distance per month, and every month as a dot calendar
-- 64 achievements across six categories and four tiers
+- 69 achievements across seven categories and four tiers
 - A weekly streak you define yourself — minutes, kilometres or missions
 - Full run log, grouped by month, with every run's detail and trace
 
@@ -208,7 +221,7 @@ Forty entries across the two campaigns.
 
 <div align="center">
 
-### Twenty missions. Two campaigns. 492 lines of dialogue. No network required.
+### Twenty-four missions. Three packs. 592 lines of dialogue. No network required.
 
 </div>
 
@@ -254,7 +267,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 454 tests
+flutter test                   # 502 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

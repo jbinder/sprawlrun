@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 463 tests
+fvm flutter test                                    # 502 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -85,6 +85,19 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
 `DateTime.now()`, or the store shots start drifting with the weekday again.
 
 ## Conventions worth preserving
+
+- **`Cy` colours are getters, not constants.** A season swaps the palette at
+  runtime (`theme/season.dart`, `Cy.use`), so a `const` that captures a `Cy`
+  colour does not compile, and a colour cached in a field or a `static final`
+  keeps the old palette after the swap. Read `Cy.x` at build or paint time;
+  a widget's colour parameter is nullable with a `?? Cy.x` fallback in
+  `build`. `SprawlRunApp` rebuilds the whole tree when the season changes.
+- **A season's window is read from the calendar, never stored.** `Season.at`
+  decides from `appNow()` and `Profile.seasonalEvents`; a seasonal pack is
+  hidden outside it, but its missions still resolve so old runs keep their
+  titles, and the seasonal achievements count runs by the same window.
+  `packs_test` pins `debugNow` to July for that reason — a test that leaves
+  the clock real starts failing every October.
 
 - **`RunEngine` owns no persistence and no UI.** It takes a `LocationSource`, a
   `Narrator` and a clock by injection. That is what makes whole missions testable

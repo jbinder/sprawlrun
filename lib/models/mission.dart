@@ -371,12 +371,18 @@ class MissionPack {
     required this.tagline,
     required this.missions,
     this.signals = const SignalPool(),
+    this.season,
   });
 
   final String id;
   final String title;
   final String tagline;
   final List<Mission> missions;
+
+  /// A seasonal event pack names its season (`samhain`), and is only offered
+  /// — and only heard from — while that season is in force. Progress through
+  /// it is kept off-season like any other, so next year carries on from it.
+  final String? season;
 
   /// Generic messages, valid whatever the runner is playing — and the fallback
   /// once a campaign is finished.
@@ -394,6 +400,7 @@ class MissionPack {
       tagline: json['tagline'] as String? ?? '',
       missions: missions,
       signals: _pool(json['signals']),
+      season: json['season'] as String?,
     );
   }
 }

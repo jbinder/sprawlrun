@@ -115,7 +115,7 @@ class _PackSection extends StatelessWidget {
                     ),
                   ),
                   if (selected) ...[
-                    const CyberTag('ACTIVE', color: Cy.cyan),
+                    CyberTag('ACTIVE', color: Cy.cyan),
                     const SizedBox(width: 8),
                   ],
                   Icon(open ? Icons.expand_less : Icons.expand_more, size: 18, color: Cy.ghost),

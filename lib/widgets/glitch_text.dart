@@ -4,12 +4,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../theme/cyber_palette.dart';
+import '../theme/season.dart';
 
 /// Text that occasionally tears into RGB-split copies of itself.
 ///
 /// Glitches are rare and short by default — the effect is a punctuation mark,
 /// not a texture. [alwaysOn] shortens the interval for moments that should feel
 /// genuinely unstable (a chase opening, a containment failure).
+///
+/// Under SAMHAIN PROTOCOL the tear becomes a haunting: instead of splitting
+/// sideways into colour, the text sheds pale copies of itself that rise off it
+/// and fade, as if something were leaving it.
 class GlitchText extends StatefulWidget {
   const GlitchText(
     this.text, {
@@ -110,12 +115,13 @@ class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateM
     // Both edges pinned, so a layer is exactly as wide as the text beneath it
     // (shifted by dx) and wraps on the same lines. With only `left` set it
     // would get unbounded width and stay on one line while the title breaks.
-    Widget layer(Color color, double dx) => Positioned(
+    Widget layer(Color color, double dx, {double dy = 0, double alpha = 0.75}) => Positioned(
       left: dx,
       right: -dx,
+      top: dy,
       child: Text(
         widget.text,
-        style: style.copyWith(color: color.withValues(alpha: 0.75), shadows: const []),
+        style: style.copyWith(color: color.withValues(alpha: alpha), shadows: const []),
         textAlign: widget.textAlign,
         maxLines: widget.maxLines,
         overflow: widget.maxLines != null ? TextOverflow.ellipsis : null,
@@ -125,10 +131,16 @@ class _GlitchTextState extends State<GlitchText> with SingleTickerProviderStateM
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        if (_offset > 0.05) ...[
-          layer(Cy.magenta, -_offset),
-          layer(Cy.cyan, _offset),
-        ],
+        if (_offset > 0.05)
+          if (Season.active == Season.samhain) ...[
+            // Rising, not splitting: the further a copy has risen the fainter
+            // it is. _offset falls as the glitch plays out, so they sink back.
+            layer(Cy.green, 0.3 * _offset, dy: -2.4 * _offset, alpha: 0.05 * _offset),
+            layer(Cy.magenta, -0.2 * _offset, dy: -1.2 * _offset, alpha: 0.08 * _offset),
+          ] else ...[
+            layer(Cy.magenta, -_offset),
+            layer(Cy.cyan, _offset),
+          ],
         Text(
           widget.text,
           style: style,

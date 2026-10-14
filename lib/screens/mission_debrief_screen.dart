@@ -30,7 +30,7 @@ class MissionDebriefScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final units = state.profile.units;
-    const accent = Cy.green;
+    final accent = Cy.green;
 
     final attempts = state.runLog.where((r) => r.missionId == mission.id).toList()
       ..sort((a, b) => a.startedAt.compareTo(b.startedAt));
@@ -87,7 +87,7 @@ class MissionDebriefScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    const SectionHeader('DEBRIEF', accent: Cy.amber),
+                    SectionHeader('DEBRIEF', accent: Cy.amber),
                     NeonPanel(
                       accent: Cy.rule,
                       child: Text(mission.debrief, style: CyType.body(size: 16, height: 1.5, color: Cy.ink)),
@@ -95,7 +95,7 @@ class MissionDebriefScreen extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     if (campaignFinished) ...[
-                      const SectionHeader('EPILOGUE', accent: Cy.green),
+                      SectionHeader('EPILOGUE', accent: Cy.green),
                       NeonPanel(
                         accent: Cy.green,
                         lit: true,

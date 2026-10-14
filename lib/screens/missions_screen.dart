@@ -49,7 +49,7 @@ class _MissionsScreenState extends State<MissionsScreen> {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).maybePop(),
-                      icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+                      icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                     ),
                     const Spacer(),
                     Text(
@@ -70,12 +70,12 @@ class _MissionsScreenState extends State<MissionsScreen> {
                         icon: Icons.sync_problem_outlined,
                       ),
                     if (active.isNotEmpty) ...[
-                      const SectionHeader('ACTIVE', accent: Cy.magenta),
+                      SectionHeader('ACTIVE', accent: Cy.magenta),
                       for (final p in active) _pack(state, p),
                       const SizedBox(height: 10),
                     ],
                     if (done.isNotEmpty) ...[
-                      const SectionHeader('DONE', accent: Cy.green),
+                      SectionHeader('DONE', accent: Cy.green),
                       for (final p in done) _pack(state, p),
                     ],
                   ],
@@ -148,7 +148,7 @@ class _PackCard extends StatelessWidget {
                   ),
                 ),
                 if (progress.selected) ...[
-                  const CyberTag('SELECTED', color: Cy.amber, filled: true),
+                  CyberTag('SELECTED', color: Cy.amber, filled: true),
                   const SizedBox(width: 6),
                 ],
                 CyberTag(stateLabel, color: accent),

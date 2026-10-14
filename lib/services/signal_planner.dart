@@ -87,11 +87,19 @@ abstract final class SignalPlanner {
     MissionPack? pack,
     Mission? nextMission,
     StreakStatus? streak,
+    SignalPool? seasonal,
   }) {
     return [
-      ..._reminders(now: now, settings: settings, runLog: runLog, pack: pack, nextMission: nextMission),
-      ..._ambient(now: now, settings: settings, pack: pack, nextMission: nextMission),
-      ..._debrief(now: now, settings: settings, pack: pack, streak: streak),
+      ..._reminders(
+        now: now,
+        settings: settings,
+        runLog: runLog,
+        pack: pack,
+        nextMission: nextMission,
+        seasonal: seasonal,
+      ),
+      ..._ambient(now: now, settings: settings, pack: pack, nextMission: nextMission, seasonal: seasonal),
+      ..._debrief(now: now, settings: settings, pack: pack, streak: streak, seasonal: seasonal),
     ];
   }
 
@@ -106,6 +114,7 @@ abstract final class SignalPlanner {
     required SignalSettings settings,
     MissionPack? pack,
     StreakStatus? streak,
+    SignalPool? seasonal,
   }) {
     if (!settings.debriefEnabled || streak == null) return const [];
 
@@ -117,7 +126,9 @@ abstract final class SignalPlanner {
     );
     final outcome = figures.outcome;
 
-    final pool = pack?.signals.debrief.forOutcome(outcome) ?? const [];
+    // A season's handlers read the week out in their own voice while it lasts.
+    final seasonalPool = seasonal?.debrief.forOutcome(outcome) ?? const [];
+    final pool = seasonalPool.isNotEmpty ? seasonalPool : pack?.signals.debrief.forOutcome(outcome) ?? const [];
     if (pool.isEmpty) return const [];
 
     // Sunday of the current week, counting from Monday as the stats do.
@@ -147,13 +158,16 @@ abstract final class SignalPlanner {
     required List<RunRecord> runLog,
     MissionPack? pack,
     Mission? nextMission,
+    SignalPool? seasonal,
   }) {
     if (!settings.remindersEnabled || settings.weekdays.isEmpty) return const [];
 
     // Both pools, not one or the other: the generic lines are what stop a
     // runner who goes out daily from seeing the same two messages all week.
     // A finished campaign simply has no mission half left.
-    final pool = [...?nextMission?.signals.reminder, ...?pack?.signals.reminder];
+    // A season's pool is drawn on alongside, so its handlers cut in on the
+    // usual ones rather than replacing them outright.
+    final pool = [...?seasonal?.reminder, ...?nextMission?.signals.reminder, ...?pack?.signals.reminder];
     if (pool.isEmpty) return const [];
 
     final out = <PlannedSignal>[];
@@ -194,10 +208,11 @@ abstract final class SignalPlanner {
     required SignalSettings settings,
     MissionPack? pack,
     Mission? nextMission,
+    SignalPool? seasonal,
   }) {
     if (settings.ambientPerWeek <= 0) return const [];
 
-    final pool = [...?nextMission?.signals.ambient, ...?pack?.signals.ambient];
+    final pool = [...?seasonal?.ambient, ...?nextMission?.signals.ambient, ...?pack?.signals.ambient];
     if (pool.isEmpty) return const [];
 
     final out = <PlannedSignal>[];

@@ -69,18 +69,18 @@ class NeonPanel extends StatelessWidget {
   const NeonPanel({
     super.key,
     required this.child,
-    this.accent = Cy.rule,
+    this.accent,
     this.padding = const EdgeInsets.all(16),
-    this.fill = Cy.panel,
+    this.fill,
     this.lit = false,
     this.cut = 14,
     this.onTap,
   });
 
   final Widget child;
-  final Color accent;
+  final Color? accent;
   final EdgeInsets padding;
-  final Color fill;
+  final Color? fill;
 
   /// Adds the outer glow. Reserved for things that are active or urgent.
   final bool lit;
@@ -89,6 +89,8 @@ class NeonPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fill = this.fill ?? Cy.panel;
+    final accent = this.accent ?? Cy.rule;
     final shape = NotchedBorder(cut: cut, side: BorderSide(color: accent, width: 1));
     final panel = DecoratedBox(
       decoration: ShapeDecoration(
@@ -114,14 +116,15 @@ class NeonPanel extends StatelessWidget {
 
 /// `▸ SECTION NAME ─────────` with an optional trailing widget.
 class SectionHeader extends StatelessWidget {
-  const SectionHeader(this.title, {super.key, this.accent = Cy.cyan, this.trailing});
+  const SectionHeader(this.title, {super.key, this.accent, this.trailing});
 
   final String title;
-  final Color accent;
+  final Color? accent;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.cyan;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, top: 4),
       child: Row(
@@ -155,18 +158,19 @@ class StatTile extends StatelessWidget {
     required this.label,
     required this.value,
     this.unit,
-    this.accent = Cy.ink,
+    this.accent,
     this.size = 26,
   });
 
   final String label;
   final String value;
   final String? unit;
-  final Color accent;
+  final Color? accent;
   final double size;
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.ink;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -275,14 +279,15 @@ class CyberButton extends StatelessWidget {
 
 /// Small status word in a box: `LOCKED`, `CLEARED`, `ACTIVE`.
 class CyberTag extends StatelessWidget {
-  const CyberTag(this.text, {super.key, this.color = Cy.cyan, this.filled = false});
+  const CyberTag(this.text, {super.key, this.color, this.filled = false});
 
   final String text;
-  final Color color;
+  final Color? color;
   final bool filled;
 
   @override
   Widget build(BuildContext context) {
+    final color = this.color ?? Cy.cyan;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(

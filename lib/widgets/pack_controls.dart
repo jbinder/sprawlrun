@@ -37,7 +37,7 @@ class _PackControlsState extends State<PackControls> {
         for (final pack in state.packs) ...[
           Row(
             children: [
-              const Icon(Icons.inventory_2_outlined, size: 15, color: Cy.cyanDim),
+              Icon(Icons.inventory_2_outlined, size: 15, color: Cy.cyanDim),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -52,7 +52,7 @@ class _PackControlsState extends State<PackControls> {
                 CyberTag(repo.bundledIds.contains(pack.id) ? 'REPLACED' : 'IMPORTED', color: Cy.green),
                 IconButton(
                   onPressed: _busy ? null : () => _remove(state, pack),
-                  icon: const Icon(Icons.delete_outline, size: 18, color: Cy.inkDim),
+                  icon: Icon(Icons.delete_outline, size: 18, color: Cy.inkDim),
                   tooltip: 'Remove ${pack.title}',
                 ),
               ] else

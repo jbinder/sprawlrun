@@ -112,7 +112,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (record.chasesTotal > 0) ...[
-                            const SectionHeader('PURSUITS', accent: Cy.magenta),
+                            SectionHeader('PURSUITS', accent: Cy.magenta),
                             NeonPanel(
                               child: Row(
                                 children: [
@@ -146,7 +146,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (success && mission != null) ...[
-                            const SectionHeader('DEBRIEF', accent: Cy.amber),
+                            SectionHeader('DEBRIEF', accent: Cy.amber),
                             NeonPanel(
                               accent: Cy.rule,
                               child: Text(
@@ -162,7 +162,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (campaignFinished) ...[
-                            const SectionHeader('EPILOGUE', accent: Cy.green),
+                            SectionHeader('EPILOGUE', accent: Cy.green),
                             NeonPanel(
                               accent: Cy.green,
                               lit: true,
@@ -181,7 +181,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                             // runner is still standing here, rather than leaving
                             // them to find it on the ops screen.
                             if (nextPack != null) ...[
-                              const SectionHeader(
+                              SectionHeader(
                                 'NEXT CAMPAIGN',
                                 accent: Cy.magenta,
                               ),
@@ -232,7 +232,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                               accent: Cy.amber,
                               child: Row(
                                 children: [
-                                  const Icon(Icons.replay, color: Cy.amber),
+                                  Icon(Icons.replay, color: Cy.amber),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
@@ -257,7 +257,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                               lit: true,
                               child: Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.lock_open_outlined,
                                     color: Cy.magenta,
                                   ),
@@ -292,7 +292,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (report.codexLost.isNotEmpty) ...[
-                            const SectionHeader('INTEL LOST', accent: Cy.amber),
+                            SectionHeader('INTEL LOST', accent: Cy.amber),
                             NeonPanel(
                               accent: Cy.amber,
                               child: Column(
@@ -312,7 +312,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                                       padding: const EdgeInsets.only(bottom: 6),
                                       child: Row(
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.lock_outline,
                                             size: 15,
                                             color: Cy.amber,
@@ -341,7 +341,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (report.codexRecovered.isNotEmpty) ...[
-                            const SectionHeader('RECOVERED', accent: Cy.cyan),
+                            SectionHeader('RECOVERED', accent: Cy.cyan),
                             for (final entry in report.codexRecovered)
                               _UnlockRow(
                                 accent: Cy.cyan,
@@ -353,7 +353,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (report.newAchievements.isNotEmpty) ...[
-                            const SectionHeader('UNLOCKED', accent: Cy.amber),
+                            SectionHeader('UNLOCKED', accent: Cy.amber),
                             for (final def in report.newAchievements)
                               _UnlockRow(
                                 accent: Unlock.achievement(def).accent,
@@ -470,7 +470,7 @@ class _SummaryGrid extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.schedule, size: 13, color: Cy.ghost),
+              Icon(Icons.schedule, size: 13, color: Cy.ghost),
               const SizedBox(width: 8),
               Text(
                 Fmt.dateTime(record.startedAt),

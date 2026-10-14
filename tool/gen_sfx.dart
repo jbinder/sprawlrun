@@ -34,15 +34,36 @@ void main(List<String> args) {
     'mission_fail': missionFail(),
     'heartbeat': heartbeat(),
     'drone': drone(),
+    'bell_toll': bellToll(),
+    'whispers': whispers(),
   };
 
-  bank.forEach((name, samples) {
-    final file = File('${outDir.path}/$name.wav');
-    file.writeAsBytesSync(encodeWav(normalise(samples, 0.89)));
-    final seconds = (samples.length / kSampleRate).toStringAsFixed(2);
-    stdout.writeln('  ${file.path.padRight(34)} ${seconds}s');
-  });
-  stdout.writeln('Generated ${bank.length} sounds.');
+  // SAMHAIN PROTOCOL's versions of shipped effects, played in their place
+  // while the season is in force. The list must match `Season.sfxVariants`.
+  final samhain = <String, List<double>>{
+    'drone': samhainDrone(),
+    'comm_open': samhainCommOpen(),
+    'comm_close': samhainCommClose(),
+    'chase_start': samhainChaseStart(),
+    'chase_clear': samhainChaseClear(),
+    'goal_reached': samhainGoalReached(),
+    'unlock': samhainUnlock(),
+    'mission_success': samhainMissionSuccess(),
+  };
+
+  void write(Directory dir, Map<String, List<double>> sounds) {
+    dir.createSync(recursive: true);
+    sounds.forEach((name, samples) {
+      final file = File('${dir.path}/$name.wav');
+      file.writeAsBytesSync(encodeWav(normalise(samples, 0.89)));
+      final seconds = (samples.length / kSampleRate).toStringAsFixed(2);
+      stdout.writeln('  ${file.path.padRight(42)} ${seconds}s');
+    });
+  }
+
+  write(outDir, bank);
+  write(Directory('${outDir.path}/samhain'), samhain);
+  stdout.writeln('Generated ${bank.length + samhain.length} sounds.');
 }
 
 // ---------------------------------------------------------------------------
@@ -246,6 +267,129 @@ List<double> drone() {
   return buf.samples;
 }
 
+/// One deep bell stroke, long decay. Inharmonic partials are what make a bell
+/// read as a bell rather than an organ.
+List<double> bellToll() {
+  final buf = Buffer(4.0);
+  buf.add(bell(freq: 98, duration: 4.0), gain: 0.6);
+  buf.add(noise(0.03, seed: 3, lowpass: 0.6), env: perc(0.001, 0.03), gain: 0.2);
+  return buf.samples;
+}
+
+/// Breath-shaped noise in syllable-length bursts: a crowd of voices just too
+/// quiet to make out.
+List<double> whispers() {
+  const dur = 2.4;
+  final buf = Buffer(dur);
+  final rnd = Random(404);
+  var t = 0.0;
+  while (t < dur - 0.3) {
+    final len = 0.08 + rnd.nextDouble() * 0.22;
+    buf.add(hiss(len, seed: rnd.nextInt(9999)), env: adsr(len * 0.3, len * 0.2, 0.6, len * 0.4, len), gain: 0.25 + rnd.nextDouble() * 0.4, at: t);
+    t += len * (0.5 + rnd.nextDouble() * 0.9);
+  }
+  return buf.samples;
+}
+
+// -- SAMHAIN PROTOCOL --------------------------------------------------------
+
+/// The bed, haunted: wind that rises and falls, a sub drone a semitone apart,
+/// a theremin that never settles on a note, and one far-off bell per loop.
+List<double> samhainDrone() {
+  const dur = 6.0;
+  final buf = Buffer(dur);
+  for (final f in [49.0, 51.9, 73.4]) {
+    buf.add(sine(freq: f, duration: dur), env: adsr(1.2, 0.5, 0.9, 1.5, dur), gain: 0.16);
+  }
+  final wind = noise(dur, seed: 1031, lowpass: 0.04);
+  final gust = List<double>.generate(wind.length, (i) {
+    final t = i / kSampleRate;
+    return wind[i] * (0.55 + 0.45 * sin(2 * pi * t / dur + 1.2));
+  });
+  buf.add(gust, env: adsr(1.5, 0.5, 0.9, 1.5, dur), gain: 0.5);
+  buf.add(theremin(from: 392, to: 370, duration: 4.0, vibrato: 5.2, depth: 0.012), env: adsr(1.2, 0.5, 0.7, 1.6, 4.0), gain: 0.05, at: 1.0);
+  buf.add(bell(freq: 196, duration: 2.6), gain: 0.06, at: 2.6);
+  return buf.samples;
+}
+
+/// Squelch-open, haunted: a theremin glides up out of static.
+List<double> samhainCommOpen() {
+  final buf = Buffer(0.5);
+  buf.add(noise(0.08, seed: 13, lowpass: 0.3), env: perc(0.002, 0.08), gain: 0.4);
+  buf.add(theremin(from: 330, to: 990, duration: 0.36, vibrato: 7, depth: 0.02), env: adsr(0.03, 0.1, 0.8, 0.12, 0.36), gain: 0.4, at: 0.04);
+  return buf.samples;
+}
+
+/// Squelch-close, haunted: the same theremin sinking away.
+List<double> samhainCommClose() {
+  final buf = Buffer(0.45);
+  buf.add(theremin(from: 880, to: 260, duration: 0.32, vibrato: 7, depth: 0.02), env: adsr(0.01, 0.1, 0.8, 0.15, 0.32), gain: 0.38);
+  buf.add(noise(0.08, seed: 29, lowpass: 0.25), env: perc(0.002, 0.08), gain: 0.3, at: 0.3);
+  return buf.samples;
+}
+
+/// Something has your scent: an organ cluster swelling under a heartbeat, a
+/// theremin climbing to a scream.
+List<double> samhainChaseStart() {
+  final buf = Buffer(1.8);
+  for (final f in [73.4, 77.8, 110.0, 146.8, 155.6]) {
+    buf.add(saw(freq: f, duration: 1.5), env: adsr(0.3, 0.2, 0.85, 0.4, 1.5), gain: 0.1);
+  }
+  for (final at in [0.0, 0.28, 0.75, 1.03]) {
+    buf.add(sweepSine(from: 88, to: 42, duration: 0.2), env: perc(0.004, 0.2), gain: 0.4, at: at);
+  }
+  buf.add(theremin(from: 220, to: 1320, duration: 1.3, vibrato: 6, depth: 0.03), env: adsr(0.2, 0.3, 0.8, 0.3, 1.3), gain: 0.22, at: 0.3);
+  return buf.samples;
+}
+
+/// Shaken off: three bells falling to rest.
+List<double> samhainChaseClear() {
+  final buf = Buffer(2.2);
+  const notes = [987.8, 784.0, 587.3];
+  for (var i = 0; i < notes.length; i++) {
+    buf.add(bell(freq: notes[i], duration: 1.6), gain: 0.3, at: i * 0.16);
+  }
+  buf.add(sine(freq: 146.8, duration: 1.4), env: perc(0.05, 1.4), gain: 0.25, at: 0.45);
+  return buf.samples;
+}
+
+/// Target met: a toll under a rising minor triad of bells.
+List<double> samhainGoalReached() {
+  final buf = Buffer(2.4);
+  buf.add(bell(freq: 110, duration: 2.4), gain: 0.35);
+  const notes = [659.3, 784.0, 987.8];
+  for (var i = 0; i < notes.length; i++) {
+    buf.add(bell(freq: notes[i], duration: 1.4), gain: 0.22, at: 0.1 + i * 0.1);
+  }
+  return buf.samples;
+}
+
+/// A music box, slightly warped: A minor, up and back.
+List<double> samhainUnlock() {
+  final buf = Buffer(1.8);
+  const notes = [440.0, 523.3, 659.3, 880.0, 1046.5, 880.0];
+  for (var i = 0; i < notes.length; i++) {
+    final warp = 1 + 0.006 * sin(i * 2.1);
+    buf.add(sine(freq: notes[i] * warp, duration: 0.9), env: perc(0.002, 0.9), gain: 0.26, at: i * 0.11);
+    buf.add(sine(freq: notes[i] * warp * 4.01, duration: 0.25), env: perc(0.002, 0.25), gain: 0.05, at: i * 0.11);
+  }
+  return buf.samples;
+}
+
+/// Operation complete: an organ in D minor that lifts to D major as it holds.
+List<double> samhainMissionSuccess() {
+  final buf = Buffer(3.0);
+  for (final f in [146.8, 220.0, 293.7, 440.0]) {
+    buf.add(saw(freq: f, duration: 2.6), env: adsr(0.15, 0.3, 0.6, 1.0, 2.6), gain: 0.08);
+    buf.add(sine(freq: f, duration: 2.6), env: adsr(0.15, 0.3, 0.7, 1.0, 2.6), gain: 0.12);
+  }
+  // The third: minor first, then the major one takes over.
+  buf.add(sine(freq: 349.2, duration: 1.0), env: adsr(0.15, 0.2, 0.7, 0.5, 1.0), gain: 0.16);
+  buf.add(sine(freq: 370.0, duration: 1.8), env: adsr(0.3, 0.3, 0.7, 1.0, 1.8), gain: 0.18, at: 0.9);
+  buf.add(bell(freq: 587.3, duration: 2.0), gain: 0.2, at: 0.9);
+  return buf.samples;
+}
+
 // ---------------------------------------------------------------------------
 // Tiny synthesis kit
 // ---------------------------------------------------------------------------
@@ -305,6 +449,50 @@ List<double> _sweep(double from, double to, double duration, double Function(dou
     out[i] = shape(phase);
   }
   return out;
+}
+
+/// A struck bell: a hum, the strike tone and inharmonic partials above it,
+/// each decaying at its own rate — the high ones first.
+List<double> bell({required double freq, required double duration}) {
+  final n = _n(duration);
+  const partials = [(0.5, 0.35, 1.0), (1.0, 1.0, 0.8), (1.19, 0.4, 0.7), (1.56, 0.3, 0.55), (2.0, 0.35, 0.45), (2.74, 0.2, 0.3), (5.4, 0.08, 0.15)];
+  return List<double>.generate(n, (i) {
+    final t = i / kSampleRate;
+    final attack = min(1.0, t / 0.003);
+    var v = 0.0;
+    for (final (ratio, gain, life) in partials) {
+      v += sin(2 * pi * freq * ratio * t) * gain * exp(-t / (duration * life * 0.35));
+    }
+    return v * attack * 0.4;
+  });
+}
+
+/// A theremin: a sine gliding between two pitches with a wide, slightly
+/// uneven vibrato.
+List<double> theremin({
+  required double from,
+  required double to,
+  required double duration,
+  double vibrato = 6,
+  double depth = 0.02,
+}) {
+  final n = _n(duration);
+  final out = List<double>.filled(n, 0.0);
+  var phase = 0.0;
+  for (var i = 0; i < n; i++) {
+    final t = i / kSampleRate;
+    final wobble = 1 + depth * sin(2 * pi * vibrato * t + 0.6 * sin(2 * pi * 0.7 * t));
+    phase += _glide(from, to, i / n) * wobble / kSampleRate;
+    out[i] = sin(2 * pi * phase) + 0.15 * sin(4 * pi * phase);
+  }
+  return out;
+}
+
+/// Noise with its low end taken out — a breath rather than a rumble.
+List<double> hiss(double duration, {int seed = 0}) {
+  final low = noise(duration, seed: seed, lowpass: 0.08);
+  final all = noise(duration, seed: seed, lowpass: 0.5);
+  return List<double>.generate(all.length, (i) => all[i] - low[i]);
 }
 
 /// White noise run through a one-pole lowpass. [lowpass] 1.0 is unfiltered.

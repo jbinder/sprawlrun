@@ -3,6 +3,7 @@ import 'dart:math';
 import '../models/profile.dart';
 import '../models/run_record.dart';
 import '../models/stats.dart';
+import '../theme/season.dart';
 import '../util/format.dart';
 import '../util/clock.dart';
 
@@ -113,6 +114,7 @@ abstract final class StatsService {
 
     final sortedByDate = List<RunRecord>.from(scoring)..sort((a, b) => a.startedAt.compareTo(b.startedAt));
     final completed = scoring.where((r) => r.isMission && r.isSuccess).map((r) => r.missionId!).toSet();
+    final samhain = scoring.where((r) => Season.samhain.contains(r.startedAt)).toList();
 
     return LifetimeStats(
       totalRuns: scoring.length,
@@ -139,6 +141,9 @@ abstract final class StatsService {
           .map((r) => r.missionId)
           .toSet()
           .length,
+      hallowsEveRuns: scoring.where((r) => r.startedAt.month == 10 && r.startedAt.day == 31).length,
+      samhainRuns: samhain.length,
+      samhainYears: samhain.map((r) => r.startedAt.year).toSet().length,
       firstRunAt: sortedByDate.first.startedAt,
       lastRunAt: sortedByDate.last.startedAt,
     );

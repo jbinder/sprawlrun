@@ -159,7 +159,7 @@ class _AchievementCard extends StatelessWidget {
                 if (view.earned)
                   Row(
                     children: [
-                      const Icon(Icons.check, size: 12, color: Cy.green),
+                      Icon(Icons.check, size: 12, color: Cy.green),
                       const SizedBox(width: 6),
                       Text(
                         view.earnedAt == null

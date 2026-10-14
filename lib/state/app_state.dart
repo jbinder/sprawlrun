@@ -22,6 +22,7 @@ import '../services/signal_library.dart';
 import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
 import '../services/stats_service.dart';
+import '../theme/season.dart';
 import '../util/clock.dart';
 
 /// The single source of truth the UI reads from.
@@ -205,12 +206,42 @@ class AppState extends ChangeNotifier {
   static Profile _startWireReadAt(Profile p) =>
       p.wireReadAt == null ? p.copyWith(wireReadAt: DateTime.now()) : p;
 
+  // -- season ---------------------------------------------------------------
+
+  /// The season the app is dressed for: whatever [appNow] falls in, unless
+  /// the runner has turned seasonal events off. Null while loading, so the
+  /// boot screen is always the year-round one.
+  Season? get season => loading || !profile.seasonalEvents ? null : Season.at(appNow());
+
+  /// The loaded packs the runner can play now: every campaign, plus the event
+  /// pack of the season in force. [packs] keeps the rest, since an old run's
+  /// story and the codex still look things up in them.
+  List<MissionPack> get visiblePacks {
+    final id = season?.id;
+    return [
+      for (final pack in packs)
+        if (pack.season == null || pack.season == id) pack,
+    ];
+  }
+
+  /// The event pack of the season in force, if one is loaded.
+  MissionPack? get seasonalPack {
+    final id = season?.id;
+    if (id == null) return null;
+    for (final pack in packs) {
+      if (pack.season == id) return pack;
+    }
+    return null;
+  }
+
   // -- campaign -------------------------------------------------------------
 
   /// The pack the ops screen is showing. Falls back to the first loaded pack
-  /// when nothing is selected or the selected one has been removed, so the
-  /// screen never points at nothing while packs exist.
+  /// when nothing is selected or the selected one has been removed — or is an
+  /// event pack out of season — so the screen never points at nothing while
+  /// packs exist.
   MissionPack? get activePack {
+    final packs = visiblePacks;
     if (packs.isEmpty) return null;
     for (final pack in packs) {
       if (pack.id == profile.activePackId) return pack;
@@ -238,7 +269,7 @@ class AppState extends ChangeNotifier {
 
   /// Every loaded pack with how far the runner is through it.
   List<PackProgress> get packProgress => [
-    for (final pack in packs)
+    for (final pack in visiblePacks)
       PackProgress(pack: pack, chain: chainFor(pack), selected: pack.id == activePack?.id),
   ];
 
@@ -248,6 +279,7 @@ class AppState extends ChangeNotifier {
   MissionPack? get nextOpenPack {
     final active = activePack;
     if (active == null) return null;
+    final packs = visiblePacks;
     final start = packs.indexWhere((p) => p.id == active.id);
     for (var i = 1; i < packs.length; i++) {
       final pack = packs[(start + i) % packs.length];
@@ -257,7 +289,7 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> selectPack(String id) async {
-    if (!packs.any((p) => p.id == id) || profile.activePackId == id) return;
+    if (!visiblePacks.any((p) => p.id == id) || profile.activePackId == id) return;
     profile = profile.copyWith(activePackId: id);
     await profiles.save(profile);
     notifyListeners();
@@ -346,6 +378,8 @@ class AppState extends ChangeNotifier {
         pack: activePack,
         nextMission: currentMission?.mission,
         streak: streak,
+        // The season's handlers talk over whatever campaign is running.
+        seasonal: seasonalPack == activePack ? null : seasonalPack?.signals,
       );
       await _signals.schedule(plan);
     }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'screens/achievements_screen.dart';
@@ -12,6 +13,7 @@ import 'screens/timeline_screen.dart';
 import 'state/app_state.dart';
 import 'theme/cyber_palette.dart';
 import 'theme/cyber_theme.dart';
+import 'theme/season.dart';
 import 'widgets/backdrop.dart';
 import 'widgets/edge_fade.dart';
 import 'widgets/glitch_text.dart';
@@ -22,6 +24,19 @@ class SprawlRunApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // A season changes every colour, and colours are read at build time — so
+    // when it changes, everything beneath is rebuilt rather than just whatever
+    // happens to depend on this.
+    final season = context.select<AppState, Season?>((s) => s.season);
+    if (Season.apply(season)) {
+      SystemChrome.setSystemUIOverlayStyle(cyberOverlayStyle);
+      void mark(Element e) {
+        e.markNeedsBuild();
+        e.visitChildren(mark);
+      }
+
+      (context as Element).visitChildren(mark);
+    }
     return MaterialApp(
       title: 'SPRAWL//RUN',
       debugShowCheckedModeBanner: false,
@@ -170,10 +185,14 @@ class _HomeShellState extends State<HomeShell> {
           ),
         ),
       ),
-      bottomNavigationBar: _NavBar(
-        index: _index,
-        destinations: _destinations,
-        onSelect: (i) => setState(() => _index = i),
+      bottomNavigationBar: PumpkinPerch(
+        left: 14,
+        size: 23,
+        child: _NavBar(
+          index: _index,
+          destinations: _destinations,
+          onSelect: (i) => setState(() => _index = i),
+        ),
       ),
     );
   }
@@ -220,13 +239,13 @@ class _TopBar extends StatelessWidget {
                 isLabelVisible: unread,
                 smallSize: 8,
                 backgroundColor: Cy.magenta,
-                child: const Icon(Icons.forum_outlined, color: Cy.inkDim),
+                child: Icon(Icons.forum_outlined, color: Cy.inkDim),
               ),
               tooltip: unread ? 'The wire — new signals' : 'The wire',
             ),
           IconButton(
             onPressed: onSettings,
-            icon: const Icon(Icons.settings_outlined, color: Cy.inkDim),
+            icon: Icon(Icons.settings_outlined, color: Cy.inkDim),
             tooltip: 'Settings',
           ),
         ],
@@ -245,7 +264,7 @@ class _NavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Cy.v0id,
         border: Border(top: BorderSide(color: Cy.rule)),
       ),

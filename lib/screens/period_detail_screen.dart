@@ -21,17 +21,18 @@ class PeriodDetailScreen extends StatelessWidget {
     required this.from,
     required this.to,
     this.subtitle,
-    this.accent = Cy.cyan,
+    this.accent,
   });
 
   final String label;
   final String? subtitle;
   final DateTime from;
   final DateTime to;
-  final Color accent;
+  final Color? accent;
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.cyan;
     final state = context.watch<AppState>();
     final units = state.profile.units;
     final stats = StatsService.period(state.runLog, label: label, from: from, to: to);
@@ -47,7 +48,7 @@ class PeriodDetailScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+                    icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                   ),
                 ],
               ),

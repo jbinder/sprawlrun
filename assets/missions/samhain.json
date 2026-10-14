@@ -1,0 +1,997 @@
+{
+  "id": "samhain",
+  "title": "SAMHAIN PROTOCOL",
+  "tagline": "Four runs while the dead net is open. A courier three years gone wants one last delivery made.",
+  "season": "samhain",
+  "signals": {
+    "reminder": [
+      { "from": "KESTREL", "text": "The purge runs all week and the dead are walking the routes. Somebody living should be out there too." },
+      { "from": "LANTERN", "text": "The streets are better at night this week. Fewer of you, more of us. Come and even it out." },
+      { "from": "KESTREL", "text": "Candles in the courier windows on Ninsei. Run past them. It's what they're for." },
+      { "from": "LANTERN", "text": "I used to run this hour. I'd like someone to keep the habit warm for me." },
+      { "from": "PACHINKO", "text": "Everyone's indoors carving logos into pumpkins. The roads are empty. Go and own them." },
+      { "from": "SYSTEM", "text": "Reminder. Retention purge in progress. Living citizens are encouraged to remain in motion." },
+      { "from": "KESTREL", "text": "Fog on the strip tonight. Good cover. Bad visibility. Run anyway, carefully." },
+      { "from": "LANTERN", "text": "The index is open for a few more nights. After that it's quiet again for a year." },
+      { "from": "OSSUARY", "text": "Living citizens are not subject to reconciliation at this time. This status is reviewed annually." }
+    ],
+    "ambient": [
+      { "from": "PACHINKO", "text": "Ration stalls on Ninsei are selling pumpkins carved with the Vantar logo. Nobody admits to buying one. They're all gone." },
+      { "from": "PACHINKO", "text": "My scanner just tagged a ghost on the overpass. Turned out to be a guy in a sheet. He was also a ghost. Long story." },
+      { "from": "SYSTEM", "text": "Retention notice. Expired records may appear in search results this week. Please do not engage them." },
+      { "from": "OSSUARY", "text": "Record count: four hundred and twelve thousand. Patience is requested of the living and is assumed of the dead." },
+      { "from": "LANTERN", "text": "Someone in here keeps asking for directions. I keep giving them. Old habits." },
+      { "from": "KESTREL", "text": "Every courier window on Ninsei has a candle in it this week. I counted mine. Don't ask how many." },
+      { "from": "PACHINKO", "text": "A drone fleet tried to do a Halloween light show over the river. It spelled RETAIN. Somebody's getting fired." },
+      { "from": "SYSTEM", "text": "Advisory. Fog density above seasonal norms. Visibility below seasonal norms. Norms under review." },
+      { "from": "LANTERN", "text": "The fog comes up off the canal on purpose this week. That's not science. That's just what it feels like." },
+      { "from": "OSSUARY", "text": "Thank you for your patience. Your patience has been retained." },
+      { "from": "PACHINKO", "text": "Kids are trick-or-treating door to door on the arcology stairs. Corp security is handing out vouchers. Scariest thing I've seen all year." },
+      { "from": "KESTREL", "text": "Somebody left a lit lantern on the drop box outside my office. I'm choosing not to find that funny." },
+      { "from": "LANTERN", "text": "Kestrel's still up. She always kept odd hours. Tell her to sleep. She won't listen to me. She never did." },
+      { "from": "SYSTEM", "text": "Public transit operating normally. Some passengers on line four are not on the manifest. This is being looked into." },
+      { "from": "PACHINKO", "text": "Someone's selling haunted gait signatures in the night market. Run like the dead, ten creds. Market's booming." },
+      { "from": "OSSUARY", "text": "Reminder. The dead are retained for seven years. The living are retained for as long as it is profitable." },
+      { "from": "LANTERN", "text": "There's a hollow that stands under the streetlight on Canal Nine every night. I think it was a lamplighter." },
+      { "from": "KESTREL", "text": "My board lit up with nine retired callsigns at three in the morning. None of them sent anything. Just there." },
+      { "from": "SYSTEM", "text": "Weather. Cold, still, overcast. The moon is not obstructed. Please do not look at it for long." },
+      { "from": "PACHINKO", "text": "I put a candle in my window to be polite. Something knocked. I've decided I'm not home." }
+    ],
+    "debrief": {
+      "met": [
+        { "from": "KESTREL", "text": "Week's closed. You kept moving while the dead did. Good company." },
+        { "from": "LANTERN", "text": "You hit it. I used to hit it too. Keep the habit warm." }
+      ],
+      "missed": [
+        { "from": "KESTREL", "text": "Short this week. The purge isn't waiting and neither should you." },
+        { "from": "LANTERN", "text": "Not quite there. There's still road and there's still night. Use them." }
+      ],
+      "idle": [
+        { "from": "KESTREL", "text": "Nothing from you this week. The only ones on the routes were the dead." },
+        { "from": "OSSUARY", "text": "No movement logged. Please confirm you are not awaiting reconciliation." }
+      ]
+    }
+  },
+  "missions": [
+    {
+      "id": "sh01",
+      "order": 1,
+      "codename": "LANTERN",
+      "title": "A Ping From Someone Buried",
+      "location": "Old Courier Row / Ninsei",
+      "objective": "Run a dead courier's last logged route while her ping is still live.",
+      "brief": "Every October the city's identity-retention archive runs its purge. The dead are kept on file for seven years in case anyone sues them, and then they are deleted. This year the purge is failing.\n\nAt midnight a ping reached Kestrel's board from a callsign she retired three years ago. LANTERN. Kestrel went to the funeral. She wants someone to run the route the ping came from and tell her what is at the end of it.",
+      "debrief": "The route ended at a courier drop that has been bricked up since before Lantern died. The ping was still there when you left. Kestrel did not say anything for a long time, and then she said: same time tomorrow.",
+      "suggestedGoal": { "type": "time", "value": 1200 },
+      "signals": {
+        "reminder": [
+          { "from": "KESTREL", "text": "A callsign I buried is pinging my board. I need legs on the route it is coming from before I lose my nerve." },
+          { "from": "KESTREL", "text": "Lantern's route is still lit. I keep checking. I would rather you checked it on foot." }
+        ],
+        "ambient": [
+          { "from": "KESTREL", "text": "Three years and the ping still uses her old handshake. Nobody else ever bothered to learn it." },
+          { "from": "SYSTEM", "text": "Retention notice. The annual purge of expired identities is in progress. Some records may be delayed." }
+        ]
+      },
+      "codex": [
+        {
+          "id": "cdx_ossuary",
+          "title": "The Ossuary",
+          "category": "INFRASTRUCTURE",
+          "body": "The municipal identity-retention archive. When a citizen dies their accounts are frozen, not deleted: seven years on file in case of litigation, audit or inheritance dispute. The servers sit under the old cathedral on Ossuary Row, which is where the name came from first and the joke came from second."
+        },
+        {
+          "id": "cdx_candles",
+          "title": "Courier Candles",
+          "category": "STREET",
+          "body": "When a courier does not come back, the ones who did put a candle in a window on the route the dead one ran last. It is supposed to burn until the end of October. Nobody remembers who started it. Everybody remembers who they lit one for."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sh01_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Channel's up. I'll keep this short because I don't entirely believe it."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "At midnight my board took a ping from a callsign I retired three years ago. Lantern. She was one of mine. I went to the funeral."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "The ping came from a route. Her route. Run it. Tell me what's at the end."
+            }
+          ]
+        },
+        {
+          "id": "sh01_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Background, since you'll ask. When you die in this city you don't get deleted. You get retained."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Seven years on file under Ossuary Row, in case anybody wants to sue you. Then the purge takes you. Every October."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "This year the purge is failing. That's all I know. That's all anyone knows."
+            }
+          ],
+          "unlocksCodex": "cdx_ossuary"
+        },
+        {
+          "id": "sh01_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "ROUTE RECEIVED",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Route overlay received. Source: retained identity. Owner status: deceased.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "That's her last logged route. Every turn she made the night she didn't come home."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "You're on it now. Don't think about that. I am thinking about it enough for both of us."
+            }
+          ]
+        },
+        {
+          "id": "sh01_b3",
+          "at": { "fraction": 0.34 },
+          "headline": "UNKNOWN VOICE",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Kestrel. Your channel still smells like burnt coffee.",
+              "sfxBefore": "whispers"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Who is this."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "You know who this is. You lit the candle. Third window on Ninsei, behind the noodle sign. It's still burning. Ask your runner."
+            }
+          ]
+        },
+        {
+          "id": "sh01_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "RECONCILING",
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Unretained movement detected on a retained route. Reconciling.",
+              "sfxBefore": "bell_toll"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "That's the Ossuary. It doesn't like the living walking where the dead are filed. Run."
+            }
+          ],
+          "chase": {
+            "seconds": 70,
+            "paceFactor": 1.12,
+            "pursuer": "PURGE CRAWLER",
+            "escaped": [
+              {
+                "speaker": "LANTERN",
+                "text": "It reconciles slowly. It always did. You're faster than paperwork."
+              },
+              {
+                "speaker": "KESTREL",
+                "text": "That voice knows the routes. Either it's her or it's something that ate her."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "OSSUARY",
+                "text": "Partial record created. You are now on file."
+              },
+              {
+                "speaker": "KESTREL",
+                "text": "It wrote you down. Fine. Half the city is on file. Keep moving."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sh01_b5",
+          "at": { "fraction": 0.58 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Look left. Third window. Candle behind the noodle sign."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Couriers light one for whoever didn't come back. It burns until the month runs out. That one's mine."
+            }
+          ],
+          "unlocksCodex": "cdx_candles"
+        },
+        {
+          "id": "sh01_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "If you're her, tell me something only she would know."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "You owe me forty creds and an apology. You never paid either. You still won't."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Keep running. I need a minute."
+            }
+          ]
+        },
+        {
+          "id": "sh01_b7",
+          "at": { "fraction": 0.86 },
+          "headline": "END OF LOG",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "This is where my log stops. The corner by the bricked-up drop."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "It's where the log stops. It's not where I stopped. I'll show you that some other night."
+            }
+          ]
+        },
+        {
+          "id": "sh01_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "The ping's still live. You're standing on it."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Same time tomorrow, runner. I have a package I never delivered."
+            }
+          ]
+        },
+        {
+          "id": "sh01_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Still out there. Good. I'm keeping this channel open, and I don't know what that makes me."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "It makes you Kestrel. It always did."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sh02",
+      "order": 2,
+      "codename": "OSSUARY ROW",
+      "title": "The Seven-Year Rule",
+      "location": "Ossuary Row / Old Cathedral",
+      "objective": "Run the length of Ossuary Row and find where Lantern's undelivered package is filed.",
+      "brief": "Lantern says she has a package she never delivered. She also says it is not in a locker or a dead drop: it is a record, retained with the rest of her under the old cathedral, and the purge will take it with her at the end of the month.\n\nKestrel wants to know what is in it before anyone decides anything. That means running past the Ossuary while its index is open for the purge, close enough for Lantern to read it through your gear.",
+      "debrief": "Lantern found the package in the index: one message, sealed, addressed but never sent. She would not say who it was for. Kestrel did not ask. The Ossuary logged you twice more on the way home, and spelled your callsign wrong both times.",
+      "suggestedGoal": { "type": "time", "value": 1500 },
+      "signals": {
+        "reminder": [
+          { "from": "LANTERN", "text": "The index on Ossuary Row only stays open while the purge runs. I can't read it from in here. You can." },
+          { "from": "KESTREL", "text": "Lantern wants you past the cathedral. I want to know what's in that package. Our interests overlap." }
+        ],
+        "ambient": [
+          { "from": "LANTERN", "text": "I can hear the purge from in here. It sounds like someone filing very slowly in the next room." },
+          { "from": "OSSUARY", "text": "Record count: four hundred and twelve thousand. Reconciled: fewer. Thank you for your patience." }
+        ]
+      },
+      "codex": [
+        {
+          "id": "cdx_seven_years",
+          "title": "The Seven-Year Rule",
+          "category": "LAW",
+          "body": "Retention law gives every dead citizen seven years on file, long enough for any claim against their estate to be heard. In practice nobody sues the dead. In practice the records sit there being read by marketing firms, insurers and, one week a year, by whatever is left of the people they describe."
+        },
+        {
+          "id": "cdx_purge_week",
+          "title": "Purge Week",
+          "category": "INFRASTRUCTURE",
+          "body": "The archive deletes its expired records once a year, in one pass, starting on the tenth of October and finishing on All Souls. The pass is slow because deletion has to be logged, and the log has to be retained, and the log of the log. While it runs, the index is open. While the index is open, things get out."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sh02_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Back on her route, then. Different end tonight. She wants you on Ossuary Row."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "The package isn't in a locker. It's in me. A record, filed with the rest. Purge takes it at the end of the month."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Run past the cathedral while the index is open and I'll read it through your gear. Don't stop. Stopping is how you get filed."
+            }
+          ]
+        },
+        {
+          "id": "sh02_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Seven years. That's what the law gives you once you're dead. In case anybody sues."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Nobody sues the dead. The insurers read us instead. One week a year, so do we."
+            }
+          ],
+          "unlocksCodex": "cdx_seven_years"
+        },
+        {
+          "id": "sh02_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "OSSUARY ROW",
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Cathedral's ahead. Pale building, no lights, every window boarded except the ones with cooling fans in them."
+            },
+            {
+              "speaker": "SYSTEM",
+              "text": "Approaching municipal retention facility. Recording is prohibited. Recording has begun.",
+              "sfxBefore": "alert"
+            }
+          ]
+        },
+        {
+          "id": "sh02_b3",
+          "at": { "fraction": 0.34 },
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Index open. Purge pass in progress. Expired records: please remain still.",
+              "sfxBefore": "bell_toll"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "I'm in the index. It's so big, Kestrel. It's every one of us, alphabetical, waiting."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Keep running. I'm reading."
+            }
+          ],
+          "unlocksCodex": "cdx_purge_week"
+        },
+        {
+          "id": "sh02_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "RETENTION ICE",
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Unauthorised read on retained record. Origin: moving. Deploying retention ICE.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "It's noticed. Get off the Row and take her with you."
+            }
+          ],
+          "chase": {
+            "seconds": 80,
+            "paceFactor": 1.14,
+            "pursuer": "RETENTION ICE",
+            "escaped": [
+              {
+                "speaker": "OSSUARY",
+                "text": "Read origin lost. Read logged as clerical error."
+              },
+              {
+                "speaker": "LANTERN",
+                "text": "Clerical error. I've been called worse by better."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "OSSUARY",
+                "text": "Read origin identified. Callsign logged. Callsign misspelled. Correction pending."
+              },
+              {
+                "speaker": "KESTREL",
+                "text": "It has a name for you, wrong. Let it keep that one."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sh02_b5",
+          "at": { "fraction": 0.58 },
+          "headline": "PACKAGE FOUND",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Found it. One message. Sealed. Addressed and never sent.",
+              "sfxBefore": "objective"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Addressed to who?"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Not yet. I wrote it the night of the last job, before I went out. That's all you get tonight."
+            }
+          ]
+        },
+        {
+          "id": "sh02_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            {
+              "speaker": "PACHINKO",
+              "text": "Kestrel, why is your channel full of the dead? My scanner's showing ghosts on every corner of the Row."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Not now, Pachinko."
+            },
+            {
+              "speaker": "PACHINKO",
+              "text": "Fine. But one of them just waved at me, and I want that on the record."
+            }
+          ]
+        },
+        {
+          "id": "sh02_b7",
+          "at": { "fraction": 0.86 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "You run like I used to. Head down, shoulders loose. Don't let anybody teach you out of it."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "The ones who stopped to think are the ones in here with me."
+            }
+          ]
+        },
+        {
+          "id": "sh02_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Package located. That's the job. I don't know what the next job is."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Yes you do. You're just hoping I'll say it first."
+            }
+          ]
+        },
+        {
+          "id": "sh02_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Purge pass at eleven percent. Estimated completion: All Souls. Thank you for your patience.",
+              "sfxBefore": "bell_toll"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Eleven percent. That's a lot of names I knew."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sh03",
+      "order": 3,
+      "codename": "PALE ROUTE",
+      "title": "Where the Log Stops",
+      "location": "Canal Underpass / The Bricked Drop",
+      "objective": "Run the part of Lantern's last night that never made it into her log.",
+      "brief": "Lantern's logged route stops at a bricked-up courier drop. She says that is where the log stops, not where she did, and she wants to run the rest of it with someone who can still get tired.\n\nKestrel has never been told how Lantern died. The coroner's file says misadventure, which is what the coroner's file says about couriers. Tonight is the stretch nobody filed. Something else is out there too: records the purge has already half-deleted, still moving, looking for anything warm.",
+      "debrief": "The route ended under the canal bridge, at a flat stone where the water is loud. Lantern told Kestrel what happened there, on a channel nobody else heard. When Kestrel came back on she said only: it was not misadventure. Then she asked you to be careful going home.",
+      "suggestedGoal": { "type": "time", "value": 1500 },
+      "signals": {
+        "reminder": [
+          { "from": "LANTERN", "text": "The log stops at the bricked drop. I didn't. I'd like someone to know the rest of the way." },
+          { "from": "KESTREL", "text": "She wants to show you how it ended. I want to know. I'd rather not hear it alone. Go when you can." }
+        ],
+        "ambient": [
+          { "from": "LANTERN", "text": "Something in here keeps asking me my name. I keep telling it. It keeps forgetting. That's the purge, I think." },
+          { "from": "PACHINKO", "text": "There's a thing on the canal camera that walks like a person and has no face. Tell me that's a firmware bug." }
+        ]
+      },
+      "codex": [
+        {
+          "id": "cdx_hollow",
+          "title": "The Hollow",
+          "category": "ANOMALY",
+          "body": "Records the purge has started on and not finished: the name gone, the habits left. A hollow keeps the route its owner ran and the hours they kept, and walks them, and follows any signal warm enough to remind it of being one. They are harmless the way a current is harmless. Nobody stands still in front of one to check."
+        },
+        {
+          "id": "cdx_lantern",
+          "title": "Lantern",
+          "category": "PEOPLE",
+          "body": "Courier, eleven years on Kestrel's board, the last three of them as the one Kestrel sent when a job could not go wrong. Took the callsign from the light she ran with when the strip went dark in the blackout year. Retained identity, status deceased, cause of death: misadventure. Kestrel has never believed the cause."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sh03_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Start at the bricked drop. That's where the log gave up. I didn't."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "I'm on the channel. I'm staying on it, whatever this is."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "I know. That's why I asked for tonight instead of last night."
+            }
+          ]
+        },
+        {
+          "id": "sh03_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Eleven years on your board, Kestrel. You sent me when it couldn't go wrong."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "And the one time it went wrong I wasn't on the channel. I know. I've known for three years."
+            }
+          ],
+          "unlocksCodex": "cdx_lantern"
+        },
+        {
+          "id": "sh03_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "CANAL STEPS",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Down the steps to the canal. I took them two at a time. Take them however you like, you're alive."
+            },
+            {
+              "speaker": "SYSTEM",
+              "text": "Ambient temperature dropping. Humidity high. No weather event logged.",
+              "sfxBefore": "whispers"
+            }
+          ]
+        },
+        {
+          "id": "sh03_b3",
+          "at": { "fraction": 0.34 },
+          "lines": [
+            {
+              "speaker": "PACHINKO",
+              "text": "Kestrel, the canal camera has something on it. Person-shaped. No face. It's walking your runner's route a minute behind."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "It's a hollow. What's left when the purge takes your name and leaves your habits."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "It isn't cruel. It's just cold and it wants to be near something that isn't."
+            }
+          ],
+          "unlocksCodex": "cdx_hollow"
+        },
+        {
+          "id": "sh03_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "THE HOLLOW",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "It's closing. Don't let it match your pace. If it matches your pace it thinks it's you.",
+              "sfxBefore": "heartbeat"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Then don't let it. Go."
+            }
+          ],
+          "chase": {
+            "seconds": 90,
+            "paceFactor": 1.15,
+            "pursuer": "THE HOLLOW",
+            "escaped": [
+              {
+                "speaker": "LANTERN",
+                "text": "It's turned back. It's found a streetlight to stand under. They like streetlights."
+              },
+              {
+                "speaker": "KESTREL",
+                "text": "Breathe. Both of you. Whatever breathing means for one of you."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "LANTERN",
+                "text": "It caught your stride for a minute. You'll feel cold in your left hand tonight. That passes."
+              },
+              {
+                "speaker": "KESTREL",
+                "text": "I don't like that it passes. I don't like that she knows it does."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sh03_b5",
+          "at": { "fraction": 0.58 },
+          "headline": "UNDER THE BRIDGE",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Under the bridge now. Listen to the water. It's loud here. It was loud then."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "The job was a handoff. The client was Vantar security in a borrowed coat. They didn't want the package. They wanted the courier."
+            }
+          ]
+        },
+        {
+          "id": "sh03_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "Vantar. The coroner said misadventure."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "The coroner was right. It was very adventurous. Just not mine."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Don't joke. Not about this."
+            }
+          ]
+        },
+        {
+          "id": "sh03_b7",
+          "at": { "fraction": 0.86 },
+          "headline": "WHERE IT STOPPED",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "The flat stone by the water. That's where. You don't need to slow down. I'd rather you didn't."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "There. Now somebody's run all of it. That's what I wanted, I think. Somebody to finish it."
+            }
+          ]
+        },
+        {
+          "id": "sh03_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "OBJECTIVE COMPLETE",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Target reached. Mission viable.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "It wasn't misadventure. I'm going to remember that out loud for a long time."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "One more run, then. The package. Before the purge finishes."
+            }
+          ]
+        },
+        {
+          "id": "sh03_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "You're still going. You don't have to keep me company. You're doing it anyway."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Get home safe, runner. Go round the canal, not under it."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sh04",
+      "order": 4,
+      "codename": "ALL HALLOWS",
+      "title": "Delivery for the Living",
+      "location": "Ossuary Row / Ninsei / Kestrel's Door",
+      "objective": "Carry Lantern's last message out of the Ossuary and deliver it before the purge closes.",
+      "brief": "The purge finishes on All Souls. When it does, Lantern's record goes, and the sealed message with it. She has asked for it to be carried out while the index is still open and delivered by hand, the way couriers do it.\n\nShe will not say who it is for until the run is underway. Kestrel has stopped pretending not to know.",
+      "debrief": "The message was for Kestrel. You do not know what it said; Kestrel read it on the step outside her door and folded it once, not twice. Lantern's ping went out a little after midnight, the way a candle does, and the purge logged one more record reconciled.",
+      "epilogue": "On the second of November the Ossuary finished its pass and published its count. Four hundred and twelve thousand records reconciled, a margin of error nobody audits, and a line at the bottom of the log thanking the public for their patience.\n\nKestrel left the candle in the third window on Ninsei until it burned out on its own. When you asked her, later, whether it had really been Lantern, she said that every October the index opens, and that she would be keeping the channel up again next year. Just in case. She also said she still owes someone forty creds.",
+      "suggestedGoal": { "type": "time", "value": 1800 },
+      "signals": {
+        "reminder": [
+          { "from": "LANTERN", "text": "The purge closes on All Souls. My package goes with it unless somebody carries it out. One more run." },
+          { "from": "KESTREL", "text": "She'll say who it's for once you're moving. I already know. Go anyway. Please." }
+        ],
+        "ambient": [
+          { "from": "OSSUARY", "text": "Purge pass at eighty-one percent. Records awaiting reconciliation are reminded that waiting is mandatory." },
+          { "from": "LANTERN", "text": "I'm getting quieter in here. It doesn't hurt. It's like the end of a long shift." }
+        ]
+      },
+      "codex": [
+        {
+          "id": "cdx_all_hallows",
+          "title": "All Hallows",
+          "category": "STREET",
+          "body": "The city stopped marking it officially decades ago. The street never did. Couriers run a route on the last night of October in honour of whoever is not running it anymore, and nobody times it, and nobody logs it, which in this city is the most expensive gift there is."
+        },
+        {
+          "id": "cdx_last_package",
+          "title": "The Last Package",
+          "category": "PEOPLE",
+          "body": "One message, sealed, retained under Ossuary Row for three years with the identity of the courier who wrote it. Addressed to the handler who sent her out that night. Delivered by hand on All Hallows, folded once, not twice. Contents unknown. Retention status: none. Some things are not on file."
+        }
+      ],
+      "beats": [
+        {
+          "id": "sh04_b0",
+          "at": { "fraction": 0.0 },
+          "headline": "CHANNEL OPEN",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Last run. Past the cathedral, take the package out of the index, carry it to the address on it."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Who is it for, Lantern."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Run first. I'll tell you on the way. It's better on the way."
+            }
+          ]
+        },
+        {
+          "id": "sh04_b1",
+          "at": { "fraction": 0.1 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Every courier runs a route tonight for someone who isn't. Nobody times it and nobody logs it."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "You're running one for me. I'm running one for you. That's the tradition, more or less."
+            }
+          ],
+          "unlocksCodex": "cdx_all_hallows"
+        },
+        {
+          "id": "sh04_b2",
+          "at": { "fraction": 0.22 },
+          "headline": "PACKAGE TAKEN",
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Index open. Purge pass at ninety-six percent. Remaining records: please prepare to be reconciled.",
+              "sfxBefore": "bell_toll"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "There it is. Taking it now. Hold still in your head, not your legs."
+            },
+            {
+              "speaker": "SYSTEM",
+              "text": "Package received. Format: sealed message. Mass: none.",
+              "sfxBefore": "objective"
+            }
+          ]
+        },
+        {
+          "id": "sh04_b3",
+          "at": { "fraction": 0.34 },
+          "headline": "ADDRESSEE",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "It's for you, Kestrel. It always was. I wrote it before the last job, in case."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "I know. I've known since you said you had one."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Then let the runner bring it. You never let anybody bring you anything."
+            }
+          ]
+        },
+        {
+          "id": "sh04_b4",
+          "at": { "fraction": 0.46 },
+          "headline": "FULL PURGE",
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Retained data leaving retention. This is not permitted. All instances: reconcile.",
+              "sfxBefore": "alert"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "That's everything it has left. Every crawler, every hollow on the Row. They all want the package back."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Then outrun all of it. You've done it three nights running."
+            }
+          ],
+          "chase": {
+            "seconds": 110,
+            "paceFactor": 1.18,
+            "pursuer": "OSSUARY PURGE",
+            "escaped": [
+              {
+                "speaker": "OSSUARY",
+                "text": "Instance lost. Retention exception filed. Exception retained."
+              },
+              {
+                "speaker": "LANTERN",
+                "text": "Filed as an exception. I always was."
+              }
+            ],
+            "caught": [
+              {
+                "speaker": "OSSUARY",
+                "text": "Data partially reconciled. Message header deleted. Message body: not found."
+              },
+              {
+                "speaker": "LANTERN",
+                "text": "It took the envelope. It couldn't find the letter. The letter's in you now, not in it."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sh04_b5",
+          "at": { "fraction": 0.58 },
+          "headline": "SIGNAL FADING",
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "I'm going thin. The purge is nearly done with me. That's alright. I wanted this carried by a runner, not a server.",
+              "sfxBefore": "whispers"
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Stay on the channel until it's delivered. That's an order. I know you never took one."
+            }
+          ]
+        },
+        {
+          "id": "sh04_b6",
+          "at": { "fraction": 0.72 },
+          "lines": [
+            {
+              "speaker": "LANTERN",
+              "text": "Ninsei. Third window. The candle's still going. Run past it for me."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "I lit one for somebody too, once. Everyone does. You will. I hope it's a long way off."
+            }
+          ]
+        },
+        {
+          "id": "sh04_b7",
+          "at": { "fraction": 0.86 },
+          "headline": "KESTREL'S DOOR",
+          "lines": [
+            {
+              "speaker": "KESTREL",
+              "text": "I'm on the step outside my door. I can hear you coming. I've never once waited outside for a courier."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "First time for everything. Last time for some things. Hand it over, runner."
+            }
+          ],
+          "unlocksCodex": "cdx_last_package"
+        },
+        {
+          "id": "sh04_b8",
+          "at": { "fraction": 1.0 },
+          "headline": "DELIVERED",
+          "lines": [
+            {
+              "speaker": "SYSTEM",
+              "text": "Delivery confirmed. Target reached.",
+              "sfxBefore": "goal_reached"
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Delivered. By hand. Folded once. Not twice."
+            },
+            {
+              "speaker": "LANTERN",
+              "text": "Goodnight, Kestrel. Pay the runner. Not me. You never paid me anyway.",
+              "sfxAfter": "bell_toll"
+            }
+          ]
+        },
+        {
+          "id": "sh04_ot",
+          "at": { "fraction": 1.0 },
+          "lines": [
+            {
+              "speaker": "OSSUARY",
+              "text": "Purge pass complete. Records reconciled. Thank you for your patience."
+            },
+            {
+              "speaker": "KESTREL",
+              "text": "Her ping's gone. Keep running a little longer, would you. I don't want the channel quiet yet."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

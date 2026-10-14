@@ -33,7 +33,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+                    icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                   ),
                   Text('SETTINGS', style: CyType.display(size: 14, color: Cy.ink)),
                 ],
@@ -77,7 +77,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    const SectionHeader('STREAK', accent: Cy.amber),
+                    SectionHeader('STREAK', accent: Cy.amber),
                     NeonPanel(
                       child: Column(
                         children: [
@@ -138,7 +138,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    const SectionHeader('AUDIO', accent: Cy.cyan),
+                    SectionHeader('AUDIO', accent: Cy.cyan),
                     NeonPanel(
                       child: Column(
                         children: [
@@ -204,7 +204,7 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    const SectionHeader('RUN', accent: Cy.magenta),
+                    SectionHeader('RUN', accent: Cy.magenta),
                     NeonPanel(
                       child: Column(
                         children: [
@@ -237,12 +237,20 @@ class SettingsScreen extends StatelessWidget {
                             value: profile.splitsEnabled,
                             onChanged: (v) => update(profile.copyWith(splitsEnabled: v)),
                           ),
+                          const _Rule(),
+                          _SwitchRow(
+                            label: 'Seasonal events',
+                            subtitle: 'The city dresses for the time of year — its look, sounds, handler '
+                                'traffic and a limited operation. Halloween: SAMHAIN PROTOCOL',
+                            value: profile.seasonalEvents,
+                            onChanged: (v) => update(profile.copyWith(seasonalEvents: v)),
+                          ),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
 
-                    const SectionHeader('SIGNALS', accent: Cy.green),
+                    SectionHeader('SIGNALS', accent: Cy.green),
                     NeonPanel(
                       child: Column(
                         children: [
@@ -319,7 +327,7 @@ class SettingsScreen extends StatelessWidget {
                     const NeonPanel(child: PackControls()),
                     const SizedBox(height: 20),
 
-                    const SectionHeader('DATA', accent: Cy.red),
+                    SectionHeader('DATA', accent: Cy.red),
                     NeonPanel(
                       accent: Cy.rule,
                       child: Column(
@@ -752,12 +760,12 @@ class _TextRowState extends State<_TextRow> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             filled: true,
             fillColor: Cy.panelHi,
-            border: const OutlineInputBorder(borderSide: BorderSide(color: Cy.rule), borderRadius: BorderRadius.zero),
-            enabledBorder: const OutlineInputBorder(
+            border: OutlineInputBorder(borderSide: BorderSide(color: Cy.rule), borderRadius: BorderRadius.zero),
+            enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Cy.rule),
               borderRadius: BorderRadius.zero,
             ),
-            focusedBorder: const OutlineInputBorder(
+            focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Cy.cyan),
               borderRadius: BorderRadius.zero,
             ),

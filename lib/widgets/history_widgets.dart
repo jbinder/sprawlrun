@@ -33,17 +33,18 @@ class DotScale {
 /// One day. A rest day is a dark notch, a future day only an outline, and a
 /// run day is lit in proportion to its distance.
 class ActivityDot extends StatelessWidget {
-  const ActivityDot({super.key, required this.level, this.future = false, this.accent = Cy.cyan, this.today = false});
+  const ActivityDot({super.key, required this.level, this.future = false, this.accent, this.today = false});
 
   final int level;
   final bool future;
-  final Color accent;
+  final Color? accent;
   final bool today;
 
   static const _alpha = [0.0, 0.32, 0.52, 0.74, 1.0];
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.cyan;
     final lit = level > 0;
     return AspectRatio(
       aspectRatio: 1,
@@ -77,7 +78,7 @@ class MonthDots extends StatelessWidget {
     required this.days,
     required this.scale,
     required this.today,
-    this.accent = Cy.cyan,
+    this.accent,
     this.onDayTap,
     this.gap = 4,
   });
@@ -85,7 +86,7 @@ class MonthDots extends StatelessWidget {
   final List<DayBucket> days;
   final DotScale scale;
   final DateTime today;
-  final Color accent;
+  final Color? accent;
 
   /// Called for days that have at least one run.
   final ValueChanged<DayBucket>? onDayTap;
@@ -170,18 +171,19 @@ class WeekColumns extends StatelessWidget {
     required this.days,
     required this.scale,
     required this.today,
-    this.accent = Cy.cyan,
+    this.accent,
     this.gap = 3,
   });
 
   final List<DayBucket> days;
   final DotScale scale;
   final DateTime today;
-  final Color accent;
+  final Color? accent;
   final double gap;
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.cyan;
     final weeks = days.length ~/ 7;
     return Row(
       children: [
@@ -213,10 +215,10 @@ class WeekColumns extends StatelessWidget {
 /// Distance per calendar month across the whole log, oldest first, with a
 /// month initial under each bar and the year where it changes.
 class MonthBars extends StatelessWidget {
-  const MonthBars({super.key, required this.months, this.accent = Cy.cyan, this.height = 110, this.onMonthTap});
+  const MonthBars({super.key, required this.months, this.accent, this.height = 110, this.onMonthTap});
 
   final List<PeriodStats> months;
-  final Color accent;
+  final Color? accent;
   final double height;
   final ValueChanged<PeriodStats>? onMonthTap;
 
@@ -224,6 +226,7 @@ class MonthBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.cyan;
     if (months.isEmpty) return SizedBox(height: height);
     final maxValue = months.fold(0.0, (m, p) => max(m, p.distanceMeters));
     final scale = max(maxValue, 1000.0);

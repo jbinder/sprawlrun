@@ -37,6 +37,7 @@ flutter:
   assets:
     - assets/missions/
     - assets/sfx/
+    - assets/sfx/samhain/
 
   fonts:
     # Display face — signage, headers, the "chrome" of the UI.

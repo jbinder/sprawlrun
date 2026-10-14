@@ -14,8 +14,8 @@ class GoalRing extends StatelessWidget {
     super.key,
     required this.progress,
     required this.child,
-    this.accent = Cy.cyan,
-    this.trackColor = Cy.rule,
+    this.accent,
+    this.trackColor,
     this.size = 240,
     this.strokeWidth = 10,
     this.segments = 60,
@@ -24,8 +24,8 @@ class GoalRing extends StatelessWidget {
 
   final double progress;
   final Widget child;
-  final Color accent;
-  final Color trackColor;
+  final Color? accent;
+  final Color? trackColor;
   final double size;
   final double strokeWidth;
 
@@ -38,6 +38,8 @@ class GoalRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final trackColor = this.trackColor ?? Cy.rule;
+    final accent = this.accent ?? Cy.cyan;
     return SizedBox(
       width: size,
       height: size,
@@ -193,15 +195,16 @@ class ChaseBar extends StatelessWidget {
 
 /// Per-day distance bars for the stats screen.
 class DayBars extends StatelessWidget {
-  const DayBars({super.key, required this.days, this.accent = Cy.cyan, this.height = 92, this.showLabels = true});
+  const DayBars({super.key, required this.days, this.accent, this.height = 92, this.showLabels = true});
 
   final List<DayBucket> days;
-  final Color accent;
+  final Color? accent;
   final double height;
   final bool showLabels;
 
   @override
   Widget build(BuildContext context) {
+    final accent = this.accent ?? Cy.cyan;
     if (days.isEmpty) return SizedBox(height: height);
     final maxValue = days.fold(0.0, (m, d) => max(m, d.distanceMeters));
     // Every bar being full height when the runner did 300 m one day would be a

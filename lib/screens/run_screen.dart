@@ -410,7 +410,7 @@ class _LocationWarning extends StatelessWidget {
       decoration: BoxDecoration(color: Cy.amber.withValues(alpha: 0.1), border: Border.all(color: Cy.amber)),
       child: Row(
         children: [
-          const Icon(Icons.satellite_alt_outlined, size: 15, color: Cy.amber),
+          Icon(Icons.satellite_alt_outlined, size: 15, color: Cy.amber),
           const SizedBox(width: 9),
           Expanded(
             child: Text(
@@ -573,7 +573,7 @@ class _TransmissionPanel extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
         child: Row(
           children: [
-            const Icon(Icons.music_note_outlined, size: 16, color: Cy.ghost),
+            Icon(Icons.music_note_outlined, size: 16, color: Cy.ghost),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -749,7 +749,7 @@ class _Controls extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(18, 12, 18, 14),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: Cy.v0id,
         border: Border(top: BorderSide(color: Cy.rule)),
       ),

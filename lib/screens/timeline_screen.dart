@@ -162,7 +162,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   children: [
                     IconButton(
                       onPressed: () => Navigator.of(context).maybePop(),
-                      icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+                      icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                     ),
                     const Spacer(),
                     Text('THE WIRE · $total', style: CyType.label(size: 10)),

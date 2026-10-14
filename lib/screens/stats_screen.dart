@@ -43,16 +43,16 @@ class StatsScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
       children: [
-        const _PeriodPager(unit: _PeriodUnit.week, accent: Cy.cyan),
+        _PeriodPager(unit: _PeriodUnit.week, accent: Cy.cyan),
         const SizedBox(height: 16),
-        const _PeriodPager(unit: _PeriodUnit.month, accent: Cy.magenta),
+        _PeriodPager(unit: _PeriodUnit.month, accent: Cy.magenta),
         const SizedBox(height: 22),
 
-        const SectionHeader('HISTORY', accent: Cy.green),
+        SectionHeader('HISTORY', accent: Cy.green),
         const _HistoryTeaser(),
         const SizedBox(height: 22),
 
-        const SectionHeader('LIFETIME', accent: Cy.amber),
+        SectionHeader('LIFETIME', accent: Cy.amber),
         _LifetimeCard(stats: state.lifetime, units: units),
         const SizedBox(height: 22),
 
@@ -289,7 +289,7 @@ class _HistoryTeaser extends StatelessWidget {
             children: [
               Text('FULL HISTORY', style: CyType.mono(size: 10, color: Cy.inkDim, letterSpacing: 1.4)),
               const SizedBox(width: 4),
-              const Icon(Icons.chevron_right, size: 14, color: Cy.inkDim),
+              Icon(Icons.chevron_right, size: 14, color: Cy.inkDim),
             ],
           ),
         ],
@@ -373,7 +373,7 @@ class _LifetimeCard extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.local_fire_department_outlined, size: 13, color: Cy.ghost),
+              Icon(Icons.local_fire_department_outlined, size: 13, color: Cy.ghost),
               const SizedBox(width: 7),
               Expanded(
                 child: Text(

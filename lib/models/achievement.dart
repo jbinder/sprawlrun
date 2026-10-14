@@ -22,7 +22,7 @@ extension AchTierStyle on AchTier {
   };
 }
 
-enum AchCategory { distance, endurance, missions, pursuit, discipline, anomaly }
+enum AchCategory { distance, endurance, missions, pursuit, discipline, anomaly, seasonal }
 
 extension AchCategoryLabel on AchCategory {
   String get label => switch (this) {
@@ -32,6 +32,7 @@ extension AchCategoryLabel on AchCategory {
     AchCategory.pursuit => 'PURSUIT',
     AchCategory.discipline => 'DISCIPLINE',
     AchCategory.anomaly => 'ANOMALY',
+    AchCategory.seasonal => 'SEASONAL',
   };
 
   IconData get icon => switch (this) {
@@ -41,6 +42,7 @@ extension AchCategoryLabel on AchCategory {
     AchCategory.pursuit => Icons.radar_outlined,
     AchCategory.discipline => Icons.local_fire_department_outlined,
     AchCategory.anomaly => Icons.blur_on_outlined,
+    AchCategory.seasonal => Icons.nights_stay_outlined,
   };
 }
 
@@ -752,6 +754,60 @@ const List<AchievementDef> kAchievements = [
     metric: _bestWeek,
     format: _km,
   ),
+
+  // ---- Seasonal -----------------------------------------------------------
+  // Earned by the calendar, so they sit on the wall year-round as a reason
+  // to come back when the season does.
+  AchievementDef(
+    id: 'sh_1',
+    title: 'Wake',
+    description: 'Complete your first SAMHAIN PROTOCOL operation.',
+    category: AchCategory.seasonal,
+    tier: AchTier.street,
+    target: 1,
+    metric: _samhainMissions,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'sh_4',
+    title: 'Laid To Rest',
+    description: 'Complete all four SAMHAIN PROTOCOL operations.',
+    category: AchCategory.seasonal,
+    tier: AchTier.ice,
+    target: 4,
+    metric: _samhainMissions,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'hallows_eve',
+    title: "All Hallows' Run",
+    description: 'Run on the 31st of October.',
+    category: AchCategory.seasonal,
+    tier: AchTier.chrome,
+    target: 1,
+    metric: _hallowsEve,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'samhain_5',
+    title: 'Restless',
+    description: 'Run five times between 10 October and 2 November.',
+    category: AchCategory.seasonal,
+    tier: AchTier.chrome,
+    target: 5,
+    metric: _samhainRuns,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'samhain_years_2',
+    title: 'Returning Spirit',
+    description: 'Run between 10 October and 2 November in two different years.',
+    category: AchCategory.seasonal,
+    tier: AchTier.legend,
+    target: 2,
+    metric: _samhainYears,
+    format: _count,
+  ),
 ];
 
 // Top-level metric accessors — const list entries cannot hold closures.
@@ -762,6 +818,10 @@ double _longestSeconds(LifetimeStats s) => s.longestRunSeconds;
 double _missions(LifetimeStats s) => s.missionsCompleted.toDouble();
 double _sprawlPrimeMissions(LifetimeStats s) => _packMissions(s, 'sprawl_prime');
 double _nullTideMissions(LifetimeStats s) => _packMissions(s, 'null_tide');
+double _samhainMissions(LifetimeStats s) => _packMissions(s, 'samhain');
+double _hallowsEve(LifetimeStats s) => s.hallowsEveRuns.toDouble();
+double _samhainRuns(LifetimeStats s) => s.samhainRuns.toDouble();
+double _samhainYears(LifetimeStats s) => s.samhainYears.toDouble();
 
 /// Cleared missions belonging to one pack, recognised by the id prefix its
 /// missions share. `test/campaign_test.dart` holds every bundled pack to this
@@ -772,7 +832,7 @@ double _packMissions(LifetimeStats s, String packId) {
 }
 
 /// Mission id prefix per pack, e.g. `sp01` for SPRAWL PRIME.
-const Map<String, String> kPackMissionPrefixes = {'sprawl_prime': 'sp', 'null_tide': 'nt'};
+const Map<String, String> kPackMissionPrefixes = {'sprawl_prime': 'sp', 'null_tide': 'nt', 'samhain': 'sh'};
 double _beats(LifetimeStats s) => s.beatsHeard.toDouble();
 double _perfect(LifetimeStats s) => s.perfectMissions.toDouble();
 double _evaded(LifetimeStats s) => s.chasesEvaded.toDouble();

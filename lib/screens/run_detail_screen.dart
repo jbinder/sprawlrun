@@ -132,7 +132,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+                    icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                   ),
                   const Spacer(),
                   IconButton(
@@ -146,7 +146,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                   ),
                   IconButton(
                     onPressed: _delete,
-                    icon: const Icon(Icons.delete_outline, color: Cy.inkDim),
+                    icon: Icon(Icons.delete_outline, color: Cy.inkDim),
                     tooltip: 'Delete run',
                   ),
                 ],
@@ -174,7 +174,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                           filled: run.isSuccess,
                         ),
                         CyberTag('TARGET ${run.goal}', color: Cy.ghost),
-                        if (run.isTimeOnly) const CyberTag('TIME ONLY', color: Cy.amber),
+                        if (run.isTimeOnly) CyberTag('TIME ONLY', color: Cy.amber),
                       ],
                     ),
                     const SizedBox(height: 18),
@@ -245,7 +245,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
 
                     if (run.missionId != null) ...[
                       const SizedBox(height: 18),
-                      const SectionHeader('STORY', accent: Cy.cyan),
+                      SectionHeader('STORY', accent: Cy.cyan),
                       if (run.story.isEmpty)
                         NeonPanel(
                           accent: Cy.rule,

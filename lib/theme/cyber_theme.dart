@@ -18,7 +18,7 @@ abstract final class CyType {
   static TextStyle display({
     double size = 18,
     double weight = 700,
-    Color color = Cy.ink,
+    Color? color,
     double letterSpacing = 2.4,
     List<Shadow>? shadows,
     double? height,
@@ -26,7 +26,7 @@ abstract final class CyType {
     fontFamily: displayFamily,
     fontVariations: [FontVariation('wght', weight)],
     fontSize: size,
-    color: color,
+    color: color ?? Cy.ink,
     letterSpacing: letterSpacing,
     shadows: shadows,
     height: height,
@@ -35,7 +35,7 @@ abstract final class CyType {
   static TextStyle body({
     double size = 16,
     FontWeight weight = FontWeight.w600,
-    Color color = Cy.ink,
+    Color? color,
     double letterSpacing = 0.4,
     double? height,
     FontStyle? style,
@@ -43,7 +43,7 @@ abstract final class CyType {
     fontFamily: bodyFamily,
     fontSize: size,
     fontWeight: weight,
-    color: color,
+    color: color ?? Cy.ink,
     letterSpacing: letterSpacing,
     height: height,
     fontStyle: style,
@@ -51,14 +51,14 @@ abstract final class CyType {
 
   static TextStyle mono({
     double size = 14,
-    Color color = Cy.ink,
+    Color? color,
     double letterSpacing = 1.0,
     List<Shadow>? shadows,
     double? height,
   }) => TextStyle(
     fontFamily: monoFamily,
     fontSize: size,
-    color: color,
+    color: color ?? Cy.ink,
     letterSpacing: letterSpacing,
     shadows: shadows,
     height: height,
@@ -76,12 +76,12 @@ abstract final class CyType {
   );
 
   /// Small all-caps label above a value or section.
-  static TextStyle label({Color color = Cy.inkDim, double size = 11}) =>
-      TextStyle(fontFamily: monoFamily, fontSize: size, color: color, letterSpacing: 2.2);
+  static TextStyle label({Color? color, double size = 11}) =>
+      TextStyle(fontFamily: monoFamily, fontSize: size, color: color ?? Cy.inkDim, letterSpacing: 2.2);
 }
 
 ThemeData buildCyberTheme() {
-  const scheme = ColorScheme.dark(
+  final scheme = ColorScheme.dark(
     primary: Cy.cyan,
     onPrimary: Cy.v0id,
     secondary: Cy.magenta,
@@ -102,15 +102,15 @@ ThemeData buildCyberTheme() {
     fontFamily: CyType.bodyFamily,
     splashColor: Cy.cyan.withValues(alpha: 0.08),
     highlightColor: Cy.cyan.withValues(alpha: 0.05),
-    dividerTheme: const DividerThemeData(color: Cy.rule, thickness: 1, space: 1),
-    iconTheme: const IconThemeData(color: Cy.cyan, size: 20),
+    dividerTheme: DividerThemeData(color: Cy.rule, thickness: 1, space: 1),
+    iconTheme: IconThemeData(color: Cy.cyan, size: 20),
     appBarTheme: AppBarTheme(
       backgroundColor: Cy.v0id,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: false,
       titleTextStyle: CyType.display(size: 16, color: Cy.ink, shadows: textGlow(Cy.cyan, blur: 10, opacity: 0.35)),
-      iconTheme: const IconThemeData(color: Cy.cyan),
+      iconTheme: IconThemeData(color: Cy.cyan),
     ),
     textTheme: TextTheme(
       displayLarge: CyType.display(size: 30),
@@ -150,7 +150,7 @@ ThemeData buildCyberTheme() {
 }
 
 /// Dark status/nav bars with no scrim, so the grid background runs edge to edge.
-const SystemUiOverlayStyle cyberOverlayStyle = SystemUiOverlayStyle(
+SystemUiOverlayStyle get cyberOverlayStyle => SystemUiOverlayStyle(
   statusBarColor: Colors.transparent,
   statusBarIconBrightness: Brightness.light,
   statusBarBrightness: Brightness.dark,

@@ -11,8 +11,10 @@ import '../services/backup_nudge.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../theme/season.dart';
 import '../util/clock.dart';
 import '../util/format.dart';
+import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
 import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
@@ -37,13 +39,27 @@ class DashboardScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
       children: [
-        _Greeting(callsign: state.profile.callsign),
-        const SizedBox(height: 16),
+        _Greeting(callsign: state.profile.callsign, season: state.season),
+        // Room for the pumpkin perched on the card, clear of the greeting.
+        SizedBox(height: state.seasonalPack == null ? 16 : 30),
+        if (state.seasonalPack case final event?) ...[
+          PumpkinPerch(
+            right: 54,
+            size: 26,
+            child: _SeasonCard(
+              season: state.season!,
+              pack: event,
+              playing: pack?.id == event.id,
+              finished: state.packProgress.any((p) => p.pack.id == event.id && p.isDone),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
         if (state.interruptedRun case final saved?) ...[
           _InterruptedRunCard(saved: saved),
           const SizedBox(height: 16),
         ],
-        _StreakCard(streak: state.streak),
+        PumpkinPerch(left: 40, size: 21, child: _StreakCard(streak: state.streak)),
         const SizedBox(height: 16),
         _WeekStrip(week: state.week, units: state.profile.units),
         const SizedBox(height: 22),
@@ -54,11 +70,11 @@ class DashboardScreen extends StatelessWidget {
         ],
 
         if (current != null) ...[
-          const SectionHeader('NEXT OPERATION', accent: Cy.magenta),
+          SectionHeader('NEXT OPERATION', accent: Cy.magenta),
           _NextOpCard(progress: current),
           const SizedBox(height: 22),
         ] else if (chain.isNotEmpty) ...[
-          const SectionHeader('CAMPAIGN COMPLETE', accent: Cy.green),
+          SectionHeader('CAMPAIGN COMPLETE', accent: Cy.green),
           _CampaignCompleteCard(pack: pack!, next: state.nextOpenPack),
           const SizedBox(height: 22),
         ],
@@ -83,7 +99,7 @@ class DashboardScreen extends StatelessWidget {
                     'ALL PACKS',
                     style: CyType.label(size: 10, color: Cy.cyan),
                   ),
-                  const Icon(Icons.chevron_right, size: 16, color: Cy.cyan),
+                  Icon(Icons.chevron_right, size: 16, color: Cy.cyan),
                 ],
               ),
             ),
@@ -130,14 +146,16 @@ class DashboardScreen extends StatelessWidget {
 }
 
 class _Greeting extends StatelessWidget {
-  const _Greeting({required this.callsign});
+  const _Greeting({required this.callsign, this.season});
 
   final String callsign;
+  final Season? season;
 
   /// Flavour that tracks the clock — the Sprawl is a night city, and the app
   /// should sound like it knows what time it is.
   String get _line {
     final hour = appNow().hour;
+    if (season == Season.samhain) return _samhainLine(hour);
     if (hour < 5) {
       return 'The city is at its quietest. Nobody is watching the streets at this hour.';
     }
@@ -154,8 +172,19 @@ class _Greeting extends StatelessWidget {
     return 'Rain on the strip. Good conditions. Nobody looks up when it rains.';
   }
 
+  /// The same clock, the week the dead accounts walk.
+  static String _samhainLine(int hour) {
+    if (hour < 5) return 'The hour the purge runs. Whatever is still logged in now is not going to log out.';
+    if (hour < 8) return 'Fog on the strip. Some of the footprints in it are older than the fog.';
+    if (hour < 12) return 'Daylight. The dead net keeps office hours, but it does not keep them well.';
+    if (hour < 17) return 'Pumpkins on the ration-stall counters, carved with corp logos. Nobody admits to it.';
+    if (hour < 21) return 'The signs are coming on, and some of them are signing for people who are not here.';
+    return 'Candles in the window of every courier who did not come back. Run past them. They like that.';
+  }
+
   String get _salutation {
     final hour = appNow().hour;
+    if (season == Season.samhain && hour >= 18) return 'GOOD HUNTING';
     if (hour < 5) return 'STILL AWAKE';
     if (hour < 12) return 'MORNING';
     if (hour < 18) return 'AFTERNOON';
@@ -192,6 +221,74 @@ class _Greeting extends StatelessWidget {
           style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
         ),
       ],
+    );
+  }
+}
+
+/// The season's event, at the top of the dashboard while it lasts: what is
+/// happening, until when, and one tap to play it.
+class _SeasonCard extends StatelessWidget {
+  const _SeasonCard({required this.season, required this.pack, required this.playing, required this.finished});
+
+  final Season season;
+  final MissionPack pack;
+
+  /// Whether the event pack is already the one on the ops screen.
+  final bool playing;
+
+  /// Whether every operation in it is cleared, so there is nothing to carry
+  /// over when the season closes.
+  final bool finished;
+
+  @override
+  Widget build(BuildContext context) {
+    final until = season.until;
+    final last = DateTime(appNow().year, until.month, until.day);
+    return NeonPanel(
+      accent: Cy.magenta,
+      lit: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.nights_stay_outlined, size: 16, color: Cy.magenta),
+              const SizedBox(width: 8),
+              Expanded(
+                child: GlitchText(
+                  season.title,
+                  maxLines: 1,
+                  style: CyType.display(size: 13, color: Cy.ink, shadows: textGlow(Cy.magenta, blur: 12)),
+                ),
+              ),
+              Text(
+                'UNTIL ${Fmt.date(last)}',
+                style: CyType.label(size: 10, color: Cy.magenta),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(pack.tagline, style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35)),
+          // Progress is kept across years, but nothing else tells the runner
+          // so; without this the card simply vanishes mid-story.
+          if (!finished && season.daysLeft(appNow()) <= 3) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Last days. Unfinished operations resume next October.',
+              style: CyType.body(size: 13, color: Cy.amber, height: 1.35),
+            ),
+          ],
+          if (!playing) ...[
+            const SizedBox(height: 12),
+            CyberButton(
+              label: 'Open ${pack.title}',
+              icon: Icons.nights_stay_outlined,
+              dense: true,
+              onPressed: () => context.read<AppState>().selectPack(pack.id),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -415,7 +512,7 @@ class _NextOpCard extends StatelessWidget {
                       'OPEN BRIEFING',
                       style: CyType.display(size: 12, color: Cy.magenta),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.chevron_right,
                       size: 18,
                       color: Cy.magenta,
@@ -619,7 +716,7 @@ class _NextUnlocks extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader('CLOSEST UNLOCKS', accent: Cy.amber),
+        SectionHeader('CLOSEST UNLOCKS', accent: Cy.amber),
         for (final view in next)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -690,14 +787,14 @@ class _BackupNudgeCardState extends State<_BackupNudgeCard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, color: Cy.amber, size: 18),
+              Icon(Icons.warning_amber_rounded, color: Cy.amber, size: 18),
               const SizedBox(width: 10),
               Expanded(
                 child: Text('ARCHIVE DRIFT', style: CyType.label(size: 11, color: Cy.amber)),
               ),
               InkWell(
                 onTap: _busy ? null : () => state.snoozeBackupNudge(),
-                child: const Padding(
+                child: Padding(
                   padding: EdgeInsets.all(4),
                   child: Icon(Icons.close, size: 16, color: Cy.inkDim),
                 ),
@@ -767,7 +864,7 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
         children: [
           Row(
             children: [
-              const Icon(Icons.restore, color: Cy.amber, size: 18),
+              Icon(Icons.restore, color: Cy.amber, size: 18),
               const SizedBox(width: 10),
               Text('RUN INTERRUPTED', style: CyType.label(size: 11, color: Cy.amber)),
             ],

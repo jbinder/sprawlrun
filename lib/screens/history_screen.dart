@@ -38,7 +38,7 @@ class HistoryScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.of(context).maybePop(),
-                    icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+                    icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                   ),
                 ],
               ),
@@ -172,7 +172,7 @@ class _MonthBlock extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 6),
-              const Icon(Icons.chevron_right, size: 14, color: Cy.ghost),
+              Icon(Icons.chevron_right, size: 14, color: Cy.ghost),
             ],
           ),
           const SizedBox(height: 10),

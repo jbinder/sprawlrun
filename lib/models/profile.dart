@@ -212,6 +212,7 @@ class Profile {
     this.speechRate = 0.52,
     this.sfxVolume = 0.9,
     this.ambientBed = false,
+    this.seasonalEvents = true,
     this.chasesEnabled = true,
     this.autoPause = true,
     this.keepScreenOn = true,
@@ -274,6 +275,11 @@ class Profile {
 
   /// Low ambient drone under the HUD for runners with no music of their own.
   final bool ambientBed;
+
+  /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
+  /// and whatever follows: palette, backdrop, sounds, the event pack and its
+  /// handler traffic. See `theme/season.dart`.
+  final bool seasonalEvents;
 
   final bool chasesEnabled;
   final bool autoPause;
@@ -341,6 +347,7 @@ class Profile {
     double? speechRate,
     double? sfxVolume,
     bool? ambientBed,
+    bool? seasonalEvents,
     bool? chasesEnabled,
     bool? autoPause,
     bool? keepScreenOn,
@@ -368,6 +375,7 @@ class Profile {
     speechRate: speechRate ?? this.speechRate,
     sfxVolume: sfxVolume ?? this.sfxVolume,
     ambientBed: ambientBed ?? this.ambientBed,
+    seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     chasesEnabled: chasesEnabled ?? this.chasesEnabled,
     autoPause: autoPause ?? this.autoPause,
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
@@ -397,6 +405,7 @@ class Profile {
     'speechRate': speechRate,
     'sfxVolume': sfxVolume,
     'ambientBed': ambientBed,
+    'seasonalEvents': seasonalEvents,
     'chasesEnabled': chasesEnabled,
     'autoPause': autoPause,
     'keepScreenOn': keepScreenOn,
@@ -433,6 +442,7 @@ class Profile {
     speechRate: (json['speechRate'] as num?)?.toDouble() ?? 0.52,
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,
     ambientBed: json['ambientBed'] as bool? ?? false,
+    seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     chasesEnabled: json['chasesEnabled'] as bool? ?? true,
     autoPause: json['autoPause'] as bool? ?? true,
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,

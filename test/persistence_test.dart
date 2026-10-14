@@ -192,8 +192,8 @@ void main() {
     test('loads every bundled campaign, in order', () async {
       final repo = MissionRepository(externalDir: external, bundle: diskBundle());
       final packs = await repo.loadPacks();
-      expect(packs.map((p) => p.id), ['sprawl_prime', 'null_tide']);
-      expect(packs.map((p) => p.missions.length), everyElement(10));
+      expect(packs.map((p) => p.id), ['sprawl_prime', 'null_tide', 'samhain']);
+      expect(packs.where((p) => p.season == null).map((p) => p.missions.length), everyElement(10));
       expect(repo.loadErrors, isEmpty);
     });
 
@@ -226,9 +226,9 @@ void main() {
 
       final repo = MissionRepository(externalDir: external, bundle: diskBundle());
       final packs = await repo.loadPacks();
-      expect(packs, hasLength(3), reason: 'two bundled, one side-loaded');
+      expect(packs, hasLength(4), reason: 'three bundled, one side-loaded');
       expect(packs.last.title, 'CHIBA NIGHTS', reason: 'side-loaded packs come after the bundled ones');
-      expect((await repo.allMissions()), hasLength(21));
+      expect((await repo.allMissions()), hasLength(25));
     });
 
     test('a malformed side-loaded pack is reported, not fatal', () async {
@@ -236,7 +236,7 @@ void main() {
       final repo = MissionRepository(externalDir: external, bundle: diskBundle());
 
       final packs = await repo.loadPacks();
-      expect(packs, hasLength(2), reason: 'the bundled campaigns still load');
+      expect(packs, hasLength(3), reason: 'the bundled packs still load');
       expect(repo.loadErrors, hasLength(1));
       expect(repo.loadErrors.single, contains('broken.json'));
     });
@@ -246,7 +246,7 @@ void main() {
         jsonEncode({'id': 'sprawl_prime', 'title': 'REVISED', 'missions': []}),
       );
       final packs = await MissionRepository(externalDir: external, bundle: diskBundle()).loadPacks();
-      expect(packs, hasLength(2));
+      expect(packs, hasLength(3));
       expect(packs.first.title, 'REVISED', reason: 'replaced in place, keeping its position');
     });
   });

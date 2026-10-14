@@ -68,6 +68,9 @@ class LifetimeStats {
     this.dawnRuns = 0,
     this.distinctDays = 0,
     this.perfectMissions = 0,
+    this.hallowsEveRuns = 0,
+    this.samhainRuns = 0,
+    this.samhainYears = 0,
     this.firstRunAt,
     this.lastRunAt,
   });
@@ -106,6 +109,15 @@ class LifetimeStats {
 
   /// Missions completed without being caught in a single chase.
   final int perfectMissions;
+
+  /// Runs started on 31 October, in any year.
+  final int hallowsEveRuns;
+
+  /// Runs inside SAMHAIN PROTOCOL's real dates, and how many different years
+  /// those fell in. Judged by the calendar, not by whether the runner had
+  /// seasonal events switched on — the run happened either way.
+  final int samhainRuns;
+  final int samhainYears;
 
   final DateTime? firstRunAt;
   final DateTime? lastRunAt;

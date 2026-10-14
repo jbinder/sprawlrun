@@ -7,6 +7,7 @@ import '../models/achievement.dart';
 import '../models/mission.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../theme/season.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
@@ -137,6 +138,12 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
   /// screen is alive for as long as the runner looks at it.
   late final AnimationController _ambient;
 
+  /// Where the candle ring is drawn and what it is drawn round. The emblem
+  /// sits in a centred column, so it moves with whatever is under it — a tag,
+  /// a readout, a longer body — and a ring placed by screen fraction missed it.
+  final GlobalKey _stage = GlobalKey();
+  final GlobalKey _emblem = GlobalKey();
+
   Timer? _hold;
   int _index = 0;
 
@@ -202,12 +209,22 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
               AnimatedBuilder(
                 animation: Listenable.merge([_boot, _ambient]),
                 builder: (context, _) => CustomPaint(
-                  painter: _HaloPainter(
-                    ambient: _ambient.value,
-                    boot: _boot.value,
-                    accent: accent,
-                    rings: 2 + unlock.intensity,
-                  ),
+                  key: _stage,
+                  painter: Season.active == Season.samhain
+                      ? _SeancePainter(
+                          ambient: _ambient.value,
+                          boot: _boot.value,
+                          accent: accent,
+                          candles: 5 + unlock.intensity * 2,
+                          stage: _stage,
+                          emblem: _emblem,
+                        )
+                      : _HaloPainter(
+                          ambient: _ambient.value,
+                          boot: _boot.value,
+                          accent: accent,
+                          rings: 2 + unlock.intensity,
+                        ),
                 ),
               ),
               SafeArea(
@@ -230,8 +247,13 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
                             // Content rises in behind the emblem, which draws
                             // itself; the two arrive as one thing switching on.
                             final t = Curves.easeOutCubic.transform((_boot.value / 0.7).clamp(0.0, 1.0));
+                            // A séance does not switch on; it gutters in, the
+                            // way a picture does on a set that is not tuned.
+                            final flicker = Season.active == Season.samhain && _boot.value < 1
+                                ? 0.55 + 0.45 * sin(_boot.value * 61).abs()
+                                : 1.0;
                             return Opacity(
-                              opacity: t,
+                              opacity: t * flicker,
                               child: Transform.translate(offset: Offset(0, 28 * (1 - t)), child: child),
                             );
                           },
@@ -239,7 +261,7 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
                             key: ValueKey(_index),
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              _Emblem(unlock: unlock, boot: _boot, ambient: _ambient),
+                              _Emblem(key: _emblem, unlock: unlock, boot: _boot, ambient: _ambient),
                               const SizedBox(height: 26),
                               if (unlock.tag != null) CyberTag(unlock.tag!, color: accent, filled: true),
                               const SizedBox(height: 14),
@@ -296,7 +318,7 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
 /// The hexagonal containment emblem: a ring that draws itself around the icon
 /// as the card boots, breathes once it is there, and takes the stamp.
 class _Emblem extends StatelessWidget {
-  const _Emblem({required this.unlock, required this.boot, required this.ambient});
+  const _Emblem({super.key, required this.unlock, required this.boot, required this.ambient});
 
   final Unlock unlock;
   final Animation<double> boot;
@@ -480,6 +502,106 @@ class _HaloPainter extends CustomPainter {
   @override
   bool shouldRepaint(_HaloPainter old) =>
       old.ambient != ambient || old.boot != boot || old.accent != accent || old.rings != rings;
+}
+
+/// SAMHAIN PROTOCOL's version of [_HaloPainter]: a ring of candles around the
+/// emblem that light one after another as the card boots and then gutter,
+/// and pale wisps rising off it for as long as the screen is up.
+class _SeancePainter extends CustomPainter {
+  const _SeancePainter({
+    required this.ambient,
+    required this.boot,
+    required this.accent,
+    required this.candles,
+    required this.stage,
+    required this.emblem,
+  });
+
+  final double ambient;
+  final double boot;
+  final Color accent;
+  final int candles;
+
+  /// This painter's own box and the emblem's, read at paint time — layout is
+  /// done by then, and the emblem's rise during the boot is included.
+  final GlobalKey stage;
+  final GlobalKey emblem;
+
+  Offset _centre(Size size) {
+    final from = stage.currentContext?.findRenderObject();
+    final to = emblem.currentContext?.findRenderObject();
+    if (from is! RenderBox || to is! RenderBox || !to.hasSize || !to.attached) {
+      return Offset(size.width / 2, size.height * 0.37);
+    }
+    return from.globalToLocal(to.localToGlobal(to.size.center(Offset.zero)));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Tight round the emblem, so no candle stands on the title below it.
+    final centre = _centre(size);
+    const radius = 122.0;
+
+    // The circle chalked on the floor.
+    canvas.drawCircle(
+      centre,
+      radius,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1
+        ..color = accent.withValues(alpha: 0.18 * boot),
+    );
+
+    for (var i = 0; i < candles; i++) {
+      // Lit in turn round the ring during the boot.
+      final lit = ((boot * candles) - i).clamp(0.0, 1.0);
+      if (lit <= 0) continue;
+      final a = -pi / 2 + 2 * pi * i / candles;
+      final base = centre + Offset(cos(a), sin(a)) * radius;
+      final gutter = 0.75 + 0.25 * sin(2 * pi * ambient * 3 + i * 1.7) * sin(2 * pi * ambient * 5 + i);
+      final h = 12 * gutter;
+      canvas
+        ..drawCircle(base + const Offset(0, -10), 16 * gutter, Paint()..color = Cy.amber.withValues(alpha: 0.10 * lit))
+        ..drawRect(
+          Rect.fromLTWH(base.dx - 3, base.dy - 4, 6, 12),
+          Paint()..color = Cy.ink.withValues(alpha: 0.7 * lit),
+        );
+      final flame = Path()
+        ..moveTo(base.dx, base.dy - 4 - h)
+        ..quadraticBezierTo(base.dx + 4.5, base.dy - 4 - h * 0.35, base.dx, base.dy - 4)
+        ..quadraticBezierTo(base.dx - 4.5, base.dy - 4 - h * 0.35, base.dx, base.dy - 4 - h)
+        ..close();
+      canvas.drawPath(flame, Paint()..color = Cy.amber.withValues(alpha: lit));
+    }
+
+    // Wisps leaving the emblem: each rises, sways and fades on its own clock.
+    for (var i = 0; i < 4; i++) {
+      final p = (ambient + i / 4) % 1.0;
+      final x = centre.dx + sin(2 * pi * (p * 1.5 + i * 0.3)) * 26 + (i - 1.5) * 22;
+      final y = centre.dy - 60 - p * size.height * 0.3;
+      canvas.drawCircle(
+        Offset(x, y),
+        6 + 10 * p,
+        Paint()..color = Cy.green.withValues(alpha: 0.10 * (1 - p) * boot),
+      );
+    }
+
+    if (boot < 1) {
+      final t = Curves.easeOutCubic.transform(boot);
+      canvas.drawCircle(
+        centre,
+        90 + size.longestSide * 0.6 * t,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2 * (1 - t) + 0.5
+          ..color = Cy.green.withValues(alpha: 0.5 * (1 - t)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SeancePainter old) =>
+      old.ambient != ambient || old.boot != boot || old.accent != accent || old.candles != candles;
 }
 
 /// One square per unlock, lit up to and including the current one.

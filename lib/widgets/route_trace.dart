@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../models/run_record.dart';
 import '../theme/cyber_palette.dart';
+import '../theme/season.dart';
 import '../theme/cyber_theme.dart';
 
 /// Draws the GPS trace as a neon filament on a grid.
@@ -22,13 +23,13 @@ class RouteTrace extends StatefulWidget {
   const RouteTrace({
     super.key,
     required this.trace,
-    this.accent = Cy.cyan,
+    this.accent,
     this.height = 200,
     this.animate = false,
   });
 
   final List<TracePoint> trace;
-  final Color accent;
+  final Color? accent;
   final double height;
   final bool animate;
 
@@ -110,10 +111,11 @@ class _RouteTraceState extends State<RouteTrace> with SingleTickerProviderStateM
                 builder: (context, _) => CustomPaint(
                   painter: _TracePainter(
                     trace: widget.trace,
-                    accent: widget.accent,
+                    accent: widget.accent ?? Cy.cyan,
                     // Linear: any easing here would be a pace the runner
                     // never ran.
                     progress: _draw.value,
+                    season: Season.active,
                   ),
                   size: Size.infinite,
                 ),
@@ -178,10 +180,15 @@ class _RouteTraceState extends State<RouteTrace> with SingleTickerProviderStateM
 }
 
 class _TracePainter extends CustomPainter {
-  _TracePainter({required this.trace, required this.accent, this.progress = 1});
+  _TracePainter({required this.trace, required this.accent, this.progress = 1, this.season});
 
   final List<TracePoint> trace;
   final Color accent;
+
+  /// Under SAMHAIN PROTOCOL the filament is ectoplasm, the start a candle, the
+  /// finish a headstone, and the replay's head a wisp with a tail.
+  final Season? season;
+  bool get _samhain => season == Season.samhain;
 
   /// How much of the filament is drawn, 0 to 1.
   final double progress;
@@ -242,8 +249,8 @@ class _TracePainter extends CustomPainter {
         ..strokeWidth = 7
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round
-        ..color = accent.withValues(alpha: 0.18)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+        ..color = (_samhain ? Cy.green : accent).withValues(alpha: _samhain ? 0.26 : 0.18)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, _samhain ? 9 : 6),
     );
     canvas.drawPath(
       path,
@@ -252,10 +259,19 @@ class _TracePainter extends CustomPainter {
         ..strokeWidth = 2.2
         ..strokeJoin = StrokeJoin.round
         ..strokeCap = StrokeCap.round
-        ..color = accent,
+        ..color = _samhain ? Cy.green : accent,
     );
 
     final start = project(trace.first);
+    if (_samhain) {
+      _candle(canvas, start);
+      if (head != null) {
+        _wisp(canvas, head, path);
+      } else {
+        _headstone(canvas, project(trace.last));
+      }
+      return;
+    }
     canvas.drawCircle(start, 5, Paint()..color = Cy.green);
     canvas.drawCircle(
       start,
@@ -290,6 +306,65 @@ class _TracePainter extends CustomPainter {
     );
   }
 
+  /// A candle stub with its flame, standing on [at].
+  void _candle(Canvas canvas, Offset at) {
+    canvas.drawRect(Rect.fromLTWH(at.dx - 2.5, at.dy - 6, 5, 9), Paint()..color = Cy.ink.withValues(alpha: 0.85));
+    final flame = Path()
+      ..moveTo(at.dx, at.dy - 15)
+      ..quadraticBezierTo(at.dx + 4, at.dy - 9, at.dx, at.dy - 7)
+      ..quadraticBezierTo(at.dx - 4, at.dy - 9, at.dx, at.dy - 15)
+      ..close();
+    canvas
+      ..drawCircle(at + const Offset(0, -10), 7, Paint()..color = Cy.amber.withValues(alpha: 0.25))
+      ..drawPath(flame, Paint()..color = Cy.amber);
+  }
+
+  /// A round-topped headstone with a cross cut in it, where the run ended.
+  void _headstone(Canvas canvas, Offset at) {
+    final stone = RRect.fromRectAndCorners(
+      Rect.fromCenter(center: at + const Offset(0, -6), width: 13, height: 16),
+      topLeft: const Radius.circular(6.5),
+      topRight: const Radius.circular(6.5),
+    );
+    canvas
+      ..drawRRect(stone, Paint()..color = Cy.panelHi)
+      ..drawRRect(
+        stone,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2
+          ..color = Cy.magenta,
+      );
+    final cross = Paint()
+      ..color = Cy.magenta
+      ..strokeWidth = 1.4;
+    canvas
+      ..drawLine(at + const Offset(0, -11), at + const Offset(0, -2), cross)
+      ..drawLine(at + const Offset(-3, -8), at + const Offset(3, -8), cross);
+  }
+
+  /// The replay's head: a pale wisp trailing the last stretch of the route.
+  void _wisp(Canvas canvas, Offset head, Path drawn) {
+    final metric = drawn.computeMetrics().lastOrNull;
+    if (metric != null && metric.length > 0) {
+      const tail = 40.0;
+      final from = max(0.0, metric.length - tail);
+      for (var i = 0; i < 8; i++) {
+        final d = from + (metric.length - from) * i / 8;
+        final pos = metric.getTangentForOffset(d)?.position;
+        if (pos == null) continue;
+        canvas.drawCircle(pos, 1.5 + i * 0.4, Paint()..color = Cy.ink.withValues(alpha: 0.05 + i * 0.04));
+      }
+    }
+    canvas.drawCircle(
+      head,
+      5,
+      Paint()
+        ..color = Cy.ink
+        ..maskFilter = const MaskFilter.blur(BlurStyle.solid, 7),
+    );
+  }
+
   void _paintGrid(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = Cy.rule.withValues(alpha: 0.45)
@@ -304,5 +379,5 @@ class _TracePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_TracePainter old) =>
-      old.trace != trace || old.accent != accent || old.progress != progress;
+      old.trace != trace || old.accent != accent || old.progress != progress || old.season != season;
 }

@@ -7,6 +7,7 @@ import 'package:sprawl_run/models/achievement.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/signal_log.dart';
 import 'package:sprawl_run/services/narrator.dart';
+import 'package:sprawl_run/theme/season.dart';
 
 /// Guards the shipped campaign against the kinds of damage that only show up
 /// twenty minutes into a run: a beat that never fires, a codex entry nothing
@@ -34,8 +35,14 @@ void _checks(String path) {
     pack = MissionPack.fromJson(Map<String, dynamic>.from(jsonDecode(raw) as Map));
   });
 
-  test('the pack holds ten missions in unbroken order', () {
-    expect(pack.missions, hasLength(10));
+  test('the pack holds its missions in unbroken order: ten, or a few for an event', () {
+    // A campaign is ten runs. A seasonal event has a week or two to be played
+    // in, so it is short enough to finish inside its window at a run a day.
+    if (pack.season == null) {
+      expect(pack.missions, hasLength(10));
+    } else {
+      expect(pack.missions.length, inInclusiveRange(3, 6));
+    }
     for (var i = 0; i < pack.missions.length; i++) {
       expect(pack.missions[i].order, i + 1);
     }
@@ -185,6 +192,7 @@ void _checks(String path) {
     final available = Directory('assets/sfx')
         .listSync()
         .whereType<File>()
+        .where((f) => f.path.endsWith('.wav'))
         .map((f) => f.uri.pathSegments.last.replaceAll('.wav', ''))
         .toSet();
 
@@ -302,13 +310,18 @@ void _checks(String path) {
 
   test('the final mission carries an epilogue and nothing else does', () {
     for (final m in pack.missions) {
-      if (m.order == 10) {
+      if (m.order == pack.missions.length) {
         expect(m.epilogue, isNotNull);
         expect(m.epilogue!.length, greaterThan(100));
       } else {
         expect(m.epilogue, isNull, reason: '${m.id} should not end the campaign');
       }
     }
+  });
+
+  test('a seasonal pack names a season the app knows', () {
+    if (pack.season == null) return;
+    expect(Season.values.map((s) => s.id), contains(pack.season));
   });
 
   test('there is enough story to fill the run', () {

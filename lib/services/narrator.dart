@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 
 import '../models/mission.dart';
 import '../models/profile.dart';
+import '../theme/season.dart';
 import 'music_resume.dart';
 
 /// Voice colouring per character. Real device voices vary wildly between
@@ -43,6 +44,14 @@ class VoiceProfile {
     'LEVEE': VoiceProfile(pitch: 0.7, rateScale: 0.8),
     // Harbour Authority security. Procedural, flat, plural.
     'DREDGE': VoiceProfile(pitch: 0.62, rateScale: 0.88),
+
+    // -- SAMHAIN PROTOCOL ----------------------------------------------------
+    // A courier three years dead, speaking through a retention server. Soft,
+    // a little slow, as if every word had to be fetched from somewhere.
+    'LANTERN': VoiceProfile(pitch: 1.08, rateScale: 0.84),
+    // The city's identity-retention archive. Lowest voice in the app; reads
+    // everything like an inscription.
+    'OSSUARY': VoiceProfile(pitch: 0.56, rateScale: 0.76),
 
     // The app's own readout voice.
     'SYSTEM': VoiceProfile(pitch: 1.0, rateScale: 1.06),
@@ -260,7 +269,7 @@ class AudioNarrator implements Narrator {
   Future<void> _playSfx(String name) async {
     if (_profile.sfxVolume <= 0) return;
     try {
-      await _sfxPlayer.setAsset('assets/sfx/$name.wav');
+      await _sfxPlayer.setAsset(sfxAsset(name, Season.active));
       await _sfxPlayer.setVolume(_profile.sfxVolume);
       await _sfxPlayer.play();
       await _sfxPlayer.stop();
@@ -269,11 +278,25 @@ class AudioNarrator implements Narrator {
     }
   }
 
+  String? _bedAsset;
+
+  /// Where an effect is played from: the season's own version when it has
+  /// one, the ordinary one otherwise. Story packs name effects plainly and
+  /// get the seasonal sound for free.
+  static String sfxAsset(String name, Season? season) => season != null && season.sfxVariants.contains(name)
+      ? 'assets/sfx/${season.sfxFolder}/$name.wav'
+      : 'assets/sfx/$name.wav';
+
   @override
   Future<void> setAmbientBed(bool on) async {
     try {
       if (on) {
-        if (_bedPlayer.audioSource == null) await _bedPlayer.setAsset('assets/sfx/drone.wav');
+        // Reloaded when the season has changed since, so the bed follows it.
+        final asset = sfxAsset('drone', Season.active);
+        if (_bedAsset != asset) {
+          await _bedPlayer.setAsset(asset);
+          _bedAsset = asset;
+        }
         await _bedPlayer.setVolume(_profile.sfxVolume * 0.35);
         if (!_bedPlayer.playing) await _bedPlayer.play();
       } else if (_bedPlayer.playing) {

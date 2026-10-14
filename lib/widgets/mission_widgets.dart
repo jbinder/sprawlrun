@@ -24,7 +24,7 @@ class OpsBar extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back, color: Cy.inkDim),
+            icon: Icon(Icons.arrow_back, color: Cy.inkDim),
           ),
           const Spacer(),
           Text(
@@ -111,7 +111,7 @@ class IntelSection extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.memory_outlined,
                           size: 16,
                           color: Cy.cyan,
@@ -139,7 +139,7 @@ class IntelSection extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.lock_outline,
                           size: 16,
                           color: Cy.ghost,

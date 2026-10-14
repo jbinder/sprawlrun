@@ -27,6 +27,8 @@ class MissionRepository {
   static const List<String> bundledPacks = [
     'assets/missions/sprawl_prime.json',
     'assets/missions/null_tide.json',
+    // Offered only while its season is in force; see `MissionPack.season`.
+    'assets/missions/samhain.json',
   ];
 
   /// Where side-loaded packs live. Created lazily; missing is not an error.

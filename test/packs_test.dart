@@ -14,6 +14,7 @@ import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
+import 'package:sprawl_run/util/clock.dart';
 
 import 'support/fakes.dart';
 
@@ -22,6 +23,11 @@ import 'support/fakes.dart';
 /// next. These pin that down against real pack data.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  // Out of every season, so a seasonal event pack never joins the chain these
+  // count; season_test covers the event pack itself.
+  setUp(() => debugNow = DateTime(2026, 7, 27, 21, 14));
+  tearDown(() => debugNow = null);
 
   const primeIds = {'sp01', 'sp02', 'sp03', 'sp04', 'sp05', 'sp06', 'sp07', 'sp08', 'sp09', 'sp10'};
 

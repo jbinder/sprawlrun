@@ -1,0 +1,9 @@
+SAMHAIN PROTOCOL: every year from 10 October to 2 November the city dresses for the dead. Pumpkin and violet neon, a graveyard on the skyline under a low moon, ghosts at the edge of the screen, candles round every unlock, and sound effects that toll and whisper. A four-run operation opens for the season only, with its own handlers cutting in between runs and five seasonal achievements. Unfinished, it waits for next October. Settings → Run → Seasonal events turns it all off.
+
+A run left paused is brought up after 15, 30 and 60 minutes, then left alone.
+
+THE WIRE marks what arrived since you last looked, with a dot on its icon until you do.
+
+Lists fade at the edge while there is more beyond it.
+
+Fixed: raising your weekly target no longer rewrites past weeks as missed, so a streak earned under the old target stays earned; opening the app no longer clears an unread signal from the notification shade; the weekly target no longer reads "/ week" twice.

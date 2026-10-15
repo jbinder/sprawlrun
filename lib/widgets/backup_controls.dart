@@ -11,6 +11,7 @@ import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
+import '../util/picked_text.dart';
 import 'panels.dart';
 import '../util/clock.dart';
 
@@ -124,7 +125,7 @@ class _BackupControlsState extends State<BackupControls> {
       );
       if (picked == null) return;
 
-      final archive = BackupArchive.parse(await picked.readAsString());
+      final archive = BackupArchive.parse(await readPickedText(picked));
       if (!mounted) return;
 
       final mode = await _chooseMode(archive);

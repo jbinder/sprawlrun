@@ -7,6 +7,7 @@ import '../models/mission.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../util/picked_text.dart';
 import 'panels.dart';
 
 /// The MISSION PACKS section of Settings: what is loaded, and how to add more.
@@ -108,7 +109,7 @@ class _PackControlsState extends State<PackControls> {
       }
 
       final repo = state.missions;
-      final source = await picked.readAsString();
+      final source = await readPickedText(picked);
       final before = {...repo.importedIds};
       final pack = await state.importMissionPack(source);
 

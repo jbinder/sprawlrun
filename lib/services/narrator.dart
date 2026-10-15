@@ -124,6 +124,25 @@ class AudioNarrator implements Narrator {
   /// Distinct system voices assigned to speakers, when the device has enough.
   final Map<String, Map<String, String>> _voiceAssignments = {};
 
+  /// The voice for every speaker without one of their own. Without it they
+  /// spoke in whichever voice the previous line had left set, so a character
+  /// changed voice depending on who had spoken before them.
+  Map<String, String>? _fallbackVoice;
+
+  /// Completed when the engine reports the line in progress failed or was
+  /// stopped, which the plugin otherwise never passes back to `speak`.
+  Completer<void>? _utteranceEnded;
+
+  /// Whether the line in progress ended in an engine error, as opposed to
+  /// finishing or being stopped.
+  bool _utteranceFailed = false;
+
+  // Error and cancel can both arrive for one line.
+  void _endUtterance() {
+    final ended = _utteranceEnded;
+    if (ended != null && !ended.isCompleted) ended.complete();
+  }
+
   /// Serialises beats: a chase result arriving mid-interlude queues up behind
   /// it rather than talking over it.
   Future<void> _queue = Future.value();
@@ -139,6 +158,16 @@ class AudioNarrator implements Narrator {
       await _configureSession();
 
       await _tts.awaitSpeakCompletion(true);
+      // flutter_tts completes `speak` only from onDone. An utterance the engine
+      // fails or stops never answers, so these end the wait instead — see
+      // [_speak].
+      _tts
+        ..setErrorHandler((message) {
+          debugPrint('TTS error: $message');
+          _utteranceFailed = true;
+          _endUtterance();
+        })
+        ..setCancelHandler(_endUtterance);
       await _tts.setLanguage('en-US');
       await _tts.setVolume(1.0);
       await _assignVoices();
@@ -185,21 +214,47 @@ class AudioNarrator implements Narrator {
     try {
       final raw = await _tts.getVoices;
       if (raw is! List) return;
-      final voices = raw
-          .whereType<Object>()
-          .map((v) => Map<String, String>.from((v as Map).map((k, v) => MapEntry('$k', '$v'))))
-          .where((v) => (v['locale'] ?? '').toLowerCase().startsWith('en'))
-          .toList();
+      final all = raw.whereType<Map<Object?, Object?>>().map((v) => v.map((k, v) => MapEntry('$k', '$v'))).toList();
+      final voices = usableVoices(all);
+      // One line in logcat, so a report of slow or missing speech can be read
+      // against what the device actually offered.
+      debugPrint(
+        'TTS voices: ${all.length} listed, ${voices.length} usable: '
+        '${all.where((v) => (v['locale'] ?? '').toLowerCase().startsWith('en')).map((v) => '${v['name']}${v['network_required'] == '1' ? ' (network)' : ''}${(v['features'] ?? '').contains('notInstalled') ? ' (not installed)' : ''}').join(', ')}',
+      );
       if (voices.length < 2) return;
 
       const order = ['KESTREL', 'HALCYON', 'SIX', 'PACHINKO', 'VANTAR', 'SYSTEM'];
       for (var i = 0; i < order.length; i++) {
         _voiceAssignments[order[i]] = voices[i % voices.length];
       }
+      _fallbackVoice = voices[order.length % voices.length];
     } on Object catch (e) {
       debugPrint('Voice enumeration unavailable: $e');
     }
   }
+
+  /// English voices that can speak with no connection and are on the device.
+  ///
+  /// The engine lists every voice it could offer, including ones it streams
+  /// from a server and ones not yet downloaded. Given one of those mid-run,
+  /// on a patchy signal, it either waits on the network — silence after the
+  /// squelch — or fails the line.
+  @visibleForTesting
+  static List<Map<String, String>> usableVoices(Iterable<Map<String, String>> voices) => [
+    for (final v in voices)
+      if ((v['locale'] ?? '').toLowerCase().startsWith('en') &&
+          v['network_required'] != '1' &&
+          !(v['features'] ?? '').split('\t').contains('notInstalled'))
+        v,
+  ];
+
+  /// The longest a line may take before it is given up on: generous enough
+  /// for the slowest voice at the slowest speech rate, with room for the
+  /// engine waking up.
+  @visibleForTesting
+  static Duration speechBudget(String text, double rate) =>
+      Duration(milliseconds: 8000 + (text.length * 90 * 0.5 / rate.clamp(0.1, 1.0)).round());
 
   @override
   Future<void> applyProfile(Profile profile) async {
@@ -252,15 +307,53 @@ class AudioNarrator implements Narrator {
     }
     final voice = VoiceProfile.of(line.speaker);
     try {
-      final assigned = _voiceAssignments[line.speaker.toUpperCase()];
-      if (assigned != null) await _tts.setVoice(assigned);
+      final key = line.speaker.toUpperCase();
+      final own = _voiceAssignments[key];
+      final assigned = own ?? _fallbackVoice;
+      // Always set one way or the other: the engine keeps the last voice it
+      // was given, which is somebody else's.
+      if (assigned != null) {
+        await _tts.setVoice(assigned);
+      } else {
+        await _tts.clearVoice();
+      }
       await _tts.setPitch(voice.pitch.clamp(0.5, 2.0));
-      await _tts.setSpeechRate((_profile.speechRate * voice.rateScale).clamp(0.1, 1.0));
-      await _tts.speak(line.text);
+      final rate = (_profile.speechRate * voice.rateScale).clamp(0.1, 1.0);
+      await _tts.setSpeechRate(rate);
+      if (await _say(line, rate) || assigned == null) return;
+      // The voice failed. Say it again in the engine's default, and keep that
+      // for the rest of the session rather than paying for the same failure on
+      // every line.
+      debugPrint('Voice ${assigned['name']} failed for ${line.speaker}; using the default');
+      if (own != null) {
+        _voiceAssignments.remove(key);
+      } else {
+        _fallbackVoice = null;
+      }
+      await _tts.clearVoice();
+      await _say(line, rate);
     } on Object catch (e) {
       debugPrint('TTS failed for ${line.speaker}: $e');
       await Future<void>.delayed(const Duration(milliseconds: 600));
     }
+  }
+
+  /// Speaks [line] and waits for it, never unbounded: a line the engine
+  /// fails, stops or simply never finishes would otherwise hold its beat open
+  /// for the rest of the run — no further beats or splits, and the music never
+  /// handed back. Returns whether it was spoken; false when the engine
+  /// reported an error.
+  Future<bool> _say(StoryLine line, double rate) async {
+    _utteranceFailed = false;
+    final ended = _utteranceEnded = Completer<void>();
+    await Future.any([_tts.speak(line.text), ended.future]).timeout(
+      speechBudget(line.text, rate),
+      onTimeout: () async {
+        debugPrint('TTS gave no answer for ${line.speaker}; moving on');
+        await _tts.stop();
+      },
+    );
+    return !_utteranceFailed;
   }
 
   @override
@@ -271,7 +364,9 @@ class AudioNarrator implements Narrator {
     try {
       await _sfxPlayer.setAsset(sfxAsset(name, Season.active));
       await _sfxPlayer.setVolume(_profile.sfxVolume);
-      await _sfxPlayer.play();
+      // Every effect is a few seconds at most; the bound only matters if the
+      // player never reports the end, which would stall the beat behind it.
+      await _sfxPlayer.play().timeout(const Duration(seconds: 8), onTimeout: () {});
       await _sfxPlayer.stop();
     } on Object catch (e) {
       debugPrint('SFX $name failed: $e');

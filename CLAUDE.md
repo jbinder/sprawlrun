@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 508 tests
+fvm flutter test                                    # 513 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -86,6 +86,18 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
 
 ## Conventions worth preserving
 
+- **Nothing a runner reads is a literal.** Interface text lives in
+  `lib/l10n/app_en.arb`, every key with a description (translators never see
+  the screen; `l10n_test` insists for short strings), and plurals as ICU
+  messages, never `'s'` concatenation. Widgets read `L.of(context)`; code
+  without a context — `Fmt`, models, notification and spoken text — reads
+  the global `l10n`, kept in step by `MaterialApp.builder`. The generated
+  `lib/l10n/generated/` is gitignored and rebuilt by `pub get` and every
+  build. Kotlin's text is in `res/values/strings.xml`; the three signal
+  channels are named on both sides and `l10n_test` keeps them equal. Codes
+  that get *stored* stay codes: the streak unit (`MIN`/`KM`/`OPS`) goes into
+  THE WIRE's archive untranslated and is only worded when shown. Story text
+  stays in the packs and is not part of this.
 - **`Cy` colours are getters, not constants.** A season swaps the palette at
   runtime (`theme/season.dart`, `Cy.use`), so a `const` that captures a `Cy`
   colour does not compile, and a colour cached in a field or a `static final`

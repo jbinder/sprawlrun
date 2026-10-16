@@ -14,6 +14,7 @@ import '../widgets/mission_widgets.dart';
 import '../widgets/panels.dart';
 import 'mission_brief_screen.dart';
 import 'run_detail_screen.dart';
+import '../l10n/l10n.dart';
 
 /// A cleared operation, seen afterwards: what it came to, what it yielded, and
 /// every attempt on it — each one openable to read its story back.
@@ -43,7 +44,7 @@ class MissionDebriefScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
-              OpsBar(mission: mission, label: 'DEBRIEFING'),
+              OpsBar(mission: mission, label: L.of(context).debriefing),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(18, 4, 18, 24),
@@ -62,7 +63,7 @@ class MissionDebriefScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: InfoCell(
-                            label: 'Cleared',
+                            label: L.of(context).infoCleared,
                             value: cleared == null ? '—' : Fmt.date(cleared.startedAt),
                             icon: Icons.check_circle_outline,
                           ),
@@ -70,7 +71,7 @@ class MissionDebriefScreen extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: InfoCell(
-                            label: 'Attempts',
+                            label: L.of(context).infoAttempts,
                             value: '${state.profile.missionAttempts[mission.id] ?? attempts.length}',
                             icon: Icons.replay,
                           ),
@@ -78,7 +79,7 @@ class MissionDebriefScreen extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: InfoCell(
-                            label: 'Best',
+                            label: L.of(context).infoBest,
                             value: cleared == null ? '—' : Fmt.distance(_bestMeters(attempts), units),
                             icon: Icons.route_outlined,
                           ),
@@ -87,7 +88,7 @@ class MissionDebriefScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    SectionHeader('DEBRIEF', accent: Cy.amber),
+                    SectionHeader(L.of(context).sectionDebrief, accent: Cy.amber),
                     NeonPanel(
                       accent: Cy.rule,
                       child: Text(mission.debrief, style: CyType.body(size: 16, height: 1.5, color: Cy.ink)),
@@ -95,7 +96,7 @@ class MissionDebriefScreen extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     if (campaignFinished) ...[
-                      SectionHeader('EPILOGUE', accent: Cy.green),
+                      SectionHeader(L.of(context).sectionEpilogue, accent: Cy.green),
                       NeonPanel(
                         accent: Cy.green,
                         lit: true,
@@ -110,13 +111,13 @@ class MissionDebriefScreen extends StatelessWidget {
                     ],
 
                     if (attempts.isNotEmpty) ...[
-                      const SectionHeader('RUNS'),
+                      SectionHeader(L.of(context).sectionRuns),
                       for (final run in attempts.reversed) _AttemptRow(run: run, units: units),
                       const SizedBox(height: 18),
                     ],
 
                     CyberButton(
-                      label: 'Run it again',
+                      label: L.of(context).runItAgain,
                       icon: Icons.play_arrow_rounded,
                       onPressed: () => Navigator.of(context).push(
                         MaterialPageRoute<void>(builder: (_) => MissionBriefScreen(mission: mission)),
@@ -167,13 +168,13 @@ class _AttemptRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '${Fmt.distanceWithUnit(run.distanceMeters, units)} · ${Fmt.clock(run.elapsedSeconds)}'
-                    '${run.story.isEmpty ? '' : ' · story'}',
+                    '${run.story.isEmpty ? '' : ' · ${L.of(context).storyTag}'}',
                     style: CyType.body(size: 12, color: Cy.inkDim, weight: FontWeight.w500),
                   ),
                 ],
               ),
             ),
-            CyberTag(run.isSuccess ? 'CLEARED' : 'FAILED', color: accent),
+            CyberTag(run.isSuccess ? L.of(context).tagCleared : L.of(context).tagFailed, color: accent),
           ],
         ),
       ),

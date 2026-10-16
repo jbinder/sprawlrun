@@ -21,6 +21,7 @@ import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
 import '../widgets/progress.dart';
 import 'run_summary_screen.dart';
+import '../l10n/l10n.dart';
 
 /// The live run. Everything on this screen is legible at arm's length while
 /// moving, which drives the type sizes and the very small number of controls.
@@ -154,24 +155,26 @@ class _RunScreenState extends State<RunScreen> {
 
   /// The notice's opening line, from the goal alone — the engine has not
   /// started yet and its counters still belong to the last run.
-  String _describeGoal(AppState app) => widget.goal.isTime
-      ? '${Fmt.clock(widget.goal.value)} left'
-      : '${Fmt.distanceWithUnit(widget.goal.value, app.profile.units)} left';
+  String _describeGoal(AppState app) => l10n.noticeLeft(
+    widget.goal.isTime
+        ? Fmt.clock(widget.goal.value)
+        : Fmt.distanceWithUnit(widget.goal.value, app.profile.units),
+  );
 
   /// What the notification says: how much of the target is left, in whichever
   /// unit the runner chose it in.
   String _describeProgress(RunEngine engine, AppState app) {
-    if (engine.phase == RunPhase.paused) return 'Paused — ${_describeLeft(engine, app)}';
-    if (engine.phase == RunPhase.autoPaused) return 'Auto-paused — ${_describeLeft(engine, app)}';
-    if (engine.goalReached) return 'Target reached — still running.';
+    if (engine.phase == RunPhase.paused) return l10n.noticePaused(_describeLeft(engine, app));
+    if (engine.phase == RunPhase.autoPaused) return l10n.noticeAutoPaused(_describeLeft(engine, app));
+    if (engine.goalReached) return l10n.noticeTargetReached;
     return _describeLeft(engine, app);
   }
 
   String _describeLeft(RunEngine engine, AppState app) {
     final left = engine.remaining;
-    return widget.goal.isTime
-        ? '${Fmt.clock(left)} left'
-        : '${Fmt.distanceWithUnit(left, app.profile.units)} left';
+    return l10n.noticeLeft(
+      widget.goal.isTime ? Fmt.clock(left) : Fmt.distanceWithUnit(left, app.profile.units),
+    );
   }
 
   /// Called on every engine tick. The notification is only rewritten when the
@@ -196,18 +199,18 @@ class _RunScreenState extends State<RunScreen> {
       case BeatEvent(:final beat):
         if (beat.headline != null) _flash(beat.headline!);
       case ChaseStarted(:final chase):
-        _flash('PURSUIT — ${chase.spec.pursuer}');
+        _flash(L.of(context).storyPursuit(chase.spec.pursuer));
       case ChaseEnded(:final escaped, :final pursuer):
-        _flash(escaped ? 'EVADED — $pursuer' : 'CAUGHT — $pursuer');
+        _flash(escaped ? L.of(context).storyEvaded(pursuer) : L.of(context).storyCaught(pursuer));
       case GoalReached():
-        _flash('TARGET REACHED');
+        _flash(L.of(context).storyTargetReached);
       case SplitReached(:final count, :final splitSeconds, :final metric):
         // The voice carries the detail; the flash is for a glance down.
-        _flash('${metric ? 'KM' : 'MILE'} $count · ${Fmt.clock(splitSeconds)}');
+        _flash('${metric ? L.of(context).splitKm(count) : L.of(context).splitMile(count)} · ${Fmt.clock(splitSeconds)}');
       case CodexUnlocked(:final entryId):
         // The voice carries this one; the flash is for whoever glances down.
         final title = widget.mission?.codex.where((e) => e.id == entryId).firstOrNull?.title;
-        _flash(title == null ? 'INTEL INTERCEPTED' : 'INTEL INTERCEPTED — ${title.toUpperCase()}');
+        _flash(title == null ? L.of(context).intelIntercepted : L.of(context).storyIntel(title.toUpperCase()));
       case LocationTrouble(:final readiness):
         setState(() => _locationTrouble = readiness);
       case LocationRestored():
@@ -339,11 +342,11 @@ class _RunHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = switch (engine.phase) {
-      RunPhase.running => ('TRACKING', Cy.green),
-      RunPhase.paused => ('PAUSED', Cy.amber),
-      RunPhase.autoPaused => ('AUTO-PAUSED', Cy.amber),
-      RunPhase.finished => ('CLOSED', Cy.ghost),
-      RunPhase.idle => ('STANDBY', Cy.ghost),
+      RunPhase.running => (L.of(context).phaseTracking, Cy.green),
+      RunPhase.paused => (L.of(context).phasePaused, Cy.amber),
+      RunPhase.autoPaused => (L.of(context).phaseAutoPaused, Cy.amber),
+      RunPhase.finished => (L.of(context).phaseClosed, Cy.ghost),
+      RunPhase.idle => (L.of(context).phaseStandby, Cy.ghost),
     };
 
     return Padding(
@@ -355,12 +358,12 @@ class _RunHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  mission == null ? 'FREE RUN' : 'OP ${mission!.order.toString().padLeft(2, '0')}',
+                  mission == null ? L.of(context).freeRun : L.of(context).opNumber(mission!.order.toString().padLeft(2, '0')),
                   style: CyType.label(size: 9),
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  mission?.codename ?? 'UNLOGGED',
+                  mission?.codename ?? L.of(context).unlogged,
                   overflow: TextOverflow.ellipsis,
                   style: CyType.display(size: 14, color: Cy.ink),
                 ),
@@ -392,15 +395,13 @@ class _LocationWarning extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final message = switch (readiness) {
-      LocationReadiness.serviceDisabled => 'Location services are off. Distance will not be recorded.',
-      LocationReadiness.denied => 'Location permission denied. Distance will not be recorded.',
-      LocationReadiness.deniedForever =>
-        'Location permission is permanently denied. Enable it in system settings to record distance.',
+      LocationReadiness.serviceDisabled => L.of(context).locationServiceOff,
+      LocationReadiness.denied => L.of(context).locationDenied,
+      LocationReadiness.deniedForever => L.of(context).locationDeniedForever,
       // Usually battery-saver location mode, which leaves network location on.
       // Naming the setting is the difference between a runner fixing it and a
       // runner assuming the app is broken.
-      LocationReadiness.gpsDisabled =>
-        'GPS is switched off — check battery saver or location mode. Distance will not be recorded.',
+      LocationReadiness.gpsDisabled => L.of(context).locationGpsOff,
       LocationReadiness.ready => '',
     };
     return Container(
@@ -414,7 +415,7 @@ class _LocationWarning extends StatelessWidget {
           const SizedBox(width: 9),
           Expanded(
             child: Text(
-              '$message Time-based targets still work.',
+              '$message ${L.of(context).locationTimeStillWorks}',
               style: CyType.body(size: 13, color: Cy.amber),
             ),
           ),
@@ -477,7 +478,7 @@ class _PrimaryReadout extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            engine.goalReached ? 'TARGET MET' : 'TARGET ${engine.goal}',
+            engine.goalReached ? L.of(context).targetMet : L.of(context).targetTag(engine.goal.toString()),
             style: CyType.label(size: 9, color: engine.goalReached ? Cy.green : Cy.inkDim),
           ),
           const SizedBox(height: 8),
@@ -520,7 +521,7 @@ class _Telemetry extends StatelessWidget {
         children: [
           Expanded(
             child: StatTile(
-              label: 'Pace now',
+              label: L.of(context).statPaceNow,
               value: Fmt.pace(engine.currentPaceSecondsPerKm, units),
               unit: Fmt.paceUnit(units),
               size: 20,
@@ -529,7 +530,7 @@ class _Telemetry extends StatelessWidget {
           ),
           Expanded(
             child: StatTile(
-              label: 'Avg pace',
+              label: L.of(context).statAvgPace,
               value: Fmt.pace(engine.paceSecondsPerKm, units),
               unit: Fmt.paceUnit(units),
               size: 20,
@@ -537,7 +538,7 @@ class _Telemetry extends StatelessWidget {
           ),
           Expanded(
             child: StatTile(
-              label: 'Kcal',
+              label: L.of(context).statKcal,
               value: Fmt.calories(engine.calories),
               size: 20,
               accent: Cy.amber,
@@ -552,9 +553,8 @@ class _Telemetry extends StatelessWidget {
 /// What a free run promises about the runner's own audio. Splits are the one
 /// thing that speaks on a free run, so silence is only promised without them.
 String freeRunAudioNote(Profile profile) => profile.splitsEnabled
-    ? 'Free run — only a short readout at each ${profile.isMetric ? 'kilometre' : 'mile'} '
-        'will cut into your audio.'
-    : 'Free run — nothing will interrupt your audio.';
+    ? (profile.isMetric ? l10n.freeRunAudioSplitsKm : l10n.freeRunAudioSplitsMile)
+    : l10n.freeRunAudioSilent;
 
 /// The story, on screen, for anyone running without headphones — and as a
 /// transcript for anything missed while the wind was loud.
@@ -607,14 +607,14 @@ class _TransmissionPanel extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                line != null ? line.speaker.toUpperCase() : 'CHANNEL IDLE',
+                line != null ? line.speaker.toUpperCase() : L.of(context).channelIdle,
                 style: CyType.label(size: 10, color: line != null ? Cy.speaker(line.speaker) : Cy.ghost),
               ),
               const Spacer(),
-              Text('${engine.beatsHeard} RX', style: CyType.mono(size: 9, color: Cy.ghost)),
+              Text(L.of(context).beatsReceived(engine.beatsHeard), style: CyType.mono(size: 9, color: Cy.ghost)),
               if (hidden) ...[
                 const SizedBox(width: 10),
-                Text('ALL ${engine.transcript.length} ›', style: CyType.mono(size: 9, color: Cy.cyanDim)),
+                Text(L.of(context).transcriptAll(engine.transcript.length), style: CyType.mono(size: 9, color: Cy.cyanDim)),
               ],
             ],
           ),
@@ -627,7 +627,7 @@ class _TransmissionPanel extends StatelessWidget {
             )
           else if (history.isEmpty)
             Text(
-              'Waiting for the first transmission. Keep moving.',
+              L.of(context).waitingFirstTransmission,
               style: CyType.body(size: 15, color: Cy.ghost),
             )
           else
@@ -654,7 +654,7 @@ class _TransmissionPanel extends StatelessWidget {
     if (!hidden) return panel;
     return Semantics(
       button: true,
-      label: 'Show all ${engine.transcript.length} transmissions',
+      label: L.of(context).showAllTransmissions(engine.transcript.length),
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => showDialog<void>(context: context, builder: (_) => _TranscriptDialog(engine: engine)),
@@ -688,9 +688,9 @@ class _TranscriptDialog extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text('TRANSCRIPT', style: CyType.display(size: 16, color: Cy.cyan)),
+                    Text(L.of(context).transcript, style: CyType.display(size: 16, color: Cy.cyan)),
                     const Spacer(),
-                    Text('${lines.length} LINES', style: CyType.mono(size: 10, color: Cy.ghost)),
+                    Text(L.of(context).lineCount(lines.length), style: CyType.mono(size: 10, color: Cy.ghost)),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -723,7 +723,7 @@ class _TranscriptDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 CyberButton(
-                  label: 'Back to the run',
+                  label: L.of(context).backToRun,
                   style: CyberButtonStyle.ghost,
                   dense: true,
                   onPressed: () => Navigator.of(context).pop(),
@@ -757,13 +757,13 @@ class _Controls extends StatelessWidget {
         children: [
           if (engine.goalReached) ...[
             CyberButton(
-              label: engine.mission == null ? 'Finish run' : 'Complete operation',
+              label: engine.mission == null ? L.of(context).finishRun : L.of(context).completeOperation,
               icon: Icons.check_rounded,
               onPressed: () => onEnd(confirmed: true),
             ),
             const SizedBox(height: 10),
             Text(
-              'Target met. You can keep running — everything past this point still counts.',
+              L.of(context).targetMetKeepRunning,
               textAlign: TextAlign.center,
               style: CyType.body(size: 13, color: Cy.green),
             ),
@@ -773,7 +773,7 @@ class _Controls extends StatelessWidget {
             children: [
               Expanded(
                 child: CyberButton(
-                  label: paused ? 'Resume' : 'Pause',
+                  label: paused ? L.of(context).resume : L.of(context).pause,
                   icon: paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
                   style: CyberButtonStyle.ghost,
                   onPressed: paused ? engine.resume : engine.pause,
@@ -787,7 +787,7 @@ class _Controls extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: CyberButton(
-                    label: 'Abort',
+                    label: L.of(context).abort,
                     icon: Icons.stop_rounded,
                     style: CyberButtonStyle.danger,
                     onPressed: () => onEnd(confirmed: false),
@@ -818,13 +818,12 @@ class _AbortDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('ABORT?', style: CyType.display(size: 18, color: Cy.magenta)),
+            Text(L.of(context).abortTitle, style: CyType.display(size: 18, color: Cy.magenta)),
             const SizedBox(height: 12),
             Text(
               mission == null
-                  ? 'You have not reached your target. The run will be logged as a failure.'
-                  : 'You have not reached your target. ${mission!.codename} will be logged as failed — '
-                        'the distance and time still count, and you can run it again.',
+                  ? L.of(context).abortBodyFree
+                  : L.of(context).abortBodyMission(mission!.codename),
               style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
             ),
             const SizedBox(height: 18),
@@ -832,7 +831,7 @@ class _AbortDialog extends StatelessWidget {
               children: [
                 Expanded(
                   child: CyberButton(
-                    label: 'Keep going',
+                    label: L.of(context).keepGoing,
                     style: CyberButtonStyle.ghost,
                     dense: true,
                     onPressed: () => Navigator.of(context).pop(false),
@@ -841,7 +840,7 @@ class _AbortDialog extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: CyberButton(
-                    label: 'Abort',
+                    label: L.of(context).abort,
                     style: CyberButtonStyle.danger,
                     dense: true,
                     onPressed: () => Navigator.of(context).pop(true),

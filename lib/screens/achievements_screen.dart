@@ -10,6 +10,7 @@ import '../util/format.dart';
 import '../widgets/filter_rail.dart';
 import '../widgets/panels.dart';
 import '../widgets/progress.dart';
+import '../l10n/l10n.dart';
 
 /// The wall. Earned first, then whatever is closest to falling.
 class AchievementsScreen extends StatefulWidget {
@@ -41,7 +42,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
           padding: gutter,
           children: [
             RailChip(
-              label: 'ALL',
+              label: L.of(context).filterAll,
               selected: _filter == null,
               onTap: () => setState(() => _filter = null),
             ),
@@ -87,7 +88,7 @@ class _WallHeader extends StatelessWidget {
               Text('$earned', style: CyType.readout(36, Cy.amber)),
               Text(' / $total', style: CyType.mono(size: 16, color: Cy.inkDim)),
               const Spacer(),
-              Text('UNLOCKED', style: CyType.label(size: 10)),
+              Text(L.of(context).wallUnlocked, style: CyType.label(size: 10)),
             ],
           ),
           const SizedBox(height: 12),
@@ -163,8 +164,8 @@ class _AchievementCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         view.earnedAt == null
-                            ? 'UNLOCKED'
-                            : 'UNLOCKED ${Fmt.date(view.earnedAt!)}',
+                            ? L.of(context).wallUnlocked
+                            : L.of(context).wallUnlockedOn(Fmt.date(view.earnedAt!)),
                         style: CyType.mono(size: 10, color: Cy.green),
                       ),
                     ],

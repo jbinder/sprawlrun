@@ -259,10 +259,10 @@ class MainActivity : FlutterActivity() {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         val channel = NotificationChannel(
             missionChannelId,
-            "Active mission",
+            context.getString(R.string.channel_mission),
             NotificationManager.IMPORTANCE_LOW
         )
-        channel.description = "Shown while a mission is tracking your route."
+        channel.description = context.getString(R.string.channel_mission_description)
         channel.setShowBadge(false)
         channel.enableVibration(false)
         manager.createNotificationChannel(channel)
@@ -283,19 +283,19 @@ class MainActivity : FlutterActivity() {
         // and signals never reach it.
         val reminders = NotificationChannel(
             reminderChannelId,
-            "Reminders",
+            context.getString(R.string.channel_reminders),
             NotificationManager.IMPORTANCE_DEFAULT
         )
-        reminders.description = "Your handler, asking whether you are running today."
+        reminders.description = context.getString(R.string.channel_reminders_description)
         manager.createNotificationChannel(reminders)
 
         // Ambient traffic is flavour, not information, so it never interrupts.
         val ambient = NotificationChannel(
             ambientChannelId,
-            "Signal noise",
+            context.getString(R.string.channel_noise),
             NotificationManager.IMPORTANCE_LOW
         )
-        ambient.description = "Traffic from the Sprawl. Silent."
+        ambient.description = context.getString(R.string.channel_noise_description)
         ambient.enableVibration(false)
         ambient.setShowBadge(false)
         manager.createNotificationChannel(ambient)
@@ -304,20 +304,20 @@ class MainActivity : FlutterActivity() {
         // silencing the nudges, or the reverse, in Android's own settings.
         val debrief = NotificationChannel(
             debriefChannelId,
-            "Weekly debrief",
+            context.getString(R.string.channel_debrief),
             NotificationManager.IMPORTANCE_DEFAULT
         )
-        debrief.description = "How your week went, when it closes."
+        debrief.description = context.getString(R.string.channel_debrief_description)
         manager.createNotificationChannel(debrief)
 
         // Audible, unlike the run's own notice: a reminder nobody hears is no
         // reminder. Only ever posted while a run sits paused.
         val paused = NotificationChannel(
             MissionService.PAUSED_CHANNEL_ID,
-            "Paused run",
+            context.getString(R.string.channel_paused),
             NotificationManager.IMPORTANCE_DEFAULT
         )
-        paused.description = "A nudge when a run has been paused for a while."
+        paused.description = context.getString(R.string.channel_paused_description)
         manager.createNotificationChannel(paused)
     }
 

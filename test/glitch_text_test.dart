@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
 import 'package:sprawl_run/widgets/glitch_text.dart';
 
@@ -10,6 +11,7 @@ void main() {
   testWidgets('the colour layers wrap on the same lines as the title', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L.localizationsDelegates,
         theme: buildCyberTheme(),
         home: Scaffold(
           body: Center(

@@ -14,6 +14,7 @@ import '../util/format.dart';
 import '../util/picked_text.dart';
 import 'panels.dart';
 import '../util/clock.dart';
+import '../l10n/l10n.dart';
 
 /// Writes a backup and hands it to the share sheet, returning what to tell the
 /// runner. Throws on failure; the caller owns the message either way.
@@ -30,13 +31,13 @@ Future<String> exportBackup(AppState state, int runs) async {
   await SharePlus.instance.share(
     ShareParams(
       files: [XFile(file.path, mimeType: 'application/json')],
-      subject: 'SPRAWL//RUN backup',
+      subject: l10n.backupShareSubject,
     ),
   );
   // Recorded whether or not the file was kept: the share sheet does not tell
   // us, and nagging somebody who did save is the worse mistake.
   await state.noteBackupExported();
-  return 'Backup ready — $runs run${runs == 1 ? '' : 's'}, ${_kb(json.length)}.';
+  return l10n.backupReady(runs, _kb(json.length));
 }
 
 String _kb(int bytes) =>
@@ -62,20 +63,19 @@ class _BackupControlsState extends State<BackupControls> {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final runs = state.runLog.length;
+    final l = L.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _ExportStatus(state: state),
         Text(
-          'A backup holds your settings, campaign progress, achievements, codex and '
-          'every run with its GPS trace — everything the app knows. It is plain JSON, '
-          'so you can read it yourself.',
+          l.backupExplainer,
           style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
         ),
         const SizedBox(height: 14),
         CyberButton(
-          label: _busy ? 'Working…' : 'Export backup',
+          label: _busy ? l.working : l.backupExport,
           icon: Icons.file_upload_outlined,
           style: CyberButtonStyle.ghost,
           dense: true,
@@ -83,7 +83,7 @@ class _BackupControlsState extends State<BackupControls> {
         ),
         const SizedBox(height: 10),
         CyberButton(
-          label: _busy ? 'Working…' : 'Import backup',
+          label: _busy ? l.working : l.backupImport,
           icon: Icons.file_download_outlined,
           style: CyberButtonStyle.ghost,
           dense: true,
@@ -107,7 +107,7 @@ class _BackupControlsState extends State<BackupControls> {
     try {
       _say(await exportBackup(state, runs));
     } on Object catch (e) {
-      _say('Export failed: $e', bad: true);
+      _say(l10n.exportFailed('$e'), bad: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -119,8 +119,8 @@ class _BackupControlsState extends State<BackupControls> {
       // Some document providers do not tag .json, so the type filter stays
       // permissive rather than hiding the file the runner is looking for.
       final picked = await openFile(
-        acceptedTypeGroups: const [
-          XTypeGroup(label: 'SPRAWL//RUN backup', extensions: ['json'], mimeTypes: ['application/json']),
+        acceptedTypeGroups: [
+          XTypeGroup(label: l10n.backupShareSubject, extensions: ['json'], mimeTypes: ['application/json']),
         ],
       );
       if (picked == null) return;
@@ -136,7 +136,7 @@ class _BackupControlsState extends State<BackupControls> {
     } on BackupFormatException catch (e) {
       _say(e.message, bad: true);
     } on Object catch (e) {
-      _say('Import failed: $e', bad: true);
+      _say(l10n.importFailed('$e'), bad: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -144,17 +144,16 @@ class _BackupControlsState extends State<BackupControls> {
 
   static String _summarise(ImportReport r) {
     if (r.mode == ImportMode.replace) {
-      return 'Restored ${r.runsAdded} run${r.runsAdded == 1 ? '' : 's'} '
-          'and ${r.missionsAdded} completed mission${r.missionsAdded == 1 ? '' : 's'}.';
+      return l10n.backupRestored(r.runsAdded, r.missionsAdded);
     }
     final parts = <String>[
-      '${r.runsAdded} new run${r.runsAdded == 1 ? '' : 's'}',
-      if (r.missionsAdded > 0) '${r.missionsAdded} mission${r.missionsAdded == 1 ? '' : 's'}',
-      if (r.achievementsAdded > 0) '${r.achievementsAdded} achievement${r.achievementsAdded == 1 ? '' : 's'}',
-      if (r.codexAdded > 0) '${r.codexAdded} codex entr${r.codexAdded == 1 ? 'y' : 'ies'}',
+      l10n.backupMergedRuns(r.runsAdded),
+      if (r.missionsAdded > 0) l10n.backupMergedMissions(r.missionsAdded),
+      if (r.achievementsAdded > 0) l10n.backupMergedAchievements(r.achievementsAdded),
+      if (r.codexAdded > 0) l10n.backupMergedCodex(r.codexAdded),
     ];
-    final skipped = r.runsAlreadyPresent > 0 ? ' ${r.runsAlreadyPresent} already here.' : '';
-    return 'Merged ${parts.join(', ')}.$skipped';
+    final merged = l10n.backupMerged(parts.join(', '));
+    return r.runsAlreadyPresent > 0 ? '$merged ${l10n.backupAlreadyHere(r.runsAlreadyPresent)}' : merged;
   }
 
   /// Asks what to do with the data already on the device. Deliberately has no
@@ -165,6 +164,7 @@ class _BackupControlsState extends State<BackupControls> {
     final missions = archive.profile.completedMissions.length;
     final when = archive.exportedAt.toLocal();
     final stamp = '${when.year}-${_two(when.month)}-${_two(when.day)} ${_two(when.hour)}:${_two(when.minute)}';
+    final l = L.of(context);
 
     return showDialog<ImportMode>(
       context: context,
@@ -177,31 +177,27 @@ class _BackupControlsState extends State<BackupControls> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('BACKUP FOUND', style: CyType.display(size: 16, color: Cy.cyan)),
+              Text(l.backupFound, style: CyType.display(size: 16, color: Cy.cyan)),
               const SizedBox(height: 10),
               Text(
-                'Written $stamp.\n'
-                '$runs run${runs == 1 ? '' : 's'}, '
-                '${archive.traceCount} with a GPS trace, '
-                '$missions mission${missions == 1 ? '' : 's'} completed.',
+                l.backupFoundSummary(stamp, runs, archive.traceCount, missions),
                 style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
               ),
               const SizedBox(height: 16),
               CyberButton(
-                label: 'Merge into this device',
+                label: l.backupMergeAction,
                 icon: Icons.merge_outlined,
                 dense: true,
                 onPressed: () => Navigator.of(context).pop(ImportMode.merge),
               ),
               const SizedBox(height: 6),
               Text(
-                'Adds runs and progress this device does not have. Keeps your settings. '
-                'Nothing is lost.',
+                l.backupMergeExplainer,
                 style: CyType.body(size: 12, color: Cy.ghost, height: 1.3),
               ),
               const SizedBox(height: 14),
               CyberButton(
-                label: 'Replace everything',
+                label: l.backupReplaceAction,
                 icon: Icons.restore_page_outlined,
                 style: CyberButtonStyle.danger,
                 dense: true,
@@ -209,13 +205,12 @@ class _BackupControlsState extends State<BackupControls> {
               ),
               const SizedBox(height: 6),
               Text(
-                'Restores this backup exactly. Every run and setting currently on this '
-                'device is deleted. Use this on a new phone.',
+                l.backupReplaceExplainer,
                 style: CyType.body(size: 12, color: Cy.ghost, height: 1.3),
               ),
               const SizedBox(height: 14),
               CyberButton(
-                label: 'Cancel',
+                label: l.cancel,
                 style: CyberButtonStyle.ghost,
                 dense: true,
                 onPressed: () => Navigator.of(context).pop(),
@@ -249,8 +244,8 @@ class _ExportStatus extends StatelessWidget {
     if (last == null && atRisk == 0) return const SizedBox.shrink();
 
     final parts = [
-      last == null ? 'Never exported' : 'Last export: ${Fmt.ago(appNow().difference(last))}',
-      if (atRisk > 0) '$atRisk run${atRisk == 1 ? '' : 's'} since',
+      last == null ? L.of(context).neverExported : L.of(context).lastExport(Fmt.ago(appNow().difference(last))),
+      if (atRisk > 0) L.of(context).runsSinceExport(atRisk),
     ];
 
     return Padding(

@@ -1,0 +1,9 @@
+# Interface strings. English is the source; translations arrive as
+# app_<lang>.arb beside it, and anything they leave out falls back to English.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-dir: lib/l10n/generated
+output-localization-file: l10n.dart
+output-class: L
+nullable-getter: false
+untranslated-messages-file: build/untranslated.json

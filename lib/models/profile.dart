@@ -1,3 +1,4 @@
+import '../l10n/l10n.dart';
 enum UnitSystem { metric, imperial }
 
 enum StreakMetric { minutes, kilometres, missions }
@@ -82,7 +83,7 @@ class StreakGoal implements WeeklyTargets {
   String get label => switch (metric) {
     StreakMetric.minutes => '${target.round()} min',
     StreakMetric.kilometres => '${target.toStringAsFixed(1)} km',
-    StreakMetric.missions => '${target.round()} mission${target == 1 ? '' : 's'}',
+    StreakMetric.missions => l10n.streakGoalMissions(target.round()),
   };
 
   String get unitLabel => switch (metric) {

@@ -15,6 +15,7 @@ import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
 import '../widgets/route_trace.dart';
 import '../widgets/unlock_reveal.dart';
+import '../l10n/l10n.dart';
 
 /// Post-run debrief: what happened, what it earned, and what it opened up.
 ///
@@ -79,13 +80,13 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                         children: [
                           Text(
                             mission == null
-                                ? 'RUN LOGGED'
-                                : 'OPERATION ${mission!.order.toString().padLeft(2, '0')}',
+                                ? L.of(context).runLogged
+                                : L.of(context).operationNumber(mission!.order.toString().padLeft(2, '0')),
                             style: CyType.label(size: 10, color: Cy.inkDim),
                           ),
                           const SizedBox(height: 8),
                           GlitchText(
-                            success ? 'SUCCESS' : 'FAILED',
+                            success ? L.of(context).tagSuccess : L.of(context).tagFailed,
                             alwaysOn: !success,
                             style: CyType.display(
                               size: 34,
@@ -106,13 +107,13 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           const SizedBox(height: 16),
 
                           if (record.trace.length > 1) ...[
-                            const SectionHeader('ROUTE'),
+                            SectionHeader(L.of(context).sectionRoute),
                             RouteTrace(trace: record.trace, accent: accent),
                             const SizedBox(height: 16),
                           ],
 
                           if (record.chasesTotal > 0) ...[
-                            SectionHeader('PURSUITS', accent: Cy.magenta),
+                            SectionHeader(L.of(context).sectionPursuits, accent: Cy.magenta),
                             NeonPanel(
                               child: Row(
                                 children: [
@@ -130,8 +131,8 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                                   Expanded(
                                     child: Text(
                                       record.chasesEvaded == record.chasesTotal
-                                          ? 'Clean run. Every pursuit shaken.'
-                                          : 'Evaded ${record.chasesEvaded} of ${record.chasesTotal}.',
+                                          ? L.of(context).pursuitsClean
+                                          : L.of(context).pursuitsEvaded(record.chasesEvaded, record.chasesTotal),
                                       style: CyType.body(size: 15),
                                     ),
                                   ),
@@ -146,7 +147,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (success && mission != null) ...[
-                            SectionHeader('DEBRIEF', accent: Cy.amber),
+                            SectionHeader(L.of(context).sectionDebrief, accent: Cy.amber),
                             NeonPanel(
                               accent: Cy.rule,
                               child: Text(
@@ -162,7 +163,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (campaignFinished) ...[
-                            SectionHeader('EPILOGUE', accent: Cy.green),
+                            SectionHeader(L.of(context).sectionEpilogue, accent: Cy.green),
                             NeonPanel(
                               accent: Cy.green,
                               lit: true,
@@ -182,7 +183,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                             // them to find it on the ops screen.
                             if (nextPack != null) ...[
                               SectionHeader(
-                                'NEXT CAMPAIGN',
+                                L.of(context).nextCampaign,
                                 accent: Cy.magenta,
                               ),
                               NeonPanel(
@@ -208,7 +209,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                                     ),
                                     const SizedBox(height: 14),
                                     CyberButton(
-                                      label: 'Switch to ${nextPack.title}',
+                                      label: L.of(context).switchToPack(nextPack.title),
                                       icon: Icons.swap_horiz_rounded,
                                       dense: true,
                                       onPressed: () {
@@ -236,8 +237,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
-                                      'The operation stays open. Everything you covered still counts toward '
-                                      'your totals and your streak.',
+                                      L.of(context).operationStaysOpen,
                                       style: CyType.body(
                                         size: 15,
                                         color: Cy.inkDim,
@@ -268,7 +268,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'NEW OPERATION UNLOCKED',
+                                          L.of(context).newOperationUnlocked,
                                           style: CyType.label(
                                             size: 10,
                                             color: Cy.magenta,
@@ -292,14 +292,14 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (report.codexLost.isNotEmpty) ...[
-                            SectionHeader('INTEL LOST', accent: Cy.amber),
+                            SectionHeader(L.of(context).intelLost, accent: Cy.amber),
                             NeonPanel(
                               accent: Cy.amber,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Intercepted but not decrypted. Complete the operation to recover:',
+                                    L.of(context).intelLostBody,
                                     style: CyType.body(
                                       size: 14,
                                       color: Cy.inkDim,
@@ -341,7 +341,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (report.codexRecovered.isNotEmpty) ...[
-                            SectionHeader('RECOVERED', accent: Cy.cyan),
+                            SectionHeader(L.of(context).sectionRecovered, accent: Cy.cyan),
                             for (final entry in report.codexRecovered)
                               _UnlockRow(
                                 accent: Cy.cyan,
@@ -353,7 +353,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                           ],
 
                           if (report.newAchievements.isNotEmpty) ...[
-                            SectionHeader('UNLOCKED', accent: Cy.amber),
+                            SectionHeader(L.of(context).wallUnlocked, accent: Cy.amber),
                             for (final def in report.newAchievements)
                               _UnlockRow(
                                 accent: Unlock.achievement(def).accent,
@@ -369,7 +369,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(18, 4, 18, 16),
                       child: CyberButton(
-                        label: 'Return to ops',
+                        label: L.of(context).returnToOps,
                         icon: Icons.grid_view_rounded,
                         onPressed: () => Navigator.of(
                           context,
@@ -408,7 +408,7 @@ class _SummaryGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Distance',
+                  label: L.of(context).statDistance,
                   value: Fmt.distance(record.distanceMeters, units),
                   unit: Fmt.distanceUnit(units),
                   accent: Cy.cyan,
@@ -416,7 +416,7 @@ class _SummaryGrid extends StatelessWidget {
               ),
               Expanded(
                 child: StatTile(
-                  label: 'Time',
+                  label: L.of(context).statTime,
                   value: Fmt.clock(record.elapsedSeconds),
                 ),
               ),
@@ -427,7 +427,7 @@ class _SummaryGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Avg pace',
+                  label: L.of(context).statAvgPace,
                   value: Fmt.pace(record.paceSecondsPerKm, units),
                   unit: Fmt.paceUnit(units),
                   size: 22,
@@ -435,7 +435,7 @@ class _SummaryGrid extends StatelessWidget {
               ),
               Expanded(
                 child: StatTile(
-                  label: 'Calories',
+                  label: L.of(context).statCalories,
                   value: Fmt.calories(record.calories),
                   unit: 'kcal',
                   accent: Cy.amber,
@@ -449,7 +449,7 @@ class _SummaryGrid extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Target',
+                  label: L.of(context).statTarget,
                   value: record.goal.toString(),
                   size: 18,
                   accent: Cy.inkDim,
@@ -457,7 +457,7 @@ class _SummaryGrid extends StatelessWidget {
               ),
               Expanded(
                 child: StatTile(
-                  label: 'Transmissions',
+                  label: L.of(context).infoTransmissions,
                   value: '${record.beatsHeard}',
                   size: 18,
                   accent: Cy.inkDim,
@@ -478,7 +478,7 @@ class _SummaryGrid extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                record.isTimeOnly ? 'TIME ONLY' : 'MOVING ${Fmt.shortDuration(record.movingSeconds)}',
+                record.isTimeOnly ? L.of(context).timeOnly : L.of(context).movingTime(Fmt.shortDuration(record.movingSeconds)),
                 style: CyType.mono(size: 11, color: Cy.ghost),
               ),
             ],

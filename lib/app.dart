@@ -18,6 +18,7 @@ import 'widgets/backdrop.dart';
 import 'widgets/edge_fade.dart';
 import 'widgets/glitch_text.dart';
 import 'widgets/signal_watcher.dart';
+import 'l10n/l10n.dart';
 
 class SprawlRunApp extends StatelessWidget {
   const SprawlRunApp({super.key});
@@ -43,6 +44,14 @@ class SprawlRunApp extends StatelessWidget {
       theme: buildCyberTheme(),
       // Fades a list's edge while there is more beyond it; see edge_fade.dart.
       scrollBehavior: const CyberScrollBehavior(),
+      localizationsDelegates: L.localizationsDelegates,
+      supportedLocales: L.supportedLocales,
+      // Beneath the localisations, so code without a context — notification
+      // text, the narrator's readouts — speaks the language on screen.
+      builder: (context, child) {
+        useLocale(Localizations.localeOf(context));
+        return child!;
+      },
       home: const _Root(),
     );
   }
@@ -80,7 +89,7 @@ class _BootScreen extends StatelessWidget {
                 style: CyType.display(size: 26, color: Cy.ink, shadows: textGlow(Cy.cyan)),
               ),
               const SizedBox(height: 14),
-              Text('ESTABLISHING CHANNEL', style: CyType.label(color: Cy.cyanDim)),
+              Text(L.of(context).bootEstablishing, style: CyType.label(color: Cy.cyanDim)),
               const SizedBox(height: 22),
               SizedBox(
                 width: 120,
@@ -143,11 +152,11 @@ class _HomeShellState extends State<HomeShell> {
     super.dispose();
   }
 
-  static const _destinations = [
-    (icon: Icons.hexagon_outlined, active: Icons.hexagon, label: 'OPS'),
-    (icon: Icons.query_stats_outlined, active: Icons.query_stats, label: 'STATS'),
-    (icon: Icons.military_tech_outlined, active: Icons.military_tech, label: 'WALL'),
-    (icon: Icons.menu_book_outlined, active: Icons.menu_book, label: 'CODEX'),
+  static List<({IconData icon, IconData active, String label})> _destinations(L l) => [
+    (icon: Icons.hexagon_outlined, active: Icons.hexagon, label: l.navOps),
+    (icon: Icons.query_stats_outlined, active: Icons.query_stats, label: l.navStats),
+    (icon: Icons.military_tech_outlined, active: Icons.military_tech, label: l.navWall),
+    (icon: Icons.menu_book_outlined, active: Icons.menu_book, label: l.navCodex),
   ];
 
   @override
@@ -190,7 +199,7 @@ class _HomeShellState extends State<HomeShell> {
         size: 23,
         child: _NavBar(
           index: _index,
-          destinations: _destinations,
+          destinations: _destinations(L.of(context)),
           onSelect: (i) => setState(() => _index = i),
         ),
       ),
@@ -241,12 +250,12 @@ class _TopBar extends StatelessWidget {
                 backgroundColor: Cy.magenta,
                 child: Icon(Icons.forum_outlined, color: Cy.inkDim),
               ),
-              tooltip: unread ? 'The wire — new signals' : 'The wire',
+              tooltip: unread ? L.of(context).wireTooltipUnread : L.of(context).wireTooltip,
             ),
           IconButton(
             onPressed: onSettings,
             icon: Icon(Icons.settings_outlined, color: Cy.inkDim),
-            tooltip: 'Settings',
+            tooltip: L.of(context).settingsTooltip,
           ),
         ],
       ),

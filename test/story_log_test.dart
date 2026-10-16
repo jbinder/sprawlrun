@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/run_record.dart';
@@ -41,6 +42,7 @@ const _story = [
 
 Future<void> _pump(WidgetTester tester, {Mission? mission}) => tester.pumpWidget(
   MaterialApp(
+    localizationsDelegates: L.localizationsDelegates,
     theme: buildCyberTheme(),
     home: Scaffold(
       body: SingleChildScrollView(

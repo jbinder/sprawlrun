@@ -16,6 +16,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/panels.dart';
 import '../widgets/route_trace.dart';
 import '../widgets/story_log.dart';
+import '../l10n/l10n.dart';
 
 /// One stored run, with its GPS trace loaded on demand.
 class RunDetailScreen extends StatefulWidget {
@@ -55,13 +56,13 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path, mimeType: 'application/gpx+xml')],
-          subject: widget.run.missionCodename ?? 'SPRAWL//RUN route',
+          subject: widget.run.missionCodename ?? L.of(context).gpxShareSubject,
         ),
       );
     } on Object catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Export failed: $e', style: CyType.body(size: 14, color: Cy.red))),
+        SnackBar(content: Text(L.of(context).exportFailed('$e'), style: CyType.body(size: 14, color: Cy.red))),
       );
     }
   }
@@ -77,11 +78,10 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('DELETE RUN?', style: CyType.display(size: 16, color: Cy.magenta)),
+              Text(L.of(context).deleteRunTitle, style: CyType.display(size: 16, color: Cy.magenta)),
               const SizedBox(height: 10),
               Text(
-                'This removes it from your totals, your streak and the achievement wall. '
-                'It cannot be undone.',
+                L.of(context).deleteRunBody,
                 style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
               ),
               const SizedBox(height: 16),
@@ -89,7 +89,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                 children: [
                   Expanded(
                     child: CyberButton(
-                      label: 'Keep',
+                      label: L.of(context).keep,
                       style: CyberButtonStyle.ghost,
                       dense: true,
                       onPressed: () => Navigator.of(context).pop(false),
@@ -98,7 +98,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: CyberButton(
-                      label: 'Delete',
+                      label: L.of(context).delete,
                       style: CyberButtonStyle.danger,
                       dense: true,
                       onPressed: () => Navigator.of(context).pop(true),
@@ -142,12 +142,12 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                     icon: const Icon(Icons.ios_share, size: 20),
                     color: Cy.inkDim,
                     disabledColor: Cy.ghost.withValues(alpha: 0.4),
-                    tooltip: 'Export route as GPX',
+                    tooltip: L.of(context).exportGpx,
                   ),
                   IconButton(
                     onPressed: _delete,
                     icon: Icon(Icons.delete_outline, color: Cy.inkDim),
-                    tooltip: 'Delete run',
+                    tooltip: L.of(context).deleteRun,
                   ),
                 ],
               ),
@@ -158,7 +158,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                     Text(Fmt.dateTime(run.startedAt), style: CyType.label(size: 10)),
                     const SizedBox(height: 8),
                     Text(
-                      run.missionCodename ?? 'FREE RUN',
+                      run.missionCodename ?? L.of(context).freeRun,
                       style: CyType.display(size: 26, color: Cy.ink, shadows: textGlow(accent, blur: 14)),
                     ),
                     const SizedBox(height: 8),
@@ -169,12 +169,12 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                       runSpacing: 8,
                       children: [
                         CyberTag(
-                          run.isSuccess ? 'SUCCESS' : 'FAILED',
+                          run.isSuccess ? L.of(context).tagSuccess : L.of(context).tagFailed,
                           color: accent,
                           filled: run.isSuccess,
                         ),
-                        CyberTag('TARGET ${run.goal}', color: Cy.ghost),
-                        if (run.isTimeOnly) CyberTag('TIME ONLY', color: Cy.amber),
+                        CyberTag(L.of(context).targetTag(run.goal.toString()), color: Cy.ghost),
+                        if (run.isTimeOnly) CyberTag(L.of(context).timeOnly, color: Cy.amber),
                       ],
                     ),
                     const SizedBox(height: 18),
@@ -185,14 +185,14 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                             children: [
                               Expanded(
                                 child: StatTile(
-                                  label: 'Distance',
+                                  label: L.of(context).statDistance,
                                   value: Fmt.distance(run.distanceMeters, units),
                                   unit: Fmt.distanceUnit(units),
                                   accent: Cy.cyan,
                                 ),
                               ),
                               Expanded(
-                                child: StatTile(label: 'Time', value: Fmt.clock(run.elapsedSeconds)),
+                                child: StatTile(label: L.of(context).statTime, value: Fmt.clock(run.elapsedSeconds)),
                               ),
                             ],
                           ),
@@ -201,7 +201,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                             children: [
                               Expanded(
                                 child: StatTile(
-                                  label: 'Avg pace',
+                                  label: L.of(context).statAvgPace,
                                   value: Fmt.pace(run.paceSecondsPerKm, units),
                                   unit: Fmt.paceUnit(units),
                                   size: 20,
@@ -209,7 +209,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                               ),
                               Expanded(
                                 child: StatTile(
-                                  label: 'Calories',
+                                  label: L.of(context).statCalories,
                                   value: Fmt.calories(run.calories),
                                   unit: 'kcal',
                                   accent: Cy.amber,
@@ -218,7 +218,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                               ),
                               Expanded(
                                 child: StatTile(
-                                  label: 'Evaded',
+                                  label: L.of(context).statEvaded,
                                   value: run.chasesTotal == 0
                                       ? '—'
                                       : '${run.chasesEvaded}/${run.chasesTotal}',
@@ -232,25 +232,25 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const SectionHeader('ROUTE'),
+                    SectionHeader(L.of(context).sectionRoute),
                     if (_trace == null)
                       Container(
                         height: 200,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(color: Cy.panel, border: Border.all(color: Cy.rule)),
-                        child: Text('LOADING TRACE', style: CyType.label()),
+                        child: Text(L.of(context).loadingTrace, style: CyType.label()),
                       )
                     else
                       RouteTrace(trace: _trace!, accent: accent, height: 240, animate: true),
 
                     if (run.missionId != null) ...[
                       const SizedBox(height: 18),
-                      SectionHeader('STORY', accent: Cy.cyan),
+                      SectionHeader(L.of(context).sectionStory, accent: Cy.cyan),
                       if (run.story.isEmpty)
                         NeonPanel(
                           accent: Cy.rule,
                           child: Text(
-                            'No story log for this run — it was recorded before the app kept one.',
+                            L.of(context).noStoryLog,
                             style: CyType.body(size: 14, color: Cy.inkDim, height: 1.35),
                           ),
                         )

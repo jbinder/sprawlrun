@@ -23,6 +23,7 @@ import 'mission_brief_screen.dart';
 import 'mission_debrief_screen.dart';
 import 'missions_screen.dart';
 import 'run_summary_screen.dart';
+import '../l10n/l10n.dart';
 
 /// The home screen: who you are, how the week is going, and the one mission
 /// you are allowed to play next.
@@ -70,17 +71,17 @@ class DashboardScreen extends StatelessWidget {
         ],
 
         if (current != null) ...[
-          SectionHeader('NEXT OPERATION', accent: Cy.magenta),
+          SectionHeader(L.of(context).nextOperation, accent: Cy.magenta),
           _NextOpCard(progress: current),
           const SizedBox(height: 22),
         ] else if (chain.isNotEmpty) ...[
-          SectionHeader('CAMPAIGN COMPLETE', accent: Cy.green),
+          SectionHeader(L.of(context).campaignComplete, accent: Cy.green),
           _CampaignCompleteCard(pack: pack!, next: state.nextOpenPack),
           const SizedBox(height: 22),
         ],
 
         SectionHeader(
-          pack?.title ?? 'MISSION CHAIN',
+          pack?.title ?? L.of(context).missionChain,
           trailing: InkWell(
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const MissionsScreen()),
@@ -96,7 +97,7 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    'ALL PACKS',
+                    L.of(context).allPacks,
                     style: CyType.label(size: 10, color: Cy.cyan),
                   ),
                   Icon(Icons.chevron_right, size: 16, color: Cy.cyan),
@@ -115,10 +116,9 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
         if (chain.isEmpty)
-          const EmptyState(
-            title: 'No mission packs',
-            body:
-                'The bundled campaign failed to load. Check Settings → Mission packs.',
+          EmptyState(
+            title: L.of(context).noPacksTitle,
+            body: L.of(context).noPacksBundledFailed,
             icon: Icons.sync_problem_outlined,
           )
         else
@@ -129,7 +129,7 @@ class DashboardScreen extends StatelessWidget {
 
         const SizedBox(height: 14),
         CyberButton(
-          label: 'Free run — no mission',
+          label: L.of(context).freeRunButton,
           icon: Icons.directions_run,
           style: CyberButtonStyle.ghost,
           onPressed: () => Navigator.of(context).push(
@@ -156,39 +156,31 @@ class _Greeting extends StatelessWidget {
   String get _line {
     final hour = appNow().hour;
     if (season == Season.samhain) return _samhainLine(hour);
-    if (hour < 5) {
-      return 'The city is at its quietest. Nobody is watching the streets at this hour.';
-    }
-    if (hour < 8) {
-      return 'Grey light on wet concrete. Best hours to move unnoticed.';
-    }
-    if (hour < 12) return 'Day shift is on the grid. Blend in.';
-    if (hour < 17) {
-      return 'Heat, noise, and forty thousand people between you and anyone tracking you.';
-    }
-    if (hour < 21) {
-      return 'The signs are coming on. This is when the work starts.';
-    }
-    return 'Rain on the strip. Good conditions. Nobody looks up when it rains.';
+    if (hour < 5) return l10n.greetingLineNight;
+    if (hour < 8) return l10n.greetingLineDawn;
+    if (hour < 12) return l10n.greetingLineMorning;
+    if (hour < 17) return l10n.greetingLineAfternoon;
+    if (hour < 21) return l10n.greetingLineEvening;
+    return l10n.greetingLineLate;
   }
 
   /// The same clock, the week the dead accounts walk.
   static String _samhainLine(int hour) {
-    if (hour < 5) return 'The hour the purge runs. Whatever is still logged in now is not going to log out.';
-    if (hour < 8) return 'Fog on the strip. Some of the footprints in it are older than the fog.';
-    if (hour < 12) return 'Daylight. The dead net keeps office hours, but it does not keep them well.';
-    if (hour < 17) return 'Pumpkins on the ration-stall counters, carved with corp logos. Nobody admits to it.';
-    if (hour < 21) return 'The signs are coming on, and some of them are signing for people who are not here.';
-    return 'Candles in the window of every courier who did not come back. Run past them. They like that.';
+    if (hour < 5) return l10n.samhainLineNight;
+    if (hour < 8) return l10n.samhainLineDawn;
+    if (hour < 12) return l10n.samhainLineMorning;
+    if (hour < 17) return l10n.samhainLineAfternoon;
+    if (hour < 21) return l10n.samhainLineEvening;
+    return l10n.samhainLineLate;
   }
 
   String get _salutation {
     final hour = appNow().hour;
-    if (season == Season.samhain && hour >= 18) return 'GOOD HUNTING';
-    if (hour < 5) return 'STILL AWAKE';
-    if (hour < 12) return 'MORNING';
-    if (hour < 18) return 'AFTERNOON';
-    return 'EVENING';
+    if (season == Season.samhain && hour >= 18) return l10n.salutationSamhain;
+    if (hour < 5) return l10n.salutationNight;
+    if (hour < 12) return l10n.salutationMorning;
+    if (hour < 18) return l10n.salutationAfternoon;
+    return l10n.salutationEvening;
   }
 
   @override
@@ -199,7 +191,7 @@ class _Greeting extends StatelessWidget {
         Row(
           children: [
             Text(
-              '$_salutation, ',
+              L.of(context).salutation(_salutation),
               style: CyType.label(size: 11, color: Cy.inkDim),
             ),
             Flexible(
@@ -262,7 +254,7 @@ class _SeasonCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'UNTIL ${Fmt.date(last)}',
+                L.of(context).seasonUntil(Fmt.date(last)),
                 style: CyType.label(size: 10, color: Cy.magenta),
               ),
             ],
@@ -274,14 +266,14 @@ class _SeasonCard extends StatelessWidget {
           if (!finished && season.daysLeft(appNow()) <= 3) ...[
             const SizedBox(height: 8),
             Text(
-              'Last days. Unfinished operations resume next October.',
+              L.of(context).seasonLastDays,
               style: CyType.body(size: 13, color: Cy.amber, height: 1.35),
             ),
           ],
           if (!playing) ...[
             const SizedBox(height: 12),
             CyberButton(
-              label: 'Open ${pack.title}',
+              label: L.of(context).openPack(pack.title),
               icon: Icons.nights_stay_outlined,
               dense: true,
               onPressed: () => context.read<AppState>().selectPack(pack.id),
@@ -327,7 +319,7 @@ class _StreakCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'WEEK STREAK',
+                          L.of(context).weekStreak,
                           style: CyType.label(size: 10, color: Cy.inkDim),
                         ),
                       ],
@@ -335,15 +327,19 @@ class _StreakCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       met
-                          ? 'Target met. Streak safe.'
-                          : '${(streak.target - streak.currentValue).toStringAsFixed(streak.unitLabel == 'KM' ? 1 : 0)} ${streak.unitLabel} to go · closes in ${Fmt.countdown(streak.weekEndsIn)}',
+                          ? L.of(context).streakTargetMet
+                          : L.of(context).streakToGo(
+                              (streak.target - streak.currentValue).toStringAsFixed(streak.unitLabel == 'KM' ? 1 : 0),
+                              L.of(context).streakUnit(streak.unitLabel),
+                              Fmt.countdown(streak.weekEndsIn),
+                            ),
                       style: CyType.body(size: 13, color: Cy.inkDim),
                     ),
                   ],
                 ),
               ),
               if (streak.longestWeeks > streak.weeks)
-                CyberTag('BEST ${streak.longestWeeks}', color: Cy.ghost),
+                CyberTag(L.of(context).streakBest(streak.longestWeeks), color: Cy.ghost),
             ],
           ),
           const SizedBox(height: 14),
@@ -353,17 +349,17 @@ class _StreakCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${streak.currentValue.toStringAsFixed(streak.unitLabel == 'KM' ? 1 : 0)} / ${streak.target.toStringAsFixed(streak.unitLabel == 'KM' ? 1 : 0)} ${streak.unitLabel}',
+                '${streak.currentValue.toStringAsFixed(streak.unitLabel == 'KM' ? 1 : 0)} / ${streak.target.toStringAsFixed(streak.unitLabel == 'KM' ? 1 : 0)} ${L.of(context).streakUnit(streak.unitLabel)}',
                 style: CyType.mono(size: 11, color: Cy.inkDim),
               ),
-              Text('THIS WEEK', style: CyType.label(size: 9)),
+              Text(L.of(context).thisWeek, style: CyType.label(size: 9)),
             ],
           ),
           if (streak.recentWeeks.isNotEmpty) ...[
             const SizedBox(height: 14),
             StreakStrip(weeks: streak.recentWeeks),
             const SizedBox(height: 5),
-            Text('LAST 12 WEEKS', style: CyType.label(size: 9)),
+            Text(L.of(context).lastWeeks(12), style: CyType.label(size: 9)),
           ],
         ],
       ),
@@ -385,7 +381,7 @@ class _WeekStrip extends StatelessWidget {
         children: [
           Expanded(
             child: StatTile(
-              label: 'Distance 7d',
+              label: L.of(context).statDistance7d,
               value: Fmt.distance(week.distanceMeters, units),
               unit: Fmt.distanceUnit(units),
               accent: Cy.cyan,
@@ -394,7 +390,7 @@ class _WeekStrip extends StatelessWidget {
           ),
           Expanded(
             child: StatTile(
-              label: 'Time 7d',
+              label: L.of(context).statTime7d,
               value: Fmt.shortDuration(week.seconds),
               accent: Cy.ink,
               size: 22,
@@ -402,7 +398,7 @@ class _WeekStrip extends StatelessWidget {
           ),
           Expanded(
             child: StatTile(
-              label: 'Ops 7d',
+              label: L.of(context).statOps7d,
               value: '${week.missions}',
               accent: Cy.magenta,
               size: 22,
@@ -441,7 +437,7 @@ class _NextOpCard extends StatelessWidget {
             child: Row(
               children: [
                 Text(
-                  'OP ${mission.order.toString().padLeft(2, '0')}',
+                  L.of(context).opNumber(mission.order.toString().padLeft(2, '0')),
                   style: CyType.mono(
                     size: 12,
                     color: Cy.magenta,
@@ -450,7 +446,7 @@ class _NextOpCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 if (progress.attempts > 0)
-                  CyberTag('ATTEMPT ${progress.attempts + 1}', color: Cy.amber),
+                  CyberTag(L.of(context).attemptNumber(progress.attempts + 1), color: Cy.amber),
               ],
             ),
           ),
@@ -496,12 +492,11 @@ class _NextOpCard extends StatelessWidget {
                     ),
                     _Chip(
                       icon: Icons.record_voice_over_outlined,
-                      text: '${mission.beats.length} transmissions',
+                      text: L.of(context).transmissionCount(mission.beats.length),
                     ),
                     _Chip(
                       icon: Icons.radar,
-                      text:
-                          '${mission.chaseBeats.length} pursuit${mission.chaseBeats.length == 1 ? '' : 's'}',
+                      text: L.of(context).pursuitCount(mission.chaseBeats.length),
                     ),
                   ],
                 ),
@@ -509,7 +504,7 @@ class _NextOpCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'OPEN BRIEFING',
+                      L.of(context).openBriefing,
                       style: CyType.display(size: 12, color: Cy.magenta),
                     ),
                     Icon(
@@ -571,21 +566,20 @@ class _CampaignCompleteCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'ALL OPERATIONS CLEARED',
+            L.of(context).allOperationsCleared,
             style: CyType.display(size: 14, color: Cy.green),
           ),
           const SizedBox(height: 8),
           Text(
             next == null
-                ? '${pack.title} is finished, and so is everything else loaded. Free runs still count '
-                      'toward streaks, distance and the wall — and new packs can be dropped in without an update.'
-                : '${pack.title} is finished. ${next!.title} is open: ${next!.tagline}',
+                ? L.of(context).campaignFinishedAll(pack.title)
+                : L.of(context).campaignFinishedNext(pack.title, next!.title, next!.tagline),
             style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
           ),
           if (next != null) ...[
             const SizedBox(height: 14),
             CyberButton(
-              label: 'Switch to ${next!.title}',
+              label: L.of(context).switchToPack(next!.title),
               icon: Icons.swap_horiz_rounded,
               dense: true,
               onPressed: () => context.read<AppState>().selectPack(next!.id),
@@ -674,7 +668,7 @@ class _MissionRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Text(
                   locked
-                      ? 'CLASSIFIED — CLEAR PRECEDING OPERATION'
+                      ? L.of(context).classified
                       : mission.title,
                   overflow: TextOverflow.ellipsis,
                   style: CyType.body(
@@ -687,11 +681,11 @@ class _MissionRow extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           if (done)
-            CyberTag('CLEARED', color: Cy.green)
+            CyberTag(L.of(context).tagCleared, color: Cy.green)
           else if (!locked)
-            CyberTag('ACTIVE', color: Cy.magenta, filled: true)
+            CyberTag(L.of(context).activeTag, color: Cy.magenta, filled: true)
           else
-            CyberTag('LOCKED', color: Cy.ghost),
+            CyberTag(L.of(context).tagLocked, color: Cy.ghost),
         ],
       ),
     );
@@ -716,7 +710,7 @@ class _NextUnlocks extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SectionHeader('CLOSEST UNLOCKS', accent: Cy.amber),
+        SectionHeader(L.of(context).closestUnlocks, accent: Cy.amber),
         for (final view in next)
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -790,7 +784,7 @@ class _BackupNudgeCardState extends State<_BackupNudgeCard> {
               Icon(Icons.warning_amber_rounded, color: Cy.amber, size: 18),
               const SizedBox(width: 10),
               Expanded(
-                child: Text('ARCHIVE DRIFT', style: CyType.label(size: 11, color: Cy.amber)),
+                child: Text(L.of(context).archiveDrift, style: CyType.label(size: 11, color: Cy.amber)),
               ),
               InkWell(
                 onTap: _busy ? null : () => state.snoozeBackupNudge(),
@@ -803,13 +797,12 @@ class _BackupNudgeCardState extends State<_BackupNudgeCard> {
           ),
           const SizedBox(height: 10),
           Text(
-            '$runs run${runs == 1 ? '' : 's'} exist${runs == 1 ? 's' : ''} only on this device. '
-            'If it is lost or the app is reinstalled, so are they.',
+            L.of(context).archiveDriftBody(runs),
             style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
           ),
           const SizedBox(height: 14),
           CyberButton(
-            label: _busy ? 'Working…' : 'EXPORT NOW',
+            label: _busy ? L.of(context).working : L.of(context).exportNow,
             icon: Icons.file_upload_outlined,
             style: CyberButtonStyle.ghost,
             dense: true,
@@ -827,7 +820,7 @@ class _BackupNudgeCardState extends State<_BackupNudgeCard> {
       if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     } on Object catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Export failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(L.of(context).exportFailed('$e'))));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -854,7 +847,7 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final run = widget.saved.record;
-    final what = run.missionCodename ?? 'Free run';
+    final what = run.missionCodename ?? L.of(context).freeRunName;
 
     return NeonPanel(
       accent: Cy.amber,
@@ -866,7 +859,7 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
             children: [
               Icon(Icons.restore, color: Cy.amber, size: 18),
               const SizedBox(width: 10),
-              Text('RUN INTERRUPTED', style: CyType.label(size: 11, color: Cy.amber)),
+              Text(L.of(context).runInterrupted, style: CyType.label(size: 11, color: Cy.amber)),
             ],
           ),
           const SizedBox(height: 10),
@@ -877,20 +870,19 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
           ),
           const SizedBox(height: 6),
           Text(
-            'The app was closed before this run was finished, last saved ${Fmt.dateTime(run.endedAt)}. '
-            'Keep it as it stood then, or let it go.',
+            L.of(context).runInterruptedBody(Fmt.dateTime(run.endedAt)),
             style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
           ),
           const SizedBox(height: 14),
           CyberButton(
-            label: _busy ? 'Working…' : 'Keep run',
+            label: _busy ? L.of(context).working : L.of(context).keepRun,
             icon: Icons.save_outlined,
             dense: true,
             onPressed: _busy ? null : () => _keep(state),
           ),
           const SizedBox(height: 8),
           CyberButton(
-            label: 'Discard',
+            label: L.of(context).discard,
             style: CyberButtonStyle.ghost,
             dense: true,
             onPressed: _busy ? null : () => _discard(state),
@@ -911,7 +903,7 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
         MaterialPageRoute<void>(builder: (_) => RunSummaryScreen(report: report, mission: mission)),
       );
     } on Object catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Could not keep the run: $e')));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(L.of(context).keepRunFailed('$e'))));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -929,22 +921,22 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('DISCARD THIS RUN', style: CyType.display(size: 16, color: Cy.red)),
+              Text(L.of(context).discardRunTitle, style: CyType.display(size: 16, color: Cy.red)),
               const SizedBox(height: 10),
               Text(
-                'It will not count toward anything, and it cannot be brought back.',
+                L.of(context).discardRunBody,
                 style: CyType.body(size: 14, color: Cy.ink, height: 1.4),
               ),
               const SizedBox(height: 18),
               CyberButton(
-                label: 'Discard',
+                label: L.of(context).discard,
                 style: CyberButtonStyle.danger,
                 dense: true,
                 onPressed: () => Navigator.of(context).pop(true),
               ),
               const SizedBox(height: 10),
               CyberButton(
-                label: 'Cancel',
+                label: L.of(context).cancel,
                 style: CyberButtonStyle.ghost,
                 dense: true,
                 onPressed: () => Navigator.of(context).pop(false),

@@ -5,6 +5,7 @@ import '../models/run_record.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
+import '../l10n/l10n.dart';
 
 /// A run's story, read back in order: every transmission with its lines, every
 /// pursuit and how it went, every recovery, the moment the target fell.
@@ -51,15 +52,16 @@ class _Moment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = L.of(context);
     final (accent, label) = switch (event.kind) {
-      StoryEventKind.beat => (Cy.cyan, _beat?.headline?.toUpperCase() ?? 'TRANSMISSION'),
-      StoryEventKind.chaseStarted => (Cy.magenta, 'PURSUIT — ${event.ref ?? 'UNKNOWN'}'),
+      StoryEventKind.beat => (Cy.cyan, _beat?.headline?.toUpperCase() ?? l.storyTransmission),
+      StoryEventKind.chaseStarted => (Cy.magenta, l.storyPursuit(event.ref ?? l.unknown)),
       StoryEventKind.chaseEnded => (
         event.escaped == true ? Cy.green : Cy.amber,
-        '${event.escaped == true ? 'EVADED' : 'CAUGHT'} — ${event.ref ?? 'UNKNOWN'}',
+        event.escaped == true ? l.storyEvaded(event.ref ?? l.unknown) : l.storyCaught(event.ref ?? l.unknown),
       ),
-      StoryEventKind.codex => (Cy.cyan, 'INTEL INTERCEPTED — ${codexTitle(event.ref ?? '') ?? event.ref ?? ''}'),
-      StoryEventKind.goal => (Cy.green, 'TARGET REACHED'),
+      StoryEventKind.codex => (Cy.cyan, l.storyIntel(codexTitle(event.ref ?? '') ?? event.ref ?? '')),
+      StoryEventKind.goal => (Cy.green, l.storyTargetReached),
     };
     final beat = _beat;
     final lines = event.kind == StoryEventKind.beat ? (beat?.lines ?? const <StoryLine>[]) : const <StoryLine>[];
@@ -100,7 +102,7 @@ class _Moment extends StatelessWidget {
                   if (event.kind == StoryEventKind.beat && beat == null) ...[
                     const SizedBox(height: 4),
                     Text(
-                      'Lines unavailable — the mission pack is no longer installed.',
+                      l.storyLinesUnavailable,
                       style: CyType.body(size: 13, color: Cy.ghost, style: FontStyle.italic),
                     ),
                   ],

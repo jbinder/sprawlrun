@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../models/mission.dart';
 import 'atomic_write.dart';
+import '../l10n/l10n.dart';
 
 /// Loads mission packs.
 ///
@@ -116,32 +117,30 @@ class MissionRepository {
     try {
       final decoded = jsonDecode(source);
       if (decoded is! Map || decoded['id'] is! String || decoded['missions'] is! List) {
-        throw const PackImportException(
-          'That is not a mission pack — it needs an "id" and a list of "missions".',
-        );
+        throw PackImportException(l10n.packErrorNotAPack);
       }
       pack = MissionPack.fromJson(Map<String, dynamic>.from(decoded));
     } on PackImportException {
       rethrow;
     } on FormatException {
-      throw const PackImportException('That file is not JSON.');
+      throw PackImportException(l10n.fileNotJson);
     } on Object catch (e) {
       // A missing or mistyped field in a mission. The detail is for the author;
       // the first sentence is for everyone else.
-      throw PackImportException('The pack could not be read. A mission is missing a required field.\n$e');
+      throw PackImportException('${l10n.packErrorMissingField}\n$e');
     }
 
     final fileName = packFileName(pack.id);
     if (fileName == null) {
-      throw const PackImportException('The pack id may only use letters, digits, "-" and "_".');
+      throw PackImportException(l10n.packErrorBadId);
     }
     if (pack.missions.isEmpty) {
-      throw const PackImportException('The pack has no missions in it.');
+      throw PackImportException(l10n.packErrorEmpty);
     }
     final ids = <String>{};
     for (final m in pack.missions) {
       if (!ids.add(m.id)) {
-        throw PackImportException('Two missions share the id "${m.id}".');
+        throw PackImportException(l10n.packErrorDuplicateId(m.id));
       }
     }
 

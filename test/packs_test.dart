@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
@@ -134,7 +135,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [ChangeNotifierProvider.value(value: state)],
-          child: MaterialApp(theme: buildCyberTheme(), home: RunSummaryScreen(report: report, mission: last)),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: RunSummaryScreen(report: report, mission: last)),
         ),
       );
       await tester.pump(const Duration(milliseconds: 200));
@@ -160,7 +161,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [ChangeNotifierProvider.value(value: state)],
-          child: MaterialApp(theme: buildCyberTheme(), home: RunSummaryScreen(report: report, mission: last)),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: RunSummaryScreen(report: report, mission: last)),
         ),
       );
       await tester.pump(const Duration(milliseconds: 200));
@@ -182,7 +183,7 @@ void main() {
             ChangeNotifierProvider.value(value: state!),
             ChangeNotifierProvider(create: (_) => RunEngine(narrator: FakeNarrator(), location: FakeLocation())),
           ],
-          child: MaterialApp(theme: buildCyberTheme(), home: const MissionsScreen()),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: const MissionsScreen()),
         ),
       );
       await tester.pump(const Duration(milliseconds: 200));

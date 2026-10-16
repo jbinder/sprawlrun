@@ -1,0 +1,2671 @@
+{
+  "@@locale": "en",
+  "bootEstablishing": "ESTABLISHING CHANNEL",
+  "@bootEstablishing": {
+    "description": "Boot screen, shown under the logo while data loads. Uppercase is the style throughout."
+  },
+  "navOps": "OPS",
+  "@navOps": {
+    "description": "Bottom navigation: the home tab with the missions (\"operations\"). Keep it very short (about 6 characters)."
+  },
+  "navStats": "STATS",
+  "@navStats": {
+    "description": "Bottom navigation: statistics tab. Very short."
+  },
+  "navWall": "WALL",
+  "@navWall": {
+    "description": "Bottom navigation: the achievements tab, a \"wall\" of trophies. Very short."
+  },
+  "navCodex": "CODEX",
+  "@navCodex": {
+    "description": "Bottom navigation: the codex tab, world-building entries unlocked during missions. Very short."
+  },
+  "wireTooltip": "The wire",
+  "@wireTooltip": {
+    "description": "Tooltip of the icon opening THE WIRE, the scrollback of messages from the story characters."
+  },
+  "wireTooltipUnread": "The wire — new signals",
+  "@wireTooltipUnread": {
+    "description": "Same tooltip when unread messages (\"signals\") have arrived."
+  },
+  "settingsTooltip": "Settings",
+  "@settingsTooltip": {
+    "description": "Tooltip of the gear icon opening Settings."
+  },
+  "working": "Working…",
+  "@working": {
+    "description": "Button label while an import or export is in progress."
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Button closing a dialog without doing anything."
+  },
+  "exportFailed": "Export failed: {error}",
+  "@exportFailed": {
+    "description": "The error is a technical message, left in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "importFailed": "Import failed: {error}",
+  "@importFailed": {
+    "description": "The error is a technical message, left in English.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupShareSubject": "SPRAWL//RUN backup",
+  "@backupShareSubject": {
+    "description": "Subject when sharing a backup file, and the file type name in the file picker. SPRAWL//RUN is the app name."
+  },
+  "backupReady": "Backup ready — {count, plural, =1{1 run} other{{count} runs}}, {size}.",
+  "@backupReady": {
+    "description": "After exporting. size is e.g. \"412 KB\".",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "backupExplainer": "A backup holds your settings, campaign progress, achievements, codex and every run with its GPS trace — everything the app knows. It is plain JSON, so you can read it yourself.",
+  "backupExport": "Export backup",
+  "@backupExport": {
+    "description": "Settings → Data: button that saves a backup file of everything."
+  },
+  "backupImport": "Import backup",
+  "@backupImport": {
+    "description": "Settings → Data: button that reads a backup file back in."
+  },
+  "backupRestored": "Restored {runs, plural, =1{1 run} other{{runs} runs}} and {missions, plural, =1{1 completed mission} other{{missions} completed missions}}.",
+  "@backupRestored": {
+    "placeholders": {
+      "runs": {
+        "type": "int"
+      },
+      "missions": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMergedRuns": "{count, plural, =1{1 new run} other{{count} new runs}}",
+  "@backupMergedRuns": {
+    "description": "Part of the list in backupMerged.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMergedMissions": "{count, plural, =1{1 mission} other{{count} missions}}",
+  "@backupMergedMissions": {
+    "description": "Part of the list in backupMerged.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMergedAchievements": "{count, plural, =1{1 achievement} other{{count} achievements}}",
+  "@backupMergedAchievements": {
+    "description": "Part of the list in backupMerged.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMergedCodex": "{count, plural, =1{1 codex entry} other{{count} codex entries}}",
+  "@backupMergedCodex": {
+    "description": "Part of the list in backupMerged.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMerged": "Merged {items}.",
+  "@backupMerged": {
+    "description": "After merging a backup. items is a comma-separated list like \"3 new runs, 1 mission\".",
+    "placeholders": {
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "backupAlreadyHere": "{count} already here.",
+  "@backupAlreadyHere": {
+    "description": "Appended to backupMerged: how many runs in the backup were already on the device.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupFound": "BACKUP FOUND",
+  "@backupFound": {
+    "description": "Title of the dialog shown after picking a backup file to import."
+  },
+  "backupFoundSummary": "Written {stamp}.\n{runs, plural, =1{1 run} other{{runs} runs}}, {traces} with a GPS trace, {missions, plural, =1{1 mission} other{{missions} missions}} completed.",
+  "@backupFoundSummary": {
+    "description": "stamp is a date and time like 2026-10-15 08:30.",
+    "placeholders": {
+      "stamp": {
+        "type": "String"
+      },
+      "runs": {
+        "type": "int"
+      },
+      "traces": {
+        "type": "int"
+      },
+      "missions": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMergeAction": "Merge into this device",
+  "@backupMergeAction": {
+    "description": "Import option: add the backup's runs to those already on the phone."
+  },
+  "backupMergeExplainer": "Adds runs and progress this device does not have. Keeps your settings. Nothing is lost.",
+  "backupReplaceAction": "Replace everything",
+  "@backupReplaceAction": {
+    "description": "Import option: delete everything on the phone and restore the backup."
+  },
+  "backupReplaceExplainer": "Restores this backup exactly. Every run and setting currently on this device is deleted. Use this on a new phone.",
+  "neverExported": "Never exported",
+  "@neverExported": {
+    "description": "Settings → Data: no backup has ever been exported."
+  },
+  "lastExport": "Last export: {ago}",
+  "@lastExport": {
+    "description": "ago is e.g. \"12 days ago\".",
+    "placeholders": {
+      "ago": {
+        "type": "String"
+      }
+    }
+  },
+  "runsSinceExport": "{count, plural, =1{1 run since} other{{count} runs since}}",
+  "@runsSinceExport": {
+    "description": "Runs recorded since the last backup export.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "remove": "Remove",
+  "@remove": {
+    "description": "Button in the dialog removing an imported mission pack."
+  },
+  "packReplaced": "REPLACED",
+  "@packReplaced": {
+    "description": "Tag on an imported mission pack that replaces one built into the app."
+  },
+  "packImported": "IMPORTED",
+  "@packImported": {
+    "description": "Tag on a mission pack the runner imported."
+  },
+  "packRemoveTooltip": "Remove {pack}",
+  "@packRemoveTooltip": {
+    "description": "pack is the pack title, e.g. NULL TIDE.",
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
+  "packOpsTag": "{count} OPS",
+  "@packOpsTag": {
+    "description": "Tag: number of missions (\"operations\") in a pack. Short.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "packExplainer": "Add a pack by importing its .json file. Importing a newer version of a pack you already have replaces it, and your progress through it is kept. See docs/MISSION_PACKS.md for the format.",
+  "packImport": "Import pack",
+  "@packImport": {
+    "description": "Settings → Mission packs: button that imports a pack file."
+  },
+  "packFileType": "Mission pack",
+  "@packFileType": {
+    "description": "File type name shown in the file picker."
+  },
+  "packTooLarge": "That file is far too large to be a mission pack.",
+  "packUpdated": "Updated {pack} — {count, plural, =1{1 operation} other{{count} operations}}.",
+  "@packUpdated": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "packImportedReplacing": "Imported {pack} — {count, plural, =1{1 operation} other{{count} operations}}. It replaces the built-in version.",
+  "@packImportedReplacing": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "packImportedNew": "Imported {pack} — {count, plural, =1{1 operation} other{{count} operations}}.",
+  "@packImportedNew": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "packRemoveTitle": "REMOVE {pack}",
+  "@packRemoveTitle": {
+    "description": "Dialog title. pack is the pack title in uppercase.",
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
+  "packRemoveKeepsProgress": "Your progress through it is kept: import it again and you pick up where you were.",
+  "packRemoveRestores": "The version that came with the app takes its place.",
+  "packRemovedRestored": "Removed. {pack} is back to the built-in version.",
+  "@packRemovedRestored": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
+  "packRemoved": "Removed {pack}.",
+  "@packRemoved": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    },
+    "description": "Message after removing an imported mission pack. pack is its title."
+  },
+  "packRemoveFailed": "Could not remove the pack: {error}",
+  "@packRemoveFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unloggedRun": "UNLOGGED RUN",
+  "@unloggedRun": {
+    "description": "Header of the debrief of a free run (one without a mission)."
+  },
+  "operationNumber": "OPERATION {number}",
+  "@operationNumber": {
+    "description": "A mission (\"operation\") by its number, e.g. OPERATION 03. number is already zero-padded.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "intelCount": "INTEL  {have} / {total}",
+  "@intelCount": {
+    "description": "Section header: codex entries recovered in a mission. The two spaces are deliberate.",
+    "placeholders": {
+      "have": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "encrypted": "ENCRYPTED",
+  "@encrypted": {
+    "description": "Placeholder for a codex entry not yet unlocked."
+  },
+  "runCount": "{count, plural, =1{1 run} other{{count} runs}}",
+  "@runCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "earlier": "Earlier",
+  "@earlier": {
+    "description": "Tooltip: page to the previous week or month."
+  },
+  "later": "Later",
+  "@later": {
+    "description": "Tooltip: page to the next week or month."
+  },
+  "statDistance": "Distance",
+  "@statDistance": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statTime": "Time",
+  "@statTime": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statCalories": "Calories",
+  "@statCalories": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statMissions": "Missions",
+  "@statMissions": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statAvgPace": "Avg pace",
+  "@statAvgPace": {
+    "description": "Label of a figure: average pace (minutes per km). Shown in uppercase."
+  },
+  "chaseWinning": "DISTANCE OPENING — HOLD IT",
+  "@chaseWinning": {
+    "description": "During a chase, when the runner is pulling away from the pursuer."
+  },
+  "chaseLosing": "GAINING ON YOU — MOVE",
+  "@chaseLosing": {
+    "description": "During a chase, when the pursuer is catching up."
+  },
+  "noRouteData": "NO ROUTE DATA",
+  "@noRouteData": {
+    "description": "In place of the map of a run that recorded no GPS trace."
+  },
+  "replayRoute": "Replay route",
+  "@replayRoute": {
+    "description": "Tooltip of the button that replays the drawing of a run's route."
+  },
+  "freeRun": "FREE RUN",
+  "@freeRun": {
+    "description": "A run without a mission, in lists and headers."
+  },
+  "unknown": "UNKNOWN",
+  "@unknown": {
+    "description": "Stand-in for a missing name, e.g. of a pursuer."
+  },
+  "storyTransmission": "TRANSMISSION",
+  "@storyTransmission": {
+    "description": "Story log of a run: a story scene that has no headline of its own."
+  },
+  "storyPursuit": "PURSUIT — {pursuer}",
+  "@storyPursuit": {
+    "description": "Story log: a chase started. pursuer comes from the mission pack, e.g. MAINTENANCE DRONE.",
+    "placeholders": {
+      "pursuer": {
+        "type": "String"
+      }
+    }
+  },
+  "storyEvaded": "EVADED — {pursuer}",
+  "@storyEvaded": {
+    "description": "Story log: the runner escaped a chase.",
+    "placeholders": {
+      "pursuer": {
+        "type": "String"
+      }
+    }
+  },
+  "storyCaught": "CAUGHT — {pursuer}",
+  "@storyCaught": {
+    "description": "Story log: the runner was caught in a chase.",
+    "placeholders": {
+      "pursuer": {
+        "type": "String"
+      }
+    }
+  },
+  "storyIntel": "INTEL INTERCEPTED — {title}",
+  "@storyIntel": {
+    "description": "Story log: a codex entry was unlocked. title comes from the mission pack.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "storyTargetReached": "TARGET REACHED",
+  "@storyTargetReached": {
+    "description": "Story log: the run reached its distance or time goal."
+  },
+  "storyLinesUnavailable": "Lines unavailable — the mission pack is no longer installed.",
+  "revealAchievementKicker": "ACHIEVEMENT UNLOCKED",
+  "@revealAchievementKicker": {
+    "description": "Full-screen reveal after a run: small line above the achievement name."
+  },
+  "revealAchievementStamp": "UNLOCKED",
+  "@revealAchievementStamp": {
+    "description": "Reveal: a stamp slammed across the achievement. One short word."
+  },
+  "revealCodexKicker": "CODEX ENTRY RECOVERED",
+  "@revealCodexKicker": {
+    "description": "Reveal: small line above a newly unlocked codex entry."
+  },
+  "revealCodexStamp": "DECRYPTED",
+  "@revealCodexStamp": {
+    "description": "Reveal: stamp on a codex entry. One short word."
+  },
+  "revealMissionKicker": "NEW OPERATION",
+  "@revealMissionKicker": {
+    "description": "Reveal: small line above a newly opened mission."
+  },
+  "revealMissionBody": "Briefing available. Your handler is waiting.",
+  "revealMissionStamp": "OPENED",
+  "@revealMissionStamp": {
+    "description": "Reveal: stamp on a newly opened mission. One short word."
+  },
+  "continueAction": "Continue",
+  "@continueAction": {
+    "description": "Button."
+  },
+  "tapToContinue": "TAP TO CONTINUE",
+  "@tapToContinue": {
+    "description": "Bottom of the full-screen unlock reveal."
+  },
+  "filterAll": "ALL",
+  "@filterAll": {
+    "description": "Filter chip: show every category."
+  },
+  "wallUnlocked": "UNLOCKED",
+  "@wallUnlocked": {
+    "description": "Achievements: how many are unlocked, and the mark on an unlocked one."
+  },
+  "wallUnlockedOn": "UNLOCKED {date}",
+  "@wallUnlockedOn": {
+    "description": "On an unlocked achievement. date is e.g. 14 OCT 2026.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "codexEmptyTitle": "Nothing recovered yet",
+  "@codexEmptyTitle": {
+    "description": "Codex tab before any entry has been unlocked."
+  },
+  "codexEmptyBody": "Intel gets logged here as your handlers mention it. Run an operation and start listening.",
+  "activeTag": "ACTIVE",
+  "@activeTag": {
+    "description": "Tag on the campaign (mission pack) currently being played."
+  },
+  "codexEntriesRecovered": "ENTRIES RECOVERED",
+  "@codexEntriesRecovered": {
+    "description": "Next to a count like 4 / 12 of codex entries."
+  },
+  "codexEmptyPack": "Nothing recovered from this campaign yet.",
+  "sectionRuns": "RUNS",
+  "@sectionRuns": {
+    "description": "Section header above a list of runs."
+  },
+  "entryCount": "{count, plural, =1{1 entry} other{{count} entries}}",
+  "@entryCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "periodEmpty": "Nothing logged in this window.",
+  "@periodEmpty": {
+    "description": "A week or month with no runs."
+  },
+  "debriefing": "DEBRIEFING",
+  "@debriefing": {
+    "description": "Top bar: this screen is the after-mission debriefing."
+  },
+  "infoCleared": "Cleared",
+  "@infoCleared": {
+    "description": "Mission debrief: the date the mission was completed. Shown in uppercase."
+  },
+  "infoAttempts": "Attempts",
+  "@infoAttempts": {
+    "description": "Mission debrief: how often the mission was tried. Shown in uppercase."
+  },
+  "infoBest": "Best",
+  "@infoBest": {
+    "description": "Mission debrief: the longest distance run in it. Shown in uppercase."
+  },
+  "sectionDebrief": "DEBRIEF",
+  "@sectionDebrief": {
+    "description": "Section header above the story text after a mission."
+  },
+  "sectionEpilogue": "EPILOGUE",
+  "@sectionEpilogue": {
+    "description": "Section header above the closing text of a finished campaign."
+  },
+  "runItAgain": "Run it again",
+  "@runItAgain": {
+    "description": "Button on a mission's debriefing that opens its briefing again."
+  },
+  "storyTag": "story",
+  "@storyTag": {
+    "description": "Marks a past attempt that has a story log, in a line like \"5.2 km · 31:05 · story\". Lowercase."
+  },
+  "tagCleared": "CLEARED",
+  "@tagCleared": {
+    "description": "Tag on a successful mission attempt."
+  },
+  "tagFailed": "FAILED",
+  "@tagFailed": {
+    "description": "Tag on a failed mission attempt."
+  },
+  "historyKicker": "LONG-TERM",
+  "@historyKicker": {
+    "description": "Small line above the HISTORY title."
+  },
+  "historyTitle": "HISTORY",
+  "@historyTitle": {
+    "description": "Title of the long-term history screen."
+  },
+  "historySummary": "SINCE {since} · {days} ACTIVE DAYS · {runs} RUNS",
+  "@historySummary": {
+    "description": "since is the date of the first run, e.g. 28 JUL 2026.",
+    "placeholders": {
+      "since": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "runs": {
+        "type": "int"
+      }
+    }
+  },
+  "historyByMonth": "BY MONTH",
+  "@historyByMonth": {
+    "description": "Section header above a calendar of months."
+  },
+  "historyDistanceByMonth": "DISTANCE BY MONTH",
+  "@historyDistanceByMonth": {
+    "description": "Chart title."
+  },
+  "historyBestMonth": "BEST {month} · {distance}",
+  "@historyBestMonth": {
+    "description": "The month with the most distance, e.g. BEST SEP 2026 · 84.2 km.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "distance": {
+        "type": "String"
+      }
+    }
+  },
+  "runCountCaps": "{count, plural, =1{1 RUN} other{{count} RUNS}}",
+  "@runCountCaps": {
+    "description": "Number of runs, in uppercase.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noRuns": "NO RUNS",
+  "@noRuns": {
+    "description": "A month with no runs."
+  },
+  "legendLess": "LESS",
+  "@legendLess": {
+    "description": "Legend of an activity heatmap: the low end. Very short."
+  },
+  "legendMore": "MORE",
+  "@legendMore": {
+    "description": "Legend of an activity heatmap: the high end. Very short."
+  },
+  "missionPacksCount": "MISSION PACKS · {count}",
+  "@missionPacksCount": {
+    "description": "Top bar of the list of mission packs (campaigns).",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noPacksTitle": "No mission packs",
+  "@noPacksTitle": {
+    "description": "Shown when no mission pack (campaign) could be loaded."
+  },
+  "noPacksBody": "Nothing loaded. Check Settings → Mission packs.",
+  "tagDone": "DONE",
+  "@tagDone": {
+    "description": "Tag/section: a finished mission or campaign."
+  },
+  "tagInProgress": "IN PROGRESS",
+  "@tagInProgress": {
+    "description": "Tag: a campaign that has been started."
+  },
+  "tagNew": "NEW",
+  "@tagNew": {
+    "description": "Tag: a campaign or mission not yet started."
+  },
+  "tagSelected": "SELECTED",
+  "@tagSelected": {
+    "description": "Tag: the campaign shown on the home screen."
+  },
+  "tagStarted": "STARTED",
+  "@tagStarted": {
+    "description": "Tag: a mission tried but not yet completed."
+  },
+  "tagLocked": "LOCKED",
+  "@tagLocked": {
+    "description": "Tag: a mission that opens after the previous one is completed."
+  },
+  "briefing": "BRIEFING",
+  "@briefing": {
+    "description": "The pre-mission screen and its story text."
+  },
+  "infoTransmissions": "Transmissions",
+  "@infoTransmissions": {
+    "description": "Briefing: number of story scenes in the mission. Shown in uppercase in a small cell."
+  },
+  "infoPursuits": "Pursuits",
+  "@infoPursuits": {
+    "description": "Briefing: number of chases in the mission. Shown in uppercase in a small cell."
+  },
+  "infoSuggested": "Suggested",
+  "@infoSuggested": {
+    "description": "Briefing: the suggested goal, e.g. 25 min. Shown in uppercase in a small cell."
+  },
+  "freeRunExplainer": "No story, no handler, no one chasing you. Distance and time still count toward your streak, your totals and the wall.",
+  "setYourTarget": "SET YOUR TARGET",
+  "@setYourTarget": {
+    "description": "Section header above the goal picker (time or distance)."
+  },
+  "targetExplainerFree": "Reach the target and the run is logged as a success.",
+  "targetExplainerMission": "Reach the target and the operation is a success. Stop short and it counts as a failure — you can retry it as many times as you like. You can always keep running past the target.",
+  "startRun": "Start run",
+  "@startRun": {
+    "description": "Button starting a free run (no mission)."
+  },
+  "beginOperation": "Begin operation",
+  "@beginOperation": {
+    "description": "Button starting a mission (\"operation\")."
+  },
+  "goalTime": "TIME",
+  "@goalTime": {
+    "description": "Goal type button: run for a time."
+  },
+  "goalDistance": "DISTANCE",
+  "@goalDistance": {
+    "description": "Goal type button: run a distance."
+  },
+  "gpxShareSubject": "SPRAWL//RUN route",
+  "@gpxShareSubject": {
+    "description": "Subject when sharing a free run's GPS route. SPRAWL//RUN is the app name."
+  },
+  "deleteRunTitle": "DELETE RUN?",
+  "@deleteRunTitle": {
+    "description": "Title of the dialog confirming deletion of a run."
+  },
+  "deleteRunBody": "This removes it from your totals, your streak and the achievement wall. It cannot be undone.",
+  "keep": "Keep",
+  "@keep": {
+    "description": "Button: do not delete."
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Button confirming deletion of a run."
+  },
+  "exportGpx": "Export route as GPX",
+  "@exportGpx": {
+    "description": "Tooltip of the share button on a run, which exports its route as a GPX file."
+  },
+  "deleteRun": "Delete run",
+  "@deleteRun": {
+    "description": "Tooltip of the delete button on a run."
+  },
+  "tagSuccess": "SUCCESS",
+  "@tagSuccess": {
+    "description": "Tag on a run that reached its goal."
+  },
+  "targetTag": "TARGET {goal}",
+  "@targetTag": {
+    "description": "Tag: the run's goal, e.g. TARGET 5.0 km.",
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      }
+    }
+  },
+  "timeOnly": "TIME ONLY",
+  "@timeOnly": {
+    "description": "Tag on a run that recorded no GPS, only time."
+  },
+  "statEvaded": "Evaded",
+  "@statEvaded": {
+    "description": "Label of a figure: chases escaped, e.g. 2/3. Shown in uppercase."
+  },
+  "sectionRoute": "ROUTE",
+  "@sectionRoute": {
+    "description": "Section header above the map of a run."
+  },
+  "loadingTrace": "LOADING TRACE",
+  "@loadingTrace": {
+    "description": "Placeholder while a run's GPS route loads."
+  },
+  "sectionStory": "STORY",
+  "@sectionStory": {
+    "description": "Section header above the story log of a run."
+  },
+  "noStoryLog": "No story log for this run — it was recorded before the app kept one.",
+  "statsEmptyTitle": "No telemetry yet",
+  "@statsEmptyTitle": {
+    "description": "Stats tab before any run has been recorded. Telemetry: the measurements."
+  },
+  "statsEmptyBody": "Run one operation and this fills up: distance, time, calories and cleared missions for this week and this month, and a history you can page back through.",
+  "sectionLifetime": "LIFETIME",
+  "@sectionLifetime": {
+    "description": "Section header above all-time totals."
+  },
+  "sectionRunLog": "RUN LOG",
+  "@sectionRunLog": {
+    "description": "Section header above the list of all runs."
+  },
+  "thisWeek": "THIS WEEK",
+  "@thisWeek": {
+    "description": "Label of the current week's figures."
+  },
+  "thisMonth": "THIS MONTH",
+  "@thisMonth": {
+    "description": "Label of the current month's figures."
+  },
+  "lastWeek": "LAST WEEK",
+  "@lastWeek": {
+    "description": "Label of the previous week's figures."
+  },
+  "lastMonth": "LAST MONTH",
+  "@lastMonth": {
+    "description": "Label of the previous month's figures."
+  },
+  "weeksAgo": "{count} WEEKS AGO",
+  "@weeksAgo": {
+    "description": "count is 2 or more.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthsAgo": "{count} MONTHS AGO",
+  "@monthsAgo": {
+    "description": "count is 2 or more.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lastWeeks": "LAST {count} WEEKS",
+  "@lastWeeks": {
+    "description": "Title of an activity strip; count is 16.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activeDays": "{count, plural, =1{1 ACTIVE DAY} other{{count} ACTIVE DAYS}}",
+  "@activeDays": {
+    "description": "Days with at least one run.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fullHistory": "FULL HISTORY",
+  "@fullHistory": {
+    "description": "Link to the long-term history screen."
+  },
+  "statTotalDistance": "Total distance",
+  "@statTotalDistance": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statTotalTime": "Total time",
+  "@statTotalTime": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statRuns": "Runs",
+  "@statRuns": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statLongestRun": "Longest run",
+  "@statLongestRun": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "statBestPace": "Best pace",
+  "@statBestPace": {
+    "description": "Label of a figure. Shown in uppercase."
+  },
+  "bestStreak": "BEST STREAK {weeks}W",
+  "@bestStreak": {
+    "description": "Longest run of weeks that met the weekly target. W abbreviates weeks.",
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "wireFilterMessages": "MESSAGES",
+  "@wireFilterMessages": {
+    "description": "THE WIRE filter: messages from story characters."
+  },
+  "wireFilterUnlocks": "UNLOCKS",
+  "@wireFilterUnlocks": {
+    "description": "THE WIRE filter: achievements and codex entries unlocked."
+  },
+  "wireTitle": "THE WIRE · {count}",
+  "@wireTitle": {
+    "description": "Top bar of THE WIRE, the scrollback of everything that happened. THE WIRE is a name; translate it only if the language has a natural equivalent.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "wireEmptyTitle": "Nothing yet",
+  "@wireEmptyTitle": {
+    "description": "THE WIRE before anything has happened."
+  },
+  "wireEmptyBody": "Runs, messages from your handler and everything you unlock will appear here.",
+  "wireFilterEmptyTitle": "Nothing of that kind",
+  "@wireFilterEmptyTitle": {
+    "description": "THE WIRE when a filter matches nothing."
+  },
+  "wireFilterEmptyBody": "Nothing on the wire matches this filter yet.",
+  "today": "TODAY",
+  "@today": {
+    "description": "Day header in THE WIRE."
+  },
+  "yesterday": "YESTERDAY",
+  "@yesterday": {
+    "description": "Day header in THE WIRE."
+  },
+  "wireKindNoise": "SIGNAL NOISE",
+  "@wireKindNoise": {
+    "description": "THE WIRE: an ambient message, \"the city talking\". Same name as the setting."
+  },
+  "wireKindDebrief": "WEEKLY DEBRIEF",
+  "@wireKindDebrief": {
+    "description": "THE WIRE: the weekly summary message."
+  },
+  "wireKindMessage": "MESSAGE",
+  "@wireKindMessage": {
+    "description": "THE WIRE: a message from a story character."
+  },
+  "wireKindRun": "RUN",
+  "@wireKindRun": {
+    "description": "THE WIRE: a recorded run."
+  },
+  "wireKindAchievement": "ACHIEVEMENT",
+  "@wireKindAchievement": {
+    "description": "THE WIRE: an achievement unlocked."
+  },
+  "nextOperation": "NEXT OPERATION",
+  "@nextOperation": {
+    "description": "Section header above the mission to run next."
+  },
+  "campaignComplete": "CAMPAIGN COMPLETE",
+  "@campaignComplete": {
+    "description": "Section header when every mission of the pack is cleared."
+  },
+  "missionChain": "MISSION CHAIN",
+  "@missionChain": {
+    "description": "Fallback section header above the list of missions."
+  },
+  "allPacks": "ALL PACKS",
+  "@allPacks": {
+    "description": "Link to the list of all mission packs (campaigns)."
+  },
+  "noPacksBundledFailed": "The bundled campaign failed to load. Check Settings → Mission packs.",
+  "freeRunButton": "Free run — no mission",
+  "@freeRunButton": {
+    "description": "Button starting a run without a story."
+  },
+  "greetingLineNight": "The city is at its quietest. Nobody is watching the streets at this hour.",
+  "@greetingLineNight": {
+    "description": "Home screen flavour line, 0–5 h. The app is set in a cyberpunk city called the Sprawl."
+  },
+  "greetingLineDawn": "Grey light on wet concrete. Best hours to move unnoticed.",
+  "@greetingLineDawn": {
+    "description": "Home screen flavour line, 5–8 h."
+  },
+  "greetingLineMorning": "Day shift is on the grid. Blend in.",
+  "@greetingLineMorning": {
+    "description": "Home screen flavour line, 8–12 h."
+  },
+  "greetingLineAfternoon": "Heat, noise, and forty thousand people between you and anyone tracking you.",
+  "@greetingLineAfternoon": {
+    "description": "Home screen flavour line, 12–17 h."
+  },
+  "greetingLineEvening": "The signs are coming on. This is when the work starts.",
+  "@greetingLineEvening": {
+    "description": "Home screen flavour line, 17–21 h. \"Signs\" are neon signs."
+  },
+  "greetingLineLate": "Rain on the strip. Good conditions. Nobody looks up when it rains.",
+  "@greetingLineLate": {
+    "description": "Home screen flavour line, 21–24 h."
+  },
+  "samhainLineNight": "The hour the purge runs. Whatever is still logged in now is not going to log out.",
+  "@samhainLineNight": {
+    "description": "Home screen flavour line during the Halloween (Samhain) event, 0–5 h. Ghost-in-the-machine theme."
+  },
+  "samhainLineDawn": "Fog on the strip. Some of the footprints in it are older than the fog.",
+  "@samhainLineDawn": {
+    "description": "Samhain event flavour line, 5–8 h."
+  },
+  "samhainLineMorning": "Daylight. The dead net keeps office hours, but it does not keep them well.",
+  "@samhainLineMorning": {
+    "description": "Samhain event flavour line, 8–12 h."
+  },
+  "samhainLineAfternoon": "Pumpkins on the ration-stall counters, carved with corp logos. Nobody admits to it.",
+  "@samhainLineAfternoon": {
+    "description": "Samhain event flavour line, 12–17 h."
+  },
+  "samhainLineEvening": "The signs are coming on, and some of them are signing for people who are not here.",
+  "@samhainLineEvening": {
+    "description": "Samhain event flavour line, 17–21 h. Wordplay: neon signs / signing for someone."
+  },
+  "samhainLineLate": "Candles in the window of every courier who did not come back. Run past them. They like that.",
+  "@samhainLineLate": {
+    "description": "Samhain event flavour line, 21–24 h."
+  },
+  "salutationSamhain": "GOOD HUNTING",
+  "@salutationSamhain": {
+    "description": "Greeting before the runner's callsign during the Halloween event, evenings."
+  },
+  "salutationNight": "STILL AWAKE",
+  "@salutationNight": {
+    "description": "Greeting before the runner's callsign, 0–5 h."
+  },
+  "salutationMorning": "MORNING",
+  "@salutationMorning": {
+    "description": "Greeting before the runner's callsign, 5–12 h."
+  },
+  "salutationAfternoon": "AFTERNOON",
+  "@salutationAfternoon": {
+    "description": "Greeting before the runner's callsign, 12–18 h."
+  },
+  "salutationEvening": "EVENING",
+  "@salutationEvening": {
+    "description": "Greeting before the runner's callsign, 18–24 h."
+  },
+  "salutation": "{greeting}, ",
+  "@salutation": {
+    "description": "The greeting followed by the callsign, e.g. \"MORNING, RUNNER\". Keep the trailing space.",
+    "placeholders": {
+      "greeting": {
+        "type": "String"
+      }
+    }
+  },
+  "seasonUntil": "UNTIL {date}",
+  "@seasonUntil": {
+    "description": "When a seasonal event ends, e.g. UNTIL 2 NOV.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "seasonLastDays": "Last days. Unfinished operations resume next October.",
+  "openPack": "Open {pack}",
+  "@openPack": {
+    "description": "Button switching the home screen to a mission pack.",
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
+  "weekStreak": "WEEK STREAK",
+  "@weekStreak": {
+    "description": "After a number: consecutive weeks that met the weekly target."
+  },
+  "streakTargetMet": "Target met. Streak safe.",
+  "@streakTargetMet": {
+    "description": "Home screen streak card once this week's target is met."
+  },
+  "streakToGo": "{amount} {unit} to go · closes in {countdown}",
+  "@streakToGo": {
+    "description": "Left of this week's target. unit is MIN, KM or OPS; countdown is e.g. 2d 4h.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "countdown": {
+        "type": "String"
+      }
+    }
+  },
+  "streakUnit": "{code, select, MIN{MIN} KM{KM} OPS{OPS} other{{code}}}",
+  "@streakUnit": {
+    "description": "Unit of the weekly target, short and uppercase: minutes, kilometres, or operations (missions).",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "streakBest": "BEST {weeks}",
+  "@streakBest": {
+    "description": "Tag: the longest streak so far, in weeks.",
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "statDistance7d": "Distance 7d",
+  "@statDistance7d": {
+    "description": "Label of a figure: distance in the last 7 days. Shown in uppercase."
+  },
+  "statTime7d": "Time 7d",
+  "@statTime7d": {
+    "description": "Label of a figure: time run in the last 7 days. Shown in uppercase."
+  },
+  "statOps7d": "Ops 7d",
+  "@statOps7d": {
+    "description": "Label of a figure: missions cleared in the last 7 days. Shown in uppercase."
+  },
+  "opNumber": "OP {number}",
+  "@opNumber": {
+    "description": "Short form of OPERATION, e.g. OP 03.",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "attemptNumber": "ATTEMPT {number}",
+  "@attemptNumber": {
+    "description": "Tag: which try at a mission this will be.",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "transmissionCount": "{count, plural, =1{1 transmission} other{{count} transmissions}}",
+  "@transmissionCount": {
+    "description": "Story scenes in a mission.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pursuitCount": "{count, plural, =1{1 pursuit} other{{count} pursuits}}",
+  "@pursuitCount": {
+    "description": "Chases in a mission.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "openBriefing": "OPEN BRIEFING",
+  "@openBriefing": {
+    "description": "Link on the next-mission card to its briefing."
+  },
+  "allOperationsCleared": "ALL OPERATIONS CLEARED",
+  "@allOperationsCleared": {
+    "description": "Home screen card once every mission of a pack is done."
+  },
+  "campaignFinishedAll": "{pack} is finished, and so is everything else loaded. Free runs still count toward streaks, distance and the wall — and new packs can be dropped in without an update.",
+  "@campaignFinishedAll": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
+  "campaignFinishedNext": "{pack} is finished. {next} is open: {tagline}",
+  "@campaignFinishedNext": {
+    "description": "tagline is the next pack's one-line description.",
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      },
+      "tagline": {
+        "type": "String"
+      }
+    }
+  },
+  "switchToPack": "Switch to {pack}",
+  "@switchToPack": {
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    },
+    "description": "Button switching to another mission pack. pack is its title."
+  },
+  "classified": "CLASSIFIED — CLEAR PRECEDING OPERATION",
+  "@classified": {
+    "description": "In place of a locked mission's title."
+  },
+  "closestUnlocks": "CLOSEST UNLOCKS",
+  "@closestUnlocks": {
+    "description": "Section header above the achievements nearest to being unlocked."
+  },
+  "archiveDrift": "ARCHIVE DRIFT",
+  "@archiveDrift": {
+    "description": "Title of the card reminding the runner to export a backup."
+  },
+  "archiveDriftBody": "{count, plural, =1{1 run exists only on this device. If it is lost or the app is reinstalled, so are they.} other{{count} runs exist only on this device. If it is lost or the app is reinstalled, so are they.}}",
+  "@archiveDriftBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "exportNow": "EXPORT NOW",
+  "@exportNow": {
+    "description": "Button on the backup reminder card."
+  },
+  "freeRunName": "Free run",
+  "@freeRunName": {
+    "description": "A run without a mission, in a sentence."
+  },
+  "runInterrupted": "RUN INTERRUPTED",
+  "@runInterrupted": {
+    "description": "Title of the card offering back a run the app was closed during."
+  },
+  "runInterruptedBody": "The app was closed before this run was finished, last saved {when}. Keep it as it stood then, or let it go.",
+  "@runInterruptedBody": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "keepRun": "Keep run",
+  "@keepRun": {
+    "description": "Button saving an interrupted run."
+  },
+  "discard": "Discard",
+  "@discard": {
+    "description": "Button throwing away an interrupted run."
+  },
+  "keepRunFailed": "Could not keep the run: {error}",
+  "@keepRunFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "discardRunTitle": "DISCARD THIS RUN",
+  "@discardRunTitle": {
+    "description": "Title of the dialog confirming an interrupted run is thrown away."
+  },
+  "discardRunBody": "It will not count toward anything, and it cannot be brought back.",
+  "noticeLeft": "{amount} left",
+  "@noticeLeft": {
+    "description": "Ongoing run notification: what is left of the goal, e.g. \"12:30 left\" or \"2.40 km left\".",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "noticePaused": "Paused — {left}",
+  "@noticePaused": {
+    "description": "Ongoing run notification while paused. left is noticeLeft.",
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeAutoPaused": "Auto-paused — {left}",
+  "@noticeAutoPaused": {
+    "description": "Ongoing run notification while paused automatically (runner standing still).",
+    "placeholders": {
+      "left": {
+        "type": "String"
+      }
+    }
+  },
+  "noticeTargetReached": "Target reached — still running.",
+  "@noticeTargetReached": {
+    "description": "Ongoing run notification once the goal is met."
+  },
+  "splitKm": "KM {count}",
+  "@splitKm": {
+    "description": "On-screen flash as each kilometre passes, e.g. KM 3.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "splitMile": "MILE {count}",
+  "@splitMile": {
+    "description": "On-screen flash as each mile passes, e.g. MILE 3.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "intelIntercepted": "INTEL INTERCEPTED",
+  "@intelIntercepted": {
+    "description": "On-screen flash: a codex entry was unlocked."
+  },
+  "phaseTracking": "TRACKING",
+  "@phaseTracking": {
+    "description": "Run status: recording."
+  },
+  "phasePaused": "PAUSED",
+  "@phasePaused": {
+    "description": "Run status."
+  },
+  "phaseAutoPaused": "AUTO-PAUSED",
+  "@phaseAutoPaused": {
+    "description": "Run status: paused because the runner stopped moving."
+  },
+  "phaseClosed": "CLOSED",
+  "@phaseClosed": {
+    "description": "Run status: finished."
+  },
+  "phaseStandby": "STANDBY",
+  "@phaseStandby": {
+    "description": "Run status: not yet started."
+  },
+  "unlogged": "UNLOGGED",
+  "@unlogged": {
+    "description": "Run screen title of a free run (no mission)."
+  },
+  "locationServiceOff": "Location services are off. Distance will not be recorded.",
+  "locationDenied": "Location permission denied. Distance will not be recorded.",
+  "locationDeniedForever": "Location permission is permanently denied. Enable it in system settings to record distance.",
+  "locationGpsOff": "GPS is switched off — check battery saver or location mode. Distance will not be recorded.",
+  "locationTimeStillWorks": "Time-based targets still work.",
+  "@locationTimeStillWorks": {
+    "description": "Appended to the location warnings."
+  },
+  "targetMet": "TARGET MET",
+  "@targetMet": {
+    "description": "Run screen, inside the goal ring once the goal is reached."
+  },
+  "statPaceNow": "Pace now",
+  "@statPaceNow": {
+    "description": "Label of a figure: current pace. Shown in uppercase."
+  },
+  "statKcal": "Kcal",
+  "@statKcal": {
+    "description": "Label of a figure: calories burnt. Shown in uppercase."
+  },
+  "freeRunAudioSplitsKm": "Free run — only a short readout at each kilometre will cut into your audio.",
+  "freeRunAudioSplitsMile": "Free run — only a short readout at each mile will cut into your audio.",
+  "freeRunAudioSilent": "Free run — nothing will interrupt your audio.",
+  "channelIdle": "CHANNEL IDLE",
+  "@channelIdle": {
+    "description": "Run screen: no story character is speaking."
+  },
+  "beatsReceived": "{count} RX",
+  "@beatsReceived": {
+    "description": "Story scenes heard so far. RX is radio jargon for \"received\"; keep it if it reads naturally.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transcriptAll": "ALL {count} ›",
+  "@transcriptAll": {
+    "description": "Link opening the full transcript of the run.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waitingFirstTransmission": "Waiting for the first transmission. Keep moving.",
+  "showAllTransmissions": "Show all {count} transmissions",
+  "@showAllTransmissions": {
+    "description": "Accessibility label of the transcript panel.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "transcript": "TRANSCRIPT",
+  "@transcript": {
+    "description": "Title of the dialog listing every line spoken during the run."
+  },
+  "lineCount": "{count, plural, =1{1 LINE} other{{count} LINES}}",
+  "@lineCount": {
+    "description": "Lines of dialogue in the transcript.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backToRun": "Back to the run",
+  "@backToRun": {
+    "description": "Button closing the transcript."
+  },
+  "finishRun": "Finish run",
+  "@finishRun": {
+    "description": "Button ending a free run once its goal is met."
+  },
+  "completeOperation": "Complete operation",
+  "@completeOperation": {
+    "description": "Button ending a mission once its goal is met."
+  },
+  "targetMetKeepRunning": "Target met. You can keep running — everything past this point still counts.",
+  "resume": "Resume",
+  "@resume": {
+    "description": "Button resuming a paused run."
+  },
+  "pause": "Pause",
+  "@pause": {
+    "description": "Button pausing a run."
+  },
+  "abort": "Abort",
+  "@abort": {
+    "description": "Button ending a run before its goal."
+  },
+  "abortTitle": "ABORT?",
+  "@abortTitle": {
+    "description": "Title of the dialog confirming a run is ended before its goal."
+  },
+  "abortBodyFree": "You have not reached your target. The run will be logged as a failure.",
+  "abortBodyMission": "You have not reached your target. {mission} will be logged as failed — the distance and time still count, and you can run it again.",
+  "@abortBodyMission": {
+    "description": "mission is the mission codename, e.g. DEAD DROP.",
+    "placeholders": {
+      "mission": {
+        "type": "String"
+      }
+    }
+  },
+  "keepGoing": "Keep going",
+  "@keepGoing": {
+    "description": "Button in the abort dialog: carry on running."
+  },
+  "runLogged": "RUN LOGGED",
+  "@runLogged": {
+    "description": "Above the result of a free run."
+  },
+  "sectionPursuits": "PURSUITS",
+  "@sectionPursuits": {
+    "description": "Section header above the chase results of a run."
+  },
+  "pursuitsClean": "Clean run. Every pursuit shaken.",
+  "pursuitsEvaded": "Evaded {evaded} of {total}.",
+  "@pursuitsEvaded": {
+    "description": "Chases escaped out of all chases in the run.",
+    "placeholders": {
+      "evaded": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "nextCampaign": "NEXT CAMPAIGN",
+  "@nextCampaign": {
+    "description": "Section header offering the next mission pack after the last mission of one."
+  },
+  "operationStaysOpen": "The operation stays open. Everything you covered still counts toward your totals and your streak.",
+  "newOperationUnlocked": "NEW OPERATION UNLOCKED",
+  "@newOperationUnlocked": {
+    "description": "After a successful mission: the next mission is now open."
+  },
+  "intelLost": "INTEL LOST",
+  "@intelLost": {
+    "description": "Section header: codex entries heard during a failed mission, not unlocked."
+  },
+  "intelLostBody": "Intercepted but not decrypted. Complete the operation to recover:",
+  "sectionRecovered": "RECOVERED",
+  "@sectionRecovered": {
+    "description": "Section header: codex entries unlocked by this run."
+  },
+  "returnToOps": "Return to ops",
+  "@returnToOps": {
+    "description": "Button back to the home screen (\"ops\")."
+  },
+  "statTarget": "Target",
+  "@statTarget": {
+    "description": "Label of a figure: the run's goal. Shown in uppercase."
+  },
+  "movingTime": "MOVING {duration}",
+  "@movingTime": {
+    "description": "Time actually spent moving, e.g. MOVING 31m.",
+    "placeholders": {
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTitle": "SETTINGS",
+  "@settingsTitle": {
+    "description": "Title of the Settings screen."
+  },
+  "sectionIdentity": "IDENTITY",
+  "@sectionIdentity": {
+    "description": "Settings section: the runner's name and body mass."
+  },
+  "settingCallsign": "Callsign",
+  "@settingCallsign": {
+    "description": "The runner's name in the story."
+  },
+  "settingCallsignHint": "How your handlers address you",
+  "settingBodyMass": "Body mass",
+  "@settingBodyMass": {
+    "description": "Weight, for calorie estimates."
+  },
+  "settingUnits": "Units",
+  "@settingUnits": {
+    "description": "Setting: kilometres or miles."
+  },
+  "unitsKm": "KM",
+  "@unitsKm": {
+    "description": "Unit choice: metric."
+  },
+  "unitsMiles": "MILES",
+  "@unitsMiles": {
+    "description": "Unit choice: imperial."
+  },
+  "sectionStreak": "STREAK",
+  "@sectionStreak": {
+    "description": "Settings section: the weekly target that keeps a streak going."
+  },
+  "settingMeasuredIn": "Measured in",
+  "@settingMeasuredIn": {
+    "description": "What the weekly target counts: time, distance or missions."
+  },
+  "metricTime": "TIME",
+  "@metricTime": {
+    "description": "Weekly target measured in minutes. Very short."
+  },
+  "metricDistance": "DIST",
+  "@metricDistance": {
+    "description": "Weekly target measured in distance. Very short abbreviation."
+  },
+  "metricOps": "OPS",
+  "@metricOps": {
+    "description": "Weekly target measured in missions (\"operations\"). Very short."
+  },
+  "settingWeeklyTarget": "Weekly target",
+  "@settingWeeklyTarget": {
+    "description": "Setting: how much running a week keeps the streak going."
+  },
+  "streakNote": "Your streak extends every week you hit this target. A week in progress never breaks it — only a finished week that fell short does.",
+  "sectionAudio": "AUDIO",
+  "@sectionAudio": {
+    "description": "Settings section: voice, music and sound."
+  },
+  "settingStoryVoice": "Story voice",
+  "@settingStoryVoice": {
+    "description": "Setting: speak the story aloud with text-to-speech."
+  },
+  "settingStoryVoiceHint": "Speak transmissions aloud using the device voice",
+  "settingYourMusic": "Your music",
+  "@settingYourMusic": {
+    "description": "What happens to the runner's own music when a story character speaks."
+  },
+  "musicPause": "PAUSE",
+  "@musicPause": {
+    "description": "Music choice: pause it while a character speaks."
+  },
+  "musicDuck": "DUCK",
+  "@musicDuck": {
+    "description": "Music choice: lower its volume while a character speaks (audio \"ducking\")."
+  },
+  "musicPauseNote": "Whatever you are playing pauses for each transmission and resumes afterwards.",
+  "musicDuckNote": "Whatever you are playing drops to a low volume under each transmission.",
+  "settingForceMusic": "Force music back on",
+  "@settingForceMusic": {
+    "description": "Setting: restart the runner's music player if it stays silent after a story line."
+  },
+  "settingForceMusicHint": "Some players stay silent after a long transmission. Presses play for you when that happens.",
+  "settingSpeechRate": "Speech rate",
+  "@settingSpeechRate": {
+    "description": "Setting: how fast the story is spoken."
+  },
+  "settingEffectsVolume": "Effects volume",
+  "@settingEffectsVolume": {
+    "description": "Setting: volume of sound effects."
+  },
+  "settingAmbientBed": "Ambient bed",
+  "@settingAmbientBed": {
+    "description": "A quiet background drone played during runs."
+  },
+  "settingAmbientBedHint": "Low synth drone under the run, for when you bring no music",
+  "sectionRun": "RUN",
+  "@sectionRun": {
+    "description": "Settings section: options for runs."
+  },
+  "settingPursuitsHint": "Timed chases that ask for a hard effort, scaled to your own pace",
+  "settingAutoPause": "Auto-pause",
+  "@settingAutoPause": {
+    "description": "Setting: pause automatically when the runner stops moving."
+  },
+  "settingAutoPauseHint": "Stop the clock when you stop moving",
+  "settingKeepScreenOn": "Keep screen on",
+  "@settingKeepScreenOn": {
+    "description": "Setting: keep the phone screen on during a run."
+  },
+  "settingKeepScreenOnHint": "Leave the HUD lit for the whole run",
+  "settingSplitsKm": "Kilometre splits",
+  "@settingSplitsKm": {
+    "description": "Setting: announce each kilometre with its time."
+  },
+  "settingSplitsMile": "Mile splits",
+  "@settingSplitsMile": {
+    "description": "Setting: announce each mile with its time."
+  },
+  "settingSplitsKmHint": "Each kilometre read out with its time — on a mission, between scenes",
+  "settingSplitsMileHint": "Each mile read out with its time — on a mission, between scenes",
+  "settingSeasonalEvents": "Seasonal events",
+  "@settingSeasonalEvents": {
+    "description": "Setting: take part in seasonal events such as Halloween."
+  },
+  "settingSeasonalEventsHint": "The city dresses for the time of year — its look, sounds, handler traffic and a limited operation. Halloween: SAMHAIN PROTOCOL",
+  "@settingSeasonalEventsHint": {
+    "description": "SAMHAIN PROTOCOL is the name of the Halloween event; keep it."
+  },
+  "sectionSignals": "SIGNALS",
+  "@sectionSignals": {
+    "description": "Settings section: notifications from story characters between runs."
+  },
+  "settingReminders": "Reminders",
+  "@settingReminders": {
+    "description": "Setting: notifications asking whether the runner is going out today."
+  },
+  "settingRemindersHint": "Your handler asks whether you are running, on the days you pick",
+  "settingDays": "Days",
+  "@settingDays": {
+    "description": "Weekdays reminders are sent on."
+  },
+  "settingTime": "Time",
+  "@settingTime": {
+    "description": "Time of day reminders are sent at."
+  },
+  "settingSignalNoise": "Signal noise",
+  "@settingSignalNoise": {
+    "description": "Ambient messages from the story world, \"the city talking\"."
+  },
+  "off": "OFF",
+  "@off": {
+    "description": "Value of the signal-noise setting when switched off."
+  },
+  "perWeek": "{count} / week",
+  "@perWeek": {
+    "description": "How many ambient messages a week.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingWeeklyDebrief": "Weekly debrief",
+  "@settingWeeklyDebrief": {
+    "description": "Setting: a Sunday notification summing up the week."
+  },
+  "settingWeeklyDebriefHint": "Sunday evening, while the week can still be saved",
+  "signalsNote": "Messages come from whoever is running your current campaign, and say nothing you have not already been told. They are never read aloud.\n\nSignal noise is the city talking whether or not you are running: silent, never between 22:00 and 07:00, and off until you ask for it.\n\nThe debrief reads back your week against the target you set, in the same voice.",
+  "sectionMissionPacks": "MISSION PACKS",
+  "@sectionMissionPacks": {
+    "description": "Settings section: the story campaigns installed."
+  },
+  "sectionData": "DATA",
+  "@sectionData": {
+    "description": "Settings section: backups and resetting."
+  },
+  "dataNote": "Everything lives on this device. Nothing is uploaded, and the app never needs a network connection.",
+  "resetProgress": "Reset all progress",
+  "@resetProgress": {
+    "description": "Button deleting all runs and progress."
+  },
+  "wipeTitle": "WIPE PROGRESS?",
+  "@wipeTitle": {
+    "description": "Title of the dialog confirming all progress is deleted."
+  },
+  "wipeBody": "Deletes every run, every achievement, the codex and all campaign progress. Your settings are kept. This cannot be undone.",
+  "wipe": "Wipe",
+  "@wipe": {
+    "description": "Button: delete all progress."
+  },
+  "offlineBuild": "OFFLINE BUILD",
+  "@offlineBuild": {
+    "description": "Shown instead of the version when it cannot be read."
+  },
+  "versionOffline": "{version} · offline",
+  "@versionOffline": {
+    "description": "Under the app name in Settings, e.g. \"0.6.0 (8) · offline\". Shown in uppercase.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "colophonLicense": "Free software, MIT · github.com/jbinder/sprawlrun",
+  "@colophonLicense": {
+    "description": "Keep the URL unchanged."
+  },
+  "monthShort": "{month, select, 1{JAN} 2{FEB} 3{MAR} 4{APR} 5{MAY} 6{JUN} 7{JUL} 8{AUG} 9{SEP} 10{OCT} 11{NOV} 12{DEC} other{?}}",
+  "@monthShort": {
+    "description": "Abbreviated month name by number (1 = January), uppercase, used in dates like 14 OCT. Keep each to about three letters.",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "weekdayShort": "{day, select, 1{MON} 2{TUE} 3{WED} 4{THU} 5{FRI} 6{SAT} 7{SUN} other{?}}",
+  "@weekdayShort": {
+    "description": "Abbreviated weekday by number (1 = Monday), uppercase. Keep each to about three letters.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "weekdayInitial": "{day, select, 1{M} 2{T} 3{W} 4{T} 5{F} 6{S} 7{S} other{?}}",
+  "@weekdayInitial": {
+    "description": "One-letter weekday by number (1 = Monday), for a row of day buttons. Use your language's usual one-letter forms (e.g. Spanish uses X for miércoles).",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "agoYears": "{count, plural, =1{a year ago} other{{count} years ago}}",
+  "@agoYears": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agoMonths": "{count} months ago",
+  "@agoMonths": {
+    "description": "count is 2 or more.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agoDays": "{count} days ago",
+  "@agoDays": {
+    "description": "count is 2 or more.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "agoYesterday": "yesterday",
+  "@agoYesterday": {
+    "description": "Lowercase: used inside a sentence like \"Last export: yesterday\"."
+  },
+  "agoToday": "today",
+  "@agoToday": {
+    "description": "Lowercase: used inside a sentence like \"Last export: today\"."
+  },
+  "countdownDaysHours": "{days}d {hours}h",
+  "@countdownDaysHours": {
+    "description": "Time left, e.g. 3d 04h. Keep the abbreviations to one letter.",
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "countdownHoursMinutes": "{hours}h {minutes}m",
+  "@countdownHoursMinutes": {
+    "description": "Time left, e.g. 5h 20m.",
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "countdownHours": "{hours}h",
+  "@countdownHours": {
+    "description": "Time left in hours, e.g. 0h.",
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "countdownMinutes": "{minutes}m",
+  "@countdownMinutes": {
+    "description": "Time left in minutes, e.g. 42m.",
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "tierStreet": "STREET",
+  "@tierStreet": {
+    "description": "Achievement rarity, lowest. Street-tech grades, not metals."
+  },
+  "tierChrome": "CHROME",
+  "@tierChrome": {
+    "description": "Achievement rarity, second."
+  },
+  "tierIce": "ICE",
+  "@tierIce": {
+    "description": "Achievement rarity, third. ICE is cyberpunk jargon for intrusion countermeasures."
+  },
+  "tierLegend": "LEGEND",
+  "@tierLegend": {
+    "description": "Achievement rarity, highest."
+  },
+  "achCategoryDistance": "DISTANCE",
+  "@achCategoryDistance": {
+    "description": "Achievement category."
+  },
+  "achCategoryEndurance": "ENDURANCE",
+  "@achCategoryEndurance": {
+    "description": "Achievement category."
+  },
+  "achCategoryOperations": "OPERATIONS",
+  "@achCategoryOperations": {
+    "description": "Achievement category: missions."
+  },
+  "achCategoryPursuit": "PURSUIT",
+  "@achCategoryPursuit": {
+    "description": "Achievement category: chases."
+  },
+  "achCategoryDiscipline": "DISCIPLINE",
+  "@achCategoryDiscipline": {
+    "description": "Achievement category: streaks and regularity."
+  },
+  "achCategoryAnomaly": "ANOMALY",
+  "@achCategoryAnomaly": {
+    "description": "Achievement category: odd hours and other curiosities."
+  },
+  "achCategorySeasonal": "SEASONAL",
+  "@achCategorySeasonal": {
+    "description": "Achievement category: seasonal events."
+  },
+  "achDist5kTitle": "First Kilometres",
+  "@achDist5kTitle": {
+    "description": "Achievement name (dist_5k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist5kDesc": "Cover 5 km across all runs.",
+  "@achDist5kDesc": {
+    "description": "What achievement \"First Kilometres\" asks for."
+  },
+  "achDist25kTitle": "Ward Walker",
+  "@achDist25kTitle": {
+    "description": "Achievement name (dist_25k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist25kDesc": "Cover 25 km across all runs.",
+  "@achDist25kDesc": {
+    "description": "What achievement \"Ward Walker\" asks for."
+  },
+  "achDist50kTitle": "Sector Sweep",
+  "@achDist50kTitle": {
+    "description": "Achievement name (dist_50k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist50kDesc": "Cover 50 km across all runs.",
+  "@achDist50kDesc": {
+    "description": "What achievement \"Sector Sweep\" asks for."
+  },
+  "achDist100kTitle": "Sprawl Native",
+  "@achDist100kTitle": {
+    "description": "Achievement name (dist_100k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist100kDesc": "Cover 100 km across all runs.",
+  "@achDist100kDesc": {
+    "description": "What achievement \"Sprawl Native\" asks for."
+  },
+  "achDist150kTitle": "Ring Road",
+  "@achDist150kTitle": {
+    "description": "Achievement name (dist_150k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist150kDesc": "Cover 150 km across all runs.",
+  "@achDist150kDesc": {
+    "description": "What achievement \"Ring Road\" asks for."
+  },
+  "achDist250kTitle": "Arterial",
+  "@achDist250kTitle": {
+    "description": "Achievement name (dist_250k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist250kDesc": "Cover 250 km across all runs.",
+  "@achDist250kDesc": {
+    "description": "What achievement \"Arterial\" asks for."
+  },
+  "achDist500kTitle": "BAMA Corridor",
+  "@achDist500kTitle": {
+    "description": "Achievement name (dist_500k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist500kDesc": "Cover 500 km across all runs.",
+  "@achDist500kDesc": {
+    "description": "What achievement \"BAMA Corridor\" asks for."
+  },
+  "achDist1000kTitle": "Orbital Distance",
+  "@achDist1000kTitle": {
+    "description": "Achievement name (dist_1000k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDist1000kDesc": "Cover 1000 km across all runs.",
+  "@achDist1000kDesc": {
+    "description": "What achievement \"Orbital Distance\" asks for."
+  },
+  "achTime1hTitle": "Clocked In",
+  "@achTime1hTitle": {
+    "description": "Achievement name (time_1h). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achTime1hDesc": "One hour of total running time.",
+  "@achTime1hDesc": {
+    "description": "What achievement \"Clocked In\" asks for."
+  },
+  "achTime5hTitle": "Five Hours In",
+  "@achTime5hTitle": {
+    "description": "Achievement name (time_5h). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achTime5hDesc": "Run for 5 hours in total.",
+  "@achTime5hDesc": {
+    "description": "What achievement \"Five Hours In\" asks for."
+  },
+  "achTime10hTitle": "Ten Hours Deep",
+  "@achTime10hTitle": {
+    "description": "Achievement name (time_10h). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achTime10hDesc": "Ten hours of total running time.",
+  "@achTime10hDesc": {
+    "description": "What achievement \"Ten Hours Deep\" asks for."
+  },
+  "achTime25hTitle": "Wetware Tuned",
+  "@achTime25hTitle": {
+    "description": "Achievement name (time_25h). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achTime25hDesc": "Twenty-five hours of total running time.",
+  "@achTime25hDesc": {
+    "description": "What achievement \"Wetware Tuned\" asks for."
+  },
+  "achTime50hTitle": "Overclocked",
+  "@achTime50hTitle": {
+    "description": "Achievement name (time_50h). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achTime50hDesc": "Fifty hours of total running time.",
+  "@achTime50hDesc": {
+    "description": "What achievement \"Overclocked\" asks for."
+  },
+  "achTime100hTitle": "Ghost In The Legs",
+  "@achTime100hTitle": {
+    "description": "Achievement name (time_100h). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achTime100hDesc": "One hundred hours of total running time.",
+  "@achTime100hDesc": {
+    "description": "What achievement \"Ghost In The Legs\" asks for."
+  },
+  "achSingle5kTitle": "Five Clean",
+  "@achSingle5kTitle": {
+    "description": "Achievement name (single_5k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle5kDesc": "Run 5 km in a single session.",
+  "@achSingle5kDesc": {
+    "description": "What achievement \"Five Clean\" asks for."
+  },
+  "achSingle10kTitle": "Ten Clean",
+  "@achSingle10kTitle": {
+    "description": "Achievement name (single_10k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle10kDesc": "Run 10 km in a single session.",
+  "@achSingle10kDesc": {
+    "description": "What achievement \"Ten Clean\" asks for."
+  },
+  "achSingle15kTitle": "Fifteen Clean",
+  "@achSingle15kTitle": {
+    "description": "Achievement name (single_15k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle15kDesc": "Run 15 km in a single run.",
+  "@achSingle15kDesc": {
+    "description": "What achievement \"Fifteen Clean\" asks for."
+  },
+  "achSingleHalfTitle": "Long Haul",
+  "@achSingleHalfTitle": {
+    "description": "Achievement name (single_half). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingleHalfDesc": "Run 21.1 km in a single session.",
+  "@achSingleHalfDesc": {
+    "description": "What achievement \"Long Haul\" asks for."
+  },
+  "achSingle30mTitle": "Half Hour Out",
+  "@achSingle30mTitle": {
+    "description": "Achievement name (single_30m). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle30mDesc": "Keep moving for thirty minutes in a single run.",
+  "@achSingle30mDesc": {
+    "description": "What achievement \"Half Hour Out\" asks for."
+  },
+  "achSingle45mTitle": "Three Quarters",
+  "@achSingle45mTitle": {
+    "description": "Achievement name (single_45m). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle45mDesc": "Keep moving for forty-five minutes in a single run.",
+  "@achSingle45mDesc": {
+    "description": "What achievement \"Three Quarters\" asks for."
+  },
+  "achSingle60mTitle": "The Long Hour",
+  "@achSingle60mTitle": {
+    "description": "Achievement name (single_60m). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle60mDesc": "Keep moving for 60 minutes in one session.",
+  "@achSingle60mDesc": {
+    "description": "What achievement \"The Long Hour\" asks for."
+  },
+  "achSingle90mTitle": "No Off Switch",
+  "@achSingle90mTitle": {
+    "description": "Achievement name (single_90m). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle90mDesc": "Keep moving for 90 minutes in one session.",
+  "@achSingle90mDesc": {
+    "description": "What achievement \"No Off Switch\" asks for."
+  },
+  "achSingle120mTitle": "Two Hours Under",
+  "@achSingle120mTitle": {
+    "description": "Achievement name (single_120m). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSingle120mDesc": "Keep moving for two hours in a single run.",
+  "@achSingle120mDesc": {
+    "description": "What achievement \"Two Hours Under\" asks for."
+  },
+  "achMission1Title": "Made Contact",
+  "@achMission1Title": {
+    "description": "Achievement name (mission_1). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achMission1Desc": "Complete your first mission.",
+  "@achMission1Desc": {
+    "description": "What achievement \"Made Contact\" asks for."
+  },
+  "achMission3Title": "On The Payroll",
+  "@achMission3Title": {
+    "description": "Achievement name (mission_3). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achMission3Desc": "Complete three missions.",
+  "@achMission3Desc": {
+    "description": "What achievement \"On The Payroll\" asks for."
+  },
+  "achMission5Title": "Halfway To Freeside",
+  "@achMission5Title": {
+    "description": "Achievement name (mission_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achMission5Desc": "Complete five missions.",
+  "@achMission5Desc": {
+    "description": "What achievement \"Halfway To Freeside\" asks for."
+  },
+  "achMission10Title": "Kuang Complete",
+  "@achMission10Title": {
+    "description": "Achievement name (mission_10). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achMission10Desc": "Complete all ten missions of SPRAWL PRIME.",
+  "@achMission10Desc": {
+    "description": "What achievement \"Kuang Complete\" asks for."
+  },
+  "achNt1Title": "First Tide",
+  "@achNt1Title": {
+    "description": "Achievement name (nt_1). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achNt1Desc": "Complete your first NULL TIDE operation.",
+  "@achNt1Desc": {
+    "description": "What achievement \"First Tide\" asks for."
+  },
+  "achNt5Title": "Half Drowned",
+  "@achNt5Title": {
+    "description": "Achievement name (nt_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achNt5Desc": "Complete five NULL TIDE operations.",
+  "@achNt5Desc": {
+    "description": "What achievement \"Half Drowned\" asks for."
+  },
+  "achNt10Title": "Tide Turned",
+  "@achNt10Title": {
+    "description": "Achievement name (nt_10). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achNt10Desc": "Complete all ten NULL TIDE operations.",
+  "@achNt10Desc": {
+    "description": "What achievement \"Tide Turned\" asks for."
+  },
+  "achMission20Title": "Two Campaigns Deep",
+  "@achMission20Title": {
+    "description": "Achievement name (mission_20). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achMission20Desc": "Complete twenty different missions, across any packs.",
+  "@achMission20Desc": {
+    "description": "What achievement \"Two Campaigns Deep\" asks for."
+  },
+  "achBeats100Title": "Signal Discipline",
+  "@achBeats100Title": {
+    "description": "Achievement name (beats_100). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achBeats100Desc": "Hear 100 story transmissions.",
+  "@achBeats100Desc": {
+    "description": "What achievement \"Signal Discipline\" asks for."
+  },
+  "achPerfect1Title": "Untouched",
+  "@achPerfect1Title": {
+    "description": "Achievement name (perfect_1). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achPerfect1Desc": "Finish a mission without being caught once.",
+  "@achPerfect1Desc": {
+    "description": "What achievement \"Untouched\" asks for."
+  },
+  "achPerfect5Title": "Never Was There",
+  "@achPerfect5Title": {
+    "description": "Achievement name (perfect_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achPerfect5Desc": "Finish five missions without being caught once.",
+  "@achPerfect5Desc": {
+    "description": "What achievement \"Never Was There\" asks for."
+  },
+  "achChase5Title": "Light Feet",
+  "@achChase5Title": {
+    "description": "Achievement name (chase_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achChase5Desc": "Escape 5 pursuits.",
+  "@achChase5Desc": {
+    "description": "What achievement \"Light Feet\" asks for."
+  },
+  "achChase25Title": "Hard To Tag",
+  "@achChase25Title": {
+    "description": "Achievement name (chase_25). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achChase25Desc": "Escape 25 pursuits.",
+  "@achChase25Desc": {
+    "description": "What achievement \"Hard To Tag\" asks for."
+  },
+  "achChase100Title": "Unscannable",
+  "@achChase100Title": {
+    "description": "Achievement name (chase_100). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achChase100Desc": "Escape 100 pursuits.",
+  "@achChase100Desc": {
+    "description": "What achievement \"Unscannable\" asks for."
+  },
+  "achPace600Title": "Moving With Purpose",
+  "@achPace600Title": {
+    "description": "Achievement name (pace_600). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achPace600Desc": "Average under 6:00 / km over a run of 3 km or more.",
+  "@achPace600Desc": {
+    "description": "What achievement \"Moving With Purpose\" asks for."
+  },
+  "achPace530Title": "Razor Quick",
+  "@achPace530Title": {
+    "description": "Achievement name (pace_530). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achPace530Desc": "Average under 5:30 / km over a run of 3 km or more.",
+  "@achPace530Desc": {
+    "description": "What achievement \"Razor Quick\" asks for."
+  },
+  "achPace500Title": "Panther Modern",
+  "@achPace500Title": {
+    "description": "Achievement name (pace_500). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achPace500Desc": "Average under 5:00 / km over a run of 3 km or more.",
+  "@achPace500Desc": {
+    "description": "What achievement \"Panther Modern\" asks for."
+  },
+  "achPace430Title": "Simstim Speed",
+  "@achPace430Title": {
+    "description": "Achievement name (pace_430). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achPace430Desc": "Average under 4:30 / km over a run of 3 km or more.",
+  "@achPace430Desc": {
+    "description": "What achievement \"Simstim Speed\" asks for."
+  },
+  "achStreak1Title": "On The Board",
+  "@achStreak1Title": {
+    "description": "Achievement name (streak_1). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak1Desc": "Hit your weekly target for the first time.",
+  "@achStreak1Desc": {
+    "description": "What achievement \"On The Board\" asks for."
+  },
+  "achStreak2Title": "Two Weeks Standing",
+  "@achStreak2Title": {
+    "description": "Achievement name (streak_2). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak2Desc": "Hit your weekly target two weeks running.",
+  "@achStreak2Desc": {
+    "description": "What achievement \"Two Weeks Standing\" asks for."
+  },
+  "achStreak3Title": "Not A Fluke",
+  "@achStreak3Title": {
+    "description": "Achievement name (streak_3). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak3Desc": "Hit your weekly target three weeks running.",
+  "@achStreak3Desc": {
+    "description": "What achievement \"Not A Fluke\" asks for."
+  },
+  "achStreak4Title": "A Month Of It",
+  "@achStreak4Title": {
+    "description": "Achievement name (streak_4). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak4Desc": "Hit your weekly target four weeks running.",
+  "@achStreak4Desc": {
+    "description": "What achievement \"A Month Of It\" asks for."
+  },
+  "achStreak6Title": "Retained",
+  "@achStreak6Title": {
+    "description": "Achievement name (streak_6). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak6Desc": "Hit your weekly target six weeks running.",
+  "@achStreak6Desc": {
+    "description": "What achievement \"Retained\" asks for."
+  },
+  "achStreak8Title": "Standing Order",
+  "@achStreak8Title": {
+    "description": "Achievement name (streak_8). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak8Desc": "Hit your weekly target eight weeks running.",
+  "@achStreak8Desc": {
+    "description": "What achievement \"Standing Order\" asks for."
+  },
+  "achStreak12Title": "Quarterly Contract",
+  "@achStreak12Title": {
+    "description": "Achievement name (streak_12). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak12Desc": "Hit your weekly target twelve weeks running.",
+  "@achStreak12Desc": {
+    "description": "What achievement \"Quarterly Contract\" asks for."
+  },
+  "achStreak26Title": "Half A Year Wired",
+  "@achStreak26Title": {
+    "description": "Achievement name (streak_26). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak26Desc": "Hit your weekly target twenty-six weeks running.",
+  "@achStreak26Desc": {
+    "description": "What achievement \"Half A Year Wired\" asks for."
+  },
+  "achStreak52Title": "Full Rotation",
+  "@achStreak52Title": {
+    "description": "Achievement name (streak_52). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achStreak52Desc": "Hit your weekly target fifty-two weeks running.",
+  "@achStreak52Desc": {
+    "description": "What achievement \"Full Rotation\" asks for."
+  },
+  "achRuns10Title": "Regular",
+  "@achRuns10Title": {
+    "description": "Achievement name (runs_10). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achRuns10Desc": "Log 10 runs.",
+  "@achRuns10Desc": {
+    "description": "What achievement \"Regular\" asks for."
+  },
+  "achRuns50Title": "Known Quantity",
+  "@achRuns50Title": {
+    "description": "Achievement name (runs_50). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achRuns50Desc": "Log 50 runs.",
+  "@achRuns50Desc": {
+    "description": "What achievement \"Known Quantity\" asks for."
+  },
+  "achRuns100Title": "Fixture",
+  "@achRuns100Title": {
+    "description": "Achievement name (runs_100). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achRuns100Desc": "Log 100 runs.",
+  "@achRuns100Desc": {
+    "description": "What achievement \"Fixture\" asks for."
+  },
+  "achRuns200Title": "Institution",
+  "@achRuns200Title": {
+    "description": "Achievement name (runs_200). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achRuns200Desc": "Log 200 runs.",
+  "@achRuns200Desc": {
+    "description": "What achievement \"Institution\" asks for."
+  },
+  "achDays30Title": "Thirty Separate Nights",
+  "@achDays30Title": {
+    "description": "Achievement name (days_30). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDays30Desc": "Run on 30 different days.",
+  "@achDays30Desc": {
+    "description": "What achievement \"Thirty Separate Nights\" asks for."
+  },
+  "achDays100Title": "A Hundred Separate Nights",
+  "@achDays100Title": {
+    "description": "Achievement name (days_100). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDays100Desc": "Run on 100 different days.",
+  "@achDays100Desc": {
+    "description": "What achievement \"A Hundred Separate Nights\" asks for."
+  },
+  "achNight5Title": "Nocturne",
+  "@achNight5Title": {
+    "description": "Achievement name (night_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achNight5Desc": "Start five runs between 22:00 and 05:00.",
+  "@achNight5Desc": {
+    "description": "What achievement \"Nocturne\" asks for."
+  },
+  "achNight25Title": "The City Never Sleeps",
+  "@achNight25Title": {
+    "description": "Achievement name (night_25). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achNight25Desc": "Start twenty-five runs between 22:00 and 05:00.",
+  "@achNight25Desc": {
+    "description": "What achievement \"The City Never Sleeps\" asks for."
+  },
+  "achDawn5Title": "Grey Hours",
+  "@achDawn5Title": {
+    "description": "Achievement name (dawn_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achDawn5Desc": "Start five runs between 04:00 and 07:00.",
+  "@achDawn5Desc": {
+    "description": "What achievement \"Grey Hours\" asks for."
+  },
+  "achKcal10kTitle": "Metabolic Debt",
+  "@achKcal10kTitle": {
+    "description": "Achievement name (kcal_10k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achKcal10kDesc": "Burn 10,000 kcal.",
+  "@achKcal10kDesc": {
+    "description": "What achievement \"Metabolic Debt\" asks for."
+  },
+  "achKcal50kTitle": "Furnace",
+  "@achKcal50kTitle": {
+    "description": "Achievement name (kcal_50k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achKcal50kDesc": "Burn 50,000 kcal.",
+  "@achKcal50kDesc": {
+    "description": "What achievement \"Furnace\" asks for."
+  },
+  "achWeek15kTitle": "Solid Week",
+  "@achWeek15kTitle": {
+    "description": "Achievement name (week_15k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWeek15kDesc": "Cover 15 km inside a single week.",
+  "@achWeek15kDesc": {
+    "description": "What achievement \"Solid Week\" asks for."
+  },
+  "achWeek30kTitle": "Heavy Week",
+  "@achWeek30kTitle": {
+    "description": "Achievement name (week_30k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWeek30kDesc": "Cover 30 km inside a single week.",
+  "@achWeek30kDesc": {
+    "description": "What achievement \"Heavy Week\" asks for."
+  },
+  "achWeek50kTitle": "Monster Week",
+  "@achWeek50kTitle": {
+    "description": "Achievement name (week_50k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWeek50kDesc": "Cover 50 km inside a single week.",
+  "@achWeek50kDesc": {
+    "description": "What achievement \"Monster Week\" asks for."
+  },
+  "achSh1Title": "Wake",
+  "@achSh1Title": {
+    "description": "Achievement name (sh_1). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSh1Desc": "Complete your first SAMHAIN PROTOCOL operation.",
+  "@achSh1Desc": {
+    "description": "What achievement \"Wake\" asks for."
+  },
+  "achSh4Title": "Laid To Rest",
+  "@achSh4Title": {
+    "description": "Achievement name (sh_4). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSh4Desc": "Complete all four SAMHAIN PROTOCOL operations.",
+  "@achSh4Desc": {
+    "description": "What achievement \"Laid To Rest\" asks for."
+  },
+  "achHallowsEveTitle": "All Hallows' Run",
+  "@achHallowsEveTitle": {
+    "description": "Achievement name (hallows_eve). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achHallowsEveDesc": "Run on the 31st of October.",
+  "@achHallowsEveDesc": {
+    "description": "What achievement \"All Hallows' Run\" asks for."
+  },
+  "achSamhain5Title": "Restless",
+  "@achSamhain5Title": {
+    "description": "Achievement name (samhain_5). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSamhain5Desc": "Run five times between 10 October and 2 November.",
+  "@achSamhain5Desc": {
+    "description": "What achievement \"Restless\" asks for."
+  },
+  "achSamhainYears2Title": "Returning Spirit",
+  "@achSamhainYears2Title": {
+    "description": "Achievement name (samhain_years_2). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achSamhainYears2Desc": "Run between 10 October and 2 November in two different years.",
+  "@achSamhainYears2Desc": {
+    "description": "What achievement \"Returning Spirit\" asks for."
+  },
+  "streakGoalMissions": "{count, plural, =1{1 mission} other{{count} missions}}",
+  "@streakGoalMissions": {
+    "description": "Weekly target measured in missions, as Settings shows it.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "streakUnitWord": "{code, select, MIN{min} KM{km} OPS{ops} other{{code}}}",
+  "@streakUnitWord": {
+    "description": "Unit of the weekly target inside a sentence, lowercase: minutes, kilometres, operations (missions).",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "debriefMetStreak": "{done} of {goal} {unit}. The streak stands at {weeks, plural, =1{one week} other{{weeks} weeks}}.",
+  "@debriefMetStreak": {
+    "description": "Weekly debrief notification, after a line written by the story. Target met. E.g. \"42 of 30 min. The streak stands at 3 weeks.\"",
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "debriefMet": "{done} of {goal} {unit}.",
+  "@debriefMet": {
+    "description": "Weekly debrief: target met, no streak yet.",
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "debriefMissed": "{done} of {goal} {unit}, so {short} {unit} short with the week nearly out.",
+  "@debriefMissed": {
+    "description": "Weekly debrief, sent Sunday evening: some running, target not yet met.",
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "goal": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "short": {
+        "type": "String"
+      }
+    }
+  },
+  "debriefIdleStreak": "Nothing logged. {goal} {unit} would keep a streak that has stood {weeks, plural, =1{one week} other{{weeks} weeks}}.",
+  "@debriefIdleStreak": {
+    "description": "Weekly debrief: no running this week, with a streak at stake.",
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "weeks": {
+        "type": "int"
+      }
+    }
+  },
+  "debriefIdle": "Nothing logged all week. The target is {goal} {unit}.",
+  "@debriefIdle": {
+    "description": "Weekly debrief: no running this week, no streak.",
+    "placeholders": {
+      "goal": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "wireRunCleared": "CLEARED — {mission}",
+  "@wireRunCleared": {
+    "description": "THE WIRE: the run that completed a mission. mission is its codename.",
+    "placeholders": {
+      "mission": {
+        "type": "String"
+      }
+    }
+  },
+  "wireRunOperation": "OPERATION — {mission}",
+  "@wireRunOperation": {
+    "description": "THE WIRE: a successful replay of an already completed mission.",
+    "placeholders": {
+      "mission": {
+        "type": "String"
+      }
+    }
+  },
+  "wireRunAttempt": "ATTEMPT — {mission}",
+  "@wireRunAttempt": {
+    "description": "THE WIRE: a failed try at a mission.",
+    "placeholders": {
+      "mission": {
+        "type": "String"
+      }
+    }
+  },
+  "spokenIntelIntercepted": "Intel intercepted: {title}. Complete the operation to decrypt.",
+  "@spokenIntelIntercepted": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, when a codex entry is unlocked. title comes from the mission pack. Write it for the ear.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "channelReminders": "Reminders",
+  "@channelReminders": {
+    "description": "Android notification channel name, shown in the system's notification settings. Must match the Android strings file."
+  },
+  "channelRemindersDescription": "Your handler, asking whether you are running today.",
+  "@channelRemindersDescription": {
+    "description": "Android notification channel description."
+  },
+  "channelDebrief": "Weekly debrief",
+  "@channelDebrief": {
+    "description": "Android notification channel name."
+  },
+  "channelDebriefDescription": "How your week went, when it closes.",
+  "@channelDebriefDescription": {
+    "description": "Android notification channel description."
+  },
+  "channelNoise": "Signal noise",
+  "@channelNoise": {
+    "description": "Android notification channel name."
+  },
+  "channelNoiseDescription": "Traffic from the Sprawl. Silent.",
+  "@channelNoiseDescription": {
+    "description": "Android notification channel description. The Sprawl is the city the story is set in."
+  },
+  "lastDays": "LAST {count} DAYS",
+  "@lastDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    },
+    "description": "Label of the figures for the last few days; count is 7."
+  },
+  "packErrorNotAPack": "That is not a mission pack — it needs an \"id\" and a list of \"missions\".",
+  "@packErrorNotAPack": {
+    "description": "Keep \"id\" and \"missions\" in English: they are field names in the file."
+  },
+  "fileNotJson": "That file is not JSON.",
+  "@fileNotJson": {
+    "description": "Error after picking a file that is not a JSON file."
+  },
+  "packErrorMissingField": "The pack could not be read. A mission is missing a required field.",
+  "@packErrorMissingField": {
+    "description": "Followed by a technical detail in English."
+  },
+  "packErrorBadId": "The pack id may only use letters, digits, \"-\" and \"_\".",
+  "packErrorEmpty": "The pack has no missions in it.",
+  "packErrorDuplicateId": "Two missions share the id \"{id}\".",
+  "@packErrorDuplicateId": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "backupErrorNotABackup": "That is not a SPRAWL//RUN backup file.",
+  "@backupErrorNotABackup": {
+    "description": "SPRAWL//RUN is the app name."
+  },
+  "backupErrorNewer": "That backup was written by a newer version of the app (format {format}). Update and try again.",
+  "@backupErrorNewer": {
+    "placeholders": {
+      "format": {
+        "type": "String"
+      }
+    }
+  },
+  "backupErrorNoProfile": "The backup is missing a readable profile.",
+  "splitReadoutKm": "Kilometre {count}. Split {split}. Total {total}.",
+  "@splitReadoutKm": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. Read out as each kilometre passes. split and total are spoken durations like \"5 minutes 41\".",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "split": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "splitReadoutMile": "Mile {count}. Split {split}. Total {total}.",
+  "@splitReadoutMile": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. Read out as each mile passes.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "split": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "spokenHours": "{hours, plural, =1{1 hour} other{{hours} hours}}",
+  "@spokenHours": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. A duration of whole hours.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "spokenHoursMinutes": "{hours, plural, =1{1 hour} other{{hours} hours}} {minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@spokenHoursMinutes": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. e.g. \"1 hour 2 minutes\".",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "spokenSeconds": "{seconds, plural, =1{1 second} other{{seconds} seconds}}",
+  "@spokenSeconds": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. A duration under a minute.",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "spokenMinutes": "{minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@spokenMinutes": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. A duration of whole minutes.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "spokenMinutesSeconds": "{minutes, plural, =1{1 minute} other{{minutes} minutes}} {seconds}",
+  "@spokenMinutesSeconds": {
+    "description": "SPOKEN ALOUD by the speech engine during a run, so write it for the ear. e.g. \"5 minutes 41\", meaning 5:41. Deliberately not written as 5:41, which speech engines read as a time of day.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      },
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "versionLabel": "v{version} · build {build}",
+  "@versionLabel": {
+    "description": "App version in Settings, e.g. v0.6.0 · build 8.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "build": {
+        "type": "String"
+      }
+    }
+  }
+}

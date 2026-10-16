@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/widgets/edge_fade.dart';
 
 /// A long list used to stop dead at the edge of the screen, with nothing to say
@@ -7,6 +8,7 @@ import 'package:sprawl_run/widgets/edge_fade.dart';
 void main() {
   Future<void> pumpList(WidgetTester tester, int rows) => tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: L.localizationsDelegates,
       scrollBehavior: const CyberScrollBehavior(),
       home: Scaffold(
         body: ListView(children: [for (var i = 0; i < rows; i++) SizedBox(height: 60, child: Text('row $i'))]),
@@ -43,6 +45,7 @@ void main() {
   testWidgets('sideways scrolling is left to the filter rails', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: L.localizationsDelegates,
         scrollBehavior: const CyberScrollBehavior(),
         home: Scaffold(
           body: ListView(

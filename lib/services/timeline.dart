@@ -3,6 +3,7 @@ import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
 import '../models/signal_log.dart';
+import '../l10n/l10n.dart';
 
 /// What happened at a moment on the timeline.
 enum TimelineKind { signal, run, achievement, codex }
@@ -92,7 +93,7 @@ abstract final class Timeline {
           TimelineEntry(
             at: run.startedAt.add(Duration(milliseconds: (event.atSeconds * 1000).round())),
             kind: TimelineKind.codex,
-            title: 'INTEL INTERCEPTED',
+            title: l10n.intelIntercepted,
             body: title,
           ),
         );
@@ -103,7 +104,7 @@ abstract final class Timeline {
     profile.unlockedAchievements.forEach((id, at) {
       final def = catalogue[id];
       if (def == null) return;
-      entries.add(TimelineEntry(at: at, kind: TimelineKind.achievement, title: 'UNLOCKED', body: def.title));
+      entries.add(TimelineEntry(at: at, kind: TimelineKind.achievement, title: l10n.wallUnlocked, body: def.title));
     });
 
     entries.sort((a, b) => b.at.compareTo(a.at));
@@ -112,11 +113,11 @@ abstract final class Timeline {
 
   static String _runTitle(RunRecord run, bool cleared) {
     final codename = run.missionCodename;
-    if (codename == null) return 'FREE RUN';
-    if (cleared) return 'CLEARED — $codename';
+    if (codename == null) return l10n.freeRun;
+    if (cleared) return l10n.wireRunCleared(codename);
     return switch (run.outcome) {
-      RunOutcome.success => 'OPERATION — $codename',
-      _ => 'ATTEMPT — $codename',
+      RunOutcome.success => l10n.wireRunOperation(codename),
+      _ => l10n.wireRunAttempt(codename),
     };
   }
 }

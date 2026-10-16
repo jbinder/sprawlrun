@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -104,6 +105,7 @@ Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500}) async {
         ChangeNotifierProvider.value(value: engine),
       ],
       child: MaterialApp(
+        localizationsDelegates: L.localizationsDelegates,
         theme: buildCyberTheme(),
         // The harness's placeholder font is far wider than the real one and
         // pushes the big readout a few pixels past its box. Scaled slightly

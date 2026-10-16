@@ -9,6 +9,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 import '../models/mission.dart';
 import 'signal_planner.dart';
+import '../l10n/l10n.dart';
 
 /// Hands planned signals to the platform, and takes them back again.
 ///
@@ -160,8 +161,8 @@ class SignalScheduler {
     AndroidNotificationDetails detailsFor(PlannedSignal s) => switch (s.kind) {
       SignalKind.reminder => AndroidNotificationDetails(
         reminderChannel,
-        'Reminders',
-        channelDescription: 'Your handler, asking whether you are running today.',
+        l10n.channelReminders,
+        channelDescription: l10n.channelRemindersDescription,
         importance: Importance.defaultImportance,
         priority: Priority.defaultPriority,
         icon: 'ic_notification',
@@ -174,8 +175,8 @@ class SignalScheduler {
       // in Android's own settings without the app needing a second switch.
       SignalKind.debrief => AndroidNotificationDetails(
         debriefChannel,
-        'Weekly debrief',
-        channelDescription: 'How your week went, when it closes.',
+        l10n.channelDebrief,
+        channelDescription: l10n.channelDebriefDescription,
         importance: Importance.defaultImportance,
         priority: Priority.defaultPriority,
         icon: 'ic_notification',
@@ -183,8 +184,8 @@ class SignalScheduler {
       ),
       SignalKind.ambient => AndroidNotificationDetails(
         ambientChannel,
-        'Signal noise',
-        channelDescription: 'Traffic from the Sprawl. Silent.',
+        l10n.channelNoise,
+        channelDescription: l10n.channelNoiseDescription,
         importance: Importance.low,
         priority: Priority.low,
         enableVibration: false,

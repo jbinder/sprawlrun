@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/services/signal_scheduler.dart';
 import 'package:sprawl_run/state/app_state.dart';
@@ -200,7 +201,7 @@ void main() {
 
 Widget _app(AppState state) => ChangeNotifierProvider.value(
   value: state,
-  child: MaterialApp(home: SignalWatcher(child: Scaffold(body: Builder(builder: (_) => const SizedBox())))),
+  child: MaterialApp(localizationsDelegates: L.localizationsDelegates, home: SignalWatcher(child: Scaffold(body: Builder(builder: (_) => const SizedBox())))),
 );
 
 Future<AppState> _boot(WidgetTester tester, Stream<Signal> taps) async {

@@ -4,6 +4,7 @@ import '../models/mission.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import 'panels.dart';
+import '../l10n/l10n.dart';
 
 /// Pieces the briefing and the debriefing share, so the two read as the same
 /// place seen before and after.
@@ -29,8 +30,8 @@ class OpsBar extends StatelessWidget {
           const Spacer(),
           Text(
             mission == null
-                ? 'UNLOGGED RUN'
-                : 'OPERATION ${mission!.order.toString().padLeft(2, '0')} · $label',
+                ? L.of(context).unloggedRun
+                : '${L.of(context).operationNumber(mission!.order.toString().padLeft(2, '0'))} · $label',
             style: CyType.label(size: 10),
           ),
         ],
@@ -95,7 +96,7 @@ class IntelSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-          'INTEL  $have / ${mission.codex.length}',
+          L.of(context).intelCount(have, mission.codex.length),
           accent: Cy.cyan,
         ),
         for (final entry in mission.codex)
@@ -146,7 +147,7 @@ class IntelSection extends StatelessWidget {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          '▮▮▮▮▮▮  ENCRYPTED',
+                          '▮▮▮▮▮▮  ${L.of(context).encrypted}',
                           style: CyType.mono(
                             size: 12,
                             color: Cy.ghost,

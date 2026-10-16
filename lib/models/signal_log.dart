@@ -1,4 +1,5 @@
 import 'mission.dart';
+import '../l10n/l10n.dart';
 
 /// Which kind of between-run message a signal is.
 enum SignalKind { reminder, ambient, debrief }
@@ -40,17 +41,19 @@ class SignalFigures {
 
   /// The sentence appended to the authored opener.
   String get sentence {
-    final unitWord = unit.toLowerCase();
+    // [unit] is a stored code, not a word: archives written in one language
+    // are read back in another.
+    final unitWord = l10n.streakUnitWord(unit);
     final done = _trim(value);
     final goal = _trim(target);
-    final stood = weeks == 1 ? 'one week' : '$weeks weeks';
     return switch (outcome) {
-      DebriefOutcome.met => weeks > 0 ? '$done of $goal $unitWord. The streak stands at $stood.' : '$done of $goal $unitWord.',
-      DebriefOutcome.missed =>
-        '$done of $goal $unitWord, so ${_trim(target - value)} $unitWord short with the week nearly out.',
+      DebriefOutcome.met => weeks > 0
+          ? l10n.debriefMetStreak(done, goal, unitWord, weeks)
+          : l10n.debriefMet(done, goal, unitWord),
+      DebriefOutcome.missed => l10n.debriefMissed(done, goal, unitWord, _trim(target - value)),
       DebriefOutcome.idle => weeks > 0
-          ? 'Nothing logged. $goal $unitWord would keep a streak that has stood $stood.'
-          : 'Nothing logged all week. The target is $goal $unitWord.',
+          ? l10n.debriefIdleStreak(goal, unitWord, weeks)
+          : l10n.debriefIdle(goal, unitWord),
     };
   }
 

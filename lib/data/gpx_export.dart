@@ -1,4 +1,5 @@
 import '../models/run_record.dart';
+import '../l10n/l10n.dart';
 
 /// Writes a run's GPS trace as GPX 1.1 — the format every map app reads,
 /// OsmAnd included.
@@ -14,7 +15,7 @@ abstract final class GpxExport {
   /// it, and a track claiming sea level everywhere would make an elevation
   /// profile that is a straight lie.
   static String of(RunRecord run, List<TracePoint> trace) {
-    final name = run.missionCodename ?? 'Free run';
+    final name = run.missionCodename ?? l10n.freeRunName;
     final buf = StringBuffer()
       ..writeln('<?xml version="1.0" encoding="UTF-8"?>')
       ..writeln(

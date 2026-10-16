@@ -9,6 +9,7 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/picked_text.dart';
 import 'panels.dart';
+import '../l10n/l10n.dart';
 
 /// The MISSION PACKS section of Settings: what is loaded, and how to add more.
 ///
@@ -31,6 +32,7 @@ class _PackControlsState extends State<PackControls> {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final repo = state.missions;
+    final l = L.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,14 +52,14 @@ class _PackControlsState extends State<PackControls> {
                 ),
               ),
               if (repo.importedIds.contains(pack.id)) ...[
-                CyberTag(repo.bundledIds.contains(pack.id) ? 'REPLACED' : 'IMPORTED', color: Cy.green),
+                CyberTag(repo.bundledIds.contains(pack.id) ? l.packReplaced : l.packImported, color: Cy.green),
                 IconButton(
                   onPressed: _busy ? null : () => _remove(state, pack),
                   icon: Icon(Icons.delete_outline, size: 18, color: Cy.inkDim),
-                  tooltip: 'Remove ${pack.title}',
+                  tooltip: l.packRemoveTooltip(pack.title),
                 ),
               ] else
-                CyberTag('${pack.missions.length} OPS', color: Cy.ghost),
+                CyberTag(l.packOpsTag(pack.missions.length), color: Cy.ghost),
             ],
           ),
           Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Container(height: 1, color: Cy.rule)),
@@ -67,14 +69,12 @@ class _PackControlsState extends State<PackControls> {
           const SizedBox(height: 6),
         ],
         Text(
-          'Add a pack by importing its .json file. Importing a newer version of a pack you already '
-          'have replaces it, and your progress through it is kept. See docs/MISSION_PACKS.md for the '
-          'format.',
+          l.packExplainer,
           style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
         ),
         const SizedBox(height: 12),
         CyberButton(
-          label: _busy ? 'Working…' : 'Import pack',
+          label: _busy ? l.working : l.packImport,
           icon: Icons.file_download_outlined,
           style: CyberButtonStyle.ghost,
           dense: true,
@@ -98,13 +98,13 @@ class _PackControlsState extends State<PackControls> {
     try {
       // Permissive, as for backups: some document providers do not tag .json.
       final picked = await openFile(
-        acceptedTypeGroups: const [
-          XTypeGroup(label: 'Mission pack', extensions: ['json'], mimeTypes: ['application/json']),
+        acceptedTypeGroups: [
+          XTypeGroup(label: l10n.packFileType, extensions: ['json'], mimeTypes: ['application/json']),
         ],
       );
       if (picked == null) return;
       if (await picked.length() > MissionRepository.maxPackBytes) {
-        _say('That file is far too large to be a mission pack.', bad: true);
+        _say(l10n.packTooLarge, bad: true);
         return;
       }
 
@@ -113,16 +113,16 @@ class _PackControlsState extends State<PackControls> {
       final before = {...repo.importedIds};
       final pack = await state.importMissionPack(source);
 
-      final ops = '${pack.missions.length} operation${pack.missions.length == 1 ? '' : 's'}';
+      final ops = pack.missions.length;
       _say(switch ((before.contains(pack.id), repo.bundledIds.contains(pack.id))) {
-        (true, _) => 'Updated ${pack.title} — $ops.',
-        (false, true) => 'Imported ${pack.title} — $ops. It replaces the built-in version.',
-        (false, false) => 'Imported ${pack.title} — $ops.',
+        (true, _) => l10n.packUpdated(pack.title, ops),
+        (false, true) => l10n.packImportedReplacing(pack.title, ops),
+        (false, false) => l10n.packImportedNew(pack.title, ops),
       });
     } on PackImportException catch (e) {
       _say(e.message, bad: true);
     } on Object catch (e) {
-      _say('Import failed: $e', bad: true);
+      _say(l10n.importFailed('$e'), bad: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -130,6 +130,7 @@ class _PackControlsState extends State<PackControls> {
 
   Future<void> _remove(AppState state, MissionPack pack) async {
     final restores = state.missions.bundledIds.contains(pack.id);
+    final l = L.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => Dialog(
@@ -141,18 +142,18 @@ class _PackControlsState extends State<PackControls> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('REMOVE ${pack.title.toUpperCase()}', style: CyType.display(size: 16, color: Cy.red)),
+              Text(l.packRemoveTitle(pack.title.toUpperCase()), style: CyType.display(size: 16, color: Cy.red)),
               const SizedBox(height: 10),
               Text(
                 [
-                  'Your progress through it is kept: import it again and you pick up where you were.',
-                  if (restores) 'The version that came with the app takes its place.',
+                  l.packRemoveKeepsProgress,
+                  if (restores) l.packRemoveRestores,
                 ].join(' '),
                 style: CyType.body(size: 14, color: Cy.ink, height: 1.4),
               ),
               const SizedBox(height: 18),
               CyberButton(
-                label: 'Remove',
+                label: l.remove,
                 icon: Icons.delete_outline,
                 style: CyberButtonStyle.danger,
                 dense: true,
@@ -160,7 +161,7 @@ class _PackControlsState extends State<PackControls> {
               ),
               const SizedBox(height: 10),
               CyberButton(
-                label: 'Cancel',
+                label: l.cancel,
                 style: CyberButtonStyle.ghost,
                 dense: true,
                 onPressed: () => Navigator.of(context).pop(false),
@@ -175,9 +176,9 @@ class _PackControlsState extends State<PackControls> {
     setState(() => _busy = true);
     try {
       await state.removeMissionPack(pack.id);
-      _say(restores ? 'Removed. ${pack.title} is back to the built-in version.' : 'Removed ${pack.title}.');
+      _say(restores ? l10n.packRemovedRestored(pack.title) : l10n.packRemoved(pack.title));
     } on Object catch (e) {
-      _say('Could not remove the pack: $e', bad: true);
+      _say(l10n.packRemoveFailed('$e'), bad: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

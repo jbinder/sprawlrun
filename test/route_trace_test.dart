@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
 import 'package:sprawl_run/widgets/route_trace.dart';
@@ -18,6 +19,7 @@ void main() {
     bool disableAnimations = false,
   }) => tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: L.localizationsDelegates,
       theme: buildCyberTheme(),
       home: MediaQuery(
         data: MediaQueryData(disableAnimations: disableAnimations),

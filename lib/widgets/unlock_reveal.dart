@@ -11,6 +11,7 @@ import '../theme/season.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
+import '../l10n/l10n.dart';
 
 /// One thing a run earned, ready to be shown.
 ///
@@ -30,14 +31,14 @@ class Unlock {
   });
 
   factory Unlock.achievement(AchievementDef def) => Unlock(
-    kicker: 'ACHIEVEMENT UNLOCKED',
+    kicker: l10n.revealAchievementKicker,
     title: def.title,
     body: def.description,
     // STREET is drawn in dim ink on the wall, where it has to recede behind the
     // rarer tiers. A reveal in grey would read as nothing happening.
     accent: def.tier == AchTier.street ? Cy.green : def.tier.color,
     icon: def.category.icon,
-    stamp: 'UNLOCKED',
+    stamp: l10n.revealAchievementStamp,
     tag: def.tier.label,
     // The number *is* the achievement; it gets the biggest type on screen.
     readout: def.format(def.target).toUpperCase(),
@@ -50,23 +51,23 @@ class Unlock {
   );
 
   factory Unlock.codex(CodexEntry entry) => Unlock(
-    kicker: 'CODEX ENTRY RECOVERED',
+    kicker: l10n.revealCodexKicker,
     title: entry.title,
     body: entry.body,
     accent: Cy.cyan,
     icon: Icons.memory_outlined,
-    stamp: 'DECRYPTED',
+    stamp: l10n.revealCodexStamp,
     tag: entry.category,
     intensity: 2,
   );
 
   factory Unlock.mission(String codename) => Unlock(
-    kicker: 'NEW OPERATION',
+    kicker: l10n.revealMissionKicker,
     title: codename,
-    body: 'Briefing available. Your handler is waiting.',
+    body: l10n.revealMissionBody,
     accent: Cy.magenta,
     icon: Icons.hexagon_outlined,
-    stamp: 'OPENED',
+    stamp: l10n.revealMissionStamp,
     intensity: 3,
   );
 
@@ -300,9 +301,9 @@ class _UnlockRevealState extends State<UnlockReveal> with TickerProviderStateMix
                       _Progress(count: widget.unlocks.length, index: _index, accent: accent),
                       const SizedBox(height: 14),
                       if (_last)
-                        CyberButton(label: 'Continue', icon: Icons.arrow_forward_rounded, onPressed: _advance)
+                        CyberButton(label: L.of(context).continueAction, icon: Icons.arrow_forward_rounded, onPressed: _advance)
                       else
-                        Text('TAP TO CONTINUE', style: CyType.label(size: 10, color: Cy.ghost)),
+                        Text(L.of(context).tapToContinue, style: CyType.label(size: 10, color: Cy.ghost)),
                     ],
                   ),
                 ),

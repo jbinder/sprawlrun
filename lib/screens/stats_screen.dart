@@ -16,6 +16,7 @@ import '../widgets/run_row.dart';
 import 'history_screen.dart';
 import 'period_detail_screen.dart';
 import '../util/clock.dart';
+import '../l10n/l10n.dart';
 
 /// Week, month, lifetime, and the run log.
 ///
@@ -31,11 +32,9 @@ class StatsScreen extends StatelessWidget {
     final units = state.profile.units;
 
     if (state.runLog.isEmpty) {
-      return const EmptyState(
-        title: 'No telemetry yet',
-        body:
-            'Run one operation and this fills up: distance, time, calories and cleared missions '
-            'for this week and this month, and a history you can page back through.',
+      return EmptyState(
+        title: L.of(context).statsEmptyTitle,
+        body: L.of(context).statsEmptyBody,
         icon: Icons.query_stats_outlined,
       );
     }
@@ -48,17 +47,17 @@ class StatsScreen extends StatelessWidget {
         _PeriodPager(unit: _PeriodUnit.month, accent: Cy.magenta),
         const SizedBox(height: 22),
 
-        SectionHeader('HISTORY', accent: Cy.green),
+        SectionHeader(L.of(context).historyTitle, accent: Cy.green),
         const _HistoryTeaser(),
         const SizedBox(height: 22),
 
-        SectionHeader('LIFETIME', accent: Cy.amber),
+        SectionHeader(L.of(context).sectionLifetime, accent: Cy.amber),
         _LifetimeCard(stats: state.lifetime, units: units),
         const SizedBox(height: 22),
 
         SectionHeader(
-          'RUN LOG',
-          trailing: Text('${state.runLog.length} entries', style: CyType.mono(size: 10, color: Cy.ghost)),
+          L.of(context).sectionRunLog,
+          trailing: Text(L.of(context).entryCount(state.runLog.length), style: CyType.mono(size: 10, color: Cy.ghost)),
         ),
         _RunLog(runs: state.runLog, units: units),
       ],
@@ -150,7 +149,7 @@ class _MonthGroup extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  '${runs.length} run${runs.length == 1 ? '' : 's'} · ${Fmt.distanceWithUnit(meters, units)}',
+                  '${L.of(context).runCount(runs.length)} · ${Fmt.distanceWithUnit(meters, units)}',
                   textAlign: TextAlign.end,
                   overflow: TextOverflow.ellipsis,
                   style: CyType.mono(size: 10, color: Cy.ghost),
@@ -216,9 +215,9 @@ class _PeriodPagerState extends State<_PeriodPager> {
     final canGoOlder = start.isAfter(oldest);
 
     final label = switch (_back) {
-      0 => _isWeek ? 'THIS WEEK' : 'THIS MONTH',
-      1 => _isWeek ? 'LAST WEEK' : 'LAST MONTH',
-      _ => '$_back ${_isWeek ? 'WEEKS' : 'MONTHS'} AGO',
+      0 => _isWeek ? L.of(context).thisWeek : L.of(context).thisMonth,
+      1 => _isWeek ? L.of(context).lastWeek : L.of(context).lastMonth,
+      _ => _isWeek ? L.of(context).weeksAgo(_back) : L.of(context).monthsAgo(_back),
     };
     final subtitle = _isWeek ? Fmt.dateRange(start, StatsService.addDays(end, -1)) : Fmt.monthYear(start);
     final stats = StatsService.period(state.runLog, label: label, from: start, to: end);
@@ -273,13 +272,13 @@ class _HistoryTeaser extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'LAST $_weeks WEEKS',
+                  L.of(context).lastWeeks(_weeks),
                   overflow: TextOverflow.ellipsis,
                   style: CyType.label(size: 11, color: Cy.green),
                 ),
               ),
               const SizedBox(width: 8),
-              Text('$activeDays ACTIVE DAYS', style: CyType.mono(size: 10, color: Cy.ghost)),
+              Text(L.of(context).activeDays(activeDays), style: CyType.mono(size: 10, color: Cy.ghost)),
             ],
           ),
           const SizedBox(height: 14),
@@ -287,7 +286,7 @@ class _HistoryTeaser extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Text('FULL HISTORY', style: CyType.mono(size: 10, color: Cy.inkDim, letterSpacing: 1.4)),
+              Text(L.of(context).fullHistory, style: CyType.mono(size: 10, color: Cy.inkDim, letterSpacing: 1.4)),
               const SizedBox(width: 4),
               Icon(Icons.chevron_right, size: 14, color: Cy.inkDim),
             ],
@@ -313,7 +312,7 @@ class _LifetimeCard extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Total distance',
+                  label: L.of(context).statTotalDistance,
                   value: Fmt.distance(stats.totalDistanceMeters, units),
                   unit: Fmt.distanceUnit(units),
                   accent: Cy.cyan,
@@ -321,7 +320,7 @@ class _LifetimeCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: StatTile(label: 'Total time', value: Fmt.shortDuration(stats.totalSeconds), size: 24),
+                child: StatTile(label: L.of(context).statTotalTime, value: Fmt.shortDuration(stats.totalSeconds), size: 24),
               ),
             ],
           ),
@@ -329,14 +328,14 @@ class _LifetimeCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: StatTile(label: 'Runs', value: '${stats.totalRuns}', size: 20),
+                child: StatTile(label: L.of(context).statRuns, value: '${stats.totalRuns}', size: 20),
               ),
               Expanded(
-                child: StatTile(label: 'Missions', value: '${stats.missionsCompleted}', accent: Cy.green, size: 20),
+                child: StatTile(label: L.of(context).statMissions, value: '${stats.missionsCompleted}', accent: Cy.green, size: 20),
               ),
               Expanded(
                 child: StatTile(
-                  label: 'Evaded',
+                  label: L.of(context).statEvaded,
                   value: '${stats.chasesEvaded}/${stats.chasesTotal}',
                   accent: Cy.magenta,
                   size: 20,
@@ -349,7 +348,7 @@ class _LifetimeCard extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Longest run',
+                  label: L.of(context).statLongestRun,
                   value: Fmt.distance(stats.longestRunMeters, units),
                   unit: Fmt.distanceUnit(units),
                   size: 20,
@@ -357,14 +356,14 @@ class _LifetimeCard extends StatelessWidget {
               ),
               Expanded(
                 child: StatTile(
-                  label: 'Best pace',
+                  label: L.of(context).statBestPace,
                   value: Fmt.pace(stats.bestPaceSecondsPerKm, units),
                   unit: Fmt.paceUnit(units),
                   size: 20,
                 ),
               ),
               Expanded(
-                child: StatTile(label: 'Calories', value: Fmt.grouped(stats.totalCalories), accent: Cy.amber, size: 20),
+                child: StatTile(label: L.of(context).statCalories, value: Fmt.grouped(stats.totalCalories), accent: Cy.amber, size: 20),
               ),
             ],
           ),
@@ -377,13 +376,13 @@ class _LifetimeCard extends StatelessWidget {
               const SizedBox(width: 7),
               Expanded(
                 child: Text(
-                  'BEST STREAK ${stats.longestStreakWeeks}W',
+                  L.of(context).bestStreak(stats.longestStreakWeeks),
                   overflow: TextOverflow.ellipsis,
                   style: CyType.mono(size: 11, color: Cy.ghost),
                 ),
               ),
               const SizedBox(width: 8),
-              Text('${stats.distinctDays} ACTIVE DAYS', style: CyType.mono(size: 11, color: Cy.ghost)),
+              Text(L.of(context).activeDays(stats.distinctDays), style: CyType.mono(size: 11, color: Cy.ghost)),
             ],
           ),
         ],

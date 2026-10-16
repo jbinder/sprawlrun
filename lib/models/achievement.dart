@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/cyber_palette.dart';
 import 'stats.dart';
 
@@ -8,10 +9,10 @@ enum AchTier { street, chrome, ice, legend }
 
 extension AchTierStyle on AchTier {
   String get label => switch (this) {
-    AchTier.street => 'STREET',
-    AchTier.chrome => 'CHROME',
-    AchTier.ice => 'ICE',
-    AchTier.legend => 'LEGEND',
+    AchTier.street => l10n.tierStreet,
+    AchTier.chrome => l10n.tierChrome,
+    AchTier.ice => l10n.tierIce,
+    AchTier.legend => l10n.tierLegend,
   };
 
   Color get color => switch (this) {
@@ -26,13 +27,13 @@ enum AchCategory { distance, endurance, missions, pursuit, discipline, anomaly, 
 
 extension AchCategoryLabel on AchCategory {
   String get label => switch (this) {
-    AchCategory.distance => 'DISTANCE',
-    AchCategory.endurance => 'ENDURANCE',
-    AchCategory.missions => 'OPERATIONS',
-    AchCategory.pursuit => 'PURSUIT',
-    AchCategory.discipline => 'DISCIPLINE',
-    AchCategory.anomaly => 'ANOMALY',
-    AchCategory.seasonal => 'SEASONAL',
+    AchCategory.distance => l10n.achCategoryDistance,
+    AchCategory.endurance => l10n.achCategoryEndurance,
+    AchCategory.missions => l10n.achCategoryOperations,
+    AchCategory.pursuit => l10n.achCategoryPursuit,
+    AchCategory.discipline => l10n.achCategoryDiscipline,
+    AchCategory.anomaly => l10n.achCategoryAnomaly,
+    AchCategory.seasonal => l10n.achCategorySeasonal,
   };
 
   IconData get icon => switch (this) {
@@ -52,8 +53,6 @@ extension AchCategoryLabel on AchCategory {
 class AchievementDef {
   const AchievementDef({
     required this.id,
-    required this.title,
-    required this.description,
     required this.category,
     required this.tier,
     required this.target,
@@ -62,8 +61,10 @@ class AchievementDef {
   });
 
   final String id;
-  final String title;
-  final String description;
+
+  /// In the language on screen; the English is in `app_en.arb`, keyed by [id].
+  String get title => achievementTitle(l10n, id);
+  String get description => achievementDescription(l10n, id);
   final AchCategory category;
   final AchTier tier;
   final double target;
@@ -103,8 +104,6 @@ const List<AchievementDef> kAchievements = [
   // ---- Distance -----------------------------------------------------------
   AchievementDef(
     id: 'dist_5k',
-    title: 'First Kilometres',
-    description: 'Cover 5 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.street,
     target: 5000,
@@ -113,8 +112,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_25k',
-    title: 'Ward Walker',
-    description: 'Cover 25 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.street,
     target: 25000,
@@ -123,8 +120,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_50k',
-    title: 'Sector Sweep',
-    description: 'Cover 50 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.chrome,
     target: 50000,
@@ -133,8 +128,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_100k',
-    title: 'Sprawl Native',
-    description: 'Cover 100 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.chrome,
     target: 100000,
@@ -143,8 +136,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_150k',
-    title: 'Ring Road',
-    description: 'Cover 150 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.chrome,
     target: 150000,
@@ -153,8 +144,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_250k',
-    title: 'Arterial',
-    description: 'Cover 250 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.ice,
     target: 250000,
@@ -163,8 +152,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_500k',
-    title: 'BAMA Corridor',
-    description: 'Cover 500 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.ice,
     target: 500000,
@@ -173,8 +160,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dist_1000k',
-    title: 'Orbital Distance',
-    description: 'Cover 1000 km across all runs.',
     category: AchCategory.distance,
     tier: AchTier.legend,
     target: 1000000,
@@ -185,8 +170,6 @@ const List<AchievementDef> kAchievements = [
   // ---- Endurance ----------------------------------------------------------
   AchievementDef(
     id: 'time_1h',
-    title: 'Clocked In',
-    description: 'One hour of total running time.',
     category: AchCategory.endurance,
     tier: AchTier.street,
     target: 3600,
@@ -195,8 +178,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'time_5h',
-    title: 'Five Hours In',
-    description: 'Run for 5 hours in total.',
     category: AchCategory.endurance,
     tier: AchTier.street,
     target: 18000,
@@ -205,8 +186,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'time_10h',
-    title: 'Ten Hours Deep',
-    description: 'Ten hours of total running time.',
     category: AchCategory.endurance,
     tier: AchTier.chrome,
     target: 36000,
@@ -215,8 +194,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'time_25h',
-    title: 'Wetware Tuned',
-    description: 'Twenty-five hours of total running time.',
     category: AchCategory.endurance,
     tier: AchTier.chrome,
     target: 90000,
@@ -225,8 +202,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'time_50h',
-    title: 'Overclocked',
-    description: 'Fifty hours of total running time.',
     category: AchCategory.endurance,
     tier: AchTier.ice,
     target: 180000,
@@ -235,8 +210,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'time_100h',
-    title: 'Ghost In The Legs',
-    description: 'One hundred hours of total running time.',
     category: AchCategory.endurance,
     tier: AchTier.legend,
     target: 360000,
@@ -245,8 +218,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_5k',
-    title: 'Five Clean',
-    description: 'Run 5 km in a single session.',
     category: AchCategory.endurance,
     tier: AchTier.street,
     target: 5000,
@@ -255,8 +226,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_10k',
-    title: 'Ten Clean',
-    description: 'Run 10 km in a single session.',
     category: AchCategory.endurance,
     tier: AchTier.chrome,
     target: 10000,
@@ -265,8 +234,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_15k',
-    title: 'Fifteen Clean',
-    description: 'Run 15 km in a single run.',
     category: AchCategory.distance,
     tier: AchTier.ice,
     target: 15000,
@@ -275,8 +242,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_half',
-    title: 'Long Haul',
-    description: 'Run 21.1 km in a single session.',
     category: AchCategory.endurance,
     tier: AchTier.ice,
     target: 21100,
@@ -285,8 +250,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_30m',
-    title: 'Half Hour Out',
-    description: 'Keep moving for thirty minutes in a single run.',
     category: AchCategory.endurance,
     tier: AchTier.street,
     target: 1800,
@@ -295,8 +258,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_45m',
-    title: 'Three Quarters',
-    description: 'Keep moving for forty-five minutes in a single run.',
     category: AchCategory.endurance,
     tier: AchTier.street,
     target: 2700,
@@ -305,8 +266,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_60m',
-    title: 'The Long Hour',
-    description: 'Keep moving for 60 minutes in one session.',
     category: AchCategory.endurance,
     tier: AchTier.chrome,
     target: 3600,
@@ -315,8 +274,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_90m',
-    title: 'No Off Switch',
-    description: 'Keep moving for 90 minutes in one session.',
     category: AchCategory.endurance,
     tier: AchTier.ice,
     target: 5400,
@@ -325,8 +282,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'single_120m',
-    title: 'Two Hours Under',
-    description: 'Keep moving for two hours in a single run.',
     category: AchCategory.endurance,
     tier: AchTier.ice,
     target: 7200,
@@ -337,8 +292,6 @@ const List<AchievementDef> kAchievements = [
   // ---- Operations ---------------------------------------------------------
   AchievementDef(
     id: 'mission_1',
-    title: 'Made Contact',
-    description: 'Complete your first mission.',
     category: AchCategory.missions,
     tier: AchTier.street,
     target: 1,
@@ -347,8 +300,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'mission_3',
-    title: 'On The Payroll',
-    description: 'Complete three missions.',
     category: AchCategory.missions,
     tier: AchTier.street,
     target: 3,
@@ -357,8 +308,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'mission_5',
-    title: 'Halfway To Freeside',
-    description: 'Complete five missions.',
     category: AchCategory.missions,
     tier: AchTier.chrome,
     target: 5,
@@ -367,8 +316,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'mission_10',
-    title: 'Kuang Complete',
-    description: 'Complete all ten missions of SPRAWL PRIME.',
     category: AchCategory.missions,
     tier: AchTier.legend,
     target: 10,
@@ -377,8 +324,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'nt_1',
-    title: 'First Tide',
-    description: 'Complete your first NULL TIDE operation.',
     category: AchCategory.missions,
     tier: AchTier.street,
     target: 1,
@@ -387,8 +332,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'nt_5',
-    title: 'Half Drowned',
-    description: 'Complete five NULL TIDE operations.',
     category: AchCategory.missions,
     tier: AchTier.chrome,
     target: 5,
@@ -397,8 +340,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'nt_10',
-    title: 'Tide Turned',
-    description: 'Complete all ten NULL TIDE operations.',
     category: AchCategory.missions,
     tier: AchTier.legend,
     target: 10,
@@ -407,8 +348,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'mission_20',
-    title: 'Two Campaigns Deep',
-    description: 'Complete twenty different missions, across any packs.',
     category: AchCategory.missions,
     tier: AchTier.ice,
     target: 20,
@@ -417,8 +356,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'beats_100',
-    title: 'Signal Discipline',
-    description: 'Hear 100 story transmissions.',
     category: AchCategory.missions,
     tier: AchTier.chrome,
     target: 100,
@@ -427,8 +364,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'perfect_1',
-    title: 'Untouched',
-    description: 'Finish a mission without being caught once.',
     category: AchCategory.missions,
     tier: AchTier.chrome,
     target: 1,
@@ -437,8 +372,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'perfect_5',
-    title: 'Never Was There',
-    description: 'Finish five missions without being caught once.',
     category: AchCategory.missions,
     tier: AchTier.ice,
     target: 5,
@@ -449,8 +382,6 @@ const List<AchievementDef> kAchievements = [
   // ---- Pursuit ------------------------------------------------------------
   AchievementDef(
     id: 'chase_5',
-    title: 'Light Feet',
-    description: 'Escape 5 pursuits.',
     category: AchCategory.pursuit,
     tier: AchTier.street,
     target: 5,
@@ -459,8 +390,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'chase_25',
-    title: 'Hard To Tag',
-    description: 'Escape 25 pursuits.',
     category: AchCategory.pursuit,
     tier: AchTier.chrome,
     target: 25,
@@ -469,8 +398,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'chase_100',
-    title: 'Unscannable',
-    description: 'Escape 100 pursuits.',
     category: AchCategory.pursuit,
     tier: AchTier.ice,
     target: 100,
@@ -479,8 +406,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'pace_600',
-    title: 'Moving With Purpose',
-    description: 'Average under 6:00 / km over a run of 3 km or more.',
     category: AchCategory.pursuit,
     tier: AchTier.street,
     target: 1,
@@ -489,8 +414,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'pace_530',
-    title: 'Razor Quick',
-    description: 'Average under 5:30 / km over a run of 3 km or more.',
     category: AchCategory.pursuit,
     tier: AchTier.chrome,
     target: 1,
@@ -499,8 +422,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'pace_500',
-    title: 'Panther Modern',
-    description: 'Average under 5:00 / km over a run of 3 km or more.',
     category: AchCategory.pursuit,
     tier: AchTier.ice,
     target: 1,
@@ -509,8 +430,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'pace_430',
-    title: 'Simstim Speed',
-    description: 'Average under 4:30 / km over a run of 3 km or more.',
     category: AchCategory.pursuit,
     tier: AchTier.legend,
     target: 1,
@@ -524,8 +443,6 @@ const List<AchievementDef> kAchievements = [
   // be two months with nothing in it.
   AchievementDef(
     id: 'streak_1',
-    title: 'On The Board',
-    description: 'Hit your weekly target for the first time.',
     category: AchCategory.discipline,
     tier: AchTier.street,
     target: 1,
@@ -534,8 +451,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_2',
-    title: 'Two Weeks Standing',
-    description: 'Hit your weekly target two weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.street,
     target: 2,
@@ -544,8 +459,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_3',
-    title: 'Not A Fluke',
-    description: 'Hit your weekly target three weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.street,
     target: 3,
@@ -554,8 +467,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_4',
-    title: 'A Month Of It',
-    description: 'Hit your weekly target four weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.street,
     target: 4,
@@ -564,8 +475,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_6',
-    title: 'Retained',
-    description: 'Hit your weekly target six weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.chrome,
     target: 6,
@@ -574,8 +483,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_8',
-    title: 'Standing Order',
-    description: 'Hit your weekly target eight weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.chrome,
     target: 8,
@@ -584,8 +491,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_12',
-    title: 'Quarterly Contract',
-    description: 'Hit your weekly target twelve weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.chrome,
     target: 12,
@@ -594,8 +499,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_26',
-    title: 'Half A Year Wired',
-    description: 'Hit your weekly target twenty-six weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.ice,
     target: 26,
@@ -604,8 +507,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'streak_52',
-    title: 'Full Rotation',
-    description: 'Hit your weekly target fifty-two weeks running.',
     category: AchCategory.discipline,
     tier: AchTier.legend,
     target: 52,
@@ -614,8 +515,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'runs_10',
-    title: 'Regular',
-    description: 'Log 10 runs.',
     category: AchCategory.discipline,
     tier: AchTier.street,
     target: 10,
@@ -624,8 +523,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'runs_50',
-    title: 'Known Quantity',
-    description: 'Log 50 runs.',
     category: AchCategory.discipline,
     tier: AchTier.chrome,
     target: 50,
@@ -634,8 +531,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'runs_100',
-    title: 'Fixture',
-    description: 'Log 100 runs.',
     category: AchCategory.discipline,
     tier: AchTier.ice,
     target: 100,
@@ -644,8 +539,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'runs_200',
-    title: 'Institution',
-    description: 'Log 200 runs.',
     category: AchCategory.discipline,
     tier: AchTier.legend,
     target: 200,
@@ -654,8 +547,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'days_30',
-    title: 'Thirty Separate Nights',
-    description: 'Run on 30 different days.',
     category: AchCategory.discipline,
     tier: AchTier.chrome,
     target: 30,
@@ -664,8 +555,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'days_100',
-    title: 'A Hundred Separate Nights',
-    description: 'Run on 100 different days.',
     category: AchCategory.discipline,
     tier: AchTier.ice,
     target: 100,
@@ -676,8 +565,6 @@ const List<AchievementDef> kAchievements = [
   // ---- Anomaly ------------------------------------------------------------
   AchievementDef(
     id: 'night_5',
-    title: 'Nocturne',
-    description: 'Start five runs between 22:00 and 05:00.',
     category: AchCategory.anomaly,
     tier: AchTier.street,
     target: 5,
@@ -686,8 +573,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'night_25',
-    title: 'The City Never Sleeps',
-    description: 'Start twenty-five runs between 22:00 and 05:00.',
     category: AchCategory.anomaly,
     tier: AchTier.ice,
     target: 25,
@@ -696,8 +581,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'dawn_5',
-    title: 'Grey Hours',
-    description: 'Start five runs between 04:00 and 07:00.',
     category: AchCategory.anomaly,
     tier: AchTier.street,
     target: 5,
@@ -706,8 +589,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'kcal_10k',
-    title: 'Metabolic Debt',
-    description: 'Burn 10,000 kcal.',
     category: AchCategory.anomaly,
     tier: AchTier.chrome,
     target: 10000,
@@ -716,8 +597,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'kcal_50k',
-    title: 'Furnace',
-    description: 'Burn 50,000 kcal.',
     category: AchCategory.anomaly,
     tier: AchTier.legend,
     target: 50000,
@@ -726,8 +605,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'week_15k',
-    title: 'Solid Week',
-    description: 'Cover 15 km inside a single week.',
     category: AchCategory.anomaly,
     tier: AchTier.chrome,
     target: 15000,
@@ -736,8 +613,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'week_30k',
-    title: 'Heavy Week',
-    description: 'Cover 30 km inside a single week.',
     category: AchCategory.anomaly,
     tier: AchTier.ice,
     target: 30000,
@@ -746,8 +621,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'week_50k',
-    title: 'Monster Week',
-    description: 'Cover 50 km inside a single week.',
     category: AchCategory.anomaly,
     tier: AchTier.legend,
     target: 50000,
@@ -760,8 +633,6 @@ const List<AchievementDef> kAchievements = [
   // to come back when the season does.
   AchievementDef(
     id: 'sh_1',
-    title: 'Wake',
-    description: 'Complete your first SAMHAIN PROTOCOL operation.',
     category: AchCategory.seasonal,
     tier: AchTier.street,
     target: 1,
@@ -770,8 +641,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'sh_4',
-    title: 'Laid To Rest',
-    description: 'Complete all four SAMHAIN PROTOCOL operations.',
     category: AchCategory.seasonal,
     tier: AchTier.ice,
     target: 4,
@@ -780,8 +649,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'hallows_eve',
-    title: "All Hallows' Run",
-    description: 'Run on the 31st of October.',
     category: AchCategory.seasonal,
     tier: AchTier.chrome,
     target: 1,
@@ -790,8 +657,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'samhain_5',
-    title: 'Restless',
-    description: 'Run five times between 10 October and 2 November.',
     category: AchCategory.seasonal,
     tier: AchTier.chrome,
     target: 5,
@@ -800,8 +665,6 @@ const List<AchievementDef> kAchievements = [
   ),
   AchievementDef(
     id: 'samhain_years_2',
-    title: 'Returning Spirit',
-    description: 'Run between 10 October and 2 November in two different years.',
     category: AchCategory.seasonal,
     tier: AchTier.legend,
     target: 2,
@@ -847,3 +710,151 @@ double _paceUnder600(LifetimeStats s) => _paceUnder(s, 360);
 double _paceUnder530(LifetimeStats s) => _paceUnder(s, 330);
 double _paceUnder500(LifetimeStats s) => _paceUnder(s, 300);
 double _paceUnder430(LifetimeStats s) => _paceUnder(s, 270);
+
+/// An achievement's name by [id], in the language of [l].
+String achievementTitle(L l, String id) => switch (id) {
+  'dist_5k' => l.achDist5kTitle,
+  'dist_25k' => l.achDist25kTitle,
+  'dist_50k' => l.achDist50kTitle,
+  'dist_100k' => l.achDist100kTitle,
+  'dist_150k' => l.achDist150kTitle,
+  'dist_250k' => l.achDist250kTitle,
+  'dist_500k' => l.achDist500kTitle,
+  'dist_1000k' => l.achDist1000kTitle,
+  'time_1h' => l.achTime1hTitle,
+  'time_5h' => l.achTime5hTitle,
+  'time_10h' => l.achTime10hTitle,
+  'time_25h' => l.achTime25hTitle,
+  'time_50h' => l.achTime50hTitle,
+  'time_100h' => l.achTime100hTitle,
+  'single_5k' => l.achSingle5kTitle,
+  'single_10k' => l.achSingle10kTitle,
+  'single_15k' => l.achSingle15kTitle,
+  'single_half' => l.achSingleHalfTitle,
+  'single_30m' => l.achSingle30mTitle,
+  'single_45m' => l.achSingle45mTitle,
+  'single_60m' => l.achSingle60mTitle,
+  'single_90m' => l.achSingle90mTitle,
+  'single_120m' => l.achSingle120mTitle,
+  'mission_1' => l.achMission1Title,
+  'mission_3' => l.achMission3Title,
+  'mission_5' => l.achMission5Title,
+  'mission_10' => l.achMission10Title,
+  'nt_1' => l.achNt1Title,
+  'nt_5' => l.achNt5Title,
+  'nt_10' => l.achNt10Title,
+  'mission_20' => l.achMission20Title,
+  'beats_100' => l.achBeats100Title,
+  'perfect_1' => l.achPerfect1Title,
+  'perfect_5' => l.achPerfect5Title,
+  'chase_5' => l.achChase5Title,
+  'chase_25' => l.achChase25Title,
+  'chase_100' => l.achChase100Title,
+  'pace_600' => l.achPace600Title,
+  'pace_530' => l.achPace530Title,
+  'pace_500' => l.achPace500Title,
+  'pace_430' => l.achPace430Title,
+  'streak_1' => l.achStreak1Title,
+  'streak_2' => l.achStreak2Title,
+  'streak_3' => l.achStreak3Title,
+  'streak_4' => l.achStreak4Title,
+  'streak_6' => l.achStreak6Title,
+  'streak_8' => l.achStreak8Title,
+  'streak_12' => l.achStreak12Title,
+  'streak_26' => l.achStreak26Title,
+  'streak_52' => l.achStreak52Title,
+  'runs_10' => l.achRuns10Title,
+  'runs_50' => l.achRuns50Title,
+  'runs_100' => l.achRuns100Title,
+  'runs_200' => l.achRuns200Title,
+  'days_30' => l.achDays30Title,
+  'days_100' => l.achDays100Title,
+  'night_5' => l.achNight5Title,
+  'night_25' => l.achNight25Title,
+  'dawn_5' => l.achDawn5Title,
+  'kcal_10k' => l.achKcal10kTitle,
+  'kcal_50k' => l.achKcal50kTitle,
+  'week_15k' => l.achWeek15kTitle,
+  'week_30k' => l.achWeek30kTitle,
+  'week_50k' => l.achWeek50kTitle,
+  'sh_1' => l.achSh1Title,
+  'sh_4' => l.achSh4Title,
+  'hallows_eve' => l.achHallowsEveTitle,
+  'samhain_5' => l.achSamhain5Title,
+  'samhain_years_2' => l.achSamhainYears2Title,
+  _ => id,
+};
+
+/// What an achievement asks for, by [id], in the language of [l].
+String achievementDescription(L l, String id) => switch (id) {
+  'dist_5k' => l.achDist5kDesc,
+  'dist_25k' => l.achDist25kDesc,
+  'dist_50k' => l.achDist50kDesc,
+  'dist_100k' => l.achDist100kDesc,
+  'dist_150k' => l.achDist150kDesc,
+  'dist_250k' => l.achDist250kDesc,
+  'dist_500k' => l.achDist500kDesc,
+  'dist_1000k' => l.achDist1000kDesc,
+  'time_1h' => l.achTime1hDesc,
+  'time_5h' => l.achTime5hDesc,
+  'time_10h' => l.achTime10hDesc,
+  'time_25h' => l.achTime25hDesc,
+  'time_50h' => l.achTime50hDesc,
+  'time_100h' => l.achTime100hDesc,
+  'single_5k' => l.achSingle5kDesc,
+  'single_10k' => l.achSingle10kDesc,
+  'single_15k' => l.achSingle15kDesc,
+  'single_half' => l.achSingleHalfDesc,
+  'single_30m' => l.achSingle30mDesc,
+  'single_45m' => l.achSingle45mDesc,
+  'single_60m' => l.achSingle60mDesc,
+  'single_90m' => l.achSingle90mDesc,
+  'single_120m' => l.achSingle120mDesc,
+  'mission_1' => l.achMission1Desc,
+  'mission_3' => l.achMission3Desc,
+  'mission_5' => l.achMission5Desc,
+  'mission_10' => l.achMission10Desc,
+  'nt_1' => l.achNt1Desc,
+  'nt_5' => l.achNt5Desc,
+  'nt_10' => l.achNt10Desc,
+  'mission_20' => l.achMission20Desc,
+  'beats_100' => l.achBeats100Desc,
+  'perfect_1' => l.achPerfect1Desc,
+  'perfect_5' => l.achPerfect5Desc,
+  'chase_5' => l.achChase5Desc,
+  'chase_25' => l.achChase25Desc,
+  'chase_100' => l.achChase100Desc,
+  'pace_600' => l.achPace600Desc,
+  'pace_530' => l.achPace530Desc,
+  'pace_500' => l.achPace500Desc,
+  'pace_430' => l.achPace430Desc,
+  'streak_1' => l.achStreak1Desc,
+  'streak_2' => l.achStreak2Desc,
+  'streak_3' => l.achStreak3Desc,
+  'streak_4' => l.achStreak4Desc,
+  'streak_6' => l.achStreak6Desc,
+  'streak_8' => l.achStreak8Desc,
+  'streak_12' => l.achStreak12Desc,
+  'streak_26' => l.achStreak26Desc,
+  'streak_52' => l.achStreak52Desc,
+  'runs_10' => l.achRuns10Desc,
+  'runs_50' => l.achRuns50Desc,
+  'runs_100' => l.achRuns100Desc,
+  'runs_200' => l.achRuns200Desc,
+  'days_30' => l.achDays30Desc,
+  'days_100' => l.achDays100Desc,
+  'night_5' => l.achNight5Desc,
+  'night_25' => l.achNight25Desc,
+  'dawn_5' => l.achDawn5Desc,
+  'kcal_10k' => l.achKcal10kDesc,
+  'kcal_50k' => l.achKcal50kDesc,
+  'week_15k' => l.achWeek15kDesc,
+  'week_30k' => l.achWeek30kDesc,
+  'week_50k' => l.achWeek50kDesc,
+  'sh_1' => l.achSh1Desc,
+  'sh_4' => l.achSh4Desc,
+  'hallows_eve' => l.achHallowsEveDesc,
+  'samhain_5' => l.achSamhain5Desc,
+  'samhain_years_2' => l.achSamhainYears2Desc,
+  _ => '',
+};

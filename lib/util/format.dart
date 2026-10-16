@@ -1,4 +1,5 @@
 import '../models/profile.dart';
+import '../l10n/l10n.dart';
 
 /// Display formatting. Every number the runner sees goes through here so units
 /// and rounding are consistent across the HUD, the summary and the stats.
@@ -64,55 +65,47 @@ abstract final class Fmt {
   static String weight(double kg, UnitSystem units) =>
       units == UnitSystem.imperial ? '${(kg * 2.20462).round()} lb' : '${kg.round()} kg';
 
-  static const List<String> _months = [
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', //
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
-  ];
+  static String _month(DateTime d) => l10n.monthShort('${d.month}');
 
-  static const List<String> _weekdays = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-
-  static String date(DateTime d) => '${d.day.toString().padLeft(2, '0')} ${_months[d.month - 1]}';
+  static String date(DateTime d) => '${d.day.toString().padLeft(2, '0')} ${_month(d)}';
 
   static String dateTime(DateTime d) =>
       '${date(d)} · ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
-  static String weekday(DateTime d) => _weekdays[d.weekday - 1];
+  static String weekday(DateTime d) => l10n.weekdayShort('${d.weekday}');
 
-  static String monthYear(DateTime d) => '${_months[d.month - 1]} ${d.year}';
+  static String monthYear(DateTime d) => '${_month(d)} ${d.year}';
 
   /// `15 – 21 SEP 2026`, or `29 SEP – 05 OCT 2026` when the span crosses a
   /// month. Both ends are inclusive.
   static String dateRange(DateTime from, DateTime to) {
     final year = to.year;
     if (from.year == to.year && from.month == to.month) {
-      return '${_two(from.day)} – ${_two(to.day)} ${_months[to.month - 1]} $year';
+      return '${_two(from.day)} – ${_two(to.day)} ${_month(to)} $year';
     }
     return '${date(from)} – ${date(to)} $year';
   }
 
   static String _two(int n) => n.toString().padLeft(2, '0');
 
-  static String weekdayInitial(DateTime d) => _weekdays[d.weekday - 1][0];
+  static String weekdayInitial(DateTime d) => l10n.weekdayInitial('${d.weekday}');
 
   /// `today`, `yesterday`, `12 days ago`, `3 months ago` — for the age of
   /// something the runner did, where the exact date matters less than whether it
   /// was recent.
   static String ago(Duration d) {
-    if (d.inDays >= 365) {
-      final years = d.inDays ~/ 365;
-      return years == 1 ? 'a year ago' : '$years years ago';
-    }
-    if (d.inDays >= 60) return '${d.inDays ~/ 30} months ago';
-    if (d.inDays >= 2) return '${d.inDays} days ago';
-    if (d.inDays == 1) return 'yesterday';
-    return 'today';
+    if (d.inDays >= 365) return l10n.agoYears(d.inDays ~/ 365);
+    if (d.inDays >= 60) return l10n.agoMonths(d.inDays ~/ 30);
+    if (d.inDays >= 2) return l10n.agoDays(d.inDays);
+    if (d.inDays == 1) return l10n.agoYesterday;
+    return l10n.agoToday;
   }
 
   /// `3d 04h` — used for "this week closes in".
   static String countdown(Duration d) {
-    if (d.isNegative) return '0h';
-    if (d.inDays > 0) return '${d.inDays}d ${(d.inHours % 24).toString().padLeft(2, '0')}h';
-    if (d.inHours > 0) return '${d.inHours}h ${(d.inMinutes % 60).toString().padLeft(2, '0')}m';
-    return '${d.inMinutes}m';
+    if (d.isNegative) return l10n.countdownHours('0');
+    if (d.inDays > 0) return l10n.countdownDaysHours('${d.inDays}', (d.inHours % 24).toString().padLeft(2, '0'));
+    if (d.inHours > 0) return l10n.countdownHoursMinutes('${d.inHours}', (d.inMinutes % 60).toString().padLeft(2, '0'));
+    return l10n.countdownMinutes('${d.inMinutes}');
   }
 }

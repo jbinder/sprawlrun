@@ -6,6 +6,7 @@ import '../models/run_record.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/season.dart';
 import '../theme/cyber_theme.dart';
+import '../l10n/l10n.dart';
 
 /// Draws the GPS trace as a neon filament on a grid.
 ///
@@ -95,7 +96,7 @@ class _RouteTraceState extends State<RouteTrace> with SingleTickerProviderStateM
         height: widget.height,
         alignment: Alignment.center,
         decoration: BoxDecoration(color: Cy.panel, border: Border.all(color: Cy.rule)),
-        child: Text('NO ROUTE DATA', style: CyType.label()),
+        child: Text(L.of(context).noRouteData, style: CyType.label()),
       );
     }
 
@@ -136,7 +137,7 @@ class _RouteTraceState extends State<RouteTrace> with SingleTickerProviderStateM
                       onPressed: _done ? _start : null,
                       icon: const Icon(Icons.restart_alt, size: 18),
                       color: Cy.inkDim,
-                      tooltip: 'Replay route',
+                      tooltip: L.of(context).replayRoute,
                       visualDensity: VisualDensity.compact,
                     ),
                   ),

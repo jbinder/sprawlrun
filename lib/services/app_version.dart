@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import '../l10n/l10n.dart';
 
 /// The installed build, as Android sees it.
 ///
@@ -15,7 +16,7 @@ class AppVersion {
   /// `versionCode`, e.g. `42`.
   final String build;
 
-  String get label => 'v$version · build $build';
+  String get label => l10n.versionLabel(version, build);
 
   /// Null when the platform cannot say — never a reason to fail a screen.
   static Future<AppVersion?> load() async {

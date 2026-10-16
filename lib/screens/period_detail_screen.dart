@@ -9,6 +9,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/panels.dart';
 import '../widgets/period_card.dart';
 import '../widgets/run_row.dart';
+import '../l10n/l10n.dart';
 
 /// One day, week or month in full: its totals and every run inside it.
 ///
@@ -65,16 +66,16 @@ class PeriodDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 22),
                     SectionHeader(
-                      'RUNS',
+                      L.of(context).sectionRuns,
                       trailing: Text(
-                        '${runs.length} entr${runs.length == 1 ? 'y' : 'ies'}',
+                        L.of(context).entryCount(runs.length),
                         style: CyType.mono(size: 10, color: Cy.ghost),
                       ),
                     ),
                     if (runs.isEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 6),
-                        child: Text('Nothing logged in this window.', style: CyType.body(size: 13, color: Cy.ghost)),
+                        child: Text(L.of(context).periodEmpty, style: CyType.body(size: 13, color: Cy.ghost)),
                       ),
                     for (final run in runs) ...[RunRow(run: run, units: units), const SizedBox(height: 8)],
                   ],

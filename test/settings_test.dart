@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
@@ -56,7 +57,7 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
   await tester.pumpWidget(
     MultiProvider(
       providers: [ChangeNotifierProvider.value(value: state)],
-      child: MaterialApp(theme: buildCyberTheme(), home: const SettingsScreen()),
+      child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: const SettingsScreen()),
     ),
   );
   await tester.pump(const Duration(milliseconds: 100));

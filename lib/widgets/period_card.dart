@@ -7,6 +7,7 @@ import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import 'panels.dart';
 import 'progress.dart';
+import '../l10n/l10n.dart';
 
 /// Totals for one window of time, with a per-day bar chart underneath.
 ///
@@ -37,7 +38,8 @@ class PeriodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final runs = Text('${stats.runs} run${stats.runs == 1 ? '' : 's'}', style: CyType.mono(size: 10, color: Cy.ghost));
+    final l = L.of(context);
+    final runs = Text(l.runCount(stats.runs), style: CyType.mono(size: 10, color: Cy.ghost));
 
     final card = NeonPanel(
       accent: Cy.rule,
@@ -57,8 +59,8 @@ class PeriodCard extends StatelessWidget {
                 ),
               ),
               if (pager != null) ...[
-                _Chevron(Icons.chevron_left, onPressed: pager!.onOlder, tooltip: 'Earlier'),
-                _Chevron(Icons.chevron_right, onPressed: pager!.onNewer, tooltip: 'Later'),
+                _Chevron(Icons.chevron_left, onPressed: pager!.onOlder, tooltip: l.earlier),
+                _Chevron(Icons.chevron_right, onPressed: pager!.onNewer, tooltip: l.later),
               ] else
                 runs,
             ],
@@ -89,7 +91,7 @@ class PeriodCard extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Distance',
+                  label: l.statDistance,
                   value: Fmt.distance(stats.distanceMeters, units),
                   unit: Fmt.distanceUnit(units),
                   accent: accent,
@@ -97,7 +99,7 @@ class PeriodCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: StatTile(label: 'Time', value: Fmt.shortDuration(stats.seconds), size: 24),
+                child: StatTile(label: l.statTime, value: Fmt.shortDuration(stats.seconds), size: 24),
               ),
             ],
           ),
@@ -106,7 +108,7 @@ class PeriodCard extends StatelessWidget {
             children: [
               Expanded(
                 child: StatTile(
-                  label: 'Calories',
+                  label: l.statCalories,
                   value: Fmt.grouped(stats.calories),
                   unit: 'kcal',
                   accent: Cy.amber,
@@ -114,11 +116,11 @@ class PeriodCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: StatTile(label: 'Missions', value: '${stats.missions}', accent: Cy.green, size: 20),
+                child: StatTile(label: l.statMissions, value: '${stats.missions}', accent: Cy.green, size: 20),
               ),
               Expanded(
                 child: StatTile(
-                  label: 'Avg pace',
+                  label: l.statAvgPace,
                   value: Fmt.pace(stats.paceSecondsPerKm, units),
                   unit: Fmt.paceUnit(units),
                   size: 20,

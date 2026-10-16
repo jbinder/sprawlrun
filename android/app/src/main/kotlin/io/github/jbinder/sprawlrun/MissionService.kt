@@ -62,9 +62,9 @@ class MissionService : Service() {
          * is also why there are no quiet hours.
          */
         private val PAUSE_REMINDERS = listOf(
-            15L to "You've gone quiet, runner. The clock's stopped — move, or call it in.",
-            30L to "Half an hour dark. Still out there? Pick it back up or close the run.",
-            60L to "An hour on hold. Last call from me — finish it or get moving.",
+            15L to R.string.paused_15,
+            30L to R.string.paused_30,
+            60L to R.string.paused_60,
         )
 
         private const val WAKE_LOCK_TAG = "sprawlrun:mission"
@@ -157,7 +157,7 @@ class MissionService : Service() {
     private val reminderToken = Any()
 
     /** Shown for the instant before the first tick arrives. */
-    private val defaultText get() = "Mission active — keep moving."
+    private val defaultText get() = getString(R.string.notice_default)
 
     private fun serviceType(tracking: Boolean): Int =
         if (tracking) {
@@ -251,15 +251,15 @@ class MissionService : Service() {
             // shrinker to strip (see CLAUDE.md).
             .addAction(
                 if (paused) {
-                    NotificationCompat.Action.Builder(0, "Resume", serviceIntent(ACTION_RESUME)).build()
+                    NotificationCompat.Action.Builder(0, getString(R.string.action_resume), serviceIntent(ACTION_RESUME)).build()
                 } else {
-                    NotificationCompat.Action.Builder(0, "Pause", serviceIntent(ACTION_PAUSE)).build()
+                    NotificationCompat.Action.Builder(0, getString(R.string.action_pause), serviceIntent(ACTION_PAUSE)).build()
                 }
             )
             // Past the goal it finishes at once (see buildStopIntent), so it
             // says so rather than offering to stop a run that is already won.
             .addAction(
-                NotificationCompat.Action.Builder(0, if (goalReached) "Complete" else "Stop", buildStopIntent()).build()
+                NotificationCompat.Action.Builder(0, getString(if (goalReached) R.string.action_complete else R.string.action_stop), buildStopIntent()).build()
             )
             .build()
     }
@@ -270,7 +270,7 @@ class MissionService : Service() {
         reminders.removeCallbacksAndMessages(reminderToken)
         for ((minutes, line) in PAUSE_REMINDERS) {
             reminders.postAtTime(
-                { postPauseReminder(minutes, line) },
+                { postPauseReminder(minutes, getString(line)) },
                 reminderToken,
                 SystemClock.uptimeMillis() + minutes * 60_000
             )
@@ -287,7 +287,7 @@ class MissionService : Service() {
     private fun postPauseReminder(minutes: Long, line: String) {
         if (!paused || !running) return
         val notification = NotificationCompat.Builder(this, PAUSED_CHANNEL_ID)
-            .setContentTitle("Run paused · $minutes min")
+            .setContentTitle(getString(R.string.paused_title, minutes))
             .setContentText(line)
             // Two lines at most, but collapsed it would still be cut.
             .setStyle(NotificationCompat.BigTextStyle().bigText(line))
@@ -297,9 +297,9 @@ class MissionService : Service() {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             // The same buttons, with the same labels, as the run's own notice.
-            .addAction(NotificationCompat.Action.Builder(0, "Resume", serviceIntent(ACTION_RESUME)).build())
+            .addAction(NotificationCompat.Action.Builder(0, getString(R.string.action_resume), serviceIntent(ACTION_RESUME)).build())
             .addAction(
-                NotificationCompat.Action.Builder(0, if (goalReached) "Complete" else "Stop", buildStopIntent()).build()
+                NotificationCompat.Action.Builder(0, getString(if (goalReached) R.string.action_complete else R.string.action_stop), buildStopIntent()).build()
             )
             .build()
         try {

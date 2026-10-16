@@ -12,6 +12,7 @@ import 'geo.dart';
 import 'location_service.dart';
 import 'split_readout.dart';
 import 'narrator.dart';
+import '../l10n/l10n.dart';
 
 enum RunPhase {
   idle,
@@ -682,7 +683,7 @@ class RunEngine extends ChangeNotifier {
           ...lines,
           StoryLine(
             speaker: 'SYSTEM',
-            text: 'Intel intercepted: ${entry.title}. Complete the operation to decrypt.',
+            text: l10n.spokenIntelIntercepted(entry.title),
             sfxBefore: 'unlock',
             pauseAfterMs: 120,
           ),

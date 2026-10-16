@@ -6,6 +6,7 @@ import '../models/signal_log.dart';
 import 'profile_repository.dart';
 import 'run_repository.dart';
 import 'signal_log_repository.dart';
+import '../l10n/l10n.dart';
 
 /// Everything the app knows about a runner, in one portable JSON document.
 ///
@@ -62,15 +63,15 @@ class BackupArchive {
     try {
       decoded = jsonDecode(source);
     } on FormatException {
-      throw const BackupFormatException('That file is not JSON.');
+      throw BackupFormatException(l10n.fileNotJson);
     }
     if (decoded is! Map || decoded['format'] != magic) {
-      throw const BackupFormatException('That is not a SPRAWL//RUN backup file.');
+      throw BackupFormatException(l10n.backupErrorNotABackup);
     }
     final version = (decoded['version'] as num?)?.toInt() ?? 0;
     if (version > currentVersion) {
       throw BackupFormatException(
-        'That backup was written by a newer version of the app (format $version). Update and try again.',
+        l10n.backupErrorNewer('$version'),
       );
     }
 
@@ -89,7 +90,7 @@ class BackupArchive {
     try {
       profile = Profile.fromJson(Map<String, dynamic>.from(decoded['profile'] as Map));
     } on Object {
-      throw const BackupFormatException('The backup is missing a readable profile.');
+      throw BackupFormatException(l10n.backupErrorNoProfile);
     }
 
     return BackupArchive(

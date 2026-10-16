@@ -7,6 +7,7 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../widgets/panels.dart';
 import '../widgets/progress.dart';
+import '../l10n/l10n.dart';
 
 /// World-building recovered by playing. Entries only appear once the beat that
 /// mentions them has actually been heard, so the codex is a record of what the
@@ -34,9 +35,9 @@ class _CodexScreenState extends State<CodexScreen> {
     _open ??= {if (active != null) active.id};
 
     if (state.unlockedCodex.isEmpty) {
-      return const EmptyState(
-        title: 'Nothing recovered yet',
-        body: 'Intel gets logged here as your handlers mention it. Run an operation and start listening.',
+      return EmptyState(
+        title: L.of(context).codexEmptyTitle,
+        body: L.of(context).codexEmptyBody,
         icon: Icons.menu_book_outlined,
       );
     }
@@ -115,7 +116,7 @@ class _PackSection extends StatelessWidget {
                     ),
                   ),
                   if (selected) ...[
-                    CyberTag('ACTIVE', color: Cy.cyan),
+                    CyberTag(L.of(context).activeTag, color: Cy.cyan),
                     const SizedBox(width: 8),
                   ],
                   Icon(open ? Icons.expand_less : Icons.expand_more, size: 18, color: Cy.ghost),
@@ -129,7 +130,7 @@ class _PackSection extends StatelessWidget {
                   Text('${entries.length}', style: CyType.readout(26, Cy.cyan)),
                   Text(' / ${all.length}', style: CyType.mono(size: 14, color: Cy.inkDim)),
                   const Spacer(),
-                  Text('ENTRIES RECOVERED', style: CyType.label(size: 10)),
+                  Text(L.of(context).codexEntriesRecovered, style: CyType.label(size: 10)),
                 ],
               ),
               const SizedBox(height: 10),
@@ -143,7 +144,7 @@ class _PackSection extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 4, bottom: 4),
               child: Text(
-                'Nothing recovered from this campaign yet.',
+                L.of(context).codexEmptyPack,
                 style: CyType.body(size: 14, color: Cy.ghost),
               ),
             ),

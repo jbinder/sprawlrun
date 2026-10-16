@@ -24,6 +24,7 @@ import '../services/signal_scheduler.dart';
 import '../services/stats_service.dart';
 import '../theme/season.dart';
 import '../util/clock.dart';
+import '../l10n/l10n.dart';
 
 /// The single source of truth the UI reads from.
 ///
@@ -599,6 +600,6 @@ class AppState extends ChangeNotifier {
   void _recompute() {
     lifetime = StatsService.lifetime(runLog, profile.streakTargets);
     streak = StatsService.streak(runLog, profile.streakTargets);
-    week = StatsService.lastDays(runLog, 7, label: 'LAST 7 DAYS');
+    week = StatsService.lastDays(runLog, 7, label: l10n.lastDays(7));
   }
 }

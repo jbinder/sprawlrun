@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Text the Android side shows itself: notification channels as they appear in
+     system settings, and the run's own notifications. Everything else is in
+     lib/l10n/app_en.arb. The three signal channels are named in both places,
+     because the Dart side passes their names too; keep the pairs identical. -->
+<resources>
+    <string name="channel_mission">Active mission</string>
+    <string name="channel_mission_description">Shown while a mission is tracking your route.</string>
+    <string name="channel_reminders">Reminders</string>
+    <string name="channel_reminders_description">Your handler, asking whether you are running today.</string>
+    <string name="channel_noise">Signal noise</string>
+    <string name="channel_noise_description">Traffic from the Sprawl. Silent.</string>
+    <string name="channel_debrief">Weekly debrief</string>
+    <string name="channel_debrief_description">How your week went, when it closes.</string>
+    <string name="channel_paused">Paused run</string>
+    <string name="channel_paused_description">A nudge when a run has been paused for a while.</string>
+
+    <!-- Shown for the instant before the run's first tick replaces it. -->
+    <string name="notice_default">Mission active — keep moving.</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_stop">Stop</string>
+    <string name="action_complete">Complete</string>
+
+    <!-- A run left paused, brought up after 15, 30 and 60 minutes, in the
+         handler's voice. -->
+    <string name="paused_title">Run paused · %1$d min</string>
+    <string name="paused_15">You\'ve gone quiet, runner. The clock\'s stopped — move, or call it in.</string>
+    <string name="paused_30">Half an hour dark. Still out there? Pick it back up or close the run.</string>
+    <string name="paused_60">An hour on hold. Last call from me — finish it or get moving.</string>
+</resources>

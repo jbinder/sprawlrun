@@ -13,6 +13,7 @@ import '../widgets/glitch_text.dart';
 import '../widgets/mission_widgets.dart';
 import '../widgets/panels.dart';
 import 'run_screen.dart';
+import '../l10n/l10n.dart';
 
 /// Pre-run screen: the story setup, then the only decision the runner has to
 /// make — how far or how long.
@@ -50,7 +51,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              OpsBar(mission: mission, label: 'BRIEFING'),
+              OpsBar(mission: mission, label: L.of(context).briefing),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(18, 4, 18, 24),
@@ -81,7 +82,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'BRIEFING',
+                              L.of(context).briefing,
                               style: CyType.label(size: 10, color: accent),
                             ),
                             const SizedBox(height: 10),
@@ -125,7 +126,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                         children: [
                           Expanded(
                             child: InfoCell(
-                              label: 'Transmissions',
+                              label: L.of(context).infoTransmissions,
                               value: '${mission.beats.length}',
                               icon: Icons.record_voice_over_outlined,
                             ),
@@ -133,7 +134,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: InfoCell(
-                              label: 'Pursuits',
+                              label: L.of(context).infoPursuits,
                               value: '${mission.chaseBeats.length}',
                               icon: Icons.radar,
                             ),
@@ -141,7 +142,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           const SizedBox(width: 10),
                           Expanded(
                             child: InfoCell(
-                              label: 'Suggested',
+                              label: L.of(context).infoSuggested,
                               value: mission.suggestedGoal.toString(),
                               icon: Icons.tune,
                             ),
@@ -151,7 +152,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       const SizedBox(height: 24),
                     ] else ...[
                       GlitchText(
-                        'FREE RUN',
+                        L.of(context).freeRun,
                         style: CyType.display(
                           size: 30,
                           color: Cy.ink,
@@ -160,8 +161,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'No story, no handler, no one chasing you. Distance and time still count '
-                        'toward your streak, your totals and the wall.',
+                        L.of(context).freeRunExplainer,
                         style: CyType.body(
                           size: 16,
                           color: Cy.inkDim,
@@ -178,7 +178,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       ),
                       const SizedBox(height: 18),
                     ],
-                    const SectionHeader('SET YOUR TARGET'),
+                    SectionHeader(L.of(context).setYourTarget),
                     _GoalPicker(
                       goal: _goal,
                       units: state.profile.units,
@@ -187,9 +187,8 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                     const SizedBox(height: 12),
                     Text(
                       mission == null
-                          ? 'Reach the target and the run is logged as a success.'
-                          : 'Reach the target and the operation is a success. Stop short and it counts as a failure — '
-                                'you can retry it as many times as you like. You can always keep running past the target.',
+                          ? L.of(context).targetExplainerFree
+                          : L.of(context).targetExplainerMission,
                       style: CyType.body(
                         size: 14,
                         color: Cy.ghost,
@@ -202,7 +201,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(18, 6, 18, 16),
                 child: CyberButton(
-                  label: mission == null ? 'Start run' : 'Begin operation',
+                  label: mission == null ? L.of(context).startRun : L.of(context).beginOperation,
                   icon: Icons.play_arrow_rounded,
                   onPressed: () async {
                     if (mission != null) {
@@ -299,7 +298,7 @@ class _GoalPicker extends StatelessWidget {
             children: [
               Expanded(
                 child: _ModeButton(
-                  label: 'TIME',
+                  label: L.of(context).goalTime,
                   icon: Icons.timer_outlined,
                   selected: goal.isTime,
                   onTap: () => onChanged(const RunGoal(GoalType.time, 1500)),
@@ -308,7 +307,7 @@ class _GoalPicker extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: _ModeButton(
-                  label: 'DISTANCE',
+                  label: L.of(context).goalDistance,
                   icon: Icons.route_outlined,
                   selected: goal.isDistance,
                   onTap: () => onChanged(

@@ -9,6 +9,7 @@ import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/data/signal_log_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/signal_log.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
@@ -163,7 +164,7 @@ void main() {
 
     await tester.pumpWidget(ChangeNotifierProvider.value(
       value: state,
-      child: const MaterialApp(home: TimelineScreen()),
+      child: const MaterialApp(localizationsDelegates: L.localizationsDelegates, home: TimelineScreen()),
     ));
     await tester.pump();
 

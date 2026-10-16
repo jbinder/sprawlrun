@@ -7,6 +7,7 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import 'panels.dart';
+import '../l10n/l10n.dart';
 
 /// One line of the run log; tapping opens the run.
 class RunRow extends StatelessWidget {
@@ -31,7 +32,7 @@ class RunRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  run.missionCodename ?? 'FREE RUN',
+                  run.missionCodename ?? L.of(context).freeRun,
                   overflow: TextOverflow.ellipsis,
                   style: CyType.display(size: 12, color: Cy.ink),
                 ),

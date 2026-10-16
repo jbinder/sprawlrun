@@ -13,6 +13,7 @@ import '../widgets/history_widgets.dart';
 import '../widgets/panels.dart';
 import 'period_detail_screen.dart';
 import '../util/clock.dart';
+import '../l10n/l10n.dart';
 
 /// The whole log at a glance: distance per month since the first run, then
 /// every month as a dot calendar. Months and lit days open in detail.
@@ -52,23 +53,26 @@ class HistoryScreen extends StatelessWidget {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('LONG-TERM', style: CyType.label(size: 10)),
+                          Text(L.of(context).historyKicker, style: CyType.label(size: 10)),
                           const SizedBox(height: 8),
                           Text(
-                            'HISTORY',
+                            L.of(context).historyTitle,
                             style: CyType.display(size: 26, color: Cy.ink, shadows: textGlow(Cy.cyan, blur: 14)),
                           ),
                           const SizedBox(height: 8),
                           if (lifetime.firstRunAt != null)
                             Text(
-                              'SINCE ${Fmt.date(lifetime.firstRunAt!)} ${lifetime.firstRunAt!.year} · '
-                              '${lifetime.distinctDays} ACTIVE DAYS · ${lifetime.totalRuns} RUNS',
+                              L.of(context).historySummary(
+                                '${Fmt.date(lifetime.firstRunAt!)} ${lifetime.firstRunAt!.year}',
+                                lifetime.distinctDays,
+                                lifetime.totalRuns,
+                              ),
                               style: CyType.mono(size: 10, color: Cy.inkDim),
                             ),
                           const SizedBox(height: 18),
                           _MonthlyDistanceCard(months: months, units: units),
                           const SizedBox(height: 22),
-                          SectionHeader('BY MONTH', accent: Cy.green, trailing: const _Legend()),
+                          SectionHeader(L.of(context).historyByMonth, accent: Cy.green, trailing: const _Legend()),
                         ],
                       );
                     }
@@ -110,7 +114,7 @@ class _MonthlyDistanceCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'DISTANCE BY MONTH',
+                  L.of(context).historyDistanceByMonth,
                   overflow: TextOverflow.ellipsis,
                   style: CyType.label(size: 11, color: Cy.cyan),
                 ),
@@ -122,7 +126,7 @@ class _MonthlyDistanceCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 11),
               child: Text(
-                'BEST ${best.label} · ${Fmt.distanceWithUnit(best.distanceMeters, units)}',
+                L.of(context).historyBestMonth(best.label, Fmt.distanceWithUnit(best.distanceMeters, units)),
                 overflow: TextOverflow.ellipsis,
                 style: CyType.mono(size: 10, color: Cy.inkDim),
               ),
@@ -162,10 +166,10 @@ class _MonthBlock extends StatelessWidget {
               Expanded(
                 child: Text(
                   active
-                      ? '${month.runs} RUN${month.runs == 1 ? '' : 'S'} · '
+                      ? '${L.of(context).runCountCaps(month.runs)} · '
                             '${Fmt.distanceWithUnit(month.distanceMeters, units)} · '
                             '${Fmt.shortDuration(month.seconds)}'
-                      : 'NO RUNS',
+                      : L.of(context).noRuns,
                   textAlign: TextAlign.end,
                   overflow: TextOverflow.ellipsis,
                   style: CyType.mono(size: 10, color: active ? Cy.inkDim : Cy.ghost),
@@ -217,7 +221,7 @@ class _Legend extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('LESS', style: CyType.label(size: 8)),
+        Text(L.of(context).legendLess, style: CyType.label(size: 8)),
         const SizedBox(width: 5),
         for (var level = 0; level <= 4; level++)
           Padding(
@@ -225,7 +229,7 @@ class _Legend extends StatelessWidget {
             child: SizedBox(width: 9, child: ActivityDot(level: level)),
           ),
         const SizedBox(width: 2),
-        Text('MORE', style: CyType.label(size: 8)),
+        Text(L.of(context).legendMore, style: CyType.label(size: 8)),
       ],
     );
   }

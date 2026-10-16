@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/achievement.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/theme/cyber_palette.dart';
@@ -8,16 +9,8 @@ import 'package:sprawl_run/widgets/unlock_reveal.dart';
 
 const _codex = CodexEntry(id: 'c1', title: 'Black Clinics', category: 'STREET MED', body: 'Unlicensed surgery.');
 
-AchievementDef _ach(AchTier tier) => AchievementDef(
-  id: 'a-${tier.name}',
-  title: 'Test ${tier.label}',
-  description: 'A description.',
-  category: AchCategory.distance,
-  tier: tier,
-  target: 1,
-  metric: (_) => 1,
-  format: (v) => '$v',
-);
+/// A real achievement of [tier]: their names live in the ARB, keyed by id.
+AchievementDef _ach(AchTier tier) => kAchievements.firstWhere((a) => a.tier == tier);
 
 Future<void> _pump(
   WidgetTester tester, {
@@ -28,6 +21,7 @@ Future<void> _pump(
 }) async {
   await tester.pumpWidget(
     MaterialApp(
+      localizationsDelegates: L.localizationsDelegates,
       theme: buildCyberTheme(),
       home: Scaffold(
         body: UnlockReveal(unlocks: unlocks, onDone: onDone ?? () {}, onShow: onShow, autoAdvance: autoAdvance),
@@ -64,7 +58,7 @@ void main() {
       greaterThan(0.95),
       reason: 'the second card faded in',
     );
-    expect(find.text('TEST LEGEND'), findsOneWidget);
+    expect(find.text(_ach(AchTier.legend).title.toUpperCase()), findsOneWidget);
     expect(find.text('LEGEND'), findsOneWidget, reason: 'tier tag');
     expect(find.text('02 / 02'), findsOneWidget);
     expect(find.text('CONTINUE'), findsOneWidget, reason: 'the last card ends the sequence with a button');

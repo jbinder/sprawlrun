@@ -6,6 +6,7 @@ import '../models/stats.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
+import '../l10n/l10n.dart';
 
 /// The run HUD's centrepiece: a segmented ring showing goal completion, with
 /// arbitrary content in the middle.
@@ -184,7 +185,7 @@ class ChaseBar extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            winning ? 'DISTANCE OPENING — HOLD IT' : 'GAINING ON YOU — MOVE',
+            winning ? L.of(context).chaseWinning : L.of(context).chaseLosing,
             style: CyType.mono(size: 10, color: accent, letterSpacing: 1.4),
           ),
         ],

@@ -19,6 +19,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/widgets/glitch_text.dart';
 import 'package:sprawl_run/app.dart';
 import 'package:sprawl_run/util/clock.dart';
@@ -438,6 +439,7 @@ Future<void> _pump(WidgetTester tester, Widget home, AppState state, {RunEngine?
           ),
         ],
         child: MaterialApp(
+          localizationsDelegates: L.localizationsDelegates,
           debugShowCheckedModeBanner: false,
           theme: buildCyberTheme(),
           scrollBehavior: const CyberScrollBehavior(),

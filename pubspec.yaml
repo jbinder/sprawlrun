@@ -12,10 +12,12 @@ dependencies:
   file_selector_android: ^0.5.2+9
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_local_notifications: ^22.3.1
   flutter_tts: ^4.2.5
   geolocator: ^14.0.3
-  intl: ^0.20.3
+  intl: ^0.20.2
   just_audio: ^0.10.6
   package_info_plus: ^10.2.1
   path_provider: ^2.1.6
@@ -33,6 +35,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Interface strings: lib/l10n/app_en.arb, compiled to lib/l10n/generated/.
+  generate: true
 
   assets:
     - assets/missions/

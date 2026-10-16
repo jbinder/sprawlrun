@@ -7,6 +7,7 @@ import 'package:sprawl_run/app.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
@@ -61,7 +62,7 @@ Future<AppState> pumpApp(WidgetTester tester, {Profile? profile}) async {
           create: (_) => RunEngine(narrator: FakeNarrator(), location: FakeLocation()),
         ),
       ],
-      child: MaterialApp(theme: buildCyberTheme(), home: const HomeShell()),
+      child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: const HomeShell()),
     ),
   );
   // The backdrop animates forever, so settling is not an option; a couple of
@@ -221,7 +222,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [ChangeNotifierProvider.value(value: state)],
-          child: MaterialApp(theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
         ),
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -248,7 +249,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [ChangeNotifierProvider.value(value: state)],
-          child: MaterialApp(theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
         ),
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));
@@ -266,7 +267,7 @@ void main() {
       await tester.pumpWidget(
         MultiProvider(
           providers: [ChangeNotifierProvider.value(value: state)],
-          child: MaterialApp(theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: RunDetailScreen(run: state.runLog.first)),
         ),
       );
       await Future<void>.delayed(const Duration(milliseconds: 100));

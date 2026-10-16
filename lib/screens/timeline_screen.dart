@@ -14,6 +14,7 @@ import '../widgets/filter_rail.dart';
 import '../widgets/panels.dart';
 import 'run_detail_screen.dart';
 import '../util/clock.dart';
+import '../l10n/l10n.dart';
 
 /// THE WIRE — everything that has come over it, newest first: the handlers'
 /// messages, runs, cleared operations, achievements and intel. Called the
@@ -43,14 +44,20 @@ class TimelineScreen extends StatefulWidget {
 /// messages outnumber everything else several times over, so a runner looking
 /// for a run or an unlock needs a way past them.
 enum _WireFilter {
-  all('ALL', null),
-  messages('MESSAGES', Icons.forum_outlined),
-  runs('RUNS', Icons.directions_run),
-  unlocks('UNLOCKS', Icons.military_tech_outlined);
+  all(null),
+  messages(Icons.forum_outlined),
+  runs(Icons.directions_run),
+  unlocks(Icons.military_tech_outlined);
 
-  const _WireFilter(this.label, this.icon);
-  final String label;
+  const _WireFilter(this.icon);
   final IconData? icon;
+
+  String label(L l) => switch (this) {
+    all => l.filterAll,
+    messages => l.wireFilterMessages,
+    runs => l.sectionRuns,
+    unlocks => l.wireFilterUnlocks,
+  };
 
   bool admits(TimelineEntry e) => switch (this) {
     all => true,
@@ -165,7 +172,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                       icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                     ),
                     const Spacer(),
-                    Text('THE WIRE · $total', style: CyType.label(size: 10)),
+                    Text(L.of(context).wireTitle(total), style: CyType.label(size: 10)),
                   ],
                 ),
               ),
@@ -175,7 +182,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
                   for (final f in _WireFilter.values) ...[
                     if (f != _WireFilter.values.first) const SizedBox(width: 8),
                     RailChip(
-                      label: f.label,
+                      label: f.label(L.of(context)),
                       icon: f.icon,
                       selected: _filter == f,
                       onTap: () => setState(() => _filter = f),
@@ -189,14 +196,14 @@ class _TimelineScreenState extends State<TimelineScreen> {
                     ? Padding(
                         padding: const EdgeInsets.all(18),
                         child: total == 0
-                            ? const EmptyState(
-                                title: 'Nothing yet',
-                                body: 'Runs, messages from your handler and everything you unlock will appear here.',
+                            ? EmptyState(
+                                title: L.of(context).wireEmptyTitle,
+                                body: L.of(context).wireEmptyBody,
                                 icon: Icons.timeline,
                               )
-                            : const EmptyState(
-                                title: 'Nothing of that kind',
-                                body: 'Nothing on the wire matches this filter yet.',
+                            : EmptyState(
+                                title: L.of(context).wireFilterEmptyTitle,
+                                body: L.of(context).wireFilterEmptyBody,
                                 icon: Icons.filter_alt_off_outlined,
                               ),
                       )
@@ -252,8 +259,8 @@ class _DayHeader extends StatelessWidget {
     final now = appNow();
     final today = DateTime(now.year, now.month, now.day);
     final label = switch (today.difference(day).inDays) {
-      0 => 'TODAY',
-      1 => 'YESTERDAY',
+      0 => L.of(context).today,
+      1 => L.of(context).yesterday,
       _ => '${Fmt.weekday(day).toUpperCase()} · ${Fmt.date(day).toUpperCase()}',
     };
     return Padding(
@@ -279,20 +286,20 @@ class _EntryRow extends StatelessWidget {
   final bool isNew;
   final UnitSystem units;
 
-  (IconData, Color, String) get _look => switch (entry.kind) {
+  (IconData, Color, String) _look(L l) => switch (entry.kind) {
     TimelineKind.signal => switch (entry.signalKind) {
-      SignalKind.ambient => (Icons.wifi_tethering, Cy.magenta, 'SIGNAL NOISE'),
-      SignalKind.debrief => (Icons.assignment_outlined, Cy.magenta, 'WEEKLY DEBRIEF'),
-      _ => (Icons.forum_outlined, Cy.magenta, 'MESSAGE'),
+      SignalKind.ambient => (Icons.wifi_tethering, Cy.magenta, l.wireKindNoise),
+      SignalKind.debrief => (Icons.assignment_outlined, Cy.magenta, l.wireKindDebrief),
+      _ => (Icons.forum_outlined, Cy.magenta, l.wireKindMessage),
     },
-    TimelineKind.run => (Icons.directions_run, entry.cleared ? Cy.green : Cy.cyan, 'RUN'),
-    TimelineKind.achievement => (Icons.military_tech_outlined, Cy.amber, 'ACHIEVEMENT'),
-    TimelineKind.codex => (Icons.menu_book_outlined, Cy.cyanDim, 'CODEX'),
+    TimelineKind.run => (Icons.directions_run, entry.cleared ? Cy.green : Cy.cyan, l.wireKindRun),
+    TimelineKind.achievement => (Icons.military_tech_outlined, Cy.amber, l.wireKindAchievement),
+    TimelineKind.codex => (Icons.menu_book_outlined, Cy.cyanDim, l.navCodex),
   };
 
   @override
   Widget build(BuildContext context) {
-    final (icon, color, label) = _look;
+    final (icon, color, label) = _look(L.of(context));
     final time = '${entry.at.hour.toString().padLeft(2, '0')}:${entry.at.minute.toString().padLeft(2, '0')}';
     final run = entry.run;
     final body = run == null
@@ -315,7 +322,7 @@ class _EntryRow extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                       decoration: BoxDecoration(border: Border.all(color: Cy.magenta)),
-                      child: Text('NEW', style: CyType.label(size: 9, color: Cy.magenta)),
+                      child: Text(L.of(context).tagNew, style: CyType.label(size: 9, color: Cy.magenta)),
                     ),
                     const SizedBox(width: 8),
                   ],

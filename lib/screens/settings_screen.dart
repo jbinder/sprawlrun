@@ -13,6 +13,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
 import '../widgets/pack_controls.dart';
 import '../widgets/panels.dart';
+import '../l10n/l10n.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -21,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final profile = state.profile;
+    final l = L.of(context);
 
     void update(Profile next) => state.updateProfile(next);
 
@@ -35,28 +37,28 @@ class SettingsScreen extends StatelessWidget {
                     onPressed: () => Navigator.of(context).maybePop(),
                     icon: Icon(Icons.arrow_back, color: Cy.inkDim),
                   ),
-                  Text('SETTINGS', style: CyType.display(size: 14, color: Cy.ink)),
+                  Text(l.settingsTitle, style: CyType.display(size: 14, color: Cy.ink)),
                 ],
               ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 6, 16, 28),
                   children: [
-                    const SectionHeader('IDENTITY'),
+                    SectionHeader(l.sectionIdentity),
                     NeonPanel(
                       child: Column(
                         children: [
                           _TextRow(
-                            label: 'Callsign',
+                            label: l.settingCallsign,
                             value: profile.callsign,
-                            hint: 'How your handlers address you',
+                            hint: l.settingCallsignHint,
                             onChanged: (v) => update(
                               profile.copyWith(callsign: v.trim().isEmpty ? 'RUNNER' : v.trim()),
                             ),
                           ),
                           const _Rule(),
                           _StepperRow(
-                            label: 'Body mass',
+                            label: l.settingBodyMass,
                             // Calorie estimates are mass-dependent; this is the
                             // only input the ACSM equations need from the user.
                             value: Fmt.weight(profile.weightKg, profile.units),
@@ -67,9 +69,9 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           _SegmentRow<UnitSystem>(
-                            label: 'Units',
+                            label: l.settingUnits,
                             value: profile.units,
-                            options: const {UnitSystem.metric: 'KM', UnitSystem.imperial: 'MILES'},
+                            options: {UnitSystem.metric: l.unitsKm, UnitSystem.imperial: l.unitsMiles},
                             onChanged: (v) => update(profile.copyWith(units: v)),
                           ),
                         ],
@@ -77,17 +79,17 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    SectionHeader('STREAK', accent: Cy.amber),
+                    SectionHeader(l.sectionStreak, accent: Cy.amber),
                     NeonPanel(
                       child: Column(
                         children: [
                           _SegmentRow<StreakMetric>(
-                            label: 'Measured in',
+                            label: l.settingMeasuredIn,
                             value: profile.streakGoal.metric,
-                            options: const {
-                              StreakMetric.minutes: 'TIME',
-                              StreakMetric.kilometres: 'DIST',
-                              StreakMetric.missions: 'OPS',
+                            options: {
+                              StreakMetric.minutes: l.metricTime,
+                              StreakMetric.kilometres: l.metricDistance,
+                              StreakMetric.missions: l.metricOps,
                             },
                             onChanged: (v) => update(
                               profile.withStreakGoal(
@@ -107,7 +109,7 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           _StepperRow(
-                            label: 'Weekly target',
+                            label: l.settingWeeklyTarget,
                             value: profile.streakGoal.label,
                             onDecrease: () => update(
                               profile.withStreakGoal(
@@ -129,54 +131,50 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ),
                           const _Rule(),
-                          _Note(
-                            'Your streak extends every week you hit this target. '
-                            'A week in progress never breaks it — only a finished week that fell short does.',
-                          ),
+                          _Note(l.streakNote),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
 
-                    SectionHeader('AUDIO', accent: Cy.cyan),
+                    SectionHeader(l.sectionAudio, accent: Cy.cyan),
                     NeonPanel(
                       child: Column(
                         children: [
                           _SwitchRow(
-                            label: 'Story voice',
-                            subtitle: 'Speak transmissions aloud using the device voice',
+                            label: l.settingStoryVoice,
+                            subtitle: l.settingStoryVoiceHint,
                             value: profile.voiceEnabled,
                             onChanged: (v) => update(profile.copyWith(voiceEnabled: v)),
                           ),
                           const _Rule(),
                           _SegmentRow<AudioInterrupt>(
-                            label: 'Your music',
+                            label: l.settingYourMusic,
                             value: profile.audioInterrupt,
-                            options: const {
-                              AudioInterrupt.pause: 'PAUSE',
-                              AudioInterrupt.duck: 'DUCK',
+                            options: {
+                              AudioInterrupt.pause: l.musicPause,
+                              AudioInterrupt.duck: l.musicDuck,
                             },
                             onChanged: (v) => update(profile.copyWith(audioInterrupt: v)),
                           ),
                           const _Rule(),
                           _Note(
                             profile.audioInterrupt == AudioInterrupt.pause
-                                ? 'Whatever you are playing pauses for each transmission and resumes afterwards.'
-                                : 'Whatever you are playing drops to a low volume under each transmission.',
+                                ? l.musicPauseNote
+                                : l.musicDuckNote,
                           ),
                           if (profile.audioInterrupt == AudioInterrupt.pause) ...[
                             const _Rule(),
                             _SwitchRow(
-                              label: 'Force music back on',
-                              subtitle: 'Some players stay silent after a long transmission. '
-                                  'Presses play for you when that happens.',
+                              label: l.settingForceMusic,
+                              subtitle: l.settingForceMusicHint,
                               value: profile.resumeMusic,
                               onChanged: (v) => update(profile.copyWith(resumeMusic: v)),
                             ),
                           ],
                           const _Rule(),
                           _SliderRow(
-                            label: 'Speech rate',
+                            label: l.settingSpeechRate,
                             value: profile.speechRate,
                             min: 0.25,
                             max: 0.9,
@@ -185,7 +183,7 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           _SliderRow(
-                            label: 'Effects volume',
+                            label: l.settingEffectsVolume,
                             value: profile.sfxVolume,
                             min: 0,
                             max: 1,
@@ -194,8 +192,8 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: 'Ambient bed',
-                            subtitle: 'Low synth drone under the run, for when you bring no music',
+                            label: l.settingAmbientBed,
+                            subtitle: l.settingAmbientBedHint,
                             value: profile.ambientBed,
                             onChanged: (v) => update(profile.copyWith(ambientBed: v)),
                           ),
@@ -204,44 +202,41 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    SectionHeader('RUN', accent: Cy.magenta),
+                    SectionHeader(l.sectionRun, accent: Cy.magenta),
                     NeonPanel(
                       child: Column(
                         children: [
                           _SwitchRow(
-                            label: 'Pursuits',
-                            subtitle: 'Timed chases that ask for a hard effort, scaled to your own pace',
+                            label: l.infoPursuits,
+                            subtitle: l.settingPursuitsHint,
                             value: profile.chasesEnabled,
                             onChanged: (v) => update(profile.copyWith(chasesEnabled: v)),
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: 'Auto-pause',
-                            subtitle: 'Stop the clock when you stop moving',
+                            label: l.settingAutoPause,
+                            subtitle: l.settingAutoPauseHint,
                             value: profile.autoPause,
                             onChanged: (v) => update(profile.copyWith(autoPause: v)),
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: 'Keep screen on',
-                            subtitle: 'Leave the HUD lit for the whole run',
+                            label: l.settingKeepScreenOn,
+                            subtitle: l.settingKeepScreenOnHint,
                             value: profile.keepScreenOn,
                             onChanged: (v) => update(profile.copyWith(keepScreenOn: v)),
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: profile.isMetric ? 'Kilometre splits' : 'Mile splits',
-                            subtitle: profile.isMetric
-                                ? 'Each kilometre read out with its time — on a mission, between scenes'
-                                : 'Each mile read out with its time — on a mission, between scenes',
+                            label: profile.isMetric ? l.settingSplitsKm : l.settingSplitsMile,
+                            subtitle: profile.isMetric ? l.settingSplitsKmHint : l.settingSplitsMileHint,
                             value: profile.splitsEnabled,
                             onChanged: (v) => update(profile.copyWith(splitsEnabled: v)),
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: 'Seasonal events',
-                            subtitle: 'The city dresses for the time of year — its look, sounds, handler '
-                                'traffic and a limited operation. Halloween: SAMHAIN PROTOCOL',
+                            label: l.settingSeasonalEvents,
+                            subtitle: l.settingSeasonalEventsHint,
                             value: profile.seasonalEvents,
                             onChanged: (v) => update(profile.copyWith(seasonalEvents: v)),
                           ),
@@ -250,13 +245,13 @@ class SettingsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
 
-                    SectionHeader('SIGNALS', accent: Cy.green),
+                    SectionHeader(l.sectionSignals, accent: Cy.green),
                     NeonPanel(
                       child: Column(
                         children: [
                           _SwitchRow(
-                            label: 'Reminders',
-                            subtitle: 'Your handler asks whether you are running, on the days you pick',
+                            label: l.settingReminders,
+                            subtitle: l.settingRemindersHint,
                             value: profile.signals.remindersEnabled,
                             onChanged: (v) => update(
                               profile.copyWith(signals: profile.signals.copyWith(remindersEnabled: v)),
@@ -265,7 +260,7 @@ class SettingsScreen extends StatelessWidget {
                           if (profile.signals.remindersEnabled) ...[
                             const _Rule(),
                             _WeekdayRow(
-                              label: 'Days',
+                              label: l.settingDays,
                               selected: profile.signals.weekdays,
                               onChanged: (days) => update(
                                 profile.copyWith(signals: profile.signals.copyWith(weekdays: days)),
@@ -273,7 +268,7 @@ class SettingsScreen extends StatelessWidget {
                             ),
                             const _Rule(),
                             _TimeRow(
-                              label: 'Time',
+                              label: l.settingTime,
                               minutesFromMidnight: profile.signals.minutesFromMidnight,
                               onChanged: (m) => update(
                                 profile.copyWith(signals: profile.signals.copyWith(minutesFromMidnight: m)),
@@ -282,10 +277,10 @@ class SettingsScreen extends StatelessWidget {
                           ],
                           const _Rule(),
                           _StepperRow(
-                            label: 'Signal noise',
+                            label: l.settingSignalNoise,
                             value: profile.signals.ambientPerWeek == 0
-                                ? 'OFF'
-                                : '${profile.signals.ambientPerWeek} / week',
+                                ? l.off
+                                : l.perWeek(profile.signals.ambientPerWeek),
                             onDecrease: () => update(
                               profile.copyWith(
                                 signals: profile.signals.copyWith(
@@ -303,8 +298,8 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: 'Weekly debrief',
-                            subtitle: 'Sunday evening, while the week can still be saved',
+                            label: l.settingWeeklyDebrief,
+                            subtitle: l.settingWeeklyDebriefHint,
                             value: profile.signals.debriefEnabled,
                             onChanged: (v) => update(
                               profile.copyWith(signals: profile.signals.copyWith(debriefEnabled: v)),
@@ -313,35 +308,25 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const _Note(
-                      'Messages come from whoever is running your current campaign, and say '
-                      'nothing you have not already been told. They are never read aloud.\n\n'
-                      'Signal noise is the city talking whether or not you are running: silent, '
-                      'never between 22:00 and 07:00, and off until you ask for it.\n\n'
-                      'The debrief reads back your week against the target you set, in the same '
-                      'voice.',
-                    ),
+                    _Note(l.signalsNote),
                     const SizedBox(height: 20),
 
-                    const SectionHeader('MISSION PACKS'),
+                    SectionHeader(l.sectionMissionPacks),
                     const NeonPanel(child: PackControls()),
                     const SizedBox(height: 20),
 
-                    SectionHeader('DATA', accent: Cy.red),
+                    SectionHeader(l.sectionData, accent: Cy.red),
                     NeonPanel(
                       accent: Cy.rule,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Note(
-                            'Everything lives on this device. Nothing is uploaded, and the app never '
-                            'needs a network connection.',
-                          ),
+                          _Note(l.dataNote),
                           const _Rule(),
                           const BackupControls(),
                           const _Rule(),
                           CyberButton(
-                            label: 'Reset all progress',
+                            label: l.resetProgress,
                             icon: Icons.delete_forever_outlined,
                             style: CyberButtonStyle.danger,
                             dense: true,
@@ -380,11 +365,10 @@ class SettingsScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('WIPE PROGRESS?', style: CyType.display(size: 16, color: Cy.red)),
+              Text(L.of(context).wipeTitle, style: CyType.display(size: 16, color: Cy.red)),
               const SizedBox(height: 10),
               Text(
-                'Deletes every run, every achievement, the codex and all campaign progress. '
-                'Your settings are kept. This cannot be undone.',
+                L.of(context).wipeBody,
                 style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),
               ),
               const SizedBox(height: 16),
@@ -392,7 +376,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: CyberButton(
-                      label: 'Cancel',
+                      label: L.of(context).cancel,
                       style: CyberButtonStyle.ghost,
                       dense: true,
                       onPressed: () => Navigator.of(context).pop(false),
@@ -401,7 +385,7 @@ class SettingsScreen extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: CyberButton(
-                      label: 'Wipe',
+                      label: L.of(context).wipe,
                       style: CyberButtonStyle.danger,
                       dense: true,
                       onPressed: () => Navigator.of(context).pop(true),
@@ -796,12 +780,12 @@ class _Colophon extends StatelessWidget {
             Text('SPRAWL//RUN', style: CyType.display(size: 11, color: Cy.inkDim, letterSpacing: 3)),
             const SizedBox(height: 6),
             Text(
-              version == null ? 'OFFLINE BUILD' : '${version.label} · offline'.toUpperCase(),
+              version == null ? L.of(context).offlineBuild : L.of(context).versionOffline(version.label).toUpperCase(),
               style: CyType.mono(size: 10, color: Cy.ghost, letterSpacing: 1.6),
             ),
             const SizedBox(height: 4),
             Text(
-              'Free software, MIT · github.com/jbinder/sprawlrun',
+              L.of(context).colophonLicense,
               style: CyType.body(size: 11, color: Cy.ghost, weight: FontWeight.w500),
             ),
           ],

@@ -10,6 +10,7 @@ import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
 import 'mission_brief_screen.dart';
 import 'mission_debrief_screen.dart';
+import '../l10n/l10n.dart';
 
 /// Every mission pack, grouped by whether there is anything left to run in it.
 ///
@@ -53,7 +54,7 @@ class _MissionsScreenState extends State<MissionsScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      'MISSION PACKS · ${packs.length}',
+                      L.of(context).missionPacksCount(packs.length),
                       style: CyType.label(size: 10),
                     ),
                   ],
@@ -64,18 +65,18 @@ class _MissionsScreenState extends State<MissionsScreen> {
                   padding: const EdgeInsets.fromLTRB(18, 4, 18, 24),
                   children: [
                     if (packs.isEmpty)
-                      const EmptyState(
-                        title: 'No mission packs',
-                        body: 'Nothing loaded. Check Settings → Mission packs.',
+                      EmptyState(
+                        title: L.of(context).noPacksTitle,
+                        body: L.of(context).noPacksBody,
                         icon: Icons.sync_problem_outlined,
                       ),
                     if (active.isNotEmpty) ...[
-                      SectionHeader('ACTIVE', accent: Cy.magenta),
+                      SectionHeader(L.of(context).activeTag, accent: Cy.magenta),
                       for (final p in active) _pack(state, p),
                       const SizedBox(height: 10),
                     ],
                     if (done.isNotEmpty) ...[
-                      SectionHeader('DONE', accent: Cy.green),
+                      SectionHeader(L.of(context).tagDone, accent: Cy.green),
                       for (final p in done) _pack(state, p),
                     ],
                   ],
@@ -120,9 +121,9 @@ class _PackCard extends StatelessWidget {
       PackState.fresh => Cy.cyan,
     };
     final stateLabel = switch (progress.state) {
-      PackState.done => 'DONE',
-      PackState.active => 'IN PROGRESS',
-      PackState.fresh => 'NEW',
+      PackState.done => L.of(context).tagDone,
+      PackState.active => L.of(context).tagInProgress,
+      PackState.fresh => L.of(context).tagNew,
     };
 
     return Padding(
@@ -148,7 +149,7 @@ class _PackCard extends StatelessWidget {
                   ),
                 ),
                 if (progress.selected) ...[
-                  CyberTag('SELECTED', color: Cy.amber, filled: true),
+                  CyberTag(L.of(context).tagSelected, color: Cy.amber, filled: true),
                   const SizedBox(width: 6),
                 ],
                 CyberTag(stateLabel, color: accent),
@@ -215,11 +216,11 @@ class _MissionLine extends StatelessWidget {
     final mission = progress.mission;
     final locked = progress.state == MissionState.locked;
     final (accent, label) = switch (progress.status) {
-      MissionStatus.finished => (Cy.green, 'DONE'),
-      MissionStatus.started => (Cy.amber, 'STARTED'),
+      MissionStatus.finished => (Cy.green, L.of(context).tagDone),
+      MissionStatus.started => (Cy.amber, L.of(context).tagStarted),
       MissionStatus.fresh => (
         locked ? Cy.ghost : Cy.cyan,
-        locked ? 'LOCKED' : 'NEW',
+        locked ? L.of(context).tagLocked : L.of(context).tagNew,
       ),
     };
 

@@ -136,23 +136,31 @@ class _PackCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            // Title and tags share a line while they fit; once a translation
+            // makes the tags too wide, they drop below rather than squeezing
+            // the title to a letter per line.
+            OverflowBar(
+              alignment: MainAxisAlignment.spaceBetween,
+              overflowSpacing: 8,
               children: [
-                Expanded(
-                  child: GlitchText(
-                    pack.title,
-                    style: CyType.display(
-                      size: 18,
-                      color: Cy.ink,
-                      shadows: textGlow(accent, blur: 12),
-                    ),
+                GlitchText(
+                  pack.title,
+                  style: CyType.display(
+                    size: 18,
+                    color: Cy.ink,
+                    shadows: textGlow(accent, blur: 12),
                   ),
                 ),
-                if (progress.selected) ...[
-                  CyberTag(L.of(context).tagSelected, color: Cy.amber, filled: true),
-                  const SizedBox(width: 6),
-                ],
-                CyberTag(stateLabel, color: accent),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (progress.selected) ...[
+                      CyberTag(L.of(context).tagSelected, color: Cy.amber, filled: true),
+                      const SizedBox(width: 6),
+                    ],
+                    CyberTag(stateLabel, color: accent),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 6),

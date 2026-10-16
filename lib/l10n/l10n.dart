@@ -18,6 +18,12 @@ export 'generated/l10n.dart';
 L get l10n => _current;
 L _current = lookupL(const Locale('en'));
 
+/// Puts [strings] behind [l10n], or English back with null. For tests that
+/// render in a language the app does not ship, such as the pseudo-locale the
+/// overflow test and the screenshot tool use; the app itself goes through
+/// [useLocale]. Named `debug` in the Flutter sense: nothing in the app calls it.
+void debugUseStrings(L? strings) => _current = strings ?? lookupL(const Locale('en'));
+
 /// Makes [locale] the language of [l10n] and of `intl`'s date formatting.
 void useLocale(Locale locale) {
   if (_current.localeName == Intl.canonicalizedLocale(locale.toString())) return;

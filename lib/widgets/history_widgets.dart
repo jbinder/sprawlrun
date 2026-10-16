@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../models/stats.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../util/format.dart';
 
 /// Shared scale for every activity dot on screen: how bright a day is drawn
 /// depends on how it compares with the runner's own best day, not with a fixed
@@ -144,17 +145,16 @@ class WeekdayHeader extends StatelessWidget {
 
   final double gap;
 
-  static const _letters = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        for (final l in _letters)
+        // 5 January 2026 was a Monday.
+        for (var day = 5; day < 12; day++)
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: gap / 2),
-              child: Center(child: Text(l, style: CyType.label(size: 9))),
+              child: Center(child: Text(Fmt.weekdayInitial(DateTime(2026, 1, day)), style: CyType.label(size: 9))),
             ),
           ),
       ],
@@ -221,8 +221,6 @@ class MonthBars extends StatelessWidget {
   final Color? accent;
   final double height;
   final ValueChanged<PeriodStats>? onMonthTap;
-
-  static const _initials = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
   @override
   Widget build(BuildContext context) {
@@ -296,7 +294,7 @@ class MonthBars extends StatelessWidget {
   Widget _axisLabel(int i, bool showInitials) {
     final start = months[i].perDay.first.day;
     final newYear = i == 0 || start.month == DateTime.january;
-    final initial = showInitials ? _initials[start.month - 1] : '';
+    final initial = showInitials ? Fmt.monthInitial(start) : '';
     return Column(
       children: [
         Text(initial, style: CyType.label(size: 8)),

@@ -27,12 +27,18 @@ class OpsBar extends StatelessWidget {
             onPressed: () => Navigator.of(context).maybePop(),
             icon: Icon(Icons.arrow_back, color: Cy.inkDim),
           ),
-          const Spacer(),
-          Text(
-            mission == null
-                ? L.of(context).unloggedRun
-                : '${L.of(context).operationNumber(mission!.order.toString().padLeft(2, '0'))} · $label',
-            style: CyType.label(size: 10),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                mission == null
+                    ? L.of(context).unloggedRun
+                    : '${L.of(context).operationNumber(mission!.order.toString().padLeft(2, '0'))} · $label',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: CyType.label(size: 10),
+              ),
+            ),
           ),
         ],
       ),

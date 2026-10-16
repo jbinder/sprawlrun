@@ -407,7 +407,14 @@ class _ModeButton extends StatelessWidget {
           children: [
             Icon(icon, size: 15, color: color),
             const SizedBox(width: 8),
-            Text(label, style: CyType.display(size: 11, color: color)),
+            // Half the width of the screen at most; a longer word than
+            // DISTANCE gets smaller rather than cut.
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(label, style: CyType.display(size: 11, color: color)),
+              ),
+            ),
           ],
         ),
       ),

@@ -961,7 +961,7 @@
   },
   "greetingLineLate": "Rain on the strip. Good conditions. Nobody looks up when it rains.",
   "@greetingLineLate": {
-    "description": "Home screen flavour line, 21–24 h."
+    "description": "Home screen flavour line, 21–24 h. Place names (the Sprawl, the strip, the Drowned Mile, …) stay in English in every language, so the community shares one set of names."
   },
   "samhainLineNight": "The hour the purge runs. Whatever is still logged in now is not going to log out.",
   "@samhainLineNight": {
@@ -969,7 +969,7 @@
   },
   "samhainLineDawn": "Fog on the strip. Some of the footprints in it are older than the fog.",
   "@samhainLineDawn": {
-    "description": "Samhain event flavour line, 5–8 h."
+    "description": "Samhain event flavour line, 5–8 h. Place names (the Sprawl, the strip, the Drowned Mile, …) stay in English in every language, so the community shares one set of names."
   },
   "samhainLineMorning": "Daylight. The dead net keeps office hours, but it does not keep them well.",
   "@samhainLineMorning": {
@@ -1849,7 +1849,7 @@
   },
   "achDist100kTitle": "Sprawl Native",
   "@achDist100kTitle": {
-    "description": "Achievement name (dist_100k). A playful cyberpunk title; translate the spirit rather than word for word."
+    "description": "Achievement name (dist_100k). A playful cyberpunk title; translate the spirit rather than word for word. Place names (the Sprawl, the strip, the Drowned Mile, …) stay in English in every language, so the community shares one set of names."
   },
   "achDist100kDesc": "Cover 100 km across all runs.",
   "@achDist100kDesc": {
@@ -1873,7 +1873,7 @@
   },
   "achDist500kTitle": "BAMA Corridor",
   "@achDist500kTitle": {
-    "description": "Achievement name (dist_500k). A playful cyberpunk title; translate the spirit rather than word for word."
+    "description": "Achievement name (dist_500k). A playful cyberpunk title; translate the spirit rather than word for word. Place names (the Sprawl, the strip, the Drowned Mile, …) stay in English in every language, so the community shares one set of names."
   },
   "achDist500kDesc": "Cover 500 km across all runs.",
   "@achDist500kDesc": {
@@ -2049,7 +2049,7 @@
   },
   "achNt5Title": "Half Drowned",
   "@achNt5Title": {
-    "description": "Achievement name (nt_5). A playful cyberpunk title; translate the spirit rather than word for word."
+    "description": "Achievement name (nt_5). A playful cyberpunk title; translate the spirit rather than word for word. Place names (the Sprawl, the strip, the Drowned Mile, …) stay in English in every language, so the community shares one set of names."
   },
   "achNt5Desc": "Complete five NULL TIDE operations.",
   "@achNt5Desc": {
@@ -2529,7 +2529,7 @@
   },
   "channelNoiseDescription": "Traffic from the Sprawl. Silent.",
   "@channelNoiseDescription": {
-    "description": "Android notification channel description. The Sprawl is the city the story is set in."
+    "description": "Android notification channel description. The Sprawl is the city the story is set in. Place names (the Sprawl, the strip, the Drowned Mile, …) stay in English in every language, so the community shares one set of names."
   },
   "lastDays": "LAST {count} DAYS",
   "@lastDays": {
@@ -2664,6 +2664,15 @@
         "type": "String"
       },
       "build": {
+        "type": "String"
+      }
+    }
+  },
+  "monthInitial": "{month, select, 1{J} 2{F} 3{M} 4{A} 5{M} 6{J} 7{J} 8{A} 9{S} 10{O} 11{N} 12{D} other{?}}",
+  "@monthInitial": {
+    "description": "One-letter month by number (1 = January), under the bars of a monthly chart. Use your language's usual one-letter forms.",
+    "placeholders": {
+      "month": {
         "type": "String"
       }
     }

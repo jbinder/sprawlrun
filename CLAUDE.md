@@ -11,12 +11,14 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 513 tests
+fvm flutter test                                    # 527 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
 fvm dart run tool/gen_icons.dart                    # launcher icons + docs/icon.png
 fvm flutter test tool/screenshots/capture_test.dart # docs/ + fastlane screenshots
+fvm flutter test --dart-define=PSEUDO=true tool/screenshots/capture_test.dart  # build/screenshots-pseudo/
+fvm dart run tool/gen_pseudo_l10n.dart              # after any ARB change
 ```
 
 Android builds take 3–6 minutes. Run them in the background with a monitor rather
@@ -98,6 +100,14 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   that get *stored* stay codes: the streak unit (`MIN`/`KM`/`OPS`) goes into
   THE WIRE's archive untranslated and is only worded when shown. Story text
   stays in the packs and is not part of this.
+- **`test/overflow_test.dart` renders every screen in a pseudo-locale.**
+  English accented, 40% longer and bracketed (`test/support/pseudo.dart`),
+  at 360 dp with the real fonts; an overflow fails it. Its `PseudoL` is
+  generated from the ARB and checked for staleness — re-run
+  `gen_pseudo_l10n` after adding a message. Fix a label that grows by letting
+  it wrap, ellipsize or scale down, never by shortening the English. The
+  pseudo screenshots show what the test cannot: text without brackets never
+  went through the ARB. Orbitron has no `Ø`, so the pseudo `O` is `Ö`.
 - **`Cy` colours are getters, not constants.** A season swaps the palette at
   runtime (`theme/season.dart`, `Cy.use`), so a `const` that captures a `Cy`
   colour does not compile, and a colour cached in a field or a `static final`

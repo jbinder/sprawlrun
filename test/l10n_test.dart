@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/achievement.dart';
 
+import '../tool/gen_pseudo_l10n.dart';
+
 /// The contract for translations. English is the source; every other language
 /// arrives from Weblate as `app_<lang>.arb` and `values-<lang>/strings.xml`,
 /// and may be partial — a missing key falls back to English — but may not
@@ -46,6 +48,16 @@ void main() {
         );
       }
     }
+  });
+
+  test('the pseudo-locale is generated from the current messages', () {
+    // A message added since misses an override and stops compiling on its own;
+    // this catches the rest, such as a placeholder renamed.
+    expect(
+      File('test/support/pseudo_l10n.dart').readAsStringSync(),
+      pseudoL10nSource(File('lib/l10n/generated/l10n.dart').readAsStringSync()),
+      reason: 'run: fvm dart run tool/gen_pseudo_l10n.dart',
+    );
   });
 
   test('every achievement has a name and a description', () {

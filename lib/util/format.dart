@@ -90,6 +90,8 @@ abstract final class Fmt {
 
   static String weekdayInitial(DateTime d) => l10n.weekdayInitial('${d.weekday}');
 
+  static String monthInitial(DateTime d) => l10n.monthInitial('${d.month}');
+
   /// `today`, `yesterday`, `12 days ago`, `3 months ago` — for the age of
   /// something the runner did, where the exact date matters less than whether it
   /// was recent.

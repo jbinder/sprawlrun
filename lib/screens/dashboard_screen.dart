@@ -318,9 +318,12 @@ class _StreakCard extends StatelessWidget {
                           style: CyType.readout(32, accent),
                         ),
                         const SizedBox(width: 6),
-                        Text(
-                          L.of(context).weekStreak,
-                          style: CyType.label(size: 10, color: Cy.inkDim),
+                        // Beside a BEST tag, so a longer translation wraps.
+                        Flexible(
+                          child: Text(
+                            L.of(context).weekStreak,
+                            style: CyType.label(size: 10, color: Cy.inkDim),
+                          ),
                         ),
                       ],
                     ),

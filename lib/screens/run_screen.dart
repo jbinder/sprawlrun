@@ -606,11 +606,15 @@ class _TransmissionPanel extends StatelessWidget {
                 color: line != null ? Cy.speaker(line.speaker) : Cy.ghost,
               ),
               const SizedBox(width: 8),
-              Text(
-                line != null ? line.speaker.toUpperCase() : L.of(context).channelIdle,
-                style: CyType.label(size: 10, color: line != null ? Cy.speaker(line.speaker) : Cy.ghost),
+              Expanded(
+                child: Text(
+                  line != null ? line.speaker.toUpperCase() : L.of(context).channelIdle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: CyType.label(size: 10, color: line != null ? Cy.speaker(line.speaker) : Cy.ghost),
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               Text(L.of(context).beatsReceived(engine.beatsHeard), style: CyType.mono(size: 9, color: Cy.ghost)),
               if (hidden) ...[
                 const SizedBox(width: 10),

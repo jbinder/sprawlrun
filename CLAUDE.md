@@ -11,12 +11,12 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 547 tests
+fvm flutter test                                    # 549 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
 fvm dart run tool/gen_icons.dart                    # launcher icons + docs/icon.png
-fvm flutter test tool/screenshots/capture_test.dart # docs/ + fastlane screenshots
+fvm flutter test tool/screenshots/capture_test.dart # docs/ + every language's store shots
 fvm flutter test --dart-define=PSEUDO=true tool/screenshots/capture_test.dart  # build/screenshots-pseudo/
 fvm flutter test --dart-define=LOCALE=es tool/screenshots/capture_test.dart    # build/screenshots-es/
 fvm dart run tool/gen_pseudo_l10n.dart              # after any ARB change
@@ -110,6 +110,14 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   `didChangeLocales` and re-plans. Adding a language is `app_<lang>.arb`,
   `values-<lang>/strings.xml` and a line in `res/xml/locales_config.xml`;
   `l10n_test` checks the last against the ARB files.
+- **Translations arrive from Weblate as pull requests; the source does not.**
+  `app_en.arb`, `values/strings.xml` and the en-US listing are edited here
+  only — Weblate has source editing off. Before merging a Weblate PR run
+  `l10n_test` and `overflow_test` (the latter renders every shipped language
+  at 360 dp, so a long Spanish word that breaks a screen fails there). A *new*
+  language also needs its line in `res/xml/locales_config.xml` — `l10n_test`
+  names it — and a `languageName`, then a screenshot run for its listing.
+  Rules and glossary for translators: `docs/TRANSLATING.md`.
 - **Only the app's own spoken lines follow the interface language.** The split
   readout and the intel notice carry `StoryLine.language`; the narrator gives
   them an installed offline voice of that language (or lets the engine pick)

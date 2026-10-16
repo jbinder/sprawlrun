@@ -272,7 +272,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 547 tests
+flutter test                   # 549 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -294,6 +294,14 @@ flutter test tool/screenshots/capture_test.dart # regenerates docs + store scree
 
 The screenshot tool drives the real widgets with seeded data, so the images in
 this README cannot drift from what the app actually looks like.
+
+## Translations
+
+The interface is in English and Spanish, and anyone can add a language on
+Weblate — no git needed. **[docs/TRANSLATING.md](docs/TRANSLATING.md)** has the
+link, the rules and a glossary. Names of places and characters stay as they are
+in every language, so runners can talk about the same streets. The story packs
+are English for now.
 
 ## Adding missions
 

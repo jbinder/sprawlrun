@@ -62,6 +62,28 @@ void main() {
     );
   });
 
+  test('every language names itself, so the picker never lists "English" twice', () {
+    // A language fresh from Weblate falls back to English for anything not
+    // yet translated — this string included.
+    for (final locale in L.supportedLocales.where((l) => l.languageCode != 'en')) {
+      expect(lookupL(locale).languageName, isNot('English'), reason: 'app_${locale.languageCode}.arb: languageName');
+    }
+  });
+
+  test('every store listing F-Droid reads has a title and a short enough summary', () {
+    // F-Droid rejects a summary over 80 characters, so one arriving from Weblate
+    // would break the build of a release rather than this test.
+    for (final dir in Directory('fastlane/metadata/android').listSync().whereType<Directory>()) {
+      final title = File('${dir.path}/title.txt');
+      final summary = File('${dir.path}/short_description.txt');
+      if (!summary.existsSync() && !title.existsSync()) continue;
+      expect(title.existsSync() && title.readAsStringSync().trim().isNotEmpty, isTrue, reason: '${dir.path}: no title');
+      if (summary.existsSync()) {
+        expect(summary.readAsStringSync().trim().length, lessThanOrEqualTo(80), reason: '${dir.path}: summary too long');
+      }
+    }
+  });
+
   test('every achievement has a name and a description', () {
     final en = lookupL(const Locale('en'));
     for (final a in kAchievements) {

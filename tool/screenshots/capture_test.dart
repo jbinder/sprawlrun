@@ -1,4 +1,5 @@
-// Renders the app's screens to docs/screenshots/*.png.
+// Renders the app's screens to docs/screenshots/*.png, and the store's
+// screenshots for every shipped language.
 //
 // This is a tool, not a test — it lives outside test/ so `flutter test` does
 // not run it and write files as a side effect. Run it explicitly:
@@ -15,6 +16,10 @@
 // and at any text that skipped the ARB — it is the text without brackets.
 // --dart-define=LOCALE=es does the same in a shipped language, into
 // build/screenshots-es/.
+//
+// Without either, one run renders every shipped language: English into
+// docs/screenshots and the en-US listing, every other language into its own
+// listing only — so no language's store shots can be forgotten.
 
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -47,13 +52,43 @@ final GlobalKey _frame = GlobalKey();
 const bool _pseudo = bool.fromEnvironment('PSEUDO');
 const String _locale = String.fromEnvironment('LOCALE');
 
-/// Anything but English goes to build/, never to the store.
-final L? _strings = _pseudo ? PseudoL() : (_locale.isEmpty ? null : lookupL(Locale(_locale)));
-final Directory _out = Directory(
-  _pseudo ? 'build/screenshots-pseudo' : (_locale.isEmpty ? 'docs/screenshots' : 'build/screenshots-$_locale'),
-);
-final List<LocalizationsDelegate<dynamic>> _delegates =
-    _strings == null ? L.localizationsDelegates : delegatesFor(_strings!);
+/// One language's shots: rendered in [strings] (null for English) and written
+/// to [out] and, ranked, to the store listing [store]. Either may be absent.
+class _Variant {
+  const _Variant(this.name, this.strings, {this.out, this.store});
+
+  final String name;
+  final L? strings;
+  final Directory? out;
+  final Directory? store;
+}
+
+/// The store listing of language [code]: whichever fastlane locale directory
+/// it already has (`es` → `es-ES`), else one named after the code.
+Directory _listingFor(String code) {
+  const root = 'fastlane/metadata/android';
+  final existing = Directory(root).listSync().whereType<Directory>().map((d) => d.uri.pathSegments.reversed.skip(1).first);
+  final dir = existing.firstWhere((n) => n == code || n.startsWith('$code-'), orElse: () => code);
+  return Directory('$root/$dir/images/phoneScreenshots');
+}
+
+List<_Variant> _variants() {
+  if (_pseudo) return [_Variant('pseudo', PseudoL(), out: Directory('build/screenshots-pseudo'))];
+  if (_locale.isNotEmpty) {
+    return [_Variant(_locale, lookupL(Locale(_locale)), out: Directory('build/screenshots-$_locale'))];
+  }
+  return [
+    for (final locale in L.supportedLocales)
+      locale.languageCode == 'en'
+          ? _Variant('en', null, out: Directory('docs/screenshots'), store: _listingFor('en'))
+          : _Variant(locale.languageCode, lookupL(locale), store: _listingFor(locale.languageCode)),
+  ];
+}
+
+// The language being rendered; each group sets it before its shots.
+late _Variant _current;
+List<LocalizationsDelegate<dynamic>> get _delegates =>
+    _current.strings == null ? L.localizationsDelegates : delegatesFor(_current.strings!);
 
 /// Long enough for any [TypewriterText] to finish typing itself out.
 ///
@@ -70,7 +105,6 @@ const Duration _typedOut = Duration(seconds: 20);
 /// left the published listing on screenshots from 0.1.0 — taken before the
 /// second campaign existed — while `docs/screenshots` moved on without them.
 /// A shot missing from this map is documentation only.
-final Directory _store = Directory('fastlane/metadata/android/en-US/images/phoneScreenshots');
 const Map<String, int> _storeOrder = {
   'dashboard': 1,
   'run-hud': 2,
@@ -84,14 +118,23 @@ const Map<String, int> _storeOrder = {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(loadFonts);
 
-  setUpAll(() async {
-    _out.createSync(recursive: true);
-    _store.createSync(recursive: true);
-    await loadFonts();
-    debugUseStrings(_strings);
-  });
-  tearDownAll(() => debugUseStrings(null));
+  for (final variant in _variants()) {
+    group(variant.name, () {
+      setUpAll(() {
+        _current = variant;
+        variant.out?.createSync(recursive: true);
+        variant.store?.createSync(recursive: true);
+        debugUseStrings(variant.strings);
+      });
+      tearDownAll(() => debugUseStrings(null));
+      _shots();
+    });
+  }
+}
+
+void _shots() {
 
   testWidgets('dashboard', (tester) async {
     final state = await seedShowcase(tester);
@@ -285,9 +328,11 @@ Future<void> _shoot(WidgetTester tester, String name) async {
     final image = await boundary.toImage(pixelRatio: pixelRatio);
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
     final bytes = data!.buffer.asUint8List();
-    File('${_out.path}/$name.png').writeAsBytesSync(bytes);
+    final out = _current.out;
+    if (out != null) File('${out.path}/$name.png').writeAsBytesSync(bytes);
     final rank = _storeOrder[name];
-    if (rank != null && _strings == null) File('${_store.path}/${rank}_$name.png').writeAsBytesSync(bytes);
+    final store = _current.store;
+    if (rank != null && store != null) File('${store.path}/${rank}_$name.png').writeAsBytesSync(bytes);
     image.dispose();
   });
 }

@@ -1,0 +1,60 @@
+Tu app de correr no debería ser una hoja de cálculo. Debería estar persiguiéndote.
+
+SPRAWL//RUN es un registro de carreras convertido en juego, envuelto en dos campañas cyberpunk de diez misiones. En Sprawl Prime eres un mensajero en una megaciudad empapada de lluvia: un encargo en el Ninsei strip acaba en cargar con algo que no deja de transmitir, y termina cuarenta pisos arriba en una arcología corporativa, con una inteligencia que lleva diecinueve años contando un latido que no estaba allí. En Null Tide los distritos del sur están bajo el agua, algo en una casa de bombas lleva nueve segundos cada noche pidiendo perdón, y un corredor de salvamento necesita que alguien cruce el Drowned Mile con un papel antes de que vuelva el mar.
+
+La interfaz está en español. La historia —diálogos, informes y mensajes de los personajes— sigue en inglés por ahora, y los nombres de lugares y personajes se quedan en su idioma original.
+
+Escucha lo que sueles escuchar. Cada pocos minutos la app toma el audio: un chasquido de radio, tu música baja y tu contacto habla. Después te devuelve la música. Once personajes entre los paquetes de historia, cada uno con su propia voz sintetizada, para que sepas quién habla con el teléfono en el bolsillo.
+
+ALGUIEN TE PERSIGUE
+
+Un dron registra tu forma de correr. Unos cobradores tiran abajo la puerta de una clínica. Un rastreo corporativo avanza por el circuito de refrigeración hacia ti. Para escapar tienes que superar tu propio ritmo de los últimos tres minutos —nunca un número arbitrario—, así que una persecución es un esfuerzo real tanto si corres a 4:00/km como a 7:00/km, e imposible en ninguno de los dos casos. Desactívalas si prefieres simplemente correr.
+
+TÚ FIJAS EL OBJETIVO
+
+Antes de cada misión eliges un tiempo o una distancia. Doce minutos o veintiún kilómetros: la historia se adapta. Alcanza el objetivo y la operación es un éxito; si te quedas corto, sigue abierta para otro intento. Pasarte no es problema, todo cuenta.
+
+LA CIUDAD SIGUE SIN TI
+
+Tu contacto puede escribirte entre carreras, los días y a la hora que elijas, con la voz de la campaña que estás jugando y sobre la operación que te espera. Activa también el ruido de señal y el mundo habla aunque no escuches: un intermediario con un rumor, una lectura de mareas, un aviso de una autoridad que preferiría que te quedaras en casa. En silencio, nunca de noche, tan a menudo o tan poco como quieras.
+
+CADA OCTUBRE, LOS MUERTOS VUELVEN A CONECTARSE
+
+Del 10 de octubre al Día de Difuntos la ciudad se disfraza: el neón se vuelve calabaza y violeta, un cementerio se alza en el horizonte bajo una luna baja, los fantasmas cruzan la pantalla y los efectos de sonido se llenan de campanas y susurros. Solo durante la temporada se abre una operación de cuatro carreras, Samhain Protocol, sobre un mensajero muerto hace tres años cuya última entrega sigue pendiente. Si no la terminas, te espera al octubre siguiente. Un solo interruptor en Ajustes lo desactiva todo.
+
+TODO LO QUE HACE
+
+- Veinte misiones en dos campañas, adaptadas al objetivo que elijas
+- Eventos de temporada: aspecto, sonido y una operación de cuatro misiones de Halloween del 10 de octubre al 2 de noviembre, desactivables
+- Persecuciones ajustadas a tu propio ritmo de los últimos tres minutos, o desactivadas
+- Cada kilómetro o milla se anuncia con su parcial y tu tiempo total; en una misión, entre escenas
+- Once voces sintetizadas que bajan tu música y te la devuelven
+- Pausar, reanudar o parar desde la notificación, con un aviso si una carrera se queda en pausa; la carrera sigue aunque cierres la app, y se conserva aunque el sistema la mate
+- Recordatorios de tu contacto según tu horario, y ruido de señal ambiental opcional
+- The wire: cada mensaje, carrera, operación superada, logro e intel en un solo flujo, que se abre directamente al tocar una notificación; un punto en su icono avisa de que llegó una señal desde la última vez que miraste
+- Un informe el domingo por la tarde que repasa tu semana frente a tu propio objetivo, con la misma voz; desactivable
+- 69 logros en siete categorías, y una racha semanal que defines tú en minutos, kilómetros o misiones; una semana sin terminar nunca la rompe
+- Distancia, tiempo, calorías y misiones superadas por semana y por mes, con barras diarias y tu registro completo de carreras
+- La vista larga: semanas y meses anteriores, distancia por mes desde tu primera carrera, cada día que corriste en un calendario de puntos
+- Calorías calculadas con las ecuaciones metabólicas del ACSM y tu peso real, no con un multiplicador inventado
+- Cuarenta y ocho entradas del códice, cada una se desbloquea solo cuando un personaje la ha mencionado: no se puede leer por adelantado
+- Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio
+- Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd
+- Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
+- Un aviso para exportar cuando tu registro tiene carreras que no existen en ningún otro sitio
+- Interfaz en inglés y en español, según el idioma del teléfono o elegido en Ajustes
+- Sin permiso de almacenamiento en ningún sentido: la hoja de compartir para sacar, el selector de documentos para traer
+
+SIN CONEXIÓN DE VERDAD
+
+No hay permiso de INTERNET en el manifiesto, así que la app no puede acceder a la red en absoluto. Sin cuentas, sin analíticas, sin anuncios.
+
+Una advertencia honesta: el servicio de copias de seguridad de Android puede copiar los datos de la app a tu cuenta de Google, como con la mayoría de las apps, si tienes activada la copia del dispositivo. Eso es el sistema operativo, no esta app; desactívalo en los ajustes de copia de seguridad de Android si prefieres que no lo haga.
+
+Tampoco usa Google Play Services: la biblioteca de ubicación propietaria se excluye de la compilación y se usa directamente el LocationManager de AOSP, así que funciona igual en una ROM sin Google.
+
+SOBRE LAS VOCES
+
+Los diálogos hablados necesitan un motor de texto a voz instalado. Muchas ROM sin Google no traen ninguno; si la tuya no lo tiene, la app muestra el texto en pantalla al ritmo de la voz y conserva todos los efectos de sonido. Instalar RHVoice o eSpeak NG recupera las voces. Los recordatorios y el ruido de señal no se ven afectados: nunca se leen en voz alta.
+
+Software libre con licencia MIT. Todos los efectos de sonido y gráficos se generan a partir de código del repositorio en lugar de distribuirse como binarios opacos.

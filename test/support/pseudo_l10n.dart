@@ -1678,4 +1678,13 @@ class PseudoL extends L {
 
   @override
   String monthInitial(String month) => pseudo(_en.monthInitial(month));
+
+  @override
+  String get settingLanguage => pseudo(_en.settingLanguage);
+
+  @override
+  String get languageSystem => pseudo(_en.languageSystem);
+
+  @override
+  String get languageName => pseudo(_en.languageName);
 }

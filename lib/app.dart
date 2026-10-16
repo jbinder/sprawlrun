@@ -29,6 +29,7 @@ class SprawlRunApp extends StatelessWidget {
     // when it changes, everything beneath is rebuilt rather than just whatever
     // happens to depend on this.
     final season = context.select<AppState, Season?>((s) => s.season);
+    final locale = context.select<AppState, Locale>((s) => s.locale);
     if (Season.apply(season)) {
       SystemChrome.setSystemUIOverlayStyle(cyberOverlayStyle);
       void mark(Element e) {
@@ -46,6 +47,9 @@ class SprawlRunApp extends StatelessWidget {
       scrollBehavior: const CyberScrollBehavior(),
       localizationsDelegates: L.localizationsDelegates,
       supportedLocales: L.supportedLocales,
+      // Resolved by AppState rather than left to MaterialApp, because the
+      // notifications it plans have to be written in the same language.
+      locale: locale,
       // Beneath the localisations, so code without a context — notification
       // text, the narrator's readouts — speaks the language on screen.
       builder: (context, child) {
@@ -116,7 +120,7 @@ class HomeShell extends StatefulWidget {
   State<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> {
+class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   int _index = 0;
 
   // The dot on THE WIRE's icon has to appear while the app sits open, but a
@@ -143,11 +147,17 @@ class _HomeShellState extends State<HomeShell> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(onResume: _checkSignals);
+    WidgetsBinding.instance.addObserver(this);
   }
+
+  // Android hands the app the new list without restarting it.
+  @override
+  void didChangeLocales(List<Locale>? locales) => context.read<AppState>().systemLocalesChanged();
 
   @override
   void dispose() {
     _signalTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     _lifecycle.dispose();
     super.dispose();
   }

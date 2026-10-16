@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="channel_mission">Misión activa</string>
+    <string name="channel_mission_description">Se muestra mientras una misión registra tu ruta.</string>
+    <string name="channel_reminders">Recordatorios</string>
+    <string name="channel_reminders_description">Tu contacto, preguntando si hoy sales a correr.</string>
+    <string name="channel_noise">Ruido de señal</string>
+    <string name="channel_noise_description">Tráfico del Sprawl. En silencio.</string>
+    <string name="channel_debrief">Informe semanal</string>
+    <string name="channel_debrief_description">Cómo fue tu semana, cuando se cierra.</string>
+    <string name="channel_paused">Carrera en pausa</string>
+    <string name="channel_paused_description">Un aviso cuando una carrera lleva un rato en pausa.</string>
+
+    <string name="notice_default">Misión activa: sigue moviéndote.</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_resume">Reanudar</string>
+    <string name="action_stop">Parar</string>
+    <string name="action_complete">Completar</string>
+
+    <string name="paused_title">Carrera en pausa · %1$d min</string>
+    <string name="paused_15">Te has quedado callado, runner. El reloj está parado: muévete o cierra la carrera.</string>
+    <string name="paused_30">Media hora a oscuras. ¿Sigues ahí fuera? Retómala o cierra la carrera.</string>
+    <string name="paused_60">Una hora en espera. Último aviso: termínala o ponte en marcha.</string>
+</resources>

@@ -1,3 +1,5 @@
+import 'dart:ui' show Locale, PlatformDispatcher;
+
 import 'package:flutter/foundation.dart';
 
 import '../data/backup.dart';
@@ -40,13 +42,18 @@ class AppState extends ChangeNotifier {
     SignalScheduler? signals,
     SignalLogRepository? signalLog,
     ActiveRunStore? activeRun,
+    List<Locale> Function()? systemLocales,
   }) : _signals = signals ?? SignalScheduler.noop(),
+       _systemLocales = systemLocales ?? (() => PlatformDispatcher.instance.locales),
        activeRun = activeRun ?? ActiveRunStore(profiles.root),
        // Next to the profile by default, so every caller — tests included —
        // gets a working log without having to name a directory for it.
        signalLog = signalLog ?? SignalLogRepository(profiles.root);
 
   final ProfileRepository profiles;
+
+  /// The phone's languages, most preferred first.
+  final List<Locale> Function() _systemLocales;
 
   /// The run in progress, kept on disk while it is going. See [interruptedRun].
   final ActiveRunStore activeRun;
@@ -162,6 +169,7 @@ class AppState extends ChangeNotifier {
       interruptedRun = null;
     }
     await _migrateAndDateAchievements();
+    _applyLocale();
     _recompute();
     loading = false;
     await narrator.init(profile);
@@ -353,6 +361,26 @@ class AppState extends ChangeNotifier {
     profile = next;
     await profiles.save(next);
     await narrator.applyProfile(next);
+    _applyLocale();
+    _recompute();
+    notifyListeners();
+    await _rescheduleSignals();
+  }
+
+  /// The interface language: the runner's choice, else the phone's.
+  Locale get locale => resolveLocale(profile.languageCode, _systemLocales());
+
+  /// Puts [locale] behind `l10n` before anything derived is computed or any
+  /// notification is planned — their text is fixed in whatever language
+  /// `l10n` speaks at that moment, and the widget tree only catches up on its
+  /// next build.
+  void _applyLocale() => useLocale(locale);
+
+  /// The phone's language changed. Only matters to a runner following it,
+  /// and then the planned notifications have to be rewritten in it.
+  Future<void> systemLocalesChanged() async {
+    if (profile.languageCode != null) return;
+    _applyLocale();
     _recompute();
     notifyListeners();
     await _rescheduleSignals();

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The interface languages, for Android 13's per-app language setting. One
+     entry per lib/l10n/app_<lang>.arb; l10n_test keeps the two lists equal. -->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="en" />
+    <locale android:name="es" />
+</locale-config>

@@ -203,6 +203,7 @@ class SignalSettings {
 class Profile {
   const Profile({
     this.callsign = 'RUNNER',
+    this.language = '',
     this.weightKg = 72,
     this.units = UnitSystem.metric,
     this.streakGoal = const StreakGoal(),
@@ -232,6 +233,13 @@ class Profile {
   });
 
   final String callsign;
+
+  /// The interface language the runner picked, as a language code, or empty
+  /// to follow the phone. Empty rather than null so [copyWith] can set it
+  /// back. A code the app no longer ships falls back like an empty one.
+  final String language;
+  String? get languageCode => language.isEmpty ? null : language;
+
   final double weightKg;
   final UnitSystem units;
   final StreakGoal streakGoal;
@@ -338,6 +346,7 @@ class Profile {
 
   Profile copyWith({
     String? callsign,
+    String? language,
     double? weightKg,
     UnitSystem? units,
     StreakGoal? streakGoal,
@@ -366,6 +375,7 @@ class Profile {
     DateTime? wireReadAt,
   }) => Profile(
     callsign: callsign ?? this.callsign,
+    language: language ?? this.language,
     weightKg: weightKg ?? this.weightKg,
     units: units ?? this.units,
     streakGoal: streakGoal ?? this.streakGoal,
@@ -396,6 +406,7 @@ class Profile {
 
   Map<String, dynamic> toJson() => {
     'callsign': callsign,
+    if (language.isNotEmpty) 'language': language,
     'weightKg': weightKg,
     'units': units.name,
     'streakGoal': streakGoal.toJson(),
@@ -426,6 +437,7 @@ class Profile {
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
     callsign: json['callsign'] as String? ?? 'RUNNER',
+    language: json['language'] as String? ?? '',
     weightKg: (json['weightKg'] as num?)?.toDouble() ?? 72,
     units: UnitSystem.values.firstWhere((u) => u.name == json['units'], orElse: () => UnitSystem.metric),
     streakGoal: json['streakGoal'] == null

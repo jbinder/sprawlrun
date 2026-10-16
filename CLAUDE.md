@@ -11,13 +11,14 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 527 tests
+fvm flutter test                                    # 547 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
 fvm dart run tool/gen_icons.dart                    # launcher icons + docs/icon.png
 fvm flutter test tool/screenshots/capture_test.dart # docs/ + fastlane screenshots
 fvm flutter test --dart-define=PSEUDO=true tool/screenshots/capture_test.dart  # build/screenshots-pseudo/
+fvm flutter test --dart-define=LOCALE=es tool/screenshots/capture_test.dart    # build/screenshots-es/
 fvm dart run tool/gen_pseudo_l10n.dart              # after any ARB change
 ```
 
@@ -100,6 +101,21 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   that get *stored* stay codes: the streak unit (`MIN`/`KM`/`OPS`) goes into
   THE WIRE's archive untranslated and is only worded when shown. Story text
   stays in the packs and is not part of this.
+- **The language is resolved in `AppState`, not left to `MaterialApp`.**
+  `AppState.locale` is `Profile.language` (empty = follow the phone) or the
+  phone's first shipped language, and `_applyLocale` puts it behind `l10n`
+  before `_recompute` and before signals are planned — notification text is
+  fixed in whatever language `l10n` speaks at that moment. `MaterialApp` gets
+  the same locale. A phone language change arrives through `HomeShell`'s
+  `didChangeLocales` and re-plans. Adding a language is `app_<lang>.arb`,
+  `values-<lang>/strings.xml` and a line in `res/xml/locales_config.xml`;
+  `l10n_test` checks the last against the ARB files.
+- **Only the app's own spoken lines follow the interface language.** The split
+  readout and the intel notice carry `StoryLine.language`; the narrator gives
+  them an installed offline voice of that language (or lets the engine pick)
+  and sets the engine back to English for the next pack line, since the engine
+  keeps the last language it was given. Pack lines have no language and stay
+  on the per-character English voices.
 - **`test/overflow_test.dart` renders every screen in a pseudo-locale.**
   English accented, 40% longer and bracketed (`test/support/pseudo.dart`),
   at 360 dp with the real fonts; an overflow fails it. Its `PseudoL` is

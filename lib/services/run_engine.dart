@@ -605,6 +605,7 @@ class RunEngine extends ChangeNotifier {
         StoryLine(
           speaker: 'SYSTEM',
           text: SplitReadout.line(count: count, metric: metric, splitSeconds: split, totalSeconds: total),
+          language: l10n.localeName,
         ),
       ]),
     );
@@ -684,6 +685,7 @@ class RunEngine extends ChangeNotifier {
           StoryLine(
             speaker: 'SYSTEM',
             text: l10n.spokenIntelIntercepted(entry.title),
+            language: l10n.localeName,
             sfxBefore: 'unlock',
             pauseAfterMs: 120,
           ),

@@ -210,6 +210,11 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Optional ambient synth bed for when you bring no music of your own
 - Adjustable speech rate and effects volume; story voice can be silenced
 
+**Language**
+- English and Spanish, following the phone's language or picked in Settings; the
+  split readout is spoken in it too. The story stays in the language its pack was
+  written in, and place names stay as they are, so every runner calls them the same
+
 **Your data**
 - Export and import everything as one JSON file — profile, progress, runs, traces
 - Import either replaces this device or merges, and merging can never relock a mission
@@ -267,7 +272,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 505 tests
+flutter test                   # 547 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -312,7 +317,8 @@ lib/
   screens/      dashboard · brief · run HUD · summary · stats · history · wall · codex · settings
   widgets/      backdrop · panels · glitch text · rings & bars · route trace
   theme/        palette and typography
-tool/           SFX, icon and screenshot generators
+  l10n/         interface text: app_en.arb is the source, app_<lang>.arb the translations
+tool/           SFX, icon, screenshot and pseudo-locale generators
 ```
 
 Some notes on the shape of it:

@@ -129,6 +129,16 @@ class AudioNarrator implements Narrator {
   /// changed voice depending on who had spoken before them.
   Map<String, String>? _fallbackVoice;
 
+  /// Every voice the engine listed, kept for lines in another language.
+  List<Map<String, String>> _allVoices = const [];
+
+  /// The voice for each non-English language a line has asked for; null where
+  /// the device has no usable one, so the engine picks.
+  final Map<String, Map<String, String>?> _languageVoices = {};
+
+  /// What `setLanguage` last told the engine, which keeps it.
+  String _engineLanguage = 'en-US';
+
   /// Completed when the engine reports the line in progress failed or was
   /// stopped, which the plugin otherwise never passes back to `speak`.
   Completer<void>? _utteranceEnded;
@@ -215,6 +225,7 @@ class AudioNarrator implements Narrator {
       final raw = await _tts.getVoices;
       if (raw is! List) return;
       final all = raw.whereType<Map<Object?, Object?>>().map((v) => v.map((k, v) => MapEntry('$k', '$v'))).toList();
+      _allVoices = all;
       final voices = usableVoices(all);
       // One line in logcat, so a report of slow or missing speech can be read
       // against what the device actually offered.
@@ -234,16 +245,17 @@ class AudioNarrator implements Narrator {
     }
   }
 
-  /// English voices that can speak with no connection and are on the device.
+  /// Voices in [language] (English unless said) that can speak with no
+  /// connection and are on the device.
   ///
   /// The engine lists every voice it could offer, including ones it streams
   /// from a server and ones not yet downloaded. Given one of those mid-run,
   /// on a patchy signal, it either waits on the network — silence after the
   /// squelch — or fails the line.
   @visibleForTesting
-  static List<Map<String, String>> usableVoices(Iterable<Map<String, String>> voices) => [
+  static List<Map<String, String>> usableVoices(Iterable<Map<String, String>> voices, {String language = 'en'}) => [
     for (final v in voices)
-      if ((v['locale'] ?? '').toLowerCase().startsWith('en') &&
+      if ((v['locale'] ?? '').toLowerCase().startsWith(language.toLowerCase()) &&
           v['network_required'] != '1' &&
           !(v['features'] ?? '').split('\t').contains('notInstalled'))
         v,
@@ -306,10 +318,16 @@ class AudioNarrator implements Narrator {
       return;
     }
     final voice = VoiceProfile.of(line.speaker);
+    // A line the app wrote in the interface language, when that is not
+    // English: one voice of that language for all of them, since there is
+    // rarely more than one installed.
+    final language = line.language?.split(RegExp('[-_]')).first.toLowerCase();
+    final foreign = language != null && language != 'en';
     try {
+      await _setEngineLanguage(foreign ? language : 'en-US');
       final key = line.speaker.toUpperCase();
-      final own = _voiceAssignments[key];
-      final assigned = own ?? _fallbackVoice;
+      final own = foreign ? null : _voiceAssignments[key];
+      final assigned = foreign ? _voiceIn(language) : own ?? _fallbackVoice;
       // Always set one way or the other: the engine keeps the last voice it
       // was given, which is somebody else's.
       if (assigned != null) {
@@ -325,7 +343,9 @@ class AudioNarrator implements Narrator {
       // for the rest of the session rather than paying for the same failure on
       // every line.
       debugPrint('Voice ${assigned['name']} failed for ${line.speaker}; using the default');
-      if (own != null) {
+      if (foreign) {
+        _languageVoices[language] = null;
+      } else if (own != null) {
         _voiceAssignments.remove(key);
       } else {
         _fallbackVoice = null;
@@ -336,6 +356,15 @@ class AudioNarrator implements Narrator {
       debugPrint('TTS failed for ${line.speaker}: $e');
       await Future<void>.delayed(const Duration(milliseconds: 600));
     }
+  }
+
+  Map<String, String>? _voiceIn(String language) =>
+      _languageVoices.putIfAbsent(language, () => usableVoices(_allVoices, language: language).firstOrNull);
+
+  Future<void> _setEngineLanguage(String language) async {
+    if (language == _engineLanguage) return;
+    _engineLanguage = language;
+    await _tts.setLanguage(language);
   }
 
   /// Speaks [line] and waits for it, never unbounded: a line the engine

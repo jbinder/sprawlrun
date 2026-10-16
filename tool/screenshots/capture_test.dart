@@ -13,6 +13,8 @@
 // instead (test/support/pseudo.dart) and writes to build/screenshots-pseudo/,
 // never to the store: a look at what a longer translation does to each screen,
 // and at any text that skipped the ARB — it is the text without brackets.
+// --dart-define=LOCALE=es does the same in a shipped language, into
+// build/screenshots-es/.
 
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -43,9 +45,15 @@ import 'showcase.dart';
 
 final GlobalKey _frame = GlobalKey();
 const bool _pseudo = bool.fromEnvironment('PSEUDO');
+const String _locale = String.fromEnvironment('LOCALE');
 
-final Directory _out = Directory(_pseudo ? 'build/screenshots-pseudo' : 'docs/screenshots');
-final List<LocalizationsDelegate<dynamic>> _delegates = _pseudo ? pseudoDelegates : L.localizationsDelegates;
+/// Anything but English goes to build/, never to the store.
+final L? _strings = _pseudo ? PseudoL() : (_locale.isEmpty ? null : lookupL(Locale(_locale)));
+final Directory _out = Directory(
+  _pseudo ? 'build/screenshots-pseudo' : (_locale.isEmpty ? 'docs/screenshots' : 'build/screenshots-$_locale'),
+);
+final List<LocalizationsDelegate<dynamic>> _delegates =
+    _strings == null ? L.localizationsDelegates : delegatesFor(_strings!);
 
 /// Long enough for any [TypewriterText] to finish typing itself out.
 ///
@@ -81,7 +89,7 @@ void main() {
     _out.createSync(recursive: true);
     _store.createSync(recursive: true);
     await loadFonts();
-    if (_pseudo) debugUseStrings(PseudoL());
+    debugUseStrings(_strings);
   });
   tearDownAll(() => debugUseStrings(null));
 
@@ -279,7 +287,7 @@ Future<void> _shoot(WidgetTester tester, String name) async {
     final bytes = data!.buffer.asUint8List();
     File('${_out.path}/$name.png').writeAsBytesSync(bytes);
     final rank = _storeOrder[name];
-    if (rank != null && !_pseudo) File('${_store.path}/${rank}_$name.png').writeAsBytesSync(bytes);
+    if (rank != null && _strings == null) File('${_store.path}/${rank}_$name.png').writeAsBytesSync(bytes);
     image.dispose();
   });
 }

@@ -2676,5 +2676,17 @@
         "type": "String"
       }
     }
+  },
+  "settingLanguage": "Language",
+  "@settingLanguage": {
+    "description": "Setting: the language of the interface. The story itself stays in the language its mission pack was written in."
+  },
+  "languageSystem": "System",
+  "@languageSystem": {
+    "description": "Language choice: follow the phone's language."
+  },
+  "languageName": "English",
+  "@languageName": {
+    "description": "The name of THIS language, written in itself — \"Español\" in Spanish, \"Deutsch\" in German. Listed in the language picker."
   }
 }

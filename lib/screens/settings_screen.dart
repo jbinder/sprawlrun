@@ -68,6 +68,19 @@ class SettingsScreen extends StatelessWidget {
                                 update(profile.copyWith(weightKg: (profile.weightKg + 1).clamp(30, 200))),
                           ),
                           const _Rule(),
+                          _PickerRow<String>(
+                            label: l.settingLanguage,
+                            value: profile.language,
+                            options: {
+                              '': l.languageSystem,
+                              // Each in its own language, so a runner who
+                              // cannot read the current one still finds theirs.
+                              for (final locale in L.supportedLocales)
+                                locale.languageCode: lookupL(locale).languageName,
+                            },
+                            onChanged: (code) => update(profile.copyWith(language: code)),
+                          ),
+                          const _Rule(),
                           _SegmentRow<UnitSystem>(
                             label: l.settingUnits,
                             value: profile.units,
@@ -604,6 +617,87 @@ class _SegmentRow<T> extends StatelessWidget {
           ),
       ],
     );
+  }
+}
+
+/// A choice among more options than fit as segments: the current one, and a
+/// dialog listing them all.
+class _PickerRow<T> extends StatelessWidget {
+  const _PickerRow({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T value;
+  final Map<T, String> options;
+  final ValueChanged<T> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => _pick(context),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
+            Flexible(
+              child: Text(
+                options[value] ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: CyType.mono(size: 12, color: Cy.cyan),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(Icons.unfold_more, size: 16, color: Cy.inkDim),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pick(BuildContext context) async {
+    final picked = await showDialog<T>(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: NeonPanel(
+          accent: Cy.cyan,
+          lit: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label.toUpperCase(), style: CyType.display(size: 14, color: Cy.cyan)),
+              const SizedBox(height: 10),
+              for (final entry in options.entries)
+                InkWell(
+                  onTap: () => Navigator.of(context).pop(entry.key),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            entry.value,
+                            style: CyType.body(size: 16, color: entry.key == value ? Cy.cyan : Cy.ink),
+                          ),
+                        ),
+                        if (entry.key == value) Icon(Icons.check, size: 18, color: Cy.cyan),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (picked != null && picked != value) onChanged(picked);
   }
 }
 

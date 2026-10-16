@@ -21,9 +21,11 @@ void main() {
     (f) => f.path.endsWith('.arb') && !f.path.endsWith('app_en.arb'),
   );
 
-  /// `{name}` and `{name, plural, …}` alike: the names a message takes.
+  /// `{name}` and `{name, plural, …}` alike: the names a message takes. Not a
+  /// branch of a select or plural (`KM{km}`, `=1{…}`), whose brace follows its
+  /// case key directly.
   Set<String> placeholders(String message) =>
-      RegExp(r'\{(\w+)(?:,|\})').allMatches(message).map((m) => m.group(1)!).toSet();
+      RegExp(r'(?<![\w=])\{(\w+)(?=[,}])').allMatches(message).map((m) => m.group(1)!).toSet();
 
   test('every English message says what it is for', () {
     // Translators see a string without its screen; the description is all
@@ -92,16 +94,31 @@ void main() {
       }
     });
 
+    test('Android offers exactly the languages the app ships', () {
+      // Android 13's per-app language setting lists what locales_config says;
+      // one missing there is a language nobody can pick from system settings.
+      final config = File('${res.path}/xml/locales_config.xml').readAsStringSync();
+      final listed = RegExp(r'<locale android:name="([\w-]+)"').allMatches(config).map((m) => m[1]).toSet();
+      expect(listed, {for (final l in L.supportedLocales) l.toLanguageTag()});
+    });
+
     test('the signal channels are named the same on both sides', () {
       // The Dart side passes the names again whenever it schedules, and the
       // last one to call createNotificationChannel wins.
-      final en = lookupL(const Locale('en'));
-      expect(base['channel_reminders'], en.channelReminders);
-      expect(base['channel_reminders_description'], en.channelRemindersDescription);
-      expect(base['channel_noise'], en.channelNoise);
-      expect(base['channel_noise_description'], en.channelNoiseDescription);
-      expect(base['channel_debrief'], en.channelDebrief);
-      expect(base['channel_debrief_description'], en.channelDebriefDescription);
+      for (final locale in L.supportedLocales) {
+        final code = locale.languageCode;
+        final file = File('${res.path}/${code == 'en' ? 'values' : 'values-$code'}/strings.xml');
+        if (!file.existsSync()) continue;
+        final android = {...base, ...strings(file)};
+        final dart = lookupL(locale);
+        final reason = '$code: the channel names differ between strings.xml and app_$code.arb';
+        expect(android['channel_reminders'], dart.channelReminders, reason: reason);
+        expect(android['channel_reminders_description'], dart.channelRemindersDescription, reason: reason);
+        expect(android['channel_noise'], dart.channelNoise, reason: reason);
+        expect(android['channel_noise_description'], dart.channelNoiseDescription, reason: reason);
+        expect(android['channel_debrief'], dart.channelDebrief, reason: reason);
+        expect(android['channel_debrief_description'], dart.channelDebriefDescription, reason: reason);
+      }
     });
   });
 }

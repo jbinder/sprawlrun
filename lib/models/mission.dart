@@ -11,10 +11,16 @@ class StoryLine {
     this.sfxBefore,
     this.sfxAfter,
     this.pauseAfterMs = 260,
+    this.language,
   });
 
   final String speaker;
   final String text;
+
+  /// The language [text] is in, for a line the app wrote itself — a split
+  /// readout, an intel notice — in the interface language. Null for a line
+  /// from a pack, which is English, so it is never read from the JSON.
+  final String? language;
 
   /// Sound effect filename (without extension) played before/after the line.
   final String? sfxBefore;

@@ -32,7 +32,23 @@ import 'support/pseudo_locale.dart';
 /// whole assertion. Real fonts, since overflow is a matter of their metrics.
 ///
 /// Story text is the pack's and stays English here; only the interface grows.
+///
+/// Run once in the pseudo-locale, which stands for every language to come,
+/// and once in each language the app ships, whose real words can break in
+/// places the pseudo text does not.
 void main() {
+  for (final (name, strings) in [
+    ('pseudo', PseudoL()),
+    for (final locale in L.supportedLocales)
+      if (locale.languageCode != 'en') (locale.languageCode, lookupL(locale)),
+  ]) {
+    group(name, () => _screens(strings));
+  }
+}
+
+void _screens(L strings) {
+  final delegates = delegatesFor(strings);
+
   /// A small, common Android width. Tall where the screen scrolls, so a lazy
   /// list builds all of itself rather than the first screenful.
   const narrow = Size(360, 780);
@@ -40,13 +56,13 @@ void main() {
 
   setUpAll(() async {
     await loadFonts();
-    debugUseStrings(PseudoL());
+    debugUseStrings(strings);
   });
   tearDownAll(() => debugUseStrings(null));
 
   Future<AppState> show(WidgetTester tester, Widget home, {Size size = tall, RunEngine? engine}) async {
     final state = await seedShowcase(tester, logicalSize: size);
-    await pumpShowcase(tester, home, state, engine: engine, delegates: pseudoDelegates);
+    await pumpShowcase(tester, home, state, engine: engine, delegates: delegates);
     return state;
   }
 
@@ -69,7 +85,7 @@ void main() {
     await tester.runAsync(() => state.updateProfile(state.profile.copyWith(lastExportAt: DateTime(2026, 8, 1))));
     expect(state.season, isNotNull);
     expect(state.backupNudge, isNotNull);
-    await pumpShowcase(tester, const HomeShell(), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, const HomeShell(), state, delegates: delegates);
   });
 
   testWidgets('home, with a campaign finished', (tester) async {
@@ -80,12 +96,12 @@ void main() {
         state.profile.copyWith(completedMissions: {...state.profile.completedMissions, for (final m in pack.missions) m.id}),
       ),
     );
-    await pumpShowcase(tester, const HomeShell(), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, const HomeShell(), state, delegates: delegates);
   });
 
   testWidgets('briefing and target picker', (tester) async {
     final state = await seedShowcase(tester, logicalSize: tall);
-    await pumpShowcase(tester, MissionBriefScreen(mission: state.currentMission!.mission), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, MissionBriefScreen(mission: state.currentMission!.mission), state, delegates: delegates);
     await tester.pump(const Duration(seconds: 20)); // typed out
     await tester.tap(find.text(l10n.goalDistance));
     await tester.pump(const Duration(milliseconds: 300));
@@ -97,7 +113,7 @@ void main() {
 
   testWidgets('debriefing', (tester) async {
     final state = await seedShowcase(tester, logicalSize: tall);
-    await pumpShowcase(tester, MissionDebriefScreen(mission: state.missionById('sp02')!), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, MissionDebriefScreen(mission: state.missionById('sp02')!), state, delegates: delegates);
   });
 
   testWidgets('run screen, mid-pursuit', (tester) async {
@@ -114,7 +130,7 @@ void main() {
       RunScreen(mission: state.currentMission!.mission, goal: const RunGoal(GoalType.time, 1500)),
       state,
       engine: engine,
-      delegates: pseudoDelegates,
+      delegates: delegates,
     );
     for (var i = 0; i < 1500 && engine.activeChase == null; i++) {
       now = now.add(const Duration(seconds: 1));
@@ -147,7 +163,7 @@ void main() {
       codexRecovered: mission.codex.take(1).toList(),
       missionUnlocked: 'COOLING LOOP',
     );
-    await pumpShowcase(tester, RunSummaryScreen(report: report, mission: mission), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, RunSummaryScreen(report: report, mission: mission), state, delegates: delegates);
     for (var i = 0; i < 3; i++) {
       await tester.pump(const Duration(milliseconds: 2500));
       await tester.tap(find.byType(UnlockReveal));
@@ -158,7 +174,7 @@ void main() {
 
   testWidgets('run detail', (tester) async {
     final state = await seedShowcase(tester, logicalSize: tall);
-    await pumpShowcase(tester, RunDetailScreen(run: state.runLog.first), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, RunDetailScreen(run: state.runLog.first), state, delegates: delegates);
     for (var i = 0; i < 40 && find.text(l10n.loadingTrace).evaluate().isNotEmpty; i++) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
       await tester.pump();
@@ -193,7 +209,7 @@ void main() {
         ),
       ),
     );
-    await pumpShowcase(tester, const SettingsScreen(), state, delegates: pseudoDelegates);
+    await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
     await tester.tap(find.text(l10n.resetProgress.toUpperCase()));
     await tester.pump(const Duration(milliseconds: 300));
   });

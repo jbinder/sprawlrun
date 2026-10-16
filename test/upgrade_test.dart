@@ -105,6 +105,7 @@ void main() {
       expect(loaded.resumeMusic, isTrue);
       expect(loaded.splitsEnabled, isTrue, reason: 'free runs read out splits unless switched off');
       expect(loaded.streakGoalChanges, isEmpty, reason: 'no recorded changes: every week judged as before');
+      expect(loaded.languageCode, isNull, reason: 'follows the phone, as it always did');
     });
 
     test('a 0.1.0 profile is not signed up for signals it never asked for', () async {

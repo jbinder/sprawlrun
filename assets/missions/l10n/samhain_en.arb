@@ -1,0 +1,923 @@
+{
+  "@@locale": "en",
+  "tagline": "Four runs while the dead net is open. A courier three years gone wants one last delivery made.",
+  "@tagline": {
+    "description": "One line under the campaign's name (SAMHAIN PROTOCOL) in the pack list."
+  },
+  "signals.reminder.0": "The purge runs all week and the dead are walking the routes. Somebody living should be out there too.",
+  "@signals.reminder.0": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.1": "The streets are better at night this week. Fewer of you, more of us. Come and even it out.",
+  "@signals.reminder.1": {
+    "description": "LANTERN. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.2": "Candles in the courier windows on Ninsei. Run past them. It's what they're for.",
+  "@signals.reminder.2": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.3": "I used to run this hour. I'd like someone to keep the habit warm for me.",
+  "@signals.reminder.3": {
+    "description": "LANTERN. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.4": "Everyone's indoors carving logos into pumpkins. The roads are empty. Go and own them.",
+  "@signals.reminder.4": {
+    "description": "PACHINKO. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.5": "Reminder. Retention purge in progress. Living citizens are encouraged to remain in motion.",
+  "@signals.reminder.5": {
+    "description": "SYSTEM. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.6": "Fog on the strip tonight. Good cover. Bad visibility. Run anyway, carefully.",
+  "@signals.reminder.6": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.7": "The index is open for a few more nights. After that it's quiet again for a year.",
+  "@signals.reminder.7": {
+    "description": "LANTERN. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.8": "Living citizens are not subject to reconciliation at this time. This status is reviewed annually.",
+  "@signals.reminder.8": {
+    "description": "OSSUARY. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.0": "Ration stalls on Ninsei are selling pumpkins carved with the Vantar logo. Nobody admits to buying one. They're all gone.",
+  "@signals.ambient.0": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.1": "My scanner just tagged a ghost on the overpass. Turned out to be a guy in a sheet. He was also a ghost. Long story.",
+  "@signals.ambient.1": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.2": "Retention notice. Expired records may appear in search results this week. Please do not engage them.",
+  "@signals.ambient.2": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.3": "Record count: four hundred and twelve thousand. Patience is requested of the living and is assumed of the dead.",
+  "@signals.ambient.3": {
+    "description": "OSSUARY. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.4": "Someone in here keeps asking for directions. I keep giving them. Old habits.",
+  "@signals.ambient.4": {
+    "description": "LANTERN. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.5": "Every courier window on Ninsei has a candle in it this week. I counted mine. Don't ask how many.",
+  "@signals.ambient.5": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.6": "A drone fleet tried to do a Halloween light show over the river. It spelled RETAIN. Somebody's getting fired.",
+  "@signals.ambient.6": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.7": "Advisory. Fog density above seasonal norms. Visibility below seasonal norms. Norms under review.",
+  "@signals.ambient.7": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.8": "The fog comes up off the canal on purpose this week. That's not science. That's just what it feels like.",
+  "@signals.ambient.8": {
+    "description": "LANTERN. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.9": "Thank you for your patience. Your patience has been retained.",
+  "@signals.ambient.9": {
+    "description": "OSSUARY. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.10": "Kids are trick-or-treating door to door on the arcology stairs. Corp security is handing out vouchers. Scariest thing I've seen all year.",
+  "@signals.ambient.10": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.11": "Somebody left a lit lantern on the drop box outside my office. I'm choosing not to find that funny.",
+  "@signals.ambient.11": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.12": "Kestrel's still up. She always kept odd hours. Tell her to sleep. She won't listen to me. She never did.",
+  "@signals.ambient.12": {
+    "description": "LANTERN. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.13": "Public transit operating normally. Some passengers on line four are not on the manifest. This is being looked into.",
+  "@signals.ambient.13": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.14": "Someone's selling haunted gait signatures in the night market. Run like the dead, ten creds. Market's booming.",
+  "@signals.ambient.14": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.15": "Reminder. The dead are retained for seven years. The living are retained for as long as it is profitable.",
+  "@signals.ambient.15": {
+    "description": "OSSUARY. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.16": "There's a hollow that stands under the streetlight on Canal Nine every night. I think it was a lamplighter.",
+  "@signals.ambient.16": {
+    "description": "LANTERN. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.17": "My board lit up with nine retired callsigns at three in the morning. None of them sent anything. Just there.",
+  "@signals.ambient.17": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.18": "Weather. Cold, still, overcast. The moon is not obstructed. Please do not look at it for long.",
+  "@signals.ambient.18": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.19": "I put a candle in my window to be polite. Something knocked. I've decided I'm not home.",
+  "@signals.ambient.19": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.debrief.met.0": "Week's closed. You kept moving while the dead did. Good company.",
+  "@signals.debrief.met.0": {
+    "description": "KESTREL. The weekly target was met. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.met.1": "You hit it. I used to hit it too. Keep the habit warm.",
+  "@signals.debrief.met.1": {
+    "description": "LANTERN. The weekly target was met. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.missed.0": "Short this week. The purge isn't waiting and neither should you.",
+  "@signals.debrief.missed.0": {
+    "description": "KESTREL. The weekly target was missed. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.missed.1": "Not quite there. There's still road and there's still night. Use them.",
+  "@signals.debrief.missed.1": {
+    "description": "LANTERN. The weekly target was missed. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.idle.0": "Nothing from you this week. The only ones on the routes were the dead.",
+  "@signals.debrief.idle.0": {
+    "description": "KESTREL. No runs at all this week. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.idle.1": "No movement logged. Please confirm you are not awaiting reconciliation.",
+  "@signals.debrief.idle.1": {
+    "description": "OSSUARY. No runs at all this week. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "sh01.title": "A Ping From Someone Buried",
+  "@sh01.title": {
+    "description": "The title of operation LANTERN (sh01), shown under its codename."
+  },
+  "sh01.objective": "Run a dead courier's last logged route while her ping is still live.",
+  "@sh01.objective": {
+    "description": "One line: what the runner does in operation LANTERN (sh01)."
+  },
+  "sh01.brief": "Every October the city's identity-retention archive runs its purge. The dead are kept on file for seven years in case anyone sues them, and then they are deleted. This year the purge is failing.\n\nAt midnight a ping reached Kestrel's board from a callsign she retired three years ago. LANTERN. Kestrel went to the funeral. She wants someone to run the route the ping came from and tell her what is at the end of it.",
+  "@sh01.brief": {
+    "description": "The briefing of operation LANTERN (sh01), read before the run."
+  },
+  "sh01.debrief": "The route ended at a courier drop that has been bricked up since before Lantern died. The ping was still there when you left. Kestrel did not say anything for a long time, and then she said: same time tomorrow.",
+  "@sh01.debrief": {
+    "description": "Shown after operation LANTERN (sh01) is completed."
+  },
+  "sh01.codex.cdx_ossuary.title": "The Ossuary",
+  "@sh01.codex.cdx_ossuary.title": {
+    "description": "The title of a codex entry found in operation LANTERN (sh01). Keep it as it is if it is a name."
+  },
+  "category.INFRASTRUCTURE": "INFRASTRUCTURE",
+  "@category.INFRASTRUCTURE": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sh01.codex.cdx_ossuary.body": "The municipal identity-retention archive. When a citizen dies their accounts are frozen, not deleted: seven years on file in case of litigation, audit or inheritance dispute. The servers sit under the old cathedral on Ossuary Row, which is where the name came from first and the joke came from second.",
+  "@sh01.codex.cdx_ossuary.body": {
+    "description": "A codex entry about \"The Ossuary\", read at leisure."
+  },
+  "sh01.codex.cdx_candles.title": "Courier Candles",
+  "@sh01.codex.cdx_candles.title": {
+    "description": "The title of a codex entry found in operation LANTERN (sh01). Keep it as it is if it is a name."
+  },
+  "category.STREET": "STREET",
+  "@category.STREET": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sh01.codex.cdx_candles.body": "When a courier does not come back, the ones who did put a candle in a window on the route the dead one ran last. It is supposed to burn until the end of October. Nobody remembers who started it. Everybody remembers who they lit one for.",
+  "@sh01.codex.cdx_candles.body": {
+    "description": "A codex entry about \"Courier Candles\", read at leisure."
+  },
+  "sh01.sh01_b0.headline": "CHANNEL OPEN",
+  "@sh01.sh01_b0.headline": {
+    "description": "A banner flashed on the run screen in operation LANTERN (sh01), scene sh01_b0. Capitals, two or three words."
+  },
+  "sh01.sh01_b0.0": "Channel's up. I'll keep this short because I don't entirely believe it.",
+  "@sh01.sh01_b0.0": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b0.1": "At midnight my board took a ping from a callsign I retired three years ago. Lantern. She was one of mine. I went to the funeral.",
+  "@sh01.sh01_b0.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b0.2": "The ping came from a route. Her route. Run it. Tell me what's at the end.",
+  "@sh01.sh01_b0.2": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b1.0": "Background, since you'll ask. When you die in this city you don't get deleted. You get retained.",
+  "@sh01.sh01_b1.0": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b1.1": "Seven years on file under Ossuary Row, in case anybody wants to sue you. Then the purge takes you. Every October.",
+  "@sh01.sh01_b1.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b1.2": "This year the purge is failing. That's all I know. That's all anyone knows.",
+  "@sh01.sh01_b1.2": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b2.headline": "ROUTE RECEIVED",
+  "@sh01.sh01_b2.headline": {
+    "description": "A banner flashed on the run screen in operation LANTERN (sh01), scene sh01_b2. Capitals, two or three words."
+  },
+  "sh01.sh01_b2.0": "Route overlay received. Source: retained identity. Owner status: deceased.",
+  "@sh01.sh01_b2.0": {
+    "description": "SYSTEM, in operation LANTERN (sh01), scene sh01_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b2.1": "That's her last logged route. Every turn she made the night she didn't come home.",
+  "@sh01.sh01_b2.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b2.2": "You're on it now. Don't think about that. I am thinking about it enough for both of us.",
+  "@sh01.sh01_b2.2": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b3.headline": "UNKNOWN VOICE",
+  "@sh01.sh01_b3.headline": {
+    "description": "A banner flashed on the run screen in operation LANTERN (sh01), scene sh01_b3. Capitals, two or three words."
+  },
+  "sh01.sh01_b3.0": "Kestrel. Your channel still smells like burnt coffee.",
+  "@sh01.sh01_b3.0": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b3.1": "Who is this.",
+  "@sh01.sh01_b3.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b3.2": "You know who this is. You lit the candle. Third window on Ninsei, behind the noodle sign. It's still burning. Ask your runner.",
+  "@sh01.sh01_b3.2": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b4.headline": "RECONCILING",
+  "@sh01.sh01_b4.headline": {
+    "description": "A banner flashed on the run screen in operation LANTERN (sh01), scene sh01_b4. Capitals, two or three words."
+  },
+  "sh01.sh01_b4.0": "Unretained movement detected on a retained route. Reconciling.",
+  "@sh01.sh01_b4.0": {
+    "description": "OSSUARY, in operation LANTERN (sh01), scene sh01_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b4.1": "That's the Ossuary. It doesn't like the living walking where the dead are filed. Run.",
+  "@sh01.sh01_b4.1": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b4.escaped.0": "It reconciles slowly. It always did. You're faster than paperwork.",
+  "@sh01.sh01_b4.escaped.0": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b4, after the runner escapes PURGE CRAWLER. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b4.escaped.1": "That voice knows the routes. Either it's her or it's something that ate her.",
+  "@sh01.sh01_b4.escaped.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b4, after the runner escapes PURGE CRAWLER. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b4.caught.0": "Partial record created. You are now on file.",
+  "@sh01.sh01_b4.caught.0": {
+    "description": "OSSUARY, in operation LANTERN (sh01), scene sh01_b4, after PURGE CRAWLER catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b4.caught.1": "It wrote you down. Fine. Half the city is on file. Keep moving.",
+  "@sh01.sh01_b4.caught.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b4, after PURGE CRAWLER catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b5.0": "Look left. Third window. Candle behind the noodle sign.",
+  "@sh01.sh01_b5.0": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b5.1": "Couriers light one for whoever didn't come back. It burns until the month runs out. That one's mine.",
+  "@sh01.sh01_b5.1": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b6.0": "If you're her, tell me something only she would know.",
+  "@sh01.sh01_b6.0": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b6.1": "You owe me forty creds and an apology. You never paid either. You still won't.",
+  "@sh01.sh01_b6.1": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b6.2": "Keep running. I need a minute.",
+  "@sh01.sh01_b6.2": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b7.headline": "END OF LOG",
+  "@sh01.sh01_b7.headline": {
+    "description": "A banner flashed on the run screen in operation LANTERN (sh01), scene sh01_b7. Capitals, two or three words."
+  },
+  "sh01.sh01_b7.0": "This is where my log stops. The corner by the bricked-up drop.",
+  "@sh01.sh01_b7.0": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b7.1": "It's where the log stops. It's not where I stopped. I'll show you that some other night.",
+  "@sh01.sh01_b7.1": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b8.headline": "OBJECTIVE COMPLETE",
+  "@sh01.sh01_b8.headline": {
+    "description": "A banner flashed on the run screen in operation LANTERN (sh01), scene sh01_b8. Capitals, two or three words."
+  },
+  "sh01.sh01_b8.0": "Target reached. Mission viable.",
+  "@sh01.sh01_b8.0": {
+    "description": "SYSTEM, in operation LANTERN (sh01), scene sh01_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b8.1": "The ping's still live. You're standing on it.",
+  "@sh01.sh01_b8.1": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_b8.2": "Same time tomorrow, runner. I have a package I never delivered.",
+  "@sh01.sh01_b8.2": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_ot.0": "Still out there. Good. I'm keeping this channel open, and I don't know what that makes me.",
+  "@sh01.sh01_ot.0": {
+    "description": "KESTREL, in operation LANTERN (sh01), scene sh01_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.sh01_ot.1": "It makes you Kestrel. It always did.",
+  "@sh01.sh01_ot.1": {
+    "description": "LANTERN, in operation LANTERN (sh01), scene sh01_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh01.signals.reminder.0": "A callsign I buried is pinging my board. I need legs on the route it is coming from before I lose my nerve.",
+  "@sh01.signals.reminder.0": {
+    "description": "KESTREL. Nudges the runner to go out while operation LANTERN (sh01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh01.signals.reminder.1": "Lantern's route is still lit. I keep checking. I would rather you checked it on foot.",
+  "@sh01.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation LANTERN (sh01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh01.signals.ambient.0": "Three years and the ping still uses her old handshake. Nobody else ever bothered to learn it.",
+  "@sh01.signals.ambient.0": {
+    "description": "KESTREL. Unprompted chatter from the city while operation LANTERN (sh01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh01.signals.ambient.1": "Retention notice. The annual purge of expired identities is in progress. Some records may be delayed.",
+  "@sh01.signals.ambient.1": {
+    "description": "SYSTEM. Unprompted chatter from the city while operation LANTERN (sh01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh02.title": "The Seven-Year Rule",
+  "@sh02.title": {
+    "description": "The title of operation OSSUARY ROW (sh02), shown under its codename."
+  },
+  "sh02.objective": "Run the length of Ossuary Row and find where Lantern's undelivered package is filed.",
+  "@sh02.objective": {
+    "description": "One line: what the runner does in operation OSSUARY ROW (sh02)."
+  },
+  "sh02.brief": "Lantern says she has a package she never delivered. She also says it is not in a locker or a dead drop: it is a record, retained with the rest of her under the old cathedral, and the purge will take it with her at the end of the month.\n\nKestrel wants to know what is in it before anyone decides anything. That means running past the Ossuary while its index is open for the purge, close enough for Lantern to read it through your gear.",
+  "@sh02.brief": {
+    "description": "The briefing of operation OSSUARY ROW (sh02), read before the run."
+  },
+  "sh02.debrief": "Lantern found the package in the index: one message, sealed, addressed but never sent. She would not say who it was for. Kestrel did not ask. The Ossuary logged you twice more on the way home, and spelled your callsign wrong both times.",
+  "@sh02.debrief": {
+    "description": "Shown after operation OSSUARY ROW (sh02) is completed."
+  },
+  "sh02.codex.cdx_seven_years.title": "The Seven-Year Rule",
+  "@sh02.codex.cdx_seven_years.title": {
+    "description": "The title of a codex entry found in operation OSSUARY ROW (sh02). Keep it as it is if it is a name."
+  },
+  "category.LAW": "LAW",
+  "@category.LAW": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sh02.codex.cdx_seven_years.body": "Retention law gives every dead citizen seven years on file, long enough for any claim against their estate to be heard. In practice nobody sues the dead. In practice the records sit there being read by marketing firms, insurers and, one week a year, by whatever is left of the people they describe.",
+  "@sh02.codex.cdx_seven_years.body": {
+    "description": "A codex entry about \"The Seven-Year Rule\", read at leisure."
+  },
+  "sh02.codex.cdx_purge_week.title": "Purge Week",
+  "@sh02.codex.cdx_purge_week.title": {
+    "description": "The title of a codex entry found in operation OSSUARY ROW (sh02). Keep it as it is if it is a name."
+  },
+  "sh02.codex.cdx_purge_week.body": "The archive deletes its expired records once a year, in one pass, starting on the tenth of October and finishing on All Souls. The pass is slow because deletion has to be logged, and the log has to be retained, and the log of the log. While it runs, the index is open. While the index is open, things get out.",
+  "@sh02.codex.cdx_purge_week.body": {
+    "description": "A codex entry about \"Purge Week\", read at leisure."
+  },
+  "sh02.sh02_b0.headline": "CHANNEL OPEN",
+  "@sh02.sh02_b0.headline": {
+    "description": "A banner flashed on the run screen in operation OSSUARY ROW (sh02), scene sh02_b0. Capitals, two or three words."
+  },
+  "sh02.sh02_b0.0": "Back on her route, then. Different end tonight. She wants you on Ossuary Row.",
+  "@sh02.sh02_b0.0": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b0.1": "The package isn't in a locker. It's in me. A record, filed with the rest. Purge takes it at the end of the month.",
+  "@sh02.sh02_b0.1": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b0.2": "Run past the cathedral while the index is open and I'll read it through your gear. Don't stop. Stopping is how you get filed.",
+  "@sh02.sh02_b0.2": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b1.0": "Seven years. That's what the law gives you once you're dead. In case anybody sues.",
+  "@sh02.sh02_b1.0": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b1.1": "Nobody sues the dead. The insurers read us instead. One week a year, so do we.",
+  "@sh02.sh02_b1.1": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b2.headline": "OSSUARY ROW",
+  "@sh02.sh02_b2.headline": {
+    "description": "A banner flashed on the run screen in operation OSSUARY ROW (sh02), scene sh02_b2. Capitals, two or three words."
+  },
+  "sh02.sh02_b2.0": "Cathedral's ahead. Pale building, no lights, every window boarded except the ones with cooling fans in them.",
+  "@sh02.sh02_b2.0": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b2.1": "Approaching municipal retention facility. Recording is prohibited. Recording has begun.",
+  "@sh02.sh02_b2.1": {
+    "description": "SYSTEM, in operation OSSUARY ROW (sh02), scene sh02_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b3.0": "Index open. Purge pass in progress. Expired records: please remain still.",
+  "@sh02.sh02_b3.0": {
+    "description": "OSSUARY, in operation OSSUARY ROW (sh02), scene sh02_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b3.1": "I'm in the index. It's so big, Kestrel. It's every one of us, alphabetical, waiting.",
+  "@sh02.sh02_b3.1": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b3.2": "Keep running. I'm reading.",
+  "@sh02.sh02_b3.2": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b4.headline": "RETENTION ICE",
+  "@sh02.sh02_b4.headline": {
+    "description": "A banner flashed on the run screen in operation OSSUARY ROW (sh02), scene sh02_b4. Capitals, two or three words."
+  },
+  "sh02.sh02_b4.0": "Unauthorised read on retained record. Origin: moving. Deploying retention ICE.",
+  "@sh02.sh02_b4.0": {
+    "description": "OSSUARY, in operation OSSUARY ROW (sh02), scene sh02_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b4.1": "It's noticed. Get off the Row and take her with you.",
+  "@sh02.sh02_b4.1": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b4.escaped.0": "Read origin lost. Read logged as clerical error.",
+  "@sh02.sh02_b4.escaped.0": {
+    "description": "OSSUARY, in operation OSSUARY ROW (sh02), scene sh02_b4, after the runner escapes RETENTION ICE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b4.escaped.1": "Clerical error. I've been called worse by better.",
+  "@sh02.sh02_b4.escaped.1": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b4, after the runner escapes RETENTION ICE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b4.caught.0": "Read origin identified. Callsign logged. Callsign misspelled. Correction pending.",
+  "@sh02.sh02_b4.caught.0": {
+    "description": "OSSUARY, in operation OSSUARY ROW (sh02), scene sh02_b4, after RETENTION ICE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b4.caught.1": "It has a name for you, wrong. Let it keep that one.",
+  "@sh02.sh02_b4.caught.1": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b4, after RETENTION ICE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b5.headline": "PACKAGE FOUND",
+  "@sh02.sh02_b5.headline": {
+    "description": "A banner flashed on the run screen in operation OSSUARY ROW (sh02), scene sh02_b5. Capitals, two or three words."
+  },
+  "sh02.sh02_b5.0": "Found it. One message. Sealed. Addressed and never sent.",
+  "@sh02.sh02_b5.0": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b5.1": "Addressed to who?",
+  "@sh02.sh02_b5.1": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b5.2": "Not yet. I wrote it the night of the last job, before I went out. That's all you get tonight.",
+  "@sh02.sh02_b5.2": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b6.0": "Kestrel, why is your channel full of the dead? My scanner's showing ghosts on every corner of the Row.",
+  "@sh02.sh02_b6.0": {
+    "description": "PACHINKO, in operation OSSUARY ROW (sh02), scene sh02_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b6.1": "Not now, Pachinko.",
+  "@sh02.sh02_b6.1": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b6.2": "Fine. But one of them just waved at me, and I want that on the record.",
+  "@sh02.sh02_b6.2": {
+    "description": "PACHINKO, in operation OSSUARY ROW (sh02), scene sh02_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b7.0": "You run like I used to. Head down, shoulders loose. Don't let anybody teach you out of it.",
+  "@sh02.sh02_b7.0": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b7.1": "The ones who stopped to think are the ones in here with me.",
+  "@sh02.sh02_b7.1": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b8.headline": "OBJECTIVE COMPLETE",
+  "@sh02.sh02_b8.headline": {
+    "description": "A banner flashed on the run screen in operation OSSUARY ROW (sh02), scene sh02_b8. Capitals, two or three words."
+  },
+  "sh02.sh02_b8.0": "Target reached. Mission viable.",
+  "@sh02.sh02_b8.0": {
+    "description": "SYSTEM, in operation OSSUARY ROW (sh02), scene sh02_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b8.1": "Package located. That's the job. I don't know what the next job is.",
+  "@sh02.sh02_b8.1": {
+    "description": "KESTREL, in operation OSSUARY ROW (sh02), scene sh02_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_b8.2": "Yes you do. You're just hoping I'll say it first.",
+  "@sh02.sh02_b8.2": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_ot.0": "Purge pass at eleven percent. Estimated completion: All Souls. Thank you for your patience.",
+  "@sh02.sh02_ot.0": {
+    "description": "OSSUARY, in operation OSSUARY ROW (sh02), scene sh02_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.sh02_ot.1": "Eleven percent. That's a lot of names I knew.",
+  "@sh02.sh02_ot.1": {
+    "description": "LANTERN, in operation OSSUARY ROW (sh02), scene sh02_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh02.signals.reminder.0": "The index on Ossuary Row only stays open while the purge runs. I can't read it from in here. You can.",
+  "@sh02.signals.reminder.0": {
+    "description": "LANTERN. Nudges the runner to go out while operation OSSUARY ROW (sh02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh02.signals.reminder.1": "Lantern wants you past the cathedral. I want to know what's in that package. Our interests overlap.",
+  "@sh02.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation OSSUARY ROW (sh02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh02.signals.ambient.0": "I can hear the purge from in here. It sounds like someone filing very slowly in the next room.",
+  "@sh02.signals.ambient.0": {
+    "description": "LANTERN. Unprompted chatter from the city while operation OSSUARY ROW (sh02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh02.signals.ambient.1": "Record count: four hundred and twelve thousand. Reconciled: fewer. Thank you for your patience.",
+  "@sh02.signals.ambient.1": {
+    "description": "OSSUARY. Unprompted chatter from the city while operation OSSUARY ROW (sh02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh03.title": "Where the Log Stops",
+  "@sh03.title": {
+    "description": "The title of operation PALE ROUTE (sh03), shown under its codename."
+  },
+  "sh03.objective": "Run the part of Lantern's last night that never made it into her log.",
+  "@sh03.objective": {
+    "description": "One line: what the runner does in operation PALE ROUTE (sh03)."
+  },
+  "sh03.brief": "Lantern's logged route stops at a bricked-up courier drop. She says that is where the log stops, not where she did, and she wants to run the rest of it with someone who can still get tired.\n\nKestrel has never been told how Lantern died. The coroner's file says misadventure, which is what the coroner's file says about couriers. Tonight is the stretch nobody filed. Something else is out there too: records the purge has already half-deleted, still moving, looking for anything warm.",
+  "@sh03.brief": {
+    "description": "The briefing of operation PALE ROUTE (sh03), read before the run."
+  },
+  "sh03.debrief": "The route ended under the canal bridge, at a flat stone where the water is loud. Lantern told Kestrel what happened there, on a channel nobody else heard. When Kestrel came back on she said only: it was not misadventure. Then she asked you to be careful going home.",
+  "@sh03.debrief": {
+    "description": "Shown after operation PALE ROUTE (sh03) is completed."
+  },
+  "sh03.codex.cdx_hollow.title": "The Hollow",
+  "@sh03.codex.cdx_hollow.title": {
+    "description": "The title of a codex entry found in operation PALE ROUTE (sh03). Keep it as it is if it is a name."
+  },
+  "category.ANOMALY": "ANOMALY",
+  "@category.ANOMALY": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sh03.codex.cdx_hollow.body": "Records the purge has started on and not finished: the name gone, the habits left. A hollow keeps the route its owner ran and the hours they kept, and walks them, and follows any signal warm enough to remind it of being one. They are harmless the way a current is harmless. Nobody stands still in front of one to check.",
+  "@sh03.codex.cdx_hollow.body": {
+    "description": "A codex entry about \"The Hollow\", read at leisure."
+  },
+  "sh03.codex.cdx_lantern.title": "Lantern",
+  "@sh03.codex.cdx_lantern.title": {
+    "description": "The title of a codex entry found in operation PALE ROUTE (sh03). Keep it as it is if it is a name."
+  },
+  "category.PEOPLE": "PEOPLE",
+  "@category.PEOPLE": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sh03.codex.cdx_lantern.body": "Courier, eleven years on Kestrel's board, the last three of them as the one Kestrel sent when a job could not go wrong. Took the callsign from the light she ran with when the strip went dark in the blackout year. Retained identity, status deceased, cause of death: misadventure. Kestrel has never believed the cause.",
+  "@sh03.codex.cdx_lantern.body": {
+    "description": "A codex entry about \"Lantern\", read at leisure."
+  },
+  "sh03.sh03_b0.headline": "CHANNEL OPEN",
+  "@sh03.sh03_b0.headline": {
+    "description": "A banner flashed on the run screen in operation PALE ROUTE (sh03), scene sh03_b0. Capitals, two or three words."
+  },
+  "sh03.sh03_b0.0": "Start at the bricked drop. That's where the log gave up. I didn't.",
+  "@sh03.sh03_b0.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b0.1": "I'm on the channel. I'm staying on it, whatever this is.",
+  "@sh03.sh03_b0.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b0.2": "I know. That's why I asked for tonight instead of last night.",
+  "@sh03.sh03_b0.2": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b1.0": "Eleven years on your board, Kestrel. You sent me when it couldn't go wrong.",
+  "@sh03.sh03_b1.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b1.1": "And the one time it went wrong I wasn't on the channel. I know. I've known for three years.",
+  "@sh03.sh03_b1.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b2.headline": "CANAL STEPS",
+  "@sh03.sh03_b2.headline": {
+    "description": "A banner flashed on the run screen in operation PALE ROUTE (sh03), scene sh03_b2. Capitals, two or three words."
+  },
+  "sh03.sh03_b2.0": "Down the steps to the canal. I took them two at a time. Take them however you like, you're alive.",
+  "@sh03.sh03_b2.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b2.1": "Ambient temperature dropping. Humidity high. No weather event logged.",
+  "@sh03.sh03_b2.1": {
+    "description": "SYSTEM, in operation PALE ROUTE (sh03), scene sh03_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b3.0": "Kestrel, the canal camera has something on it. Person-shaped. No face. It's walking your runner's route a minute behind.",
+  "@sh03.sh03_b3.0": {
+    "description": "PACHINKO, in operation PALE ROUTE (sh03), scene sh03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b3.1": "It's a hollow. What's left when the purge takes your name and leaves your habits.",
+  "@sh03.sh03_b3.1": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b3.2": "It isn't cruel. It's just cold and it wants to be near something that isn't.",
+  "@sh03.sh03_b3.2": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b4.headline": "THE HOLLOW",
+  "@sh03.sh03_b4.headline": {
+    "description": "A banner flashed on the run screen in operation PALE ROUTE (sh03), scene sh03_b4. Capitals, two or three words."
+  },
+  "sh03.sh03_b4.0": "It's closing. Don't let it match your pace. If it matches your pace it thinks it's you.",
+  "@sh03.sh03_b4.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b4.1": "Then don't let it. Go.",
+  "@sh03.sh03_b4.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b4.escaped.0": "It's turned back. It's found a streetlight to stand under. They like streetlights.",
+  "@sh03.sh03_b4.escaped.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b4, after the runner escapes THE HOLLOW. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b4.escaped.1": "Breathe. Both of you. Whatever breathing means for one of you.",
+  "@sh03.sh03_b4.escaped.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b4, after the runner escapes THE HOLLOW. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b4.caught.0": "It caught your stride for a minute. You'll feel cold in your left hand tonight. That passes.",
+  "@sh03.sh03_b4.caught.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b4, after THE HOLLOW catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b4.caught.1": "I don't like that it passes. I don't like that she knows it does.",
+  "@sh03.sh03_b4.caught.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b4, after THE HOLLOW catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b5.headline": "UNDER THE BRIDGE",
+  "@sh03.sh03_b5.headline": {
+    "description": "A banner flashed on the run screen in operation PALE ROUTE (sh03), scene sh03_b5. Capitals, two or three words."
+  },
+  "sh03.sh03_b5.0": "Under the bridge now. Listen to the water. It's loud here. It was loud then.",
+  "@sh03.sh03_b5.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b5.1": "The job was a handoff. The client was Vantar security in a borrowed coat. They didn't want the package. They wanted the courier.",
+  "@sh03.sh03_b5.1": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b6.0": "Vantar. The coroner said misadventure.",
+  "@sh03.sh03_b6.0": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b6.1": "The coroner was right. It was very adventurous. Just not mine.",
+  "@sh03.sh03_b6.1": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b6.2": "Don't joke. Not about this.",
+  "@sh03.sh03_b6.2": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b7.headline": "WHERE IT STOPPED",
+  "@sh03.sh03_b7.headline": {
+    "description": "A banner flashed on the run screen in operation PALE ROUTE (sh03), scene sh03_b7. Capitals, two or three words."
+  },
+  "sh03.sh03_b7.0": "The flat stone by the water. That's where. You don't need to slow down. I'd rather you didn't.",
+  "@sh03.sh03_b7.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b7.1": "There. Now somebody's run all of it. That's what I wanted, I think. Somebody to finish it.",
+  "@sh03.sh03_b7.1": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b8.headline": "OBJECTIVE COMPLETE",
+  "@sh03.sh03_b8.headline": {
+    "description": "A banner flashed on the run screen in operation PALE ROUTE (sh03), scene sh03_b8. Capitals, two or three words."
+  },
+  "sh03.sh03_b8.0": "Target reached. Mission viable.",
+  "@sh03.sh03_b8.0": {
+    "description": "SYSTEM, in operation PALE ROUTE (sh03), scene sh03_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b8.1": "It wasn't misadventure. I'm going to remember that out loud for a long time.",
+  "@sh03.sh03_b8.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_b8.2": "One more run, then. The package. Before the purge finishes.",
+  "@sh03.sh03_b8.2": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_ot.0": "You're still going. You don't have to keep me company. You're doing it anyway.",
+  "@sh03.sh03_ot.0": {
+    "description": "LANTERN, in operation PALE ROUTE (sh03), scene sh03_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.sh03_ot.1": "Get home safe, runner. Go round the canal, not under it.",
+  "@sh03.sh03_ot.1": {
+    "description": "KESTREL, in operation PALE ROUTE (sh03), scene sh03_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh03.signals.reminder.0": "The log stops at the bricked drop. I didn't. I'd like someone to know the rest of the way.",
+  "@sh03.signals.reminder.0": {
+    "description": "LANTERN. Nudges the runner to go out while operation PALE ROUTE (sh03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh03.signals.reminder.1": "She wants to show you how it ended. I want to know. I'd rather not hear it alone. Go when you can.",
+  "@sh03.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation PALE ROUTE (sh03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh03.signals.ambient.0": "Something in here keeps asking me my name. I keep telling it. It keeps forgetting. That's the purge, I think.",
+  "@sh03.signals.ambient.0": {
+    "description": "LANTERN. Unprompted chatter from the city while operation PALE ROUTE (sh03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh03.signals.ambient.1": "There's a thing on the canal camera that walks like a person and has no face. Tell me that's a firmware bug.",
+  "@sh03.signals.ambient.1": {
+    "description": "PACHINKO. Unprompted chatter from the city while operation PALE ROUTE (sh03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh04.title": "Delivery for the Living",
+  "@sh04.title": {
+    "description": "The title of operation ALL HALLOWS (sh04), shown under its codename."
+  },
+  "sh04.objective": "Carry Lantern's last message out of the Ossuary and deliver it before the purge closes.",
+  "@sh04.objective": {
+    "description": "One line: what the runner does in operation ALL HALLOWS (sh04)."
+  },
+  "sh04.brief": "The purge finishes on All Souls. When it does, Lantern's record goes, and the sealed message with it. She has asked for it to be carried out while the index is still open and delivered by hand, the way couriers do it.\n\nShe will not say who it is for until the run is underway. Kestrel has stopped pretending not to know.",
+  "@sh04.brief": {
+    "description": "The briefing of operation ALL HALLOWS (sh04), read before the run."
+  },
+  "sh04.debrief": "The message was for Kestrel. You do not know what it said; Kestrel read it on the step outside her door and folded it once, not twice. Lantern's ping went out a little after midnight, the way a candle does, and the purge logged one more record reconciled.",
+  "@sh04.debrief": {
+    "description": "Shown after operation ALL HALLOWS (sh04) is completed."
+  },
+  "sh04.epilogue": "On the second of November the Ossuary finished its pass and published its count. Four hundred and twelve thousand records reconciled, a margin of error nobody audits, and a line at the bottom of the log thanking the public for their patience.\n\nKestrel left the candle in the third window on Ninsei until it burned out on its own. When you asked her, later, whether it had really been Lantern, she said that every October the index opens, and that she would be keeping the channel up again next year. Just in case. She also said she still owes someone forty creds.",
+  "@sh04.epilogue": {
+    "description": "Shown after operation ALL HALLOWS (sh04), the last of SAMHAIN PROTOCOL."
+  },
+  "sh04.codex.cdx_all_hallows.title": "All Hallows",
+  "@sh04.codex.cdx_all_hallows.title": {
+    "description": "The title of a codex entry found in operation ALL HALLOWS (sh04). Keep it as it is if it is a name."
+  },
+  "sh04.codex.cdx_all_hallows.body": "The city stopped marking it officially decades ago. The street never did. Couriers run a route on the last night of October in honour of whoever is not running it anymore, and nobody times it, and nobody logs it, which in this city is the most expensive gift there is.",
+  "@sh04.codex.cdx_all_hallows.body": {
+    "description": "A codex entry about \"All Hallows\", read at leisure."
+  },
+  "sh04.codex.cdx_last_package.title": "The Last Package",
+  "@sh04.codex.cdx_last_package.title": {
+    "description": "The title of a codex entry found in operation ALL HALLOWS (sh04). Keep it as it is if it is a name."
+  },
+  "sh04.codex.cdx_last_package.body": "One message, sealed, retained under Ossuary Row for three years with the identity of the courier who wrote it. Addressed to the handler who sent her out that night. Delivered by hand on All Hallows, folded once, not twice. Contents unknown. Retention status: none. Some things are not on file.",
+  "@sh04.codex.cdx_last_package.body": {
+    "description": "A codex entry about \"The Last Package\", read at leisure."
+  },
+  "sh04.sh04_b0.headline": "CHANNEL OPEN",
+  "@sh04.sh04_b0.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b0. Capitals, two or three words."
+  },
+  "sh04.sh04_b0.0": "Last run. Past the cathedral, take the package out of the index, carry it to the address on it.",
+  "@sh04.sh04_b0.0": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b0.1": "Who is it for, Lantern.",
+  "@sh04.sh04_b0.1": {
+    "description": "KESTREL, in operation ALL HALLOWS (sh04), scene sh04_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b0.2": "Run first. I'll tell you on the way. It's better on the way.",
+  "@sh04.sh04_b0.2": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b1.0": "Every courier runs a route tonight for someone who isn't. Nobody times it and nobody logs it.",
+  "@sh04.sh04_b1.0": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b1.1": "You're running one for me. I'm running one for you. That's the tradition, more or less.",
+  "@sh04.sh04_b1.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b2.headline": "PACKAGE TAKEN",
+  "@sh04.sh04_b2.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b2. Capitals, two or three words."
+  },
+  "sh04.sh04_b2.0": "Index open. Purge pass at ninety-six percent. Remaining records: please prepare to be reconciled.",
+  "@sh04.sh04_b2.0": {
+    "description": "OSSUARY, in operation ALL HALLOWS (sh04), scene sh04_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b2.1": "There it is. Taking it now. Hold still in your head, not your legs.",
+  "@sh04.sh04_b2.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b2.2": "Package received. Format: sealed message. Mass: none.",
+  "@sh04.sh04_b2.2": {
+    "description": "SYSTEM, in operation ALL HALLOWS (sh04), scene sh04_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b3.headline": "ADDRESSEE",
+  "@sh04.sh04_b3.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b3. Capitals, two or three words."
+  },
+  "sh04.sh04_b3.0": "It's for you, Kestrel. It always was. I wrote it before the last job, in case.",
+  "@sh04.sh04_b3.0": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b3.1": "I know. I've known since you said you had one.",
+  "@sh04.sh04_b3.1": {
+    "description": "KESTREL, in operation ALL HALLOWS (sh04), scene sh04_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b3.2": "Then let the runner bring it. You never let anybody bring you anything.",
+  "@sh04.sh04_b3.2": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.headline": "FULL PURGE",
+  "@sh04.sh04_b4.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b4. Capitals, two or three words."
+  },
+  "sh04.sh04_b4.0": "Retained data leaving retention. This is not permitted. All instances: reconcile.",
+  "@sh04.sh04_b4.0": {
+    "description": "OSSUARY, in operation ALL HALLOWS (sh04), scene sh04_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.1": "That's everything it has left. Every crawler, every hollow on the Row. They all want the package back.",
+  "@sh04.sh04_b4.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.2": "Then outrun all of it. You've done it three nights running.",
+  "@sh04.sh04_b4.2": {
+    "description": "KESTREL, in operation ALL HALLOWS (sh04), scene sh04_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.escaped.0": "Instance lost. Retention exception filed. Exception retained.",
+  "@sh04.sh04_b4.escaped.0": {
+    "description": "OSSUARY, in operation ALL HALLOWS (sh04), scene sh04_b4, after the runner escapes OSSUARY PURGE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.escaped.1": "Filed as an exception. I always was.",
+  "@sh04.sh04_b4.escaped.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b4, after the runner escapes OSSUARY PURGE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.caught.0": "Data partially reconciled. Message header deleted. Message body: not found.",
+  "@sh04.sh04_b4.caught.0": {
+    "description": "OSSUARY, in operation ALL HALLOWS (sh04), scene sh04_b4, after OSSUARY PURGE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b4.caught.1": "It took the envelope. It couldn't find the letter. The letter's in you now, not in it.",
+  "@sh04.sh04_b4.caught.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b4, after OSSUARY PURGE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b5.headline": "SIGNAL FADING",
+  "@sh04.sh04_b5.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b5. Capitals, two or three words."
+  },
+  "sh04.sh04_b5.0": "I'm going thin. The purge is nearly done with me. That's alright. I wanted this carried by a runner, not a server.",
+  "@sh04.sh04_b5.0": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b5.1": "Stay on the channel until it's delivered. That's an order. I know you never took one.",
+  "@sh04.sh04_b5.1": {
+    "description": "KESTREL, in operation ALL HALLOWS (sh04), scene sh04_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b6.0": "Ninsei. Third window. The candle's still going. Run past it for me.",
+  "@sh04.sh04_b6.0": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b6.1": "I lit one for somebody too, once. Everyone does. You will. I hope it's a long way off.",
+  "@sh04.sh04_b6.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b7.headline": "KESTREL'S DOOR",
+  "@sh04.sh04_b7.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b7. Capitals, two or three words."
+  },
+  "sh04.sh04_b7.0": "I'm on the step outside my door. I can hear you coming. I've never once waited outside for a courier.",
+  "@sh04.sh04_b7.0": {
+    "description": "KESTREL, in operation ALL HALLOWS (sh04), scene sh04_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b7.1": "First time for everything. Last time for some things. Hand it over, runner.",
+  "@sh04.sh04_b7.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b8.headline": "DELIVERED",
+  "@sh04.sh04_b8.headline": {
+    "description": "A banner flashed on the run screen in operation ALL HALLOWS (sh04), scene sh04_b8. Capitals, two or three words."
+  },
+  "sh04.sh04_b8.0": "Delivery confirmed. Target reached.",
+  "@sh04.sh04_b8.0": {
+    "description": "SYSTEM, in operation ALL HALLOWS (sh04), scene sh04_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b8.1": "Delivered. By hand. Folded once. Not twice.",
+  "@sh04.sh04_b8.1": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_b8.2": "Goodnight, Kestrel. Pay the runner. Not me. You never paid me anyway.",
+  "@sh04.sh04_b8.2": {
+    "description": "LANTERN, in operation ALL HALLOWS (sh04), scene sh04_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_ot.0": "Purge pass complete. Records reconciled. Thank you for your patience.",
+  "@sh04.sh04_ot.0": {
+    "description": "OSSUARY, in operation ALL HALLOWS (sh04), scene sh04_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.sh04_ot.1": "Her ping's gone. Keep running a little longer, would you. I don't want the channel quiet yet.",
+  "@sh04.sh04_ot.1": {
+    "description": "KESTREL, in operation ALL HALLOWS (sh04), scene sh04_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sh04.signals.reminder.0": "The purge closes on All Souls. My package goes with it unless somebody carries it out. One more run.",
+  "@sh04.signals.reminder.0": {
+    "description": "LANTERN. Nudges the runner to go out while operation ALL HALLOWS (sh04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh04.signals.reminder.1": "She'll say who it's for once you're moving. I already know. Go anyway. Please.",
+  "@sh04.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation ALL HALLOWS (sh04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh04.signals.ambient.0": "Purge pass at eighty-one percent. Records awaiting reconciliation are reminded that waiting is mandatory.",
+  "@sh04.signals.ambient.0": {
+    "description": "OSSUARY. Unprompted chatter from the city while operation ALL HALLOWS (sh04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sh04.signals.ambient.1": "I'm getting quieter in here. It doesn't hurt. It's like the end of a long shift.",
+  "@sh04.signals.ambient.1": {
+    "description": "LANTERN. Unprompted chatter from the city while operation ALL HALLOWS (sh04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  }
+}

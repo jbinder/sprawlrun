@@ -1,4 +1,5 @@
 import 'goal.dart';
+import 'signal_ref.dart';
 
 /// A single spoken line inside a story beat.
 ///
@@ -12,15 +13,21 @@ class StoryLine {
     this.sfxAfter,
     this.pauseAfterMs = 260,
     this.language,
+    this.original,
   });
 
   final String speaker;
   final String text;
 
-  /// The language [text] is in, for a line the app wrote itself — a split
-  /// readout, an intel notice — in the interface language. Null for a line
-  /// from a pack, which is English, so it is never read from the JSON.
+  /// The language [text] is in, when that is not the English a pack is
+  /// written in: a line the app wrote itself — a split readout, an intel
+  /// notice — in the interface language, or a pack line from a translation.
+  /// Null for English. Never read from the JSON.
   final String? language;
+
+  /// The English a translated pack line was made from, so a phone with no
+  /// voice for [language] can still speak the line. Null otherwise.
+  final String? original;
 
   /// Sound effect filename (without extension) played before/after the line.
   final String? sfxBefore;
@@ -185,13 +192,24 @@ class CodexEntry {
 /// future change can accidentally route one into text-to-speech — the only
 /// path into TTS takes `StoryLine`s.
 class Signal {
-  const Signal({required this.from, required this.text});
+  const Signal({required this.from, required this.text, this.original});
 
   /// A speaker from `VoiceProfile.bySpeaker`. Used for the notification title
   /// and nothing else; no voice is ever selected from it.
   final String from;
 
   final String text;
+
+  /// The English a translated signal was made from; null for one that is
+  /// not translated.
+  final String? original;
+
+  /// The line as the pack authored it, in English; [text] is what is shown.
+  String get source => original ?? text;
+
+  /// What THE WIRE's archive stores for this signal: always of the English,
+  /// so a translation — or a change of language — never orphans an entry.
+  String get ref => signalRef(source);
 
   factory Signal.fromJson(Map<String, dynamic> json) => Signal(
     from: json['from'] as String? ?? 'SYSTEM',
@@ -378,12 +396,28 @@ class MissionPack {
     required this.missions,
     this.signals = const SignalPool(),
     this.season,
+    this.translations = const {},
   });
 
   final String id;
   final String title;
   final String tagline;
   final List<Mission> missions;
+
+  /// Its text in other languages: language code → key → text, keyed as
+  /// `packStrings` offers it. Applied by `localizePack`, never read directly.
+  final Map<String, Map<String, String>> translations;
+
+  /// This pack with [translations] for [language] added, replacing any it had.
+  MissionPack withTranslations(String language, Map<String, String> strings) => MissionPack(
+    id: id,
+    title: title,
+    tagline: tagline,
+    missions: missions,
+    signals: signals,
+    season: season,
+    translations: {...translations, language: strings},
+  );
 
   /// A seasonal event pack names its season (`samhain`), and is only offered
   /// — and only heard from — while that season is in force. Progress through

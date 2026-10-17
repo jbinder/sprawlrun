@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 549 tests
+fvm flutter test                                    # 558 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -20,6 +20,7 @@ fvm flutter test tool/screenshots/capture_test.dart # docs/ + every language's s
 fvm flutter test --dart-define=PSEUDO=true tool/screenshots/capture_test.dart  # build/screenshots-pseudo/
 fvm flutter test --dart-define=LOCALE=es tool/screenshots/capture_test.dart    # build/screenshots-es/
 fvm dart run tool/gen_pseudo_l10n.dart              # after any ARB change
+fvm dart run tool/pack_strings.dart                 # after any pack text change; reports translations
 ```
 
 Android builds take 3–6 minutes. Run them in the background with a monitor rather
@@ -100,7 +101,7 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   channels are named on both sides and `l10n_test` keeps them equal. Codes
   that get *stored* stay codes: the streak unit (`MIN`/`KM`/`OPS`) goes into
   THE WIRE's archive untranslated and is only worded when shown. Story text
-  stays in the packs and is not part of this.
+  is translated separately, below.
 - **The language is resolved in `AppState`, not left to `MaterialApp`.**
   `AppState.locale` is `Profile.language` (empty = follow the phone) or the
   phone's first shipped language, and `_applyLocale` puts it behind `l10n`
@@ -124,6 +125,20 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   and sets the engine back to English for the next pack line, since the engine
   keeps the last language it was given. Pack lines have no language and stay
   on the per-character English voices.
+- **Story translations are overlays on the English pack, applied whole
+  missions at a time.** `models/pack_strings.dart` walks a pack once to offer
+  its strings (`packStrings`) and once to answer them (`localizePack`), so the
+  keys a translator sees and the keys the app reads cannot drift. Keys are
+  paths (`sp01.sp01_b4.2`), so a translation outlives a reworded English line
+  instead of falling back. Names — pack title, codename, location, speakers,
+  pursuers — are never offered. A mission is translated only when all of its
+  strings are; the pack's own text (tagline, categories, pack signals) goes
+  string by string. `AppState.packs` is the localized view of
+  `_sourcePacks`, rebuilt when the language changes. A translated signal keeps
+  its English as `Signal.original`, and `Signal.ref` hashes that, so THE
+  WIRE's archive never depends on the language a signal was sent in. Bundled
+  translations are `assets/missions/l10n/<pack>_<lang>.arb`; the `_en.arb`
+  beside them is generated and `pack_strings_test` fails while it is stale.
 - **`test/overflow_test.dart` renders every screen in a pseudo-locale.**
   English accented, 40% longer and bracketed (`test/support/pseudo.dart`),
   at 360 dp with the real fonts; an overflow fails it. Its `PseudoL` is

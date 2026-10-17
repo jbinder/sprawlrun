@@ -145,7 +145,7 @@ abstract final class SignalPlanner {
         kind: SignalKind.debrief,
         from: signal.from,
         text: '${signal.text} ${figures.sentence}',
-        ref: signalRef(signal.text),
+        ref: signal.ref,
         figures: figures,
       ),
     ];
@@ -190,7 +190,7 @@ abstract final class SignalPlanner {
           kind: SignalKind.reminder,
           from: signal.from,
           text: signal.text,
-          ref: signalRef(signal.text),
+          ref: signal.ref,
         ),
       );
     }
@@ -251,7 +251,7 @@ abstract final class SignalPlanner {
           kind: SignalKind.ambient,
           from: signal.from,
           text: signal.text,
-          ref: signalRef(signal.text),
+          ref: signal.ref,
         ),
       );
     }

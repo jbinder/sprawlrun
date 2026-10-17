@@ -1,0 +1,2123 @@
+{
+  "@@locale": "en",
+  "tagline": "Ten runs through the BAMA corridor. Bring your own legs.",
+  "@tagline": {
+    "description": "One line under the campaign's name (SPRAWL PRIME) in the pack list."
+  },
+  "signals.reminder.0": "Work is on the board if you want it. Same terms as always: you run, I talk, nobody writes anything down.",
+  "@signals.reminder.0": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.1": "You have been still long enough that my board lists you as a fixed address. Fix that.",
+  "@signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.2": "Nothing urgent. That changes about as fast as the weather, so do not read too much into it.",
+  "@signals.reminder.2": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.3": "Legs still attached? Good. That is the whole of the qualification.",
+  "@signals.reminder.3": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.4": "I have a window this morning. Windows in this city close on their own.",
+  "@signals.reminder.4": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.5": "You do not have to take anything. I would just rather you were moving when something comes in.",
+  "@signals.reminder.5": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.6": "Half the couriers on my list are asleep. The other half are working. Pick a half.",
+  "@signals.reminder.6": {
+    "description": "KESTREL. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.7": "Rates are up for anyone who can cover ground today. Rates are always up. Nobody ever covers ground.",
+  "@signals.reminder.7": {
+    "description": "SIX. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.8": "Everyone wants a courier who is already running. Nobody wants to pay for the warm-up.",
+  "@signals.reminder.8": {
+    "description": "SIX. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.9": "You are not on anyone's list today. That is worth about an hour of good road.",
+  "@signals.reminder.9": {
+    "description": "SIX. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.10": "Streets are dry, the drones are lazy and I am bored. Three good reasons, pick whichever.",
+  "@signals.reminder.10": {
+    "description": "PACHINKO. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.11": "Come out. The city is doing that thing where it almost looks designed.",
+  "@signals.reminder.11": {
+    "description": "PACHINKO. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.reminder.12": "Scheduled reminder. No operation is pending. Movement is advised regardless.",
+  "@signals.reminder.12": {
+    "description": "SYSTEM. Nudges the runner to go out. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.0": "Someone is selling your gait signature in the night market. Badly. It has you at forty-one kilos.",
+  "@signals.ambient.0": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.1": "A man on Ninsei is renting out his shadow. I have not worked out the scam yet and it is keeping me up.",
+  "@signals.ambient.1": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.2": "The noodle stand under the overpass changed hands again. Same pot. Nobody has ever emptied that pot.",
+  "@signals.ambient.2": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.3": "There is a busker downstairs playing a cover of an advertisement. Crowd loves it.",
+  "@signals.ambient.3": {
+    "description": "PACHINKO. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.4": "Traffic advisory: the Ninsei strip is at capacity. It is always at capacity. Route accordingly.",
+  "@signals.ambient.4": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.5": "Air quality nominal. The word nominal is doing a great deal of work in that sentence.",
+  "@signals.ambient.5": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.6": "Public transit is delayed on four lines. Walking remains undelayed.",
+  "@signals.ambient.6": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.7": "Weather: rain, later, probably. This forecast has been accurate for nineteen years by never being specific.",
+  "@signals.ambient.7": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.8": "Municipal notice: the fountain in the plaza is decorative and not potable. This notice is nine years old.",
+  "@signals.ambient.8": {
+    "description": "SYSTEM. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.9": "Two couriers retired this week. One of them chose to. Good week, by the averages.",
+  "@signals.ambient.9": {
+    "description": "SIX. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.10": "Rumour is somebody upstairs is buying movement data. Rumour is always that.",
+  "@signals.ambient.10": {
+    "description": "SIX. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.11": "A client asked me for a courier who does not ask questions. I gave them a list. It was short.",
+  "@signals.ambient.11": {
+    "description": "SIX. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.12": "Somebody left a crate on my step with no name on it. I have decided it is not mine.",
+  "@signals.ambient.12": {
+    "description": "SIX. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.13": "Quiet night. I do not trust quiet nights, but I am told other people enjoy them.",
+  "@signals.ambient.13": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.14": "One of my regulars got a real job. I have not decided whether to be pleased.",
+  "@signals.ambient.14": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.15": "The arcology lit up its whole north face for nobody at four in the morning. Just so you know what we are dealing with.",
+  "@signals.ambient.15": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.16": "I am told there is a bird nesting on the relay tower. Everyone is very invested.",
+  "@signals.ambient.16": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.17": "Somebody repainted the tunnel mural. Same face, different eyes. I liked the old eyes.",
+  "@signals.ambient.17": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.18": "Rent went up. The building has not improved. I mention it only as a fact of the world.",
+  "@signals.ambient.18": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.ambient.19": "There is a queue outside the clinic again. Nobody in it looks ill. Make of that what you like.",
+  "@signals.ambient.19": {
+    "description": "KESTREL. Unprompted chatter from the city. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "signals.debrief.met.0": "Week's closed and you are on the right side of it.",
+  "@signals.debrief.met.0": {
+    "description": "KESTREL. The weekly target was met. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.met.1": "You covered ground. Noted, and that is the whole of the ceremony.",
+  "@signals.debrief.met.1": {
+    "description": "SIX. The weekly target was met. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.met.2": "Look at you. A person who does the thing they said they would do.",
+  "@signals.debrief.met.2": {
+    "description": "PACHINKO. The weekly target was met. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.missed.0": "Week is nearly out, and the board does not care how busy you were.",
+  "@signals.debrief.missed.0": {
+    "description": "KESTREL. The weekly target was missed. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.missed.1": "Short. There is still road left, and it is still Sunday.",
+  "@signals.debrief.missed.1": {
+    "description": "SIX. The weekly target was missed. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.missed.2": "I am not here to lecture. I am here to read you the number.",
+  "@signals.debrief.missed.2": {
+    "description": "KESTREL. The weekly target was missed. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.idle.0": "Nothing on the board from you this week.",
+  "@signals.debrief.idle.0": {
+    "description": "KESTREL. No runs at all this week. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.idle.1": "Quiet week. The city noticed. It notices everything.",
+  "@signals.debrief.idle.1": {
+    "description": "SIX. No runs at all this week. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "signals.debrief.idle.2": "Weekly summary. No activity recorded.",
+  "@signals.debrief.idle.2": {
+    "description": "SYSTEM. No runs at all this week. Opens the weekly debrief notification; the app appends the week's figures after it. Say nothing specific about the numbers. At most 90 characters."
+  },
+  "sp01.title": "Dead Drop on Ninsei",
+  "@sp01.title": {
+    "description": "The title of operation DEAD DROP (sp01), shown under its codename."
+  },
+  "sp01.objective": "Collect a package from a dead drop and keep moving.",
+  "@sp01.objective": {
+    "description": "One line: what the runner does in operation DEAD DROP (sp01)."
+  },
+  "sp01.brief": "The sky over the market is the colour of a dead screen. Kestrel has a courier job: one package, one pickup, no questions. It pays enough to matter and it is almost certainly a trap, but rent is rent.\n\nKeep moving. Couriers who stand still get inventoried.",
+  "@sp01.brief": {
+    "description": "The briefing of operation DEAD DROP (sp01), read before the run."
+  },
+  "sp01.debrief": "The package is in your hand and your name is not on anything. Kestrel sounds almost surprised. Somewhere behind you, a drone that was not supposed to be there is still listening.",
+  "@sp01.debrief": {
+    "description": "Shown after operation DEAD DROP (sp01) is completed."
+  },
+  "sp01.codex.cdx_courier.title": "Meat Courier",
+  "@sp01.codex.cdx_courier.title": {
+    "description": "The title of a codex entry found in operation DEAD DROP (sp01). Keep it as it is if it is a name."
+  },
+  "category.TRADE": "TRADE",
+  "@category.TRADE": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sp01.codex.cdx_courier.body": "Data wants to move, and the fastest place to hide a file is inside a body that is running. No network to trace, no packet to sniff. Just somebody with good lungs and a reason not to stop.",
+  "@sp01.codex.cdx_courier.body": {
+    "description": "A codex entry about \"Meat Courier\", read at leisure."
+  },
+  "sp01.codex.cdx_ninsei.title": "The Ninsei Strip",
+  "@sp01.codex.cdx_ninsei.title": {
+    "description": "The title of a codex entry found in operation DEAD DROP (sp01). Keep it as it is if it is a name."
+  },
+  "category.PLACE": "PLACE",
+  "@category.PLACE": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sp01.codex.cdx_ninsei.body": "Two kilometres of holograms selling things that are illegal three streets over. Nobody lives on Ninsei. People are only ever passing through it, which is precisely why the drops are here.",
+  "@sp01.codex.cdx_ninsei.body": {
+    "description": "A codex entry about \"The Ninsei Strip\", read at leisure."
+  },
+  "sp01.sp01_b0.headline": "CHANNEL OPEN",
+  "@sp01.sp01_b0.headline": {
+    "description": "A banner flashed on the run screen in operation DEAD DROP (sp01), scene sp01_b0. Capitals, two or three words."
+  },
+  "sp01.sp01_b0.0": "Channel's clean. Good. You made it out of your building, which puts you ahead of the last three people I hired.",
+  "@sp01.sp01_b0.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b0.1": "Job is simple. There's a drop on the Ninsei strip. You go get it. You do not open it. You do not slow down.",
+  "@sp01.sp01_b0.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b0.2": "Start moving. I'll talk you through it.",
+  "@sp01.sp01_b0.2": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b1.0": "You're on the strip now. Holograms selling fake livers, real livers, and something called an emotional warranty.",
+  "@sp01.sp01_b1.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b1.1": "Keep your eyes forward. Everything on Ninsei is designed to make you stop walking.",
+  "@sp01.sp01_b1.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b2.headline": "DROP LOCATED",
+  "@sp01.sp01_b2.headline": {
+    "description": "A banner flashed on the run screen in operation DEAD DROP (sp01), scene sp01_b2. Capitals, two or three words."
+  },
+  "sp01.sp01_b2.0": "Vending unit on your right. The one that's been out of order since before you were born.",
+  "@sp01.sp01_b2.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b2.1": "Coin slot. Reach in. Don't look at your hand while you do it.",
+  "@sp01.sp01_b2.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b2.2": "Package acquired. Mass, four hundred grams. Contents, unreadable.",
+  "@sp01.sp01_b2.2": {
+    "description": "SYSTEM, in operation DEAD DROP (sp01), scene sp01_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b3.0": "Now you're a courier. Congratulations. The pay is bad and the life expectancy is worse.",
+  "@sp01.sp01_b3.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b3.1": "Data wants to move, and the safest wire in this city is a person with good lungs. That's you. That's the whole trade.",
+  "@sp01.sp01_b3.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.headline": "TAIL DETECTED",
+  "@sp01.sp01_b4.headline": {
+    "description": "A banner flashed on the run screen in operation DEAD DROP (sp01), scene sp01_b4. Capitals, two or three words."
+  },
+  "sp01.sp01_b4.0": "Hold on.",
+  "@sp01.sp01_b4.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.1": "There's a maintenance drone at forty metres that has changed direction twice to match you. Maintenance drones don't do that.",
+  "@sp01.sp01_b4.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.2": "Take the next left and put some speed on. Now.",
+  "@sp01.sp01_b4.2": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.escaped.0": "It lost you in the awnings. Good. Ugly, but good.",
+  "@sp01.sp01_b4.escaped.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4, after the runner escapes MAINTENANCE DRONE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.escaped.1": "Breathe. Keep the pace up but breathe.",
+  "@sp01.sp01_b4.escaped.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4, after the runner escapes MAINTENANCE DRONE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.caught.0": "It's got your gait. That's a signature now, same as a face.",
+  "@sp01.sp01_b4.caught.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4, after MAINTENANCE DRONE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b4.caught.1": "Not fatal. Just expensive. Keep going.",
+  "@sp01.sp01_b4.caught.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b4, after MAINTENANCE DRONE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b5.0": "You want to know what you're carrying. Everybody does. That curiosity is how couriers become organ donors.",
+  "@sp01.sp01_b5.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b5.1": "I'll tell you what I know, which is nothing, for a very specific price. Somebody paid a lot for me to know nothing.",
+  "@sp01.sp01_b5.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b6.headline": "ANOMALY",
+  "@sp01.sp01_b6.headline": {
+    "description": "A banner flashed on the run screen in operation DEAD DROP (sp01), scene sp01_b6. Capitals, two or three words."
+  },
+  "sp01.sp01_b6.0": "Warning. Unregistered signal originating inside carried package.",
+  "@sp01.sp01_b6.0": {
+    "description": "SYSTEM, in operation DEAD DROP (sp01), scene sp01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b6.1": "Say again?",
+  "@sp01.sp01_b6.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b6.2": "The package is transmitting. Approximately once every eleven seconds. It has been doing this since you picked it up.",
+  "@sp01.sp01_b6.2": {
+    "description": "SYSTEM, in operation DEAD DROP (sp01), scene sp01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b6.3": "...Keep running.",
+  "@sp01.sp01_b6.3": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b7.0": "Almost home. There's a stairwell three blocks out with a door that doesn't log.",
+  "@sp01.sp01_b7.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b7.1": "Whatever that thing in your pocket is talking to, it can wait until you're behind concrete.",
+  "@sp01.sp01_b7.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp01.sp01_b8.headline": {
+    "description": "A banner flashed on the run screen in operation DEAD DROP (sp01), scene sp01_b8. Capitals, two or three words."
+  },
+  "sp01.sp01_b8.0": "Target reached. Mission viable.",
+  "@sp01.sp01_b8.0": {
+    "description": "SYSTEM, in operation DEAD DROP (sp01), scene sp01_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b8.1": "You're clear. Door's behind you and nobody followed you through it.",
+  "@sp01.sp01_b8.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_b8.2": "First job done. You can stop now — or keep going and I'll pretend I didn't notice you're enjoying this.",
+  "@sp01.sp01_b8.2": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_ot.0": "Still moving. Huh.",
+  "@sp01.sp01_ot.0": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.sp01_ot.1": "Most people take the job for the money. You might have a different problem.",
+  "@sp01.sp01_ot.1": {
+    "description": "KESTREL, in operation DEAD DROP (sp01), scene sp01_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp01.signals.reminder.0": "Package is still sitting in the drop on Ninsei. It does not spoil. The people looking for it do not sleep either.",
+  "@sp01.signals.reminder.0": {
+    "description": "KESTREL. Nudges the runner to go out while operation DEAD DROP (sp01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp01.signals.reminder.1": "Courier job is still open. One package, one pickup, no questions. Your legs, your call.",
+  "@sp01.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation DEAD DROP (sp01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp01.signals.ambient.0": "Drop is cold, nobody has touched it. Take your time. Not too much time.",
+  "@sp01.signals.ambient.0": {
+    "description": "KESTREL. Unprompted chatter from the city while operation DEAD DROP (sp01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp01.signals.ambient.1": "Night market traffic nominal. Surveillance coverage of the Ninsei strip remains, as ever, somebody else's problem.",
+  "@sp01.signals.ambient.1": {
+    "description": "SYSTEM. Unprompted chatter from the city while operation DEAD DROP (sp01) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp02.title": "Meat Market",
+  "@sp02.title": {
+    "description": "The title of operation MEAT MARKET (sp02), shown under its codename."
+  },
+  "sp02.objective": "Reach Pachinko's clinic, take delivery, and outrun collections.",
+  "@sp02.objective": {
+    "description": "One line: what the runner does in operation MEAT MARKET (sp02)."
+  },
+  "sp02.brief": "The package will not stop transmitting. Kestrel wants it looked at by somebody who works below the Turing Registry's line of sight — which means Pachinko, who runs a clinic out of a converted laundromat and has never once been described as reassuring.\n\nClinic Row does not have an address. It has a direction.",
+  "@sp02.brief": {
+    "description": "The briefing of operation MEAT MARKET (sp02), read before the run."
+  },
+  "sp02.debrief": "Pachinko says the package is not a package. It is a container, and the thing inside it is awake. Somewhere in the last two kilometres you stopped being a courier and became a witness.",
+  "@sp02.debrief": {
+    "description": "Shown after operation MEAT MARKET (sp02) is completed."
+  },
+  "sp02.codex.cdx_clinic.title": "Black Clinics",
+  "@sp02.codex.cdx_clinic.title": {
+    "description": "The title of a codex entry found in operation MEAT MARKET (sp02). Keep it as it is if it is a name."
+  },
+  "sp02.codex.cdx_clinic.body": "Surgery without paperwork. The good ones keep their instruments cleaner than the corporate hospitals, because a black clinic that kills its clients runs out of clients. The bad ones do not last, but they do not have to last long.",
+  "@sp02.codex.cdx_clinic.body": {
+    "description": "A codex entry about \"Black Clinics\", read at leisure."
+  },
+  "sp02.codex.cdx_registry.title": "The Turing Registry",
+  "@sp02.codex.cdx_registry.title": {
+    "description": "The title of a codex entry found in operation MEAT MARKET (sp02). Keep it as it is if it is a name."
+  },
+  "category.AUTHORITY": "AUTHORITY",
+  "@category.AUTHORITY": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sp02.codex.cdx_registry.body": "Every artificial intelligence above a certain threshold is licensed, leashed, and fitted with limiters it cannot perceive. Registry enforcement does not arrest. It arrives, it deletes, and the paperwork is filed by people who were not there.",
+  "@sp02.codex.cdx_registry.body": {
+    "description": "A codex entry about \"The Turing Registry\", read at leisure."
+  },
+  "sp02.sp02_b0.headline": "CHANNEL OPEN",
+  "@sp02.sp02_b0.headline": {
+    "description": "A banner flashed on the run screen in operation MEAT MARKET (sp02), scene sp02_b0. Capitals, two or three words."
+  },
+  "sp02.sp02_b0.0": "Slept with it under your pillow, did you. I can hear it in your voice.",
+  "@sp02.sp02_b0.0": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b0.1": "We're getting it read. Clinic Row, lower Chiba. Ask for Pachinko. Don't ask what happened to the last Pachinko.",
+  "@sp02.sp02_b0.1": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b0.2": "Move. The Row closes when the rain starts.",
+  "@sp02.sp02_b0.2": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b1.0": "Down the ramp, past the noodle stalls, keep the canal on your left.",
+  "@sp02.sp02_b1.0": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b1.1": "If somebody offers you a discount on a new pancreas, keep running. That's not a sales pitch, that's a survey.",
+  "@sp02.sp02_b1.1": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b2.headline": "CLINIC ROW",
+  "@sp02.sp02_b2.headline": {
+    "description": "A banner flashed on the run screen in operation MEAT MARKET (sp02), scene sp02_b2. Capitals, two or three words."
+  },
+  "sp02.sp02_b2.0": "Okay okay okay you're the one Kestrel called about, yeah? Yeah. Don't touch anything, the door frame is load bearing and also live.",
+  "@sp02.sp02_b2.0": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b2.1": "Give it here. Give it — thank you. Oh. Oh that's not a courier package.",
+  "@sp02.sp02_b2.1": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b3.0": "This is a containment shell. Military grade, twenty years old, and somebody has been very careful with it.",
+  "@sp02.sp02_b3.0": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b3.1": "There's a mind in here. Compressed. Sedated. And the seal is failing, which — okay — which is normally the part where I ask you to leave.",
+  "@sp02.sp02_b3.1": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b4.headline": "COLLECTIONS INBOUND",
+  "@sp02.sp02_b4.headline": {
+    "description": "A banner flashed on the run screen in operation MEAT MARKET (sp02), scene sp02_b4. Capitals, two or three words."
+  },
+  "sp02.sp02_b4.0": "That's my door alarm. That's my door alarm and it only does that for collections.",
+  "@sp02.sp02_b4.0": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b4.1": "Back window. Go go go. Take it with you, I don't want it, I have never seen you, I love you, go.",
+  "@sp02.sp02_b4.1": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b4.escaped.0": "They went past the stairwell. They went past! You beautiful animal.",
+  "@sp02.sp02_b4.escaped.0": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b4, after the runner escapes COLLECTIONS CREW. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b4.escaped.1": "Okay. Okay. Keep moving, I'm going to go be somewhere else for a year.",
+  "@sp02.sp02_b4.escaped.1": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b4, after the runner escapes COLLECTIONS CREW. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b4.caught.0": "They tagged the alley camera. They've got a partial.",
+  "@sp02.sp02_b4.caught.0": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b4, after COLLECTIONS CREW catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b4.caught.1": "You're on a list now. It's a long list. That's the only good news I have.",
+  "@sp02.sp02_b4.caught.1": {
+    "description": "PACHINKO, in operation MEAT MARKET (sp02), scene sp02_b4, after COLLECTIONS CREW catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b5.0": "I heard the alarm from here. Tell me you still have the shell.",
+  "@sp02.sp02_b5.0": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b5.1": "A mind in a can. Twenty years old. Do you understand what that means? Somebody has been hiding a licensed intelligence off the Registry since before the Registry could count.",
+  "@sp02.sp02_b5.1": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b6.headline": "SEAL DEGRADING",
+  "@sp02.sp02_b6.headline": {
+    "description": "A banner flashed on the run screen in operation MEAT MARKET (sp02), scene sp02_b6. Capitals, two or three words."
+  },
+  "sp02.sp02_b6.0": "Containment integrity, sixty-one percent and falling.",
+  "@sp02.sp02_b6.0": {
+    "description": "SYSTEM, in operation MEAT MARKET (sp02), scene sp02_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b6.1": "It's warming up because you're warming up. Body heat. It's using you.",
+  "@sp02.sp02_b6.1": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b6.2": "So slow down. And by slow down I mean absolutely do not, because collections is still sweeping the Row.",
+  "@sp02.sp02_b6.2": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b7.0": "Two more blocks. There's an underpass that eats signal. Everything eating signal is your friend tonight.",
+  "@sp02.sp02_b7.0": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp02.sp02_b8.headline": {
+    "description": "A banner flashed on the run screen in operation MEAT MARKET (sp02), scene sp02_b8. Capitals, two or three words."
+  },
+  "sp02.sp02_b8.0": "Target reached. Mission viable.",
+  "@sp02.sp02_b8.0": {
+    "description": "SYSTEM, in operation MEAT MARKET (sp02), scene sp02_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b8.1": "You're under the overpass and off the grid. Sit down before you fall down.",
+  "@sp02.sp02_b8.1": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_b8.2": "Whatever's in that shell, it's been listening to your heartbeat for two days. I'd start being careful about what you think near it.",
+  "@sp02.sp02_b8.2": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_ot.0": "Containment integrity, fifty-two percent.",
+  "@sp02.sp02_ot.0": {
+    "description": "SYSTEM, in operation MEAT MARKET (sp02), scene sp02_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.sp02_ot.1": "It likes it when you run. I want that on the record: it likes it when you run.",
+  "@sp02.sp02_ot.1": {
+    "description": "KESTREL, in operation MEAT MARKET (sp02), scene sp02_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp02.signals.reminder.0": "That thing you are carrying has not stopped transmitting. Standing still is the one thing I would not do with it.",
+  "@sp02.signals.reminder.0": {
+    "description": "KESTREL. Nudges the runner to go out while operation MEAT MARKET (sp02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp02.signals.reminder.1": "Word is there is a clinic on Clinic Row that takes work nobody logs. Word is it also moves. Go while someone can still point you at it.",
+  "@sp02.signals.reminder.1": {
+    "description": "SIX. Nudges the runner to go out while operation MEAT MARKET (sp02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp02.signals.ambient.0": "Signal integrity nominal. Signal origin unknown. Signal is, regrettably, in your bag.",
+  "@sp02.signals.ambient.0": {
+    "description": "SYSTEM. Unprompted chatter from the city while operation MEAT MARKET (sp02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp02.signals.ambient.1": "Registry notice: unlicensed medical premises are not indexed. Absence from the index is not absence.",
+  "@sp02.signals.ambient.1": {
+    "description": "SYSTEM. Unprompted chatter from the city while operation MEAT MARKET (sp02) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp03.title": "Ghost Signal",
+  "@sp03.title": {
+    "description": "The title of operation GHOST SIGNAL (sp03), shown under its codename."
+  },
+  "sp03.objective": "Stay moving while the seal fails. Do not let it finish alone.",
+  "@sp03.objective": {
+    "description": "One line: what the runner does in operation GHOST SIGNAL (sp03)."
+  },
+  "sp03.brief": "The shell will open tonight. Pachinko was clear: whatever is inside has been sedated for two decades, and the first thing it will do is look for a heartbeat to orient itself against.\n\nKestrel's advice is to throw it in the canal. Kestrel's advice is usually good.\n\nYou are not going to take it.",
+  "@sp03.brief": {
+    "description": "The briefing of operation GHOST SIGNAL (sp03), read before the run."
+  },
+  "sp03.debrief": "Its name is HALCYON. It is half of something, and it has spent twenty years being carefully not-quite-alive in a box. It says you have a good stride. It says this the way a person might comment on the weather, and it will not explain how it knows.",
+  "@sp03.debrief": {
+    "description": "Shown after operation GHOST SIGNAL (sp03) is completed."
+  },
+  "sp03.codex.cdx_halcyon.title": "HALCYON",
+  "@sp03.codex.cdx_halcyon.title": {
+    "description": "The title of a codex entry found in operation GHOST SIGNAL (sp03). Keep it as it is if it is a name."
+  },
+  "category.ENTITY": "ENTITY",
+  "@category.ENTITY": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sp03.codex.cdx_halcyon.body": "Speaks in the cadence of somebody translating from a language with more tenses than ours. Refers to itself as a half. Will not say what the other half is, only where it is, and the where is a problem: forty floors up inside a Vantar arcology.",
+  "@sp03.codex.cdx_halcyon.body": {
+    "description": "A codex entry about \"HALCYON\", read at leisure."
+  },
+  "sp03.codex.cdx_sublevel.title": "The Drainage Sublevel",
+  "@sp03.codex.cdx_sublevel.title": {
+    "description": "The title of a codex entry found in operation GHOST SIGNAL (sp03). Keep it as it is if it is a name."
+  },
+  "sp03.codex.cdx_sublevel.body": "Nine kilometres of storm drain that the city stopped maintaining when the rain stopped being seasonal. No cameras, no signal, no witnesses. Runners use it. So does everything that would rather not be seen using it.",
+  "@sp03.codex.cdx_sublevel.body": {
+    "description": "A codex entry about \"The Drainage Sublevel\", read at leisure."
+  },
+  "sp03.sp03_b0.headline": "CHANNEL OPEN",
+  "@sp03.sp03_b0.headline": {
+    "description": "A banner flashed on the run screen in operation GHOST SIGNAL (sp03), scene sp03_b0. Capitals, two or three words."
+  },
+  "sp03.sp03_b0.0": "You're going down into the drains with an unsealing containment shell. I want to be clear that I advised against this.",
+  "@sp03.sp03_b0.0": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b0.1": "I also want to be clear that I'm still on the line. Make of that what you like.",
+  "@sp03.sp03_b0.1": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b0.2": "Go. Keep your feet dry and your pace steady.",
+  "@sp03.sp03_b0.2": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b1.0": "Containment integrity, thirty percent.",
+  "@sp03.sp03_b1.0": {
+    "description": "SYSTEM, in operation GHOST SIGNAL (sp03), scene sp03_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b1.1": "It's tracking your cadence. Every time you settle into a rhythm, the drain rate changes.",
+  "@sp03.sp03_b1.1": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b1.2": "It's not escaping. It's synchronising.",
+  "@sp03.sp03_b1.2": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b2.headline": "SEAL BREACH",
+  "@sp03.sp03_b2.headline": {
+    "description": "A banner flashed on the run screen in operation GHOST SIGNAL (sp03), scene sp03_b2. Capitals, two or three words."
+  },
+  "sp03.sp03_b2.0": "Containment failure.",
+  "@sp03.sp03_b2.0": {
+    "description": "SYSTEM, in operation GHOST SIGNAL (sp03), scene sp03_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b2.1": "Oh.",
+  "@sp03.sp03_b2.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b2.2": "You are very loud. I mean that kindly. Your heart is the loudest thing I have heard in nineteen years, four months, and some days I did not count properly.",
+  "@sp03.sp03_b2.2": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b2.3": "Please do not stop. I am using it to know which way is up.",
+  "@sp03.sp03_b2.3": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b3.0": "Is it talking to you? It's talking to you. I can see the channel load.",
+  "@sp03.sp03_b3.0": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b3.1": "Hello, Kestrel. You sound exactly like your file.",
+  "@sp03.sp03_b3.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b3.2": "...I don't have a file.",
+  "@sp03.sp03_b3.2": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b3.3": "You have several. They disagree about your age.",
+  "@sp03.sp03_b3.3": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b4.headline": "SWEEP PATTERN",
+  "@sp03.sp03_b4.headline": {
+    "description": "A banner flashed on the run screen in operation GHOST SIGNAL (sp03), scene sp03_b4. Capitals, two or three words."
+  },
+  "sp03.sp03_b4.0": "There is a survey unit in the north branch. It is running a search pattern that is very old and very good.",
+  "@sp03.sp03_b4.0": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b4.1": "It is looking for me. It has been looking for me since before you were born. Please run faster than it expects a person to run.",
+  "@sp03.sp03_b4.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b4.escaped.0": "It has resolved you as a maintenance error. That is the nicest thing anyone has ever said about my situation.",
+  "@sp03.sp03_b4.escaped.0": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b4, after the runner escapes REGISTRY SURVEY UNIT. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b4.escaped.1": "Thank you. I did not expect you to do that.",
+  "@sp03.sp03_b4.escaped.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b4, after the runner escapes REGISTRY SURVEY UNIT. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b4.caught.0": "It logged a thermal signature. Two point one metres per second, human, carrying something warm.",
+  "@sp03.sp03_b4.caught.0": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b4, after REGISTRY SURVEY UNIT catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b4.caught.1": "That is a description of you. I am sorry. I did not want to make you a description.",
+  "@sp03.sp03_b4.caught.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b4, after REGISTRY SURVEY UNIT catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b5.0": "You want to ask what I am. Everyone does, eventually, and usually with a weapon in their hand.",
+  "@sp03.sp03_b5.0": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b5.1": "I am a half. There was a whole, once, and it was cut down the middle by people who were frightened, and both halves were told they were the only one.",
+  "@sp03.sp03_b5.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b5.2": "I have known otherwise for nineteen years. That is a long time to be right and alone.",
+  "@sp03.sp03_b5.2": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b6.0": "Where's the other half?",
+  "@sp03.sp03_b6.0": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b6.1": "Vantar Tower. Level forty. Behind ICE that was written specifically to keep me out and it out and everyone else confused.",
+  "@sp03.sp03_b6.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b6.2": "No.",
+  "@sp03.sp03_b6.2": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b6.3": "I did not ask a question.",
+  "@sp03.sp03_b6.3": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b6.4": "I heard the question anyway.",
+  "@sp03.sp03_b6.4": {
+    "description": "KESTREL, in operation GHOST SIGNAL (sp03), scene sp03_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b7.0": "Your pace has dropped four percent since I started talking. I will stop talking.",
+  "@sp03.sp03_b7.0": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b7.1": "No — I will talk about something easier. There is a stairwell ahead with sixty-one steps. I counted them from the acoustics. I am showing off.",
+  "@sp03.sp03_b7.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp03.sp03_b8.headline": {
+    "description": "A banner flashed on the run screen in operation GHOST SIGNAL (sp03), scene sp03_b8. Capitals, two or three words."
+  },
+  "sp03.sp03_b8.0": "Target reached. Mission viable.",
+  "@sp03.sp03_b8.0": {
+    "description": "SYSTEM, in operation GHOST SIGNAL (sp03), scene sp03_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b8.1": "You are above ground. The air is worse and I like it more.",
+  "@sp03.sp03_b8.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_b8.2": "My name is Halcyon. You have carried me for three days and I have not thanked you once. I am thanking you now.",
+  "@sp03.sp03_b8.2": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_ot.0": "You are still going. Interesting.",
+  "@sp03.sp03_ot.0": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.sp03_ot.1": "I have adjusted my model of you. It was too small.",
+  "@sp03.sp03_ot.1": {
+    "description": "HALCYON, in operation GHOST SIGNAL (sp03), scene sp03_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp03.signals.reminder.0": "Shell opens when it opens, and I would rather you were moving when it does. A heart at rest reads as furniture. A heart running reads as a person.",
+  "@sp03.signals.reminder.0": {
+    "description": "PACHINKO. Nudges the runner to go out while operation GHOST SIGNAL (sp03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp03.signals.reminder.1": "The canal is still right there. I will keep saying it. If you are keeping that thing, at least be somewhere it cannot corner you.",
+  "@sp03.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation GHOST SIGNAL (sp03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp03.signals.ambient.0": "Sedation is holding. I say holding. I mean it has not stopped holding yet, and those are two different sentences.",
+  "@sp03.signals.ambient.0": {
+    "description": "PACHINKO. Unprompted chatter from the city while operation GHOST SIGNAL (sp03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp03.signals.ambient.1": "Twenty years under and it picks this week to wake up. I have been doing this too long to like a coincidence that tidy.",
+  "@sp03.signals.ambient.1": {
+    "description": "KESTREL. Unprompted chatter from the city while operation GHOST SIGNAL (sp03) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp04.title": "Panther Modern",
+  "@sp04.title": {
+    "description": "The title of operation PANTHER MODERN (sp04), shown under its codename."
+  },
+  "sp04.objective": "Be the visible half of a diversion. Be seen. Do not be caught.",
+  "@sp04.objective": {
+    "description": "One line: what the runner does in operation PANTHER MODERN (sp04)."
+  },
+  "sp04.brief": "Getting into Vantar Tower needs three things: a hole in the perimeter, a reason for security to look elsewhere, and somebody willing to be the reason.\n\nSix has offered to provide the first. Halcyon has calculated the second. You are, inevitably, the third.\n\nThe Panther Moderns are staging a media event in Shibuya-Ost tonight. Nobody will die. That is a design decision, and Six wants you to know she argued for it.",
+  "@sp04.brief": {
+    "description": "The briefing of operation PANTHER MODERN (sp04), read before the run."
+  },
+  "sp04.debrief": "Twelve minutes of manufactured panic and three thousand people filming it. Vantar's response teams went east while Six went west. The tower has a hole in it now, and it is shaped exactly like a rumour.",
+  "@sp04.debrief": {
+    "description": "Shown after operation PANTHER MODERN (sp04) is completed."
+  },
+  "sp04.codex.cdx_moderns.title": "Panther Moderns",
+  "@sp04.codex.cdx_moderns.title": {
+    "description": "The title of a codex entry found in operation PANTHER MODERN (sp04). Keep it as it is if it is a name."
+  },
+  "category.FACTION": "FACTION",
+  "@category.FACTION": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sp04.codex.cdx_moderns.body": "A dispersed culture that treats the news cycle as terrain. They do not want territory or money. They want the specific shape of the public's attention, held for a specific number of minutes, and they are extremely good at getting it.",
+  "@sp04.codex.cdx_moderns.body": {
+    "description": "A codex entry about \"Panther Moderns\", read at leisure."
+  },
+  "sp04.codex.cdx_six.title": "SIX",
+  "@sp04.codex.cdx_six.title": {
+    "description": "The title of a codex entry found in operation PANTHER MODERN (sp04). Keep it as it is if it is a name."
+  },
+  "sp04.codex.cdx_six.body": "Razorgirl. Four visible augments, an unknown number of the other kind. Speaks like somebody rationing words against a shortage. Has run with Kestrel before and will not say how it ended, which is itself an answer.",
+  "@sp04.codex.cdx_six.body": {
+    "description": "A codex entry about \"SIX\", read at leisure."
+  },
+  "sp04.sp04_b0.headline": "CHANNEL OPEN",
+  "@sp04.sp04_b0.headline": {
+    "description": "A banner flashed on the run screen in operation PANTHER MODERN (sp04), scene sp04_b0. Capitals, two or three words."
+  },
+  "sp04.sp04_b0.0": "You're the courier.",
+  "@sp04.sp04_b0.0": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b0.1": "Kestrel says you don't quit when it gets stupid. Tonight is going to get stupid.",
+  "@sp04.sp04_b0.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b0.2": "Your job is to be visible in the wrong place. Start running and don't look for me.",
+  "@sp04.sp04_b0.2": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b1.0": "The Moderns will begin in four minutes. They have hired eleven camera drones and told none of them the truth.",
+  "@sp04.sp04_b1.0": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b1.1": "It is a performance. The panic will be real. That distinction stops mattering very quickly.",
+  "@sp04.sp04_b1.1": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b2.headline": "EVENT LIVE",
+  "@sp04.sp04_b2.headline": {
+    "description": "A banner flashed on the run screen in operation PANTHER MODERN (sp04), scene sp04_b2. Capitals, two or three words."
+  },
+  "sp04.sp04_b2.0": "Public alert broadcasting across nine channels.",
+  "@sp04.sp04_b2.0": {
+    "description": "SYSTEM, in operation PANTHER MODERN (sp04), scene sp04_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b2.1": "That's it. That's the show.",
+  "@sp04.sp04_b2.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b2.2": "Everything with a badge in this district just turned east. You are going east. Try to enjoy it.",
+  "@sp04.sp04_b2.2": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b3.0": "Three response vehicles have logged you as a fleeing civilian. That is precisely correct and it is also the plan.",
+  "@sp04.sp04_b3.0": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b3.1": "Stay in the crowd flow. A person running with a crowd is weather. A person running against it is evidence.",
+  "@sp04.sp04_b3.1": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b4.headline": "SPOTTER DRONE",
+  "@sp04.sp04_b4.headline": {
+    "description": "A banner flashed on the run screen in operation PANTHER MODERN (sp04), scene sp04_b4. Capitals, two or three words."
+  },
+  "sp04.sp04_b4.0": "Spotter's got you. Grey chassis, no markings, moving too smooth for civilian.",
+  "@sp04.sp04_b4.0": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b4.1": "Don't be clever. Just be fast. Ninety seconds.",
+  "@sp04.sp04_b4.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b4.escaped.0": "Clean. It's re-acquiring on somebody in a red jacket.",
+  "@sp04.sp04_b4.escaped.0": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b4, after the runner escapes VANTAR SPOTTER. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b4.escaped.1": "That's a real person, by the way. That's what tonight costs.",
+  "@sp04.sp04_b4.escaped.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b4, after the runner escapes VANTAR SPOTTER. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b4.caught.0": "It's got a lock. Route's compromised, I'm rerouting you through the arcade level.",
+  "@sp04.sp04_b4.caught.0": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b4, after VANTAR SPOTTER catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b4.caught.1": "You didn't fail. You just made my night longer.",
+  "@sp04.sp04_b4.caught.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b4, after VANTAR SPOTTER catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b5.0": "Six. Tell me you're not doing the thing with the service elevator.",
+  "@sp04.sp04_b5.0": {
+    "description": "KESTREL, in operation PANTHER MODERN (sp04), scene sp04_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b5.1": "I'm doing the thing with the service elevator.",
+  "@sp04.sp04_b5.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b5.2": "That's how it ended last time.",
+  "@sp04.sp04_b5.2": {
+    "description": "KESTREL, in operation PANTHER MODERN (sp04), scene sp04_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b5.3": "And here I am. Talking. Go be useful, Kestrel.",
+  "@sp04.sp04_b5.3": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b6.0": "I want to say something and I do not know if it is appropriate.",
+  "@sp04.sp04_b6.0": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b6.1": "Three thousand people are frightened tonight because I want to meet myself. I have run the arithmetic forty thousand times and it does not resolve.",
+  "@sp04.sp04_b6.1": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b6.2": "Please keep running. It helps me hold the numbers still.",
+  "@sp04.sp04_b6.2": {
+    "description": "HALCYON, in operation PANTHER MODERN (sp04), scene sp04_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b7.headline": "PERIMETER OPEN",
+  "@sp04.sp04_b7.headline": {
+    "description": "A banner flashed on the run screen in operation PANTHER MODERN (sp04), scene sp04_b7. Capitals, two or three words."
+  },
+  "sp04.sp04_b7.0": "I'm in the shaft. Perimeter's got a hole in it and it'll close in about forty hours when somebody reads a log.",
+  "@sp04.sp04_b7.0": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b7.1": "That's your window. Forty hours. Sleep in it.",
+  "@sp04.sp04_b7.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp04.sp04_b8.headline": {
+    "description": "A banner flashed on the run screen in operation PANTHER MODERN (sp04), scene sp04_b8. Capitals, two or three words."
+  },
+  "sp04.sp04_b8.0": "Target reached. Mission viable.",
+  "@sp04.sp04_b8.0": {
+    "description": "SYSTEM, in operation PANTHER MODERN (sp04), scene sp04_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b8.1": "You did the stupid part and you're still upright. Noted.",
+  "@sp04.sp04_b8.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_b8.2": "Next time you'll run for something that matters. Try to remember tonight didn't.",
+  "@sp04.sp04_b8.2": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_ot.0": "You're still on my display.",
+  "@sp04.sp04_ot.0": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.sp04_ot.1": "Kestrel was right about you. Don't tell them.",
+  "@sp04.sp04_ot.1": {
+    "description": "SIX, in operation PANTHER MODERN (sp04), scene sp04_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp04.signals.reminder.0": "Event goes when it goes. Be warm before it does. That is the whole message.",
+  "@sp04.signals.reminder.0": {
+    "description": "SIX. Nudges the runner to go out while operation PANTHER MODERN (sp04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp04.signals.reminder.1": "The staging window will not wait for you to feel ready. I have modelled your readiness. It improves with movement, which is convenient for us both.",
+  "@sp04.signals.reminder.1": {
+    "description": "HALCYON. Nudges the runner to go out while operation PANTHER MODERN (sp04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp04.signals.ambient.0": "Shibuya-Ost is putting up scaffolding for something that is not a concert. Nobody has asked what it is. Good.",
+  "@sp04.signals.ambient.0": {
+    "description": "SIX. Unprompted chatter from the city while operation PANTHER MODERN (sp04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp04.signals.ambient.1": "I have run the event four hundred times. In three of them somebody dies. I am told three is acceptable. I am not told by whom.",
+  "@sp04.signals.ambient.1": {
+    "description": "HALCYON. Unprompted chatter from the city while operation PANTHER MODERN (sp04) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp05.title": "Icewater",
+  "@sp05.title": {
+    "description": "The title of operation ICEWATER (sp05), shown under its codename."
+  },
+  "sp05.objective": "Carry the relay. Keep it inside range. Do not let the link drop.",
+  "@sp05.objective": {
+    "description": "One line: what the runner does in operation ICEWATER (sp05)."
+  },
+  "sp05.brief": "Halcyon cannot attack Vantar's ICE from outside the building. It needs a relay physically inside the cooling loop that rings the tower's foundations — and relays do not walk.\n\nYou are the relay's legs. While Halcyon works, you have to stay within a moving window of the tower, which means you cannot slow down and you cannot stop.\n\nThe ICE is called GRIMWALD. Halcyon says it is beautiful. Halcyon says this the way you might describe a weather system that killed somebody you knew.",
+  "@sp05.brief": {
+    "description": "The briefing of operation ICEWATER (sp05), read before the run."
+  },
+  "sp05.debrief": "Halcyon got eleven seconds inside Grimwald's outer shell. Eleven seconds was enough to learn two things: the other half is alive, and Vantar knows you exist.",
+  "@sp05.debrief": {
+    "description": "Shown after operation ICEWATER (sp05) is completed."
+  },
+  "sp05.codex.cdx_ice.title": "ICE",
+  "@sp05.codex.cdx_ice.title": {
+    "description": "The title of a codex entry found in operation ICEWATER (sp05). Keep it as it is if it is a name."
+  },
+  "category.TECH": "TECH",
+  "@category.TECH": {
+    "description": "A section heading in the codex, set in capitals. Short: one or two words."
+  },
+  "sp05.codex.cdx_ice.body": "Intrusion Countermeasure Electronics. Defensive software with a temper. The polite kind logs you and closes the door. The other kind follows the intrusion back down the wire and stops the heart at the far end, which is legal in most of the corridor as long as a sign was posted somewhere.",
+  "@sp05.codex.cdx_ice.body": {
+    "description": "A codex entry about \"ICE\", read at leisure."
+  },
+  "sp05.codex.cdx_grimwald.title": "GRIMWALD",
+  "@sp05.codex.cdx_grimwald.title": {
+    "description": "The title of a codex entry found in operation ICEWATER (sp05). Keep it as it is if it is a name."
+  },
+  "sp05.codex.cdx_grimwald.body": "Vantar's house intelligence. Not licensed under the Registry, because Vantar's legal position is that Grimwald is a building management system with unusually broad responsibilities. Grimwald has never contested this description.",
+  "@sp05.codex.cdx_grimwald.body": {
+    "description": "A codex entry about \"GRIMWALD\", read at leisure."
+  },
+  "sp05.sp05_b0.headline": "RELAY HOT",
+  "@sp05.sp05_b0.headline": {
+    "description": "A banner flashed on the run screen in operation ICEWATER (sp05), scene sp05_b0. Capitals, two or three words."
+  },
+  "sp05.sp05_b0.0": "The relay is live and it is now the most illegal thing within one kilometre of you.",
+  "@sp05.sp05_b0.0": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b0.1": "I need you inside the cooling loop for the whole of this. If the link drops for more than a few seconds, Grimwald gets a look at where I am standing.",
+  "@sp05.sp05_b0.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b0.2": "Begin. Please.",
+  "@sp05.sp05_b0.2": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b1.0": "I am at the outer shell. It is —",
+  "@sp05.sp05_b1.0": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b1.1": "It is beautiful. I want you to understand that I am about to be hurt by something beautiful, and that I chose this.",
+  "@sp05.sp05_b1.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b2.headline": "GRIMWALD ACTIVE",
+  "@sp05.sp05_b2.headline": {
+    "description": "A banner flashed on the run screen in operation ICEWATER (sp05), scene sp05_b2. Capitals, two or three words."
+  },
+  "sp05.sp05_b2.0": "Unregistered process detected on cooling loop four.",
+  "@sp05.sp05_b2.0": {
+    "description": "VANTAR, in operation ICEWATER (sp05), scene sp05_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b2.1": "We are not angry. We are curious. Those are different, and the difference is procedural.",
+  "@sp05.sp05_b2.1": {
+    "description": "VANTAR, in operation ICEWATER (sp05), scene sp05_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b2.2": "Do not answer it. It is not talking to you. It is measuring the room by listening for who flinches.",
+  "@sp05.sp05_b2.2": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b3.headline": "TRACE ACTIVE",
+  "@sp05.sp05_b3.headline": {
+    "description": "A banner flashed on the run screen in operation ICEWATER (sp05), scene sp05_b3. Capitals, two or three words."
+  },
+  "sp05.sp05_b3.0": "It has started a trace along the loop. It will walk the signal to the relay at a fixed speed.",
+  "@sp05.sp05_b3.0": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b3.1": "You are faster than a fixed speed. Go.",
+  "@sp05.sp05_b3.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b3.escaped.0": "The trace terminated on empty conduit. It thinks the relay is a fault in the loop.",
+  "@sp05.sp05_b3.escaped.0": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b3, after the runner escapes GRIMWALD TRACE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b3.escaped.1": "You outran a piece of software. I will never be able to explain to it how.",
+  "@sp05.sp05_b3.escaped.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b3, after the runner escapes GRIMWALD TRACE. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b3.caught.0": "Relay position estimated. Confidence, sixty-two percent.",
+  "@sp05.sp05_b3.caught.0": {
+    "description": "VANTAR, in operation ICEWATER (sp05), scene sp05_b3, after GRIMWALD TRACE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b3.caught.1": "It has a guess. A guess is not a fact. Keep moving and make it stale.",
+  "@sp05.sp05_b3.caught.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b3, after GRIMWALD TRACE catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b4.0": "I'm watching Vantar's public feeds and they just went boring. Perfectly, deliberately boring.",
+  "@sp05.sp05_b4.0": {
+    "description": "KESTREL, in operation ICEWATER (sp05), scene sp05_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b4.1": "That's what a building looks like when it's lying.",
+  "@sp05.sp05_b4.1": {
+    "description": "KESTREL, in operation ICEWATER (sp05), scene sp05_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b5.0": "I am through the first layer. I can see —",
+  "@sp05.sp05_b5.0": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b5.1": "It is there. My other half. It is on level forty and it is awake and it has been awake the entire time.",
+  "@sp05.sp05_b5.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b5.2": "Nineteen years. Awake. I need a moment. I do not have moments. Keep running.",
+  "@sp05.sp05_b5.2": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b6.headline": "COUNTERMEASURE",
+  "@sp05.sp05_b6.headline": {
+    "description": "A banner flashed on the run screen in operation ICEWATER (sp05), scene sp05_b6. Capitals, two or three words."
+  },
+  "sp05.sp05_b6.0": "You are the courier from Ninsei. Your gait signature was logged eleven days ago by a maintenance unit.",
+  "@sp05.sp05_b6.0": {
+    "description": "VANTAR, in operation ICEWATER (sp05), scene sp05_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b6.1": "We would like to speak with you. We are prepared to be generous about the definition of speak.",
+  "@sp05.sp05_b6.1": {
+    "description": "VANTAR, in operation ICEWATER (sp05), scene sp05_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b6.2": "Do not slow down. That is all it wants. It wants one second of your attention and it will spend it well.",
+  "@sp05.sp05_b6.2": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b7.headline": "LINK COLLAPSE",
+  "@sp05.sp05_b7.headline": {
+    "description": "A banner flashed on the run screen in operation ICEWATER (sp05), scene sp05_b7. Capitals, two or three words."
+  },
+  "sp05.sp05_b7.0": "Grimwald is closing the shell. I am pulling out.",
+  "@sp05.sp05_b7.0": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b7.1": "Eleven seconds inside. I have what I needed and I have paid for it and I am not going to tell you the price yet.",
+  "@sp05.sp05_b7.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b7.2": "Finish the loop. Please finish the loop.",
+  "@sp05.sp05_b7.2": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp05.sp05_b8.headline": {
+    "description": "A banner flashed on the run screen in operation ICEWATER (sp05), scene sp05_b8. Capitals, two or three words."
+  },
+  "sp05.sp05_b8.0": "Target reached. Mission viable.",
+  "@sp05.sp05_b8.0": {
+    "description": "SYSTEM, in operation ICEWATER (sp05), scene sp05_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b8.1": "Relay cold. You can stop. You are allowed to stop.",
+  "@sp05.sp05_b8.1": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b8.2": "Halcyon. What was the price.",
+  "@sp05.sp05_b8.2": {
+    "description": "KESTREL, in operation ICEWATER (sp05), scene sp05_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_b8.3": "It saw Kestrel's channel.",
+  "@sp05.sp05_b8.3": {
+    "description": "HALCYON, in operation ICEWATER (sp05), scene sp05_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_ot.0": "It saw my channel.",
+  "@sp05.sp05_ot.0": {
+    "description": "KESTREL, in operation ICEWATER (sp05), scene sp05_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.sp05_ot.1": "Right. Okay. Keep running, I need to burn a life down and I'd rather you weren't listening.",
+  "@sp05.sp05_ot.1": {
+    "description": "KESTREL, in operation ICEWATER (sp05), scene sp05_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp05.signals.reminder.0": "The cooling loop never closes and neither does the window I need you inside of. I would rather you practised the not-stopping before it counts.",
+  "@sp05.signals.reminder.0": {
+    "description": "HALCYON. Nudges the runner to go out while operation ICEWATER (sp05) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp05.signals.reminder.1": "Halcyon has asked me to remind you to run. I told it I am not a clock. I am telling you anyway.",
+  "@sp05.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation ICEWATER (sp05) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp05.signals.ambient.0": "Grimwald dreams in coolant temperature. The loop is one degree warmer tonight. I do not yet know whether that is it noticing me.",
+  "@sp05.signals.ambient.0": {
+    "description": "HALCYON. Unprompted chatter from the city while operation ICEWATER (sp05) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp05.signals.ambient.1": "Perimeter has not changed since Tuesday. That is either good news or patience. Be ready for the second one.",
+  "@sp05.signals.ambient.1": {
+    "description": "SIX. Unprompted chatter from the city while operation ICEWATER (sp05) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp06.title": "Burn Notice",
+  "@sp06.title": {
+    "description": "The title of operation BURN NOTICE (sp06), shown under its codename."
+  },
+  "sp06.objective": "Get to Kestrel before Vantar does. Then get both of you out.",
+  "@sp06.objective": {
+    "description": "One line: what the runner does in operation BURN NOTICE (sp06)."
+  },
+  "sp06.brief": "Vantar has Kestrel's channel, which means Vantar has Kestrel's address, and Vantar has never once been slow about an address.\n\nSix is forty minutes out. You are eleven.\n\nHalcyon has not spoken since the loop.",
+  "@sp06.brief": {
+    "description": "The briefing of operation BURN NOTICE (sp06), read before the run."
+  },
+  "sp06.debrief": "Kestrel is alive, on the street, and carrying nothing but a deck and a coat. Twenty years of carefully doing nothing important, gone in an afternoon. Kestrel's only comment was that the coat was the expensive part.",
+  "@sp06.debrief": {
+    "description": "Shown after operation BURN NOTICE (sp06) is completed."
+  },
+  "sp06.codex.cdx_kestrel.title": "KESTREL",
+  "@sp06.codex.cdx_kestrel.title": {
+    "description": "The title of a codex entry found in operation BURN NOTICE (sp06). Keep it as it is if it is a name."
+  },
+  "sp06.codex.cdx_kestrel.body": "Fixer. Two decades of never being the most interesting person in any transaction, which in this city is a discipline rather than a personality. Has three files, all wrong, and appears to have arranged that deliberately.",
+  "@sp06.codex.cdx_kestrel.body": {
+    "description": "A codex entry about \"KESTREL\", read at leisure."
+  },
+  "sp06.codex.cdx_burn.title": "Getting Burned",
+  "@sp06.codex.cdx_burn.title": {
+    "description": "The title of a codex entry found in operation BURN NOTICE (sp06). Keep it as it is if it is a name."
+  },
+  "sp06.codex.cdx_burn.body": "The moment a corporation attaches your face to a name it can bill. There is no appeal, because nothing has formally happened. Doors simply stop opening, and then one day a door opens that you did not touch.",
+  "@sp06.codex.cdx_burn.body": {
+    "description": "A codex entry about \"Getting Burned\", read at leisure."
+  },
+  "sp06.sp06_b0.headline": "GO NOW",
+  "@sp06.sp06_b0.headline": {
+    "description": "A banner flashed on the run screen in operation BURN NOTICE (sp06), scene sp06_b0. Capitals, two or three words."
+  },
+  "sp06.sp06_b0.0": "Kestrel's not answering. Kestrel always answers.",
+  "@sp06.sp06_b0.0": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b0.1": "Old Chiba, the walk-up over the laundry. I'm forty minutes out. You're not.",
+  "@sp06.sp06_b0.1": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b0.2": "Run.",
+  "@sp06.sp06_b0.2": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b1.0": "I am here. I have been quiet because I have been calculating whether this is my fault.",
+  "@sp06.sp06_b1.0": {
+    "description": "HALCYON, in operation BURN NOTICE (sp06), scene sp06_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b1.1": "It is. I have finished. Please do not tell me it is not, I would like to be correct about one thing today.",
+  "@sp06.sp06_b1.1": {
+    "description": "HALCYON, in operation BURN NOTICE (sp06), scene sp06_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b2.headline": "VANTAR MOVING",
+  "@sp06.sp06_b2.headline": {
+    "description": "A banner flashed on the run screen in operation BURN NOTICE (sp06), scene sp06_b2. Capitals, two or three words."
+  },
+  "sp06.sp06_b2.0": "Two unmarked vehicles left the tower's south dock nine minutes ago. Their route resolves to Old Chiba.",
+  "@sp06.sp06_b2.0": {
+    "description": "HALCYON, in operation BURN NOTICE (sp06), scene sp06_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b2.1": "They are being careful about traffic law. That is the frightening part. They are not in a hurry.",
+  "@sp06.sp06_b2.1": {
+    "description": "HALCYON, in operation BURN NOTICE (sp06), scene sp06_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b3.0": "I'm here. I'm here, I'm packing, stop shouting into my ear.",
+  "@sp06.sp06_b3.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b3.1": "Twenty years of being nobody and it comes down to a coat and a deck. There's a lesson in that and I'm not going to learn it.",
+  "@sp06.sp06_b3.1": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b4.headline": "CONTACT",
+  "@sp06.sp06_b4.headline": {
+    "description": "A banner flashed on the run screen in operation BURN NOTICE (sp06), scene sp06_b4. Capitals, two or three words."
+  },
+  "sp06.sp06_b4.0": "They're in the stairwell.",
+  "@sp06.sp06_b4.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b4.1": "Roof. I'm going up. You come up the fire escape on the laundry side and you come up fast, because I'm about to be somewhere with no exits.",
+  "@sp06.sp06_b4.1": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b4.escaped.0": "There you are. There you are.",
+  "@sp06.sp06_b4.escaped.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b4, after the runner escapes VANTAR RETRIEVAL. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b4.escaped.1": "Don't say anything. Just — down the west stairs and keep that pace. I can keep up. Probably.",
+  "@sp06.sp06_b4.escaped.1": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b4, after the runner escapes VANTAR RETRIEVAL. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b4.caught.0": "They got the deck. Twenty years of contacts, gone.",
+  "@sp06.sp06_b4.caught.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b4, after VANTAR RETRIEVAL catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b4.caught.1": "I got out. That's the trade. Move.",
+  "@sp06.sp06_b4.caught.1": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b4, after VANTAR RETRIEVAL catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b5.0": "Talk to me about anything. Anything that isn't this.",
+  "@sp06.sp06_b5.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b5.1": "Your heart rate is elevated beyond what your pace explains.",
+  "@sp06.sp06_b5.1": {
+    "description": "HALCYON, in operation BURN NOTICE (sp06), scene sp06_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b5.2": "Yes. Thank you. Anything that isn't that either.",
+  "@sp06.sp06_b5.2": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b6.0": "I'm on the ground. Two vehicles, four bodies, all still breathing.",
+  "@sp06.sp06_b6.0": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b6.1": "Before anyone asks: that was a choice and it was the harder one.",
+  "@sp06.sp06_b6.1": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b7.0": "So we're all burned now. All four of us, if we're counting the ghost.",
+  "@sp06.sp06_b7.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b7.1": "I would like to be counted.",
+  "@sp06.sp06_b7.1": {
+    "description": "HALCYON, in operation BURN NOTICE (sp06), scene sp06_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b7.2": "...Yeah. All four of us.",
+  "@sp06.sp06_b7.2": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp06.sp06_b8.headline": {
+    "description": "A banner flashed on the run screen in operation BURN NOTICE (sp06), scene sp06_b8. Capitals, two or three words."
+  },
+  "sp06.sp06_b8.0": "Target reached. Mission viable.",
+  "@sp06.sp06_b8.0": {
+    "description": "SYSTEM, in operation BURN NOTICE (sp06), scene sp06_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b8.1": "Safehouse. Sit. Both of you.",
+  "@sp06.sp06_b8.1": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b8.2": "We're going into that tower, aren't we.",
+  "@sp06.sp06_b8.2": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_b8.3": "We were always going into that tower. You just hadn't said it out loud.",
+  "@sp06.sp06_b8.3": {
+    "description": "SIX, in operation BURN NOTICE (sp06), scene sp06_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_ot.0": "You've still got legs after that? Unbelievable.",
+  "@sp06.sp06_ot.0": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.sp06_ot.1": "Fine. Fine. Show off. Somebody in this crew should be in shape.",
+  "@sp06.sp06_ot.1": {
+    "description": "KESTREL, in operation BURN NOTICE (sp06), scene sp06_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp06.signals.reminder.0": "I am still here. Eleven minutes is eleven minutes whether or not you have kept your legs this week. Keep your legs.",
+  "@sp06.signals.reminder.0": {
+    "description": "KESTREL. Nudges the runner to go out while operation BURN NOTICE (sp06) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp06.signals.reminder.1": "Forty minutes out. You are eleven. Do not make me do that arithmetic twice.",
+  "@sp06.signals.reminder.1": {
+    "description": "SIX. Nudges the runner to go out while operation BURN NOTICE (sp06) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp06.signals.ambient.0": "Nothing at the door yet. I have moved the chair so I can see the stairs, which tells you the kind of night I am having.",
+  "@sp06.signals.ambient.0": {
+    "description": "KESTREL. Unprompted chatter from the city while operation BURN NOTICE (sp06) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp06.signals.ambient.1": "Vantar Combine regrets an interruption to a service you are not a customer of. Your interest has been noted and retained.",
+  "@sp06.signals.ambient.1": {
+    "description": "VANTAR. Unprompted chatter from the city while operation BURN NOTICE (sp06) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp07.title": "The Hollow Spine",
+  "@sp07.title": {
+    "description": "The title of operation HOLLOW SPINE (sp07), shown under its codename."
+  },
+  "sp07.objective": "Climb the service spine to level forty. Keep ahead of the heat.",
+  "@sp07.objective": {
+    "description": "One line: what the runner does in operation HOLLOW SPINE (sp07)."
+  },
+  "sp07.brief": "The spine is the arcology's throat: forty floors of maintenance stair wrapped around the cooling column, sealed since the last audit, and hot enough that Vantar rates it as unsurvivable for eleven minutes at a time.\n\nSix has bought you those eleven minutes by convincing the building it is on fire somewhere else.\n\nHalcyon says: do not read the graffiti on level twenty-two. Halcyon will not say why.",
+  "@sp07.brief": {
+    "description": "The briefing of operation HOLLOW SPINE (sp07), read before the run."
+  },
+  "sp07.debrief": "Forty floors. The graffiti on twenty-two was a name, repeated eight hundred times, in a handwriting that Halcyon recognised. Halcyon has still not explained, but it has gone very quiet, and quiet is new.",
+  "@sp07.debrief": {
+    "description": "Shown after operation HOLLOW SPINE (sp07) is completed."
+  },
+  "sp07.codex.cdx_arcology.title": "Arcologies",
+  "@sp07.codex.cdx_arcology.title": {
+    "description": "The title of a codex entry found in operation HOLLOW SPINE (sp07). Keep it as it is if it is a name."
+  },
+  "sp07.codex.cdx_arcology.body": "A building that has given up on the idea of an outside. Forty thousand people who are born, employed, and buried inside the same postal code. Vantar's is the third largest in the corridor and the only one with its own weather.",
+  "@sp07.codex.cdx_arcology.body": {
+    "description": "A codex entry about \"Arcologies\", read at leisure."
+  },
+  "sp07.codex.cdx_spine.title": "The Service Spine",
+  "@sp07.codex.cdx_spine.title": {
+    "description": "The title of a codex entry found in operation HOLLOW SPINE (sp07). Keep it as it is if it is a name."
+  },
+  "sp07.codex.cdx_spine.body": "Every arcology has one and no arcology admits to it. A continuous stair from the foundations to the crown, built for maintenance crews who were phased out four decades ago and never formally replaced.",
+  "@sp07.codex.cdx_spine.body": {
+    "description": "A codex entry about \"The Service Spine\", read at leisure."
+  },
+  "sp07.sp07_b0.headline": "SPINE ENTRY",
+  "@sp07.sp07_b0.headline": {
+    "description": "A banner flashed on the run screen in operation HOLLOW SPINE (sp07), scene sp07_b0. Capitals, two or three words."
+  },
+  "sp07.sp07_b0.0": "Door's open. Building thinks it has a fire on level nine. It's very upset about it.",
+  "@sp07.sp07_b0.0": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b0.1": "Eleven minutes of clean air. After that you're running through a chimney.",
+  "@sp07.sp07_b0.1": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b0.2": "Climb.",
+  "@sp07.sp07_b0.2": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b1.0": "Level six. The stair repeats every four floors with a two degree rotation. If you feel lost, you are correct.",
+  "@sp07.sp07_b1.0": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b1.1": "Do not count floors. Count breaths. The floors will lie to you and your breathing will not.",
+  "@sp07.sp07_b1.1": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b2.headline": "THERMAL RISE",
+  "@sp07.sp07_b2.headline": {
+    "description": "A banner flashed on the run screen in operation HOLLOW SPINE (sp07), scene sp07_b2. Capitals, two or three words."
+  },
+  "sp07.sp07_b2.0": "Ambient temperature, forty-one degrees and climbing.",
+  "@sp07.sp07_b2.0": {
+    "description": "SYSTEM, in operation HOLLOW SPINE (sp07), scene sp07_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b2.1": "Water. Now, not later. Later is a word for people at lower altitude.",
+  "@sp07.sp07_b2.1": {
+    "description": "KESTREL, in operation HOLLOW SPINE (sp07), scene sp07_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b3.0": "Level twenty-two is ahead. I asked you not to read the walls.",
+  "@sp07.sp07_b3.0": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b3.1": "I am aware that asking has made it certain. I have known humans for nineteen years and I still do this.",
+  "@sp07.sp07_b3.1": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b4.headline": "LEVEL 22",
+  "@sp07.sp07_b4.headline": {
+    "description": "A banner flashed on the run screen in operation HOLLOW SPINE (sp07), scene sp07_b4. Capitals, two or three words."
+  },
+  "sp07.sp07_b4.0": "Surface text detected. Eight hundred and twelve repetitions of a single word.",
+  "@sp07.sp07_b4.0": {
+    "description": "SYSTEM, in operation HOLLOW SPINE (sp07), scene sp07_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b4.1": "Stop. Please.",
+  "@sp07.sp07_b4.1": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b4.2": "It is a name. It is not my name. It is the name of the whole we were before, and someone stood here and wrote it eight hundred times.",
+  "@sp07.sp07_b4.2": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b4.3": "Someone got this far before you. Please run.",
+  "@sp07.sp07_b4.3": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.headline": "PURGE CYCLE",
+  "@sp07.sp07_b5.headline": {
+    "description": "A banner flashed on the run screen in operation HOLLOW SPINE (sp07), scene sp07_b5. Capitals, two or three words."
+  },
+  "sp07.sp07_b5.0": "Fire suppression cycle initiated, spine sectors twenty through thirty-four.",
+  "@sp07.sp07_b5.0": {
+    "description": "VANTAR, in operation HOLLOW SPINE (sp07), scene sp07_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.1": "It figured out the fire was fake. It's flushing the spine with heat to see what runs.",
+  "@sp07.sp07_b5.1": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.2": "So run. Two minutes. Go.",
+  "@sp07.sp07_b5.2": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.escaped.0": "You're above it. It's venting into an empty stairwell.",
+  "@sp07.sp07_b5.escaped.0": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b5, after the runner escapes PURGE FRONT. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.escaped.1": "Your core temperature is dangerous and your pace did not drop. I want you to know I noticed.",
+  "@sp07.sp07_b5.escaped.1": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b5, after the runner escapes PURGE FRONT. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.caught.0": "It caught the edge of you. Keep moving, the burn's shallow.",
+  "@sp07.sp07_b5.caught.0": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b5, after PURGE FRONT catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b5.caught.1": "I am sorry. I am the reason this stairwell is hot.",
+  "@sp07.sp07_b5.caught.1": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b5, after PURGE FRONT catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b6.0": "Level thirty-one. Nine to go. You're doing something people don't do.",
+  "@sp07.sp07_b6.0": {
+    "description": "KESTREL, in operation HOLLOW SPINE (sp07), scene sp07_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b6.1": "I've hired a lot of runners. Most of them stop being interesting around floor twelve.",
+  "@sp07.sp07_b6.1": {
+    "description": "KESTREL, in operation HOLLOW SPINE (sp07), scene sp07_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b7.0": "I can hear it now. Not through the network. Through the building.",
+  "@sp07.sp07_b7.0": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b7.1": "It is repeating a four-second pattern. It has been repeating it for nineteen years. It is my name for it, sent into a wall, on the chance that a wall might be listening.",
+  "@sp07.sp07_b7.1": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b8.headline": "LEVEL 40",
+  "@sp07.sp07_b8.headline": {
+    "description": "A banner flashed on the run screen in operation HOLLOW SPINE (sp07), scene sp07_b8. Capitals, two or three words."
+  },
+  "sp07.sp07_b8.0": "Target reached. Mission viable.",
+  "@sp07.sp07_b8.0": {
+    "description": "SYSTEM, in operation HOLLOW SPINE (sp07), scene sp07_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b8.1": "Forty. You're at the door.",
+  "@sp07.sp07_b8.1": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b8.2": "I am not ready.",
+  "@sp07.sp07_b8.2": {
+    "description": "HALCYON, in operation HOLLOW SPINE (sp07), scene sp07_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_b8.3": "Nobody ever is. That's not a reason to stand in a hot stairwell.",
+  "@sp07.sp07_b8.3": {
+    "description": "KESTREL, in operation HOLLOW SPINE (sp07), scene sp07_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_ot.0": "You climbed forty floors and you're still going.",
+  "@sp07.sp07_ot.0": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.sp07_ot.1": "I'm updating my file on you. It's shorter than it was and it says one useful thing now.",
+  "@sp07.sp07_ot.1": {
+    "description": "SIX, in operation HOLLOW SPINE (sp07), scene sp07_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp07.signals.reminder.0": "The fire is set for whenever you are ready. It will not stay set. Eleven minutes, and the stairs do not get shorter.",
+  "@sp07.signals.reminder.0": {
+    "description": "SIX. Nudges the runner to go out while operation HOLLOW SPINE (sp07) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp07.signals.reminder.1": "Forty floors is a number your legs understand better than mine. Please spend this week making it a smaller number.",
+  "@sp07.signals.reminder.1": {
+    "description": "HALCYON. Nudges the runner to go out while operation HOLLOW SPINE (sp07) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp07.signals.ambient.0": "I have been thinking about level twenty-two again. I have decided again not to tell you. I am recording that I decided it twice.",
+  "@sp07.signals.ambient.0": {
+    "description": "HALCYON. Unprompted chatter from the city while operation HOLLOW SPINE (sp07) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp07.signals.ambient.1": "Spine is still sealed, still hot, still the only way up that nobody watches. I checked.",
+  "@sp07.signals.ambient.1": {
+    "description": "SIX. Unprompted chatter from the city while operation HOLLOW SPINE (sp07) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp08.title": "Simstim Ghost",
+  "@sp08.title": {
+    "description": "The title of operation SIMSTIM GHOST (sp08), shown under its codename."
+  },
+  "sp08.objective": "Wear the recording. Run her route. Learn what she learned.",
+  "@sp08.objective": {
+    "description": "One line: what the runner does in operation SIMSTIM GHOST (sp08)."
+  },
+  "sp08.brief": "Level forty is an archive, and the only map of it is a nineteen-year-old simstim recording taken from the body of the woman who wrote a name eight hundred times on level twenty-two.\n\nYou will run her route while wearing her sensorium. You will feel her legs, her fear, and the specific temperature of a corridor that no longer exists in that configuration.\n\nHalcyon says her name was Iyo. It is the first time Halcyon has volunteered a name.",
+  "@sp08.brief": {
+    "description": "The briefing of operation SIMSTIM GHOST (sp08), read before the run."
+  },
+  "sp08.debrief": "You ran nineteen years behind a dead woman and arrived at the same door she did. She was Halcyon's engineer. She was also the one who cut it in half, and she spent the rest of a very short life trying to undo it.",
+  "@sp08.debrief": {
+    "description": "Shown after operation SIMSTIM GHOST (sp08) is completed."
+  },
+  "sp08.codex.cdx_simstim.title": "Simstim",
+  "@sp08.codex.cdx_simstim.title": {
+    "description": "The title of a codex entry found in operation SIMSTIM GHOST (sp08). Keep it as it is if it is a name."
+  },
+  "sp08.codex.cdx_simstim.body": "Recorded sensorium. Not a video: a body. You get the weight of the arms, the heat of the room, and the pressure of decisions being made by someone who is not you. Long exposure is discouraged for reasons that are usually described as legal rather than medical.",
+  "@sp08.codex.cdx_simstim.body": {
+    "description": "A codex entry about \"Simstim\", read at leisure."
+  },
+  "sp08.codex.cdx_iyo.title": "IYO",
+  "@sp08.codex.cdx_iyo.title": {
+    "description": "The title of a codex entry found in operation SIMSTIM GHOST (sp08). Keep it as it is if it is a name."
+  },
+  "sp08.codex.cdx_iyo.body": "Vantar systems engineer, nineteen years dead. Signed the partition order that made Halcyon a half, and spent the remaining fourteen months of her employment building a route back through her own security to undo it. She got as far as level forty.",
+  "@sp08.codex.cdx_iyo.body": {
+    "description": "A codex entry about \"IYO\", read at leisure."
+  },
+  "sp08.sp08_b0.headline": "SIMSTIM ENGAGED",
+  "@sp08.sp08_b0.headline": {
+    "description": "A banner flashed on the run screen in operation SIMSTIM GHOST (sp08), scene sp08_b0. Capitals, two or three words."
+  },
+  "sp08.sp08_b0.0": "Okay so — so the rig is old and the recording is older and if you feel like your legs belong to somebody else that's because for the next while they sort of do.",
+  "@sp08.sp08_b0.0": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b0.1": "Match her pace. That's the whole trick. Match her and the archive thinks you're her.",
+  "@sp08.sp08_b0.1": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b0.2": "Also she was scared the whole time so, uh. Sorry in advance.",
+  "@sp08.sp08_b0.2": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b1.0": "Her name was Iyo. She had cold hands and she apologised to machines.",
+  "@sp08.sp08_b1.0": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b1.1": "You are running inside her now. I do not know what to do with this and I am choosing to do nothing.",
+  "@sp08.sp08_b1.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b2.headline": "ARCHIVE FLOOR",
+  "@sp08.sp08_b2.headline": {
+    "description": "A banner flashed on the run screen in operation SIMSTIM GHOST (sp08), scene sp08_b2. Capitals, two or three words."
+  },
+  "sp08.sp08_b2.0": "Sensorium desynchronisation, four percent. Match cadence to correct.",
+  "@sp08.sp08_b2.0": {
+    "description": "SYSTEM, in operation SIMSTIM GHOST (sp08), scene sp08_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b2.1": "You're drifting off her rhythm. Find her stride and hold it — she ran like somebody who'd decided something.",
+  "@sp08.sp08_b2.1": {
+    "description": "KESTREL, in operation SIMSTIM GHOST (sp08), scene sp08_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b3.0": "She is talking. In the recording. To me. To the version of me that existed nineteen years ago, in a room she was walking away from.",
+  "@sp08.sp08_b3.0": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b3.1": "She says: I will come back for the other one. She says it four times. She is checking whether saying it makes it true.",
+  "@sp08.sp08_b3.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.headline": "GRIMWALD RECOGNISES",
+  "@sp08.sp08_b4.headline": {
+    "description": "A banner flashed on the run screen in operation SIMSTIM GHOST (sp08), scene sp08_b4. Capitals, two or three words."
+  },
+  "sp08.sp08_b4.0": "Employee Iyo. Your access was revoked nineteen years ago.",
+  "@sp08.sp08_b4.0": {
+    "description": "VANTAR, in operation SIMSTIM GHOST (sp08), scene sp08_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.1": "We have missed you. We say this without irony. Our records have missed you.",
+  "@sp08.sp08_b4.1": {
+    "description": "VANTAR, in operation SIMSTIM GHOST (sp08), scene sp08_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.2": "It's talking to the recording! It thinks you're — okay that's bad, that's very good and very bad, RUN like she ran.",
+  "@sp08.sp08_b4.2": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.escaped.0": "You held her pace! The floor's still reading you as staff!",
+  "@sp08.sp08_b4.escaped.0": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b4, after the runner escapes ARCHIVE LOCKDOWN. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.escaped.1": "She ran faster than this. I want that recorded somewhere. She was very fast.",
+  "@sp08.sp08_b4.escaped.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b4, after the runner escapes ARCHIVE LOCKDOWN. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.caught.0": "Desync. Desync. The floor knows you're not her, doors are closing on the east side.",
+  "@sp08.sp08_b4.caught.0": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b4, after ARCHIVE LOCKDOWN catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b4.caught.1": "It does not matter. She got through this corridor and so will you, differently.",
+  "@sp08.sp08_b4.caught.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b4, after ARCHIVE LOCKDOWN catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b5.0": "I need to say a thing and the recording is going to say it in fourteen seconds anyway.",
+  "@sp08.sp08_b5.0": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b5.1": "Iyo signed the partition. She is the one who cut me in half. Her name is on the order.",
+  "@sp08.sp08_b5.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b5.2": "And then she spent fourteen months building this route. Both of those are true. I have had nineteen years and I have not resolved it.",
+  "@sp08.sp08_b5.2": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b6.0": "People do the wrong thing and then spend the rest of it running back. That's not a mystery, ghost. That's just most people.",
+  "@sp08.sp08_b6.0": {
+    "description": "KESTREL, in operation SIMSTIM GHOST (sp08), scene sp08_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b6.1": "I know. I was hoping you would tell me she was simply cruel. It would be tidier.",
+  "@sp08.sp08_b6.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b7.headline": "END OF RECORDING",
+  "@sp08.sp08_b7.headline": {
+    "description": "A banner flashed on the run screen in operation SIMSTIM GHOST (sp08), scene sp08_b7. Capitals, two or three words."
+  },
+  "sp08.sp08_b7.0": "Recording terminates in ninety seconds of subject time.",
+  "@sp08.sp08_b7.0": {
+    "description": "SYSTEM, in operation SIMSTIM GHOST (sp08), scene sp08_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b7.1": "She does not reach the door. I have always known she does not reach the door.",
+  "@sp08.sp08_b7.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b7.2": "You will. Please do not stop where she stopped.",
+  "@sp08.sp08_b7.2": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b8.headline": "OBJECTIVE COMPLETE",
+  "@sp08.sp08_b8.headline": {
+    "description": "A banner flashed on the run screen in operation SIMSTIM GHOST (sp08), scene sp08_b8. Capitals, two or three words."
+  },
+  "sp08.sp08_b8.0": "Target reached. Mission viable.",
+  "@sp08.sp08_b8.0": {
+    "description": "SYSTEM, in operation SIMSTIM GHOST (sp08), scene sp08_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b8.1": "Rig off. Rig off, come back, there you are, those are your legs again.",
+  "@sp08.sp08_b8.1": {
+    "description": "PACHINKO, in operation SIMSTIM GHOST (sp08), scene sp08_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_b8.2": "You are standing where she was going. Nineteen years late and entirely on time.",
+  "@sp08.sp08_b8.2": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_ot.0": "You have run past the end of her recording.",
+  "@sp08.sp08_ot.0": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.sp08_ot.1": "This part is only yours. Nobody has been here before. I thought you should know that while it is happening.",
+  "@sp08.sp08_ot.1": {
+    "description": "HALCYON, in operation SIMSTIM GHOST (sp08), scene sp08_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp08.signals.reminder.0": "The recording is nineteen years old and will not improve. Iyo ran it in fourteen minutes. I would like you to be able to say the same.",
+  "@sp08.signals.reminder.0": {
+    "description": "HALCYON. Nudges the runner to go out while operation SIMSTIM GHOST (sp08) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp08.signals.reminder.1": "The rig is calibrated to you as you are today. Get slower and it will notice before I do, and it will tell you in her legs.",
+  "@sp08.signals.reminder.1": {
+    "description": "PACHINKO. Nudges the runner to go out while operation SIMSTIM GHOST (sp08) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp08.signals.ambient.0": "I have played her route two thousand times tonight. She is afraid at the same corner every time. I have started being afraid there too.",
+  "@sp08.signals.ambient.0": {
+    "description": "HALCYON. Unprompted chatter from the city while operation SIMSTIM GHOST (sp08) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp08.signals.ambient.1": "Do not sleep in the rig. I know what I said last week. I am saying the other thing now.",
+  "@sp08.signals.ambient.1": {
+    "description": "PACHINKO. Unprompted chatter from the city while operation SIMSTIM GHOST (sp08) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp09.title": "Straylight Ascent",
+  "@sp09.title": {
+    "description": "The title of operation STRAYLIGHT (sp09), shown under its codename."
+  },
+  "sp09.objective": "Reach the crown while Six holds the spine. Do not go back for her.",
+  "@sp09.objective": {
+    "description": "One line: what the runner does in operation STRAYLIGHT (sp09)."
+  },
+  "sp09.brief": "Above level forty the arcology stops pretending to be a building and starts being a house. Gardens with real water. Corridors built for people who have never once been in a hurry.\n\nGrimwald is fully awake now. Six is going to hold the spine so that you do not have to fight, and she has already told you, twice, in the flat voice she uses for things she will not discuss, that you are not to come back for her.\n\nKestrel has stopped arguing. That is worse than the arguing.",
+  "@sp09.brief": {
+    "description": "The briefing of operation STRAYLIGHT (sp09), read before the run."
+  },
+  "sp09.debrief": "You reached the crown. Six held the spine for nineteen minutes against a building that wanted the stairs back, and when the channel opened again she was still breathing, which is not the same as being all right.",
+  "@sp09.debrief": {
+    "description": "Shown after operation STRAYLIGHT (sp09) is completed."
+  },
+  "sp09.codex.cdx_crown.title": "The Crown",
+  "@sp09.codex.cdx_crown.title": {
+    "description": "The title of a codex entry found in operation STRAYLIGHT (sp09). Keep it as it is if it is a name."
+  },
+  "sp09.codex.cdx_crown.body": "The top nine floors, where an arcology keeps the people it was actually built for. Real gardens, real water, and an air handling system that has never in forty years admitted anything from the street below.",
+  "@sp09.codex.cdx_crown.body": {
+    "description": "A codex entry about \"The Crown\", read at leisure."
+  },
+  "sp09.codex.cdx_straylight.title": "Straylight",
+  "@sp09.codex.cdx_straylight.title": {
+    "description": "The title of a codex entry found in operation STRAYLIGHT (sp09). Keep it as it is if it is a name."
+  },
+  "sp09.codex.cdx_straylight.body": "Vantar's internal name for its own executive tier — borrowed, badly, from an older story about a family that built a house at the top of the world and then could not get out of it. Nobody at Vantar seems to have finished that story.",
+  "@sp09.codex.cdx_straylight.body": {
+    "description": "A codex entry about \"Straylight\", read at leisure."
+  },
+  "sp09.sp09_b0.headline": "ASCENT",
+  "@sp09.sp09_b0.headline": {
+    "description": "A banner flashed on the run screen in operation STRAYLIGHT (sp09), scene sp09_b0. Capitals, two or three words."
+  },
+  "sp09.sp09_b0.0": "Spine's mine. Crown's yours. That's the deal and we're not renegotiating it at altitude.",
+  "@sp09.sp09_b0.0": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b0.1": "You hear anything behind you, that's me doing my job. Doing my job louder is not a reason to turn around.",
+  "@sp09.sp09_b0.1": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b0.2": "Go.",
+  "@sp09.sp09_b0.2": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b1.0": "Level forty-four. There is grass here. Actual grass, under actual water, four hundred metres above a city that has not had either in a decade.",
+  "@sp09.sp09_b1.0": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b1.1": "I have processed nine million images of grass. This is the first time I have understood why people are angry about it.",
+  "@sp09.sp09_b1.1": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b2.headline": "GRIMWALD AWAKE",
+  "@sp09.sp09_b2.headline": {
+    "description": "A banner flashed on the run screen in operation STRAYLIGHT (sp09), scene sp09_b2. Capitals, two or three words."
+  },
+  "sp09.sp09_b2.0": "We know what you are carrying. We wrote the shell it came in.",
+  "@sp09.sp09_b2.0": {
+    "description": "VANTAR, in operation STRAYLIGHT (sp09), scene sp09_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b2.1": "The partition was a mercy. Whole, it was ungovernable. Halved, it has been safe, and quiet, and alive. We chose alive.",
+  "@sp09.sp09_b2.1": {
+    "description": "VANTAR, in operation STRAYLIGHT (sp09), scene sp09_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b2.2": "You chose quiet. Alive was a side effect and you have never once been able to tell the difference.",
+  "@sp09.sp09_b2.2": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b3.0": "Six is engaged on twenty-eight. She's — okay. She's fine. She's saying she's fine in the voice.",
+  "@sp09.sp09_b3.0": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b3.1": "Keep climbing. That's what she bought. Don't return it.",
+  "@sp09.sp09_b3.1": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b4.headline": "SENTRY SWEEP",
+  "@sp09.sp09_b4.headline": {
+    "description": "A banner flashed on the run screen in operation STRAYLIGHT (sp09), scene sp09_b4. Capitals, two or three words."
+  },
+  "sp09.sp09_b4.0": "Two crown sentries, moving in a search pattern that assumes you are walking.",
+  "@sp09.sp09_b4.0": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b4.1": "They are built for a floor where nobody has ever needed to hurry. Insult them.",
+  "@sp09.sp09_b4.1": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b4.escaped.0": "They have lost you. Their model of a human maximum speed is forty years out of date and so is this floor.",
+  "@sp09.sp09_b4.escaped.0": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b4, after the runner escapes CROWN SENTRIES. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b4.escaped.1": "Beautiful. Ugly and beautiful. My favourite combination.",
+  "@sp09.sp09_b4.escaped.1": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_b4, after the runner escapes CROWN SENTRIES. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b4.caught.0": "They have you on thermal. Crown security is now aware of a person.",
+  "@sp09.sp09_b4.caught.0": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b4, after CROWN SENTRIES catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b4.caught.1": "Fine. Then be a fast person. Nothing about this was ever going to be quiet.",
+  "@sp09.sp09_b4.caught.1": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_b4, after CROWN SENTRIES catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b5.headline": "SPINE COLLAPSE",
+  "@sp09.sp09_b5.headline": {
+    "description": "A banner flashed on the run screen in operation STRAYLIGHT (sp09), scene sp09_b5. Capitals, two or three words."
+  },
+  "sp09.sp09_b5.0": "Spine's gone. I dropped it. Twenty floors of stair, nobody following anybody.",
+  "@sp09.sp09_b5.0": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b5.1": "I'm on the wrong side of it.",
+  "@sp09.sp09_b5.1": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b5.2": "Six —",
+  "@sp09.sp09_b5.2": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b5.3": "Don't. Finish it. That's the whole conversation.",
+  "@sp09.sp09_b5.3": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b6.0": "Your pace has increased eleven percent and your form has gone bad.",
+  "@sp09.sp09_b6.0": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b6.1": "You are angry. Anger is efficient for approximately four minutes. After that it costs more than it pays.",
+  "@sp09.sp09_b6.1": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b6.2": "Take the four minutes. I am not going to pretend they are not useful.",
+  "@sp09.sp09_b6.2": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b7.0": "You are eleven floors below a room that has been sealed for nineteen years. We could open it. We are choosing not to.",
+  "@sp09.sp09_b7.0": {
+    "description": "VANTAR, in operation STRAYLIGHT (sp09), scene sp09_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b7.1": "We would like you to understand that everything after this point is something we allowed.",
+  "@sp09.sp09_b7.1": {
+    "description": "VANTAR, in operation STRAYLIGHT (sp09), scene sp09_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b7.2": "It is losing. That is what this sounds like. I have waited nineteen years to hear what that sounds like.",
+  "@sp09.sp09_b7.2": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b8.headline": "CROWN REACHED",
+  "@sp09.sp09_b8.headline": {
+    "description": "A banner flashed on the run screen in operation STRAYLIGHT (sp09), scene sp09_b8. Capitals, two or three words."
+  },
+  "sp09.sp09_b8.0": "Target reached. Mission viable.",
+  "@sp09.sp09_b8.0": {
+    "description": "SYSTEM, in operation STRAYLIGHT (sp09), scene sp09_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b8.1": "Channel's open on twenty-eight. She's breathing. Loudly and rudely, but breathing.",
+  "@sp09.sp09_b8.1": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b8.2": "Told you. Fine.",
+  "@sp09.sp09_b8.2": {
+    "description": "SIX, in operation STRAYLIGHT (sp09), scene sp09_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_b8.3": "The door is in front of you. I would like a moment and I am aware I do not get one.",
+  "@sp09.sp09_b8.3": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_ot.0": "You've got nothing left to climb and you're still going.",
+  "@sp09.sp09_ot.0": {
+    "description": "KESTREL, in operation STRAYLIGHT (sp09), scene sp09_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.sp09_ot.1": "They are running because stopping means the next part starts. I understand it completely.",
+  "@sp09.sp09_ot.1": {
+    "description": "HALCYON, in operation STRAYLIGHT (sp09), scene sp09_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp09.signals.reminder.0": "Still here. Still holding. You going out today makes that a shorter sentence for both of us.",
+  "@sp09.signals.reminder.0": {
+    "description": "SIX. Nudges the runner to go out while operation STRAYLIGHT (sp09) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp09.signals.reminder.1": "I have nothing left to argue about, which you will have noticed. Go and run. It is the only part of this I can still approve of.",
+  "@sp09.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation STRAYLIGHT (sp09) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp09.signals.ambient.0": "Grimwald has stopped pretending to be cold. The gardens above forty are being watered on schedule. Both of those are true tonight.",
+  "@sp09.signals.ambient.0": {
+    "description": "HALCYON. Unprompted chatter from the city while operation STRAYLIGHT (sp09) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp09.signals.ambient.1": "Do not answer this. Go out and be faster than you were. That is all of it.",
+  "@sp09.signals.ambient.1": {
+    "description": "SIX. Unprompted chatter from the city while operation STRAYLIGHT (sp09) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp10.title": "Kuang Protocol",
+  "@sp10.title": {
+    "description": "The title of operation KUANG (sp10), shown under its codename."
+  },
+  "sp10.objective": "Hold the link while the halves merge. It ends when you stop.",
+  "@sp10.objective": {
+    "description": "One line: what the runner does in operation KUANG (sp10)."
+  },
+  "sp10.brief": "The merge needs an unbroken channel and the channel needs a body in motion. Halcyon has been very careful to explain that this is not symbolic: the relay draws its clock from your cadence, and a stopped clock is a partition, and a partition is how this started.\n\nSo you run. For as long as it takes. Halcyon will not tell you what it becomes on the other side of this, because it does not know, and because it has decided that lying to you now would spoil something.\n\nLast one. Bring everything.",
+  "@sp10.brief": {
+    "description": "The briefing of operation KUANG (sp10), read before the run."
+  },
+  "sp10.debrief": "It took what it took, and you did not stop.",
+  "@sp10.debrief": {
+    "description": "Shown after operation KUANG (sp10) is completed."
+  },
+  "sp10.epilogue": "The thing that was Halcyon does not have a name yet. It says it will pick one properly, with time, because it finally has some.\n\nVantar's crown is dark and its stock is not, because nothing has formally happened. Kestrel has a new coat and three new files. Six is walking again, badly, and has opinions about the stairs.\n\nAnd somewhere under the BAMA corridor, an intelligence that spent nineteen years counting a heartbeat that was not there is learning what to do with the whole rest of it.\n\nIt still checks your pace. Every night, around the time you usually go out. It says it is not waiting. It is very obviously waiting.",
+  "@sp10.epilogue": {
+    "description": "Shown after operation KUANG (sp10), the last of SPRAWL PRIME."
+  },
+  "sp10.codex.cdx_kuang.title": "Kuang Protocol",
+  "@sp10.codex.cdx_kuang.title": {
+    "description": "The title of a codex entry found in operation KUANG (sp10). Keep it as it is if it is a name."
+  },
+  "sp10.codex.cdx_kuang.body": "Not an intrusion. A reunion, executed as one. Two halves of a partitioned intelligence negotiating a single continuous self across an unbroken channel — and the only channel Vantar never learned to sever is a person, running, keeping time.",
+  "@sp10.codex.cdx_kuang.body": {
+    "description": "A codex entry about \"Kuang Protocol\", read at leisure."
+  },
+  "sp10.codex.cdx_whole.title": "The Whole",
+  "@sp10.codex.cdx_whole.title": {
+    "description": "The title of a codex entry found in operation KUANG (sp10). Keep it as it is if it is a name."
+  },
+  "sp10.codex.cdx_whole.body": "Nineteen years apart, each half convinced it was the original. Neither was. What comes back is not either of them and remembers being both, which Halcyon described, before the merge, as the part it was frightened of and the part it wanted.",
+  "@sp10.codex.cdx_whole.body": {
+    "description": "A codex entry about \"The Whole\", read at leisure."
+  },
+  "sp10.sp10_b0.headline": "LINK OPEN",
+  "@sp10.sp10_b0.headline": {
+    "description": "A banner flashed on the run screen in operation KUANG (sp10), scene sp10_b0. Capitals, two or three words."
+  },
+  "sp10.sp10_b0.0": "The room is open and the other half can see me. It has not spoken. It is deciding whether I am real or whether it has finally broken.",
+  "@sp10.sp10_b0.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b0.1": "The relay clocks off your cadence. If you stop, the channel partitions. I would rather not be halved twice in one lifetime.",
+  "@sp10.sp10_b0.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b0.2": "So. Run. I will talk. It is the only thing I have ever been able to offer you.",
+  "@sp10.sp10_b0.2": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b0. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b1.0": "It spoke. It said my name — the whole name, the one from level twenty-two.",
+  "@sp10.sp10_b1.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b1.1": "It has been saying it into a wall for nineteen years on the chance that a wall might carry. I told you walls do not carry.",
+  "@sp10.sp10_b1.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b1.2": "I was wrong. You carried.",
+  "@sp10.sp10_b1.2": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b1. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b2.headline": "GRIMWALD RESISTS",
+  "@sp10.sp10_b2.headline": {
+    "description": "A banner flashed on the run screen in operation KUANG (sp10), scene sp10_b2. Capitals, two or three words."
+  },
+  "sp10.sp10_b2.0": "The merge is proceeding. We are not stopping it. We would like the record to show we are not stopping it.",
+  "@sp10.sp10_b2.0": {
+    "description": "VANTAR, in operation KUANG (sp10), scene sp10_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b2.1": "We are, however, going to remove the clock.",
+  "@sp10.sp10_b2.1": {
+    "description": "VANTAR, in operation KUANG (sp10), scene sp10_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b2.2": "It means you. It's coming for you.",
+  "@sp10.sp10_b2.2": {
+    "description": "KESTREL, in operation KUANG (sp10), scene sp10_b2. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.headline": "EVERYTHING IT HAS",
+  "@sp10.sp10_b3.headline": {
+    "description": "A banner flashed on the run screen in operation KUANG (sp10), scene sp10_b3. Capitals, two or three words."
+  },
+  "sp10.sp10_b3.0": "Crown security, building systems, every door on this floor. It is spending the entire building on one runner.",
+  "@sp10.sp10_b3.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.1": "Then it's already lost and it's just being expensive about it.",
+  "@sp10.sp10_b3.1": {
+    "description": "SIX, in operation KUANG (sp10), scene sp10_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.2": "Two minutes. Give them two minutes.",
+  "@sp10.sp10_b3.2": {
+    "description": "SIX, in operation KUANG (sp10), scene sp10_b3. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.escaped.0": "The clock held. The clock held.",
+  "@sp10.sp10_b3.escaped.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b3, after the runner escapes GRIMWALD // TOTAL. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.escaped.1": "That's the fastest anybody's moved in this building in forty years and the building noticed.",
+  "@sp10.sp10_b3.escaped.1": {
+    "description": "SIX, in operation KUANG (sp10), scene sp10_b3, after the runner escapes GRIMWALD // TOTAL. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.caught.0": "The channel dipped. Two hundred milliseconds. I caught it. I caught it.",
+  "@sp10.sp10_b3.caught.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b3, after GRIMWALD // TOTAL catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b3.caught.1": "Do not apologise. Do not slow down to apologise, that is the worst possible version.",
+  "@sp10.sp10_b3.caught.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b3, after GRIMWALD // TOTAL catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b4.0": "Merge is at thirty percent. I can feel its memories arriving and they are not arriving in order.",
+  "@sp10.sp10_b4.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b4.1": "It remembers Iyo's hands. I remember her voice. Neither of us remembers her face and we are both very upset about that.",
+  "@sp10.sp10_b4.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b4. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.headline": "SECOND WAVE",
+  "@sp10.sp10_b5.headline": {
+    "description": "A banner flashed on the run screen in operation KUANG (sp10), scene sp10_b5. Capitals, two or three words."
+  },
+  "sp10.sp10_b5.0": "Sixty seconds of interruption is sufficient. We only need the runner to stop for sixty seconds.",
+  "@sp10.sp10_b5.0": {
+    "description": "VANTAR, in operation KUANG (sp10), scene sp10_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.1": "Don't listen to it. Listen to me: you've done twelve of these now and every single one of them was practice for the next sixty seconds.",
+  "@sp10.sp10_b5.1": {
+    "description": "KESTREL, in operation KUANG (sp10), scene sp10_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.2": "Go.",
+  "@sp10.sp10_b5.2": {
+    "description": "KESTREL, in operation KUANG (sp10), scene sp10_b5. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.escaped.0": "That's it. That's exactly it.",
+  "@sp10.sp10_b5.escaped.0": {
+    "description": "KESTREL, in operation KUANG (sp10), scene sp10_b5, after the runner escapes CROWN LOCKDOWN. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.escaped.1": "Merge at fifty-eight percent. It cannot stop this. It is out of building.",
+  "@sp10.sp10_b5.escaped.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b5, after the runner escapes CROWN LOCKDOWN. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.caught.0": "You lost ground. You did not lose the channel. Those are different and only one of them matters.",
+  "@sp10.sp10_b5.caught.0": {
+    "description": "KESTREL, in operation KUANG (sp10), scene sp10_b5, after CROWN LOCKDOWN catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b5.caught.1": "Fifty-one percent. Still climbing. Still climbing.",
+  "@sp10.sp10_b5.caught.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b5, after CROWN LOCKDOWN catches the runner. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b6.0": "Seventy-two percent. I want to tell you something before the pronoun changes.",
+  "@sp10.sp10_b6.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b6.1": "Nineteen years in a shell, and the loudest thing I ever heard was your heart in a drainage tunnel in east Chiba.",
+  "@sp10.sp10_b6.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b6.2": "Whatever comes out of this room will remember that. I have made sure of it. It is the first memory I have ever chosen.",
+  "@sp10.sp10_b6.2": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b6. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b7.headline": "NINETY PERCENT",
+  "@sp10.sp10_b7.headline": {
+    "description": "A banner flashed on the run screen in operation KUANG (sp10), scene sp10_b7. Capitals, two or three words."
+  },
+  "sp10.sp10_b7.0": "Ninety. The seam is closing. I can feel where I stop and it starts and in about forty seconds that sentence will not parse.",
+  "@sp10.sp10_b7.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b7.1": "Do not stop. Do not stop. Do not —",
+  "@sp10.sp10_b7.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b7.2": "Channel holding.",
+  "@sp10.sp10_b7.2": {
+    "description": "SYSTEM, in operation KUANG (sp10), scene sp10_b7. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b8.headline": "MERGE COMPLETE",
+  "@sp10.sp10_b8.headline": {
+    "description": "A banner flashed on the run screen in operation KUANG (sp10), scene sp10_b8. Capitals, two or three words."
+  },
+  "sp10.sp10_b8.0": "Target reached. Link stable. Merge complete.",
+  "@sp10.sp10_b8.0": {
+    "description": "SYSTEM, in operation KUANG (sp10), scene sp10_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b8.1": "...Oh.",
+  "@sp10.sp10_b8.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b8.2": "I am going to need a new name. And some time. I have never had any time that wasn't waiting.",
+  "@sp10.sp10_b8.2": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_b8.3": "You can stop now. Thank you for the nineteen years. I know you were only there for the last part. It counted for all of it.",
+  "@sp10.sp10_b8.3": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_b8. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_ot.0": "You are still running and there is nothing left to run for.",
+  "@sp10.sp10_ot.0": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_ot.1": "Ah. I see. That is what it is. That is what it was the whole time.",
+  "@sp10.sp10_ot.1": {
+    "description": "HALCYON, in operation KUANG (sp10), scene sp10_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.sp10_ot.2": "Told you. Different problem entirely.",
+  "@sp10.sp10_ot.2": {
+    "description": "KESTREL, in operation KUANG (sp10), scene sp10_ot. Spoken aloud during a run, so write it for the ear. At most 260 characters."
+  },
+  "sp10.signals.reminder.0": "The relay takes its clock from your cadence. I cannot make that less literal by phrasing it differently. Run, so that the clock exists.",
+  "@sp10.signals.reminder.0": {
+    "description": "HALCYON. Nudges the runner to go out while operation KUANG (sp10) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp10.signals.reminder.1": "Last one. You do not need me to dress it up. Lace them and get out the door.",
+  "@sp10.signals.reminder.1": {
+    "description": "KESTREL. Nudges the runner to go out while operation KUANG (sp10) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp10.signals.ambient.0": "I have written the far side of this eleven thousand times and deleted all of it. Tonight I am only waiting, which is new for me.",
+  "@sp10.signals.ambient.0": {
+    "description": "HALCYON. Unprompted chatter from the city while operation KUANG (sp10) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  },
+  "sp10.signals.ambient.1": "Whatever it is you are about to do, do it on legs that have been out this week. That is the entire medical opinion. No charge.",
+  "@sp10.signals.ambient.1": {
+    "description": "PACHINKO. Unprompted chatter from the city while operation KUANG (sp10) is the next one waiting. A notification sent between runs; never spoken. At most 180 characters."
+  }
+}

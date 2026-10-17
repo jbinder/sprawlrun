@@ -3,27 +3,31 @@ import '../models/signal_log.dart';
 
 /// Every authored signal line in the loaded packs, by [signalRef] — how the
 /// archive gets its words back.
+///
+/// The reference is always of the English line, and the words are whatever the
+/// packs show now: a signal sent in English reads in Spanish once the runner
+/// switches, and the other way round.
 class SignalLibrary {
   SignalLibrary.fromPacks(List<MissionPack> packs)
     : _byRef = {
-        for (final line in [
+        for (final signal in [
           for (final pack in packs) ...[
-            ..._linesOf(pack.signals),
-            for (final mission in pack.missions) ..._linesOf(mission.signals),
+            ..._signalsOf(pack.signals),
+            for (final mission in pack.missions) ..._signalsOf(mission.signals),
           ],
         ])
-          signalRef(line): line,
+          signal.ref: signal.text,
       };
 
   final Map<String, String> _byRef;
 
-  static Iterable<String> _linesOf(SignalPool pool) => [
+  static Iterable<Signal> _signalsOf(SignalPool pool) => [
     ...pool.reminder,
     ...pool.ambient,
     ...pool.debrief.met,
     ...pool.debrief.missed,
     ...pool.debrief.idle,
-  ].map((s) => s.text);
+  ];
 
   /// The entry with its words, or null when its line is no longer in any pack —
   /// reworded since, or its pack removed. Left out rather than shown as a

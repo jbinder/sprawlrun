@@ -12,6 +12,7 @@ import '../data/signal_log_repository.dart';
 import '../models/achievement.dart';
 import '../models/goal.dart';
 import '../models/mission.dart';
+import '../models/pack_strings.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
 import '../models/signal_log.dart';
@@ -76,7 +77,35 @@ class AppState extends ChangeNotifier {
 
   Profile profile = const Profile();
   List<RunRecord> runLog = const [];
-  List<MissionPack> packs = const [];
+  /// The packs as loaded, in English with their translations attached.
+  List<MissionPack> _sourcePacks = const [];
+
+  /// The loaded packs, in the interface language wherever a translation has
+  /// it (see `localizePack`). Rebuilt only when the packs or the language
+  /// change, so the identity is stable between — the signal library relies on
+  /// that.
+  List<MissionPack> get packs {
+    final language = locale.languageCode;
+    if (!identical(_localizedFrom, _sourcePacks) || _localizedLanguage != language) {
+      _localizedFrom = _sourcePacks;
+      _localizedLanguage = language;
+      _localized = [
+        for (final pack in _sourcePacks) localizePack(pack, language, pack.translations[language] ?? const {}),
+      ];
+    }
+    return _localized;
+  }
+
+  /// Gives every loaded pack a translation into [language], for the overflow
+  /// test, which shows story text grown the way translations grow it.
+  @visibleForTesting
+  void debugTranslatePacks(String language, Map<String, String> Function(MissionPack pack) strings) {
+    _sourcePacks = [for (final pack in _sourcePacks) pack.withTranslations(language, strings(pack))];
+  }
+
+  List<MissionPack>? _localizedFrom;
+  String? _localizedLanguage;
+  List<MissionPack> _localized = const [];
 
   /// Signals already sent, newest first, with their words looked up. Empty
   /// until [loadSignalArchive] — the whole history is only read when THE WIRE
@@ -160,7 +189,7 @@ class AppState extends ChangeNotifier {
   Future<void> load() async {
     profile = await profiles.load();
     runLog = await runs.loadAll();
-    packs = await missions.loadPacks();
+    _sourcePacks = await missions.loadPacks();
     interruptedRun = await activeRun.load();
     // Finished and recorded, but the app died before the copy was cleared:
     // nothing was lost, and offering it back would record it twice.
@@ -598,7 +627,7 @@ class AppState extends ChangeNotifier {
 
   Future<void> reloadMissionPacks() async {
     missions.invalidate();
-    packs = await missions.loadPacks();
+    _sourcePacks = await missions.loadPacks();
     notifyListeners();
   }
 

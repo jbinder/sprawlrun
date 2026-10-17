@@ -9,6 +9,36 @@ Whatever you translate arrives in the app as a pull request the maintainer
 reviews. A language does not have to be finished to ship: any string not yet
 translated simply shows in English.
 
+## How it works, step by step
+
+1. Open the project on Weblate and sign in (a GitHub account works).
+2. Pick your language, or **Start new translation** if it is not listed yet.
+   Before you begin a new one, read [Languages and fonts](#languages-and-fonts).
+3. Start with the **App** component. It is most of the work and what runners
+   see. **Android** and **Store listing** are short, and can wait.
+4. Translate string by string. Each one comes with a description of where it
+   appears, and the glossary terms are shown beside it. Weblate saves as you go,
+   so you can stop at any point.
+5. Read the [Rules](#rules) below once before starting. They are short.
+
+Your work reaches the app with the next release after the maintainer merges it.
+To review an existing language rather than add one, use the same steps: open
+the language and use **Suggest** on any string that reads wrong.
+
+### While the Weblate project is being approved
+
+If the link above does not open yet, you have two options:
+
+- **Wait.** Hosted Weblate approves free projects by hand, which takes a while.
+- **Translate the file directly.** Download
+  [`lib/l10n/app_en.arb`](../lib/l10n/app_en.arb) and save it as
+  `app_<code>.arb`, where the code is your language's two-letter code, e.g.
+  `app_fr.arb`. Change the text after each `"key":` and leave everything else
+  alone: the keys, the lines starting with `"@"`, and every `{placeholder}`.
+  Save the file as UTF-8, then attach it to a new
+  [issue](https://github.com/jbinder/sprawlrun/issues), or open a pull request
+  if you know how. It is imported into Weblate, so none of the work is lost.
+
 ## What there is to translate
 
 | Weblate component | What it is | Where it shows |

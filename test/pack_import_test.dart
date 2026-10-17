@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show Locale;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/state/app_state.dart';
 
@@ -25,9 +27,15 @@ void main() {
   });
   tearDown(() => root.deleteSync(recursive: true));
 
-  String pack({String id = 'ghost_line', String title = 'GHOST LINE', List<String> missionIds = const ['gl01']}) =>
+  String pack({
+    String id = 'ghost_line',
+    String title = 'GHOST LINE',
+    List<String> missionIds = const ['gl01'],
+    Object? translations,
+  }) =>
       jsonEncode({
         'id': id,
+        'translations': ?translations,
         'title': title,
         'tagline': 'Test pack',
         'missions': [
@@ -131,6 +139,16 @@ void main() {
       expect(await refusal(broken), startsWith('The pack could not be read.'));
     });
 
+    test('a translations block that is not language → key → text', () async {
+      expect(await refusal(pack(translations: ['es'])), contains('"translations"'));
+      expect(await refusal(pack(translations: {'Spanish': <String, String>{}})), contains('"translations"'));
+      expect(await refusal(pack(translations: {'en': <String, String>{}})), contains('"translations"'));
+    });
+
+    test('a translated string the pack does not have, named', () async {
+      expect(await refusal(pack(translations: {'es': {'gl01.titel': 'Op uno'}})), contains('"gl01.titel"'));
+    });
+
     test('an id that would escape the folder', () async {
       // Becomes the file name, so `../profile` would overwrite the runner's
       // data. Refused rather than cleaned up.
@@ -158,6 +176,27 @@ void main() {
     await state.importMissionPack(pack(missionIds: ['gl01', 'gl02']));
     expect(state.packs.map((p) => p.id), contains('ghost_line'));
     expect(state.profile.completedMissions, contains('gl01'), reason: 'still cleared after coming back');
+  });
+
+  testWidgets('a pack carries its own translation, shown in that language', (tester) async {
+    final profiles = ProfileRepository(root);
+    final state = AppState(
+      profiles: profiles,
+      runs: RunRepository(Directory('${root.path}/runs')),
+      missions: repo,
+      narrator: FakeNarrator(),
+    );
+    addTearDown(() => useLocale(const Locale('en')));
+    await tester.runAsync(() async {
+      await profiles.save(const Profile(language: 'es'));
+      await state.load();
+      await state.importMissionPack(
+        pack(translations: {'es': {'tagline': 'Paquete de prueba', 'gl01.title': 'Op uno'}}),
+      );
+    });
+    final ghost = state.packs.firstWhere((p) => p.id == 'ghost_line');
+    expect((ghost.tagline, ghost.missions.single.title), ('Paquete de prueba', 'Op uno'));
+    expect(ghost.missions.single.codename, 'OP 1', reason: 'a name');
   });
 }
 

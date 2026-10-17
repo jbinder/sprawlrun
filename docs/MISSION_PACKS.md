@@ -253,6 +253,71 @@ the pool size is how long the noise stays fresh: a runner who asks for the
 maximum fourteen a week works through twenty lines in ten days. The shipped packs
 carry twenty generic ones each, and that is a floor rather than a target.
 
+## Translating a pack
+
+A pack can carry its own translations, so it stays one file you can share. Add
+a `translations` block at the top level, with one entry per language: the
+two-letter code, then each string by its key.
+
+```jsonc
+"translations": {
+  "es": {
+    "tagline": "Diez carreras por el corredor BAMA.",
+    "sp01.title": "Entrega en Ninsei",
+    "sp01.brief": "…",
+    "sp01.sp01_b4.headline": "TE SIGUEN",
+    "sp01.sp01_b4.0": "…"
+  }
+}
+```
+
+The runner sees the translation when the app's language matches. Anything
+not translated stays in English, with one exception: **a mission is
+translated whole or not at all.** Until every string of a mission has its
+translation, all of that mission plays in English, so a scene never switches
+language partway through. The pack's own text — tagline, codex categories,
+pack signals — is used string by string.
+
+**Keys** are paths into the pack:
+
+| key | the string |
+|---|---|
+| `tagline` | the pack's tagline |
+| `signals.ambient.3` | the fourth pack-level ambient signal (also `reminder`, `debrief.met`, `debrief.missed`, `debrief.idle`) |
+| `category.TRADE` | a codex category, once per pack however many entries use it |
+| `sp01.title` | a mission's title (also `objective`, `brief`, `debrief`, `epilogue`) |
+| `sp01.sp01_b4.headline` | a beat's headline |
+| `sp01.sp01_b4.2` | the third line of that beat |
+| `sp01.sp01_b4.escaped.0`, `sp01.sp01_b4.caught.0` | a chase's lines |
+| `sp01.codex.cdx_courier.title` | a codex entry's title (also `body`) |
+| `sp01.signals.reminder.1` | a mission's own signals |
+
+Because keys are positions, a translation keeps working after you fix a typo
+in the English. It goes wrong only if you insert or remove a line, which
+shifts the numbers after it.
+
+From a checkout of the repository, `dart run tool/pack_strings.dart
+my_pack.json` prints every key of your pack with its English and a note on
+where it appears. That is the list to translate.
+
+**Names are never translated**: the pack's `title`, a mission's `codename`
+and `location`, speakers and pursuers. Runners talk to each other about these
+places, so they keep one name in every language. Keys for them do not exist.
+
+Import checks the block: a key the pack does not have is refused, with its
+name, since a mistyped key would otherwise leave its mission in English
+without saying why. Keep translations within the same length limits as the
+English: lines 260 characters, signals 180, debrief openers 90.
+
+**Voices.** A translated line is spoken by an offline voice of that language
+when the phone has one installed, and each speaker keeps their pitch and
+pace. If the phone has none, the line is spoken in its English original while
+the screen shows the translation, and the briefing tells the runner why.
+
+The packs that ship with the app keep their translations in separate files,
+`assets/missions/l10n/<pack>_<language>.arb`, which translators edit (see
+[TRANSLATING.md](TRANSLATING.md)).
+
 ## Validating a pack
 
 `test/campaign_test.dart` checks the shipped campaign for ordering, dangling

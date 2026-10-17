@@ -13,7 +13,18 @@ import 'package:sprawl_run/models/pack_strings.dart';
 /// Run it after changing a pack's text; `pack_strings_test` fails while a
 /// source file is stale. Translators work from the English file — on Weblate
 /// or by hand — and their `<pack>_<lang>.arb` is what the app loads.
-void main() {
+///
+///     fvm dart run tool/pack_strings.dart my_pack.json
+///
+/// prints any pack's strings the same way instead, for an author writing a
+/// `translations` block into their own pack.
+void main(List<String> args) {
+  if (args.isNotEmpty) {
+    for (final path in args) {
+      stdout.write(packSourceArb(MissionPack.fromJson(jsonDecode(File(path).readAsStringSync()) as Map<String, dynamic>)));
+    }
+    return;
+  }
   final packs = Directory('assets/missions').listSync().whereType<File>().where((f) => f.path.endsWith('.json')).toList()
     ..sort((a, b) => a.path.compareTo(b.path));
   for (final file in packs) {

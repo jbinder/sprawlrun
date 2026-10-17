@@ -1647,6 +1647,12 @@ class PseudoL extends L {
   String packErrorDuplicateId(String id) => pseudo(_en.packErrorDuplicateId(id));
 
   @override
+  String get packErrorTranslations => pseudo(_en.packErrorTranslations);
+
+  @override
+  String packErrorTranslationKey(String language, String key) => pseudo(_en.packErrorTranslationKey(language, key));
+
+  @override
   String get backupErrorNotABackup => pseudo(_en.backupErrorNotABackup);
 
   @override

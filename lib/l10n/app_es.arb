@@ -545,6 +545,8 @@
   "packErrorBadId": "El id del paquete solo puede usar letras, dígitos, \"-\" y \"_\".",
   "packErrorEmpty": "El paquete no contiene misiones.",
   "packErrorDuplicateId": "Dos misiones comparten el id \"{id}\".",
+  "packErrorTranslations": "El bloque \"translations\" debe asociar códigos de idioma como \"es\" a textos.",
+  "packErrorTranslationKey": "La traducción \"{language}\" tiene un texto que el paquete no tiene: \"{key}\".",
   "backupErrorNotABackup": "Eso no es una copia de seguridad de SPRAWL//RUN.",
   "backupErrorNewer": "Esa copia la escribió una versión más nueva de la app (formato {format}). Actualiza y vuelve a intentarlo.",
   "backupErrorNoProfile": "A la copia le falta un perfil legible.",

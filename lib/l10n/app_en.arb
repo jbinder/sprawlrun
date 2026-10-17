@@ -2566,6 +2566,22 @@
       }
     }
   },
+  "packErrorTranslations": "The \"translations\" block must map language codes such as \"es\" to strings.",
+  "@packErrorTranslations": {
+    "description": "Keep \"translations\" and \"es\" as they are: a field name and a language code in the file."
+  },
+  "packErrorTranslationKey": "The \"{language}\" translation has a string the pack does not: \"{key}\".",
+  "@packErrorTranslationKey": {
+    "description": "The key is a path into the pack such as sp01.brief; usually a mistyped one.",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      },
+      "key": {
+        "type": "String"
+      }
+    }
+  },
   "backupErrorNotABackup": "That is not a SPRAWL//RUN backup file.",
   "@backupErrorNotABackup": {
     "description": "SPRAWL//RUN is the app name."

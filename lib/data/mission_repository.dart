@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 import '../models/mission.dart';
+import '../models/pack_strings.dart';
 import 'atomic_write.dart';
 import '../l10n/l10n.dart';
 
@@ -189,6 +190,7 @@ class MissionRepository {
         throw PackImportException(l10n.packErrorDuplicateId(m.id));
       }
     }
+    _checkTranslations((jsonDecode(source) as Map)['translations'], pack);
 
     await externalDir.create(recursive: true);
     final target = File('${externalDir.path}/$fileName');
@@ -199,6 +201,25 @@ class MissionRepository {
     await _deleteFilesOf(pack.id, except: target);
     invalidate();
     return pack;
+  }
+
+  /// Refuses a `translations` block that is not language code → key → text,
+  /// or that names a string the pack does not have — a mistyped key would
+  /// otherwise leave its mission silently in English, since a mission is only
+  /// shown translated once every one of its strings is.
+  static void _checkTranslations(Object? raw, MissionPack pack) {
+    if (raw == null) return;
+    if (raw is! Map) throw PackImportException(l10n.packErrorTranslations);
+    final keys = packStrings(pack);
+    for (final MapEntry(key: language, value: strings) in raw.entries) {
+      if (language is! String || !RegExp(r'^[a-z]{2,3}$').hasMatch(language) || language == 'en' || strings is! Map) {
+        throw PackImportException(l10n.packErrorTranslations);
+      }
+      for (final MapEntry(:key, :value) in strings.entries) {
+        if (value is! String) throw PackImportException(l10n.packErrorTranslations);
+        if (!keys.containsKey(key)) throw PackImportException(l10n.packErrorTranslationKey(language, '$key'));
+      }
+    }
   }
 
   /// Deletes an imported pack. A pack that replaced a bundled one leaves the

@@ -447,6 +447,20 @@ class MissionPack {
       missions: missions,
       signals: _pool(json['signals']),
       season: json['season'] as String?,
+      translations: _translations(json['translations']),
     );
   }
+
+  /// A pack's own `translations` block — language code → key → text — read
+  /// leniently: anything that is not a string is left out. The importer is
+  /// where a malformed block is refused, with a reason.
+  static Map<String, Map<String, String>> _translations(Object? raw) => {
+    if (raw is Map)
+      for (final MapEntry(:key, :value) in raw.entries)
+        if (key is String && key != 'en' && value is Map)
+          key: {
+            for (final e in value.entries)
+              if (e.key is String && e.value is String) e.key as String: e.value as String,
+          },
+  };
 }

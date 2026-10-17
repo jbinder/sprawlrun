@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 568 tests
+fvm flutter test                                    # 570 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -112,9 +112,10 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   `values-<lang>/strings.xml` and a line in `res/xml/locales_config.xml`;
   `l10n_test` checks the last against the ARB files.
 - **Translations arrive from Weblate as pull requests; the source does not.**
-  `app_en.arb`, `values/strings.xml` and the en-US listing are edited here
-  only — Weblate has source editing off. Before merging a Weblate PR run
-  `l10n_test` and `overflow_test` (the latter renders every shipped language
+  `app_en.arb`, `values/strings.xml`, the en-US listing and the generated
+  `assets/missions/l10n/<pack>_en.arb` are edited here only — Weblate has
+  source editing off. Before merging a Weblate PR run `l10n_test`,
+  `pack_strings_test` and `overflow_test` (the latter renders every shipped language
   at 360 dp, so a long Spanish word that breaks a screen fails there). A *new*
   language also needs its line in `res/xml/locales_config.xml` — `l10n_test`
   names it — and a `languageName`, then a screenshot run for its listing.

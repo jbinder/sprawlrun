@@ -212,8 +212,13 @@ next October if you do not finish. One switch in Settings turns it all off.
 
 **Language**
 - English and Spanish, following the phone's language or picked in Settings; the
-  split readout is spoken in it too. The story stays in the language its pack was
-  written in, and place names stay as they are, so every runner calls them the same
+  split readout is spoken in it too
+- The story too: all three campaigns are in Spanish, and a community pack can carry
+  its own translations. A mission switches language only when all of it is
+  translated, so a scene never changes language partway through
+- Translated lines are spoken by an offline voice of that language when the phone
+  has one; otherwise in the English original, and the briefing says why
+- Place and character names stay as they are, so every runner calls them the same
 
 **Your data**
 - Export and import everything as one JSON file — profile, progress, runs, traces
@@ -324,7 +329,8 @@ lib/
   widgets/      backdrop · panels · glitch text · rings & bars · route trace
   theme/        palette and typography
   l10n/         interface text: app_en.arb is the source, app_<lang>.arb the translations
-tool/           SFX, icon, screenshot and pseudo-locale generators
+assets/missions/l10n/  story text: <pack>_en.arb is generated from the pack, <pack>_<lang>.arb translates it
+tool/           SFX, icon, screenshot, pseudo-locale and pack-string generators
 ```
 
 Some notes on the shape of it:

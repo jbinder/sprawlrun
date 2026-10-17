@@ -2,7 +2,7 @@ Tu app de correr no debería ser una hoja de cálculo. Debería estar persiguié
 
 SPRAWL//RUN es un registro de carreras convertido en juego, envuelto en dos campañas cyberpunk de diez misiones. En Sprawl Prime eres un mensajero en una megaciudad empapada de lluvia: un encargo en el Ninsei strip acaba en cargar con algo que no deja de transmitir, y termina cuarenta pisos arriba en una arcología corporativa, con una inteligencia que lleva diecinueve años contando un latido que no estaba allí. En Null Tide los distritos del sur están bajo el agua, algo en una casa de bombas lleva nueve segundos cada noche pidiendo perdón, y un corredor de salvamento necesita que alguien cruce el Drowned Mile con un papel antes de que vuelva el mar.
 
-La interfaz está en español. La historia —diálogos, informes y mensajes de los personajes— sigue en inglés por ahora, y los nombres de lugares y personajes se quedan en su idioma original.
+Todo está en español, la historia incluida: diálogos, informes, códice y mensajes de los personajes. Los nombres de lugares y personajes se quedan en su idioma original, para que todos los runners llamen igual a los mismos sitios. Si tu teléfono tiene una voz en español instalada, los personajes hablan en español; si no, oyes el original en inglés mientras lees la traducción.
 
 Escucha lo que sueles escuchar. Cada pocos minutos la app toma el audio: un chasquido de radio, tu música baja y tu contacto habla. Después te devuelve la música. Once personajes entre los paquetes de historia, cada uno con su propia voz sintetizada, para que sepas quién habla con el teléfono en el bolsillo.
 
@@ -42,7 +42,7 @@ TODO LO QUE HACE
 - Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd
 - Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
 - Un aviso para exportar cuando tu registro tiene carreras que no existen en ningún otro sitio
-- Interfaz en inglés y en español, según el idioma del teléfono o elegido en Ajustes
+- En inglés y en español, historia incluida, según el idioma del teléfono o elegido en Ajustes
 - Sin permiso de almacenamiento en ningún sentido: la hoja de compartir para sacar, el selector de documentos para traer
 
 SIN CONEXIÓN DE VERDAD

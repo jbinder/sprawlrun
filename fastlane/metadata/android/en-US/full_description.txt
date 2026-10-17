@@ -40,7 +40,7 @@ EVERYTHING IT DOES
 - Every run keeps its GPS trace, replays its route at the pace you ran it, and exports as a GPX track for OsmAnd
 - One tap exports the lot as plain JSON — profile, progress, achievements, codex, every run with its trace. Import restores a new phone outright, or merges
 - A nudge to export once your log holds runs that exist nowhere else
-- Interface in English and Spanish, following the phone or picked in Settings; the story stays in English for now
+- English and Spanish, story included, following the phone or picked in Settings; place and character names stay as they are
 - No storage permission either way — the share sheet going out, the document picker coming in
 
 GENUINELY OFFLINE

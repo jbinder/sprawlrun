@@ -46,19 +46,39 @@ If the link above does not open yet, you have two options:
 | **App** | Every word of the interface: buttons, labels, settings, achievements, notifications, the spoken kilometre readout | The app |
 | **Android** | Notification channel names, the run notification's buttons, the paused-run reminders | Android's notification shade and settings |
 | **Store listing** | Title, one-line summary and description | F-Droid |
+| **Sprawl Prime**, **Null Tide**, **Samhain Protocol** | One per campaign: mission briefings, every spoken line, codex entries, and the messages characters send between runs | The app, and spoken during a run |
 
-**The story is not translatable yet.** Mission briefings, dialogue, codex
-entries and the messages characters send between runs live in the mission
-packs, and stay in English for now. Translating them is planned; the interface
-comes first.
+The story files are `assets/missions/l10n/<pack>_<language>.arb`. They are
+the largest part: about 1,250 strings and 20,000 words across the three
+campaigns. Each string's description says who speaks it, in which mission
+and scene, and its length limit.
+
+**A mission is shown translated only once all of it is.** Until every string
+of a mission has a translation, the whole mission plays in English, so a
+scene never switches language partway through. Translate a mission start to
+finish before moving on. The pack's own text (its tagline, codex categories
+and general messages) is used string by string.
+
+**Story strings are identified by their position**, such as
+`sp01.sp01_b4.2` (mission `sp01`, scene `sp01_b4`, third line). If the
+English of a line changes later, your translation keeps showing until you
+update it.
+
+**Spoken lines** are read by the phone's offline voice for your language,
+with each character's pitch and pace. If the phone has no such voice, the
+English original is spoken while the translation is shown. Write lines for
+the ear, as with the rest of the spoken text.
 
 ## Rules
 
 - **Names stay as they are, in every language.** Places, characters, campaigns,
-  missions and gangs — the Sprawl, the Ninsei strip, the Drowned Mile, KESTREL,
-  SPRAWL PRIME, NULL TIDE, PANTHER MODERN, SAMHAIN PROTOCOL, SPRAWL//RUN itself.
-  Runners talk to each other about these places; they should all call them the
-  same thing. Grammar around a name is yours to adapt ("el Sprawl").
+  mission codenames, gangs and organisations — the Sprawl, the Ninsei strip, the
+  Drowned Mile, Ossuary Row, Pump House Seven, KESTREL, SPRAWL PRIME, NULL TIDE,
+  PANTHER MODERN, SAMHAIN PROTOCOL, Vantar, the Harbour Authority, the Dredge,
+  SPRAWL//RUN itself. Runners talk to each other about these places; they should
+  all call them the same thing. Grammar around a name is yours to adapt ("el
+  Sprawl", "la Harbour Authority"). A mission's *title* ("Dead Drop on Ninsei")
+  is translated; its codename (DEAD DROP) is not offered for translation at all.
 - **Keep every `{placeholder}` exactly as written.** `{count}`, `{pack}`,
   `{date}` are filled in by the app. Move them wherever your grammar needs them.
 - **Plurals: keep the structure, fill in every branch.** A message like

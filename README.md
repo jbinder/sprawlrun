@@ -297,23 +297,9 @@ this README cannot drift from what the app actually looks like.
 
 ## Contributing
 
-Three ways in, none of which needs Flutter installed:
-
-- **Translate the interface.** It is in English and Spanish so far. Translation
-  happens on Weblate, in the browser, without git. Fixing a word in an existing
-  language is as welcome as adding a new one. **[docs/TRANSLATING.md](docs/TRANSLATING.md)**
-  has the link, the rules, a glossary, and what to do while the Weblate project
-  is still being approved. Names of places and characters stay as they are in
-  every language, so runners can talk about the same streets. The story packs
-  are English for now; translating them is planned.
-- **Write missions.** A pack is one JSON file you can import into the app and
-  play, with no build needed. See [Adding missions](#adding-missions) below.
-- **Report a bug or suggest something.** Open an
-  [issue](https://github.com/jbinder/sprawlrun/issues). For a problem during a
-  run, say what the phone is and whether the screen was off.
-
-Code changes are welcome as pull requests. Run `flutter analyze` and
-`flutter test` first; [Tests](#tests) says what they cover.
+Translations, mission packs, bug reports and code are all welcome, and only
+code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
+Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
 
 ## Adding missions
 

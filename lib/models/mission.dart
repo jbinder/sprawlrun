@@ -363,6 +363,12 @@ class Mission {
   /// Every beat that carries a chase, in trigger order.
   Iterable<StoryBeat> get chaseBeats => beats.where((b) => b.chase != null);
 
+  /// The language this mission is shown in when it is translated, else null.
+  /// A mission is translated whole or not at all, so one line answers.
+  String? get translatedInto => [
+    for (final b in beats) ...b.lines,
+  ].where((l) => l.original != null).firstOrNull?.language;
+
   factory Mission.fromJson(Map<String, dynamic> json, {required String packId}) => Mission(
     id: json['id'] as String,
     packId: packId,

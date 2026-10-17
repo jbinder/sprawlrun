@@ -126,6 +126,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
 
   testWidgets('briefing and target picker', (tester) async {
     final state = await seed(tester, logicalSize: tall);
+    // No voice for the story's language, so the notice saying so shows too.
+    (state.narrator as FakeNarrator).voices = {};
     await pumpShowcase(tester, MissionBriefScreen(mission: state.currentMission!.mission), state, delegates: delegates);
     await tester.pump(const Duration(seconds: 20)); // typed out
     await tester.tap(find.text(l10n.goalDistance));

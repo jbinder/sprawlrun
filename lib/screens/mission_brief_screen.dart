@@ -149,6 +149,23 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           ),
                         ],
                       ),
+                      if (mission.translatedInto case final language?
+                          when state.profile.voiceEnabled && !state.narrator.hasVoiceFor(language)) ...[
+                        const SizedBox(height: 14),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.voice_over_off_outlined, size: 15, color: Cy.amber),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                L.of(context).storyVoiceMissing,
+                                style: CyType.body(size: 14, color: Cy.inkDim, height: 1.35),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 24),
                     ] else ...[
                       GlitchText(

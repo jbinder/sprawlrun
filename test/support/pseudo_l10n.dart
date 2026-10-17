@@ -402,6 +402,9 @@ class PseudoL extends L {
   String get freeRunExplainer => pseudo(_en.freeRunExplainer);
 
   @override
+  String get storyVoiceMissing => pseudo(_en.storyVoiceMissing);
+
+  @override
   String get setYourTarget => pseudo(_en.setYourTarget);
 
   @override

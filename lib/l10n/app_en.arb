@@ -684,6 +684,10 @@
     "description": "Briefing: the suggested goal, e.g. 25 min. Shown in uppercase in a small cell."
   },
   "freeRunExplainer": "No story, no handler, no one chasing you. Distance and time still count toward your streak, your totals and the wall.",
+  "storyVoiceMissing": "This phone has no offline voice for this language, so the transmissions are spoken in their English original. Install one in Android's text-to-speech settings to hear them translated.",
+  "@storyVoiceMissing": {
+    "description": "On the briefing of a translated mission, when the phone cannot speak the translation. The text on screen is still translated; only the speech is English."
+  },
   "setYourTarget": "SET YOUR TARGET",
   "@setYourTarget": {
     "description": "Section header above the goal picker (time or distance)."

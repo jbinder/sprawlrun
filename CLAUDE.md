@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 558 tests
+fvm flutter test                                    # 564 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -119,12 +119,16 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   language also needs its line in `res/xml/locales_config.xml` — `l10n_test`
   names it — and a `languageName`, then a screenshot run for its listing.
   Rules and glossary for translators: `docs/TRANSLATING.md`.
-- **Only the app's own spoken lines follow the interface language.** The split
-  readout and the intel notice carry `StoryLine.language`; the narrator gives
-  them an installed offline voice of that language (or lets the engine pick)
-  and sets the engine back to English for the next pack line, since the engine
-  keeps the last language it was given. Pack lines have no language and stay
-  on the per-character English voices.
+- **A line is spoken in its `StoryLine.language`, or in English.** The split
+  readout and the intel notice carry the interface language; the narrator
+  gives them an installed offline voice of it (or lets the engine pick) and
+  sets the engine back to English for the next English line, since the engine
+  keeps the last language it was given. A translated pack line carries its
+  language *and* its English (`original`): with an offline voice of the
+  language it is spoken in one, spread across speakers by `_speakerOrder`
+  with each speaker's pitch and rate; with none, `spokenForm` swaps in the
+  English, in the speaker's own English voice, and the briefing says why
+  (`Narrator.hasVoiceFor`). The screen shows the translation either way.
 - **Story translations are overlays on the English pack, applied whole
   missions at a time.** `models/pack_strings.dart` walks a pack once to offer
   its strings (`packStrings`) and once to answer them (`localizePack`), so the

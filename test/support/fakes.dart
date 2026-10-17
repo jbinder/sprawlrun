@@ -107,6 +107,12 @@ class FakeNarrator implements Narrator {
     _events.add(const NarrationEvent(null));
   }
 
+  /// Languages with an installed voice, as far as the briefing asks.
+  Set<String> voices = {'en', 'es'};
+
+  @override
+  bool hasVoiceFor(String language) => voices.contains(language);
+
   @override
   Future<void> sfx(String name) async => sfxPlayed.add(name);
 

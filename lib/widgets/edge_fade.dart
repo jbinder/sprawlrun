@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/cyber_palette.dart';
+
 /// Fades the top or bottom edge of a vertical scroller while that edge still
 /// hides content — the same signal the filter rails give sideways (see
 /// `filter_rail.dart`). A list that fits shows no fade at all, and each edge
@@ -41,6 +43,28 @@ class EdgeFadeState extends State<EdgeFade> {
     return false;
   }
 
+  Widget _edge({required bool top, required bool shown}) {
+    final solid = Cy.v0id.withValues(alpha: shown ? 1 : 0);
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: top ? 0 : null,
+      bottom: top ? null : 0,
+      height: _fade,
+      child: IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: top ? Alignment.topCenter : Alignment.bottomCenter,
+              end: top ? Alignment.bottomCenter : Alignment.topCenter,
+              colors: [solid, solid.withValues(alpha: 0)],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Only this scroller's own notifications: a scroller nested inside it
@@ -49,20 +73,21 @@ class EdgeFadeState extends State<EdgeFade> {
       onNotification: (n) => n.depth == 0 && _onMetrics(n.metrics),
       child: NotificationListener<ScrollNotification>(
         onNotification: (n) => n.depth == 0 && _onMetrics(n.metrics),
-        // Always a ShaderMask, even with nothing to fade: swapping it in and
-        // out would rebuild the scroller underneath and lose its position.
-        child: ShaderMask(
-          shaderCallback: (bounds) {
-            final f = bounds.height <= 0 ? 0.0 : (_fade / bounds.height).clamp(0.0, 0.5);
-            return LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: const [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-              stops: [0, _moreAbove ? f : 0, _moreBelow ? 1 - f : 1, 1],
-            ).createShader(bounds);
-          },
-          blendMode: BlendMode.dstIn,
-          child: widget.child,
+        // Painted over the edges rather than masking the list: under a
+        // ShaderMask, Impeller (3.44) drew text cut off at the scroller's edge
+        // from a glyph atlas it was never added to — orange streaks across the
+        // whole briefing, every frame, after the screen was turned off and on.
+        // A RepaintBoundary under the mask did not help. The edges therefore
+        // fade into the void colour rather than into whatever is behind.
+        // Both overlays are always there, so the scroller underneath is never
+        // rebuilt and keeps its position.
+        child: Stack(
+          fit: StackFit.passthrough,
+          children: [
+            widget.child,
+            _edge(top: true, shown: _moreAbove),
+            _edge(top: false, shown: _moreBelow),
+          ],
         ),
       ),
     );

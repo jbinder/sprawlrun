@@ -1,0 +1,9 @@
+SAMHAIN PROTOCOL: del 10 oct. al 2 nov., neones, fantasmas, velas y sonidos lúgubres. Operación de cuatro carreras, handlers y cinco logros; si no la acabas, vuelve en octubre. Desactívala en Ajustes → Carrera → Eventos de temporada.
+
+Carrera pausada: avisos a los 15, 30 y 60 min; luego, silencio.
+
+THE WIRE marca novedades con un punto hasta que las leas.
+
+Las listas se difuminan si continúan.
+
+Corregido: subir el objetivo conserva semanas y rachas; abrir la app no borra señales sin leer; corregido «/ semana» duplicado.

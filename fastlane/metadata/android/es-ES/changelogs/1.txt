@@ -1,0 +1,5 @@
+Primera versión.
+
+Diez misiones de historia, 266 líneas de diálogo y 20 entradas del códice. Seguimiento GPS con objetivos de tiempo o distancia, persecuciones ajustadas a tu propio ritmo, 46 logros y una racha semanal configurable.
+
+Funciona completamente sin conexión: no necesita el permiso de INTERNET ni Google Play Services.

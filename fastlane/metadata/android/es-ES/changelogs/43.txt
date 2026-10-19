@@ -1,0 +1,3 @@
+Corregido: no aparecía la notificación «misión activa». Android bloqueaba su canal y la app no pedía permiso para enviar notificaciones. Ya está solucionado: se te pedirá permiso una vez, al iniciar tu próxima carrera.
+
+Corregido: una misión sin GPS (ubicación desactivada o permiso denegado) podía congelarse en segundo plano y detener la historia mientras el reloj seguía corriendo. Ahora esas misiones tienen su propio servicio en primer plano y muestran la misma notificación.

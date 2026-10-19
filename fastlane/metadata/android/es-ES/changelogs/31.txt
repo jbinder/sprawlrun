@@ -1,0 +1,5 @@
+Copia de seguridad y restauración. Ajustes → Datos exporta el perfil, el progreso, los logros, el códice y las carreras con sus rutas GPS en un archivo JSON. Impórtalo para reemplazar los datos del dispositivo o combinarlos con los existentes.
+
+Corregido: un efecto de sonido no devolvía el control del audio y podía dejar la música pausada durante una persecución.
+
+Nuevo: la app reanuda la música si no vuelve a sonar tras una transmisión larga. Se puede desactivar en Audio.

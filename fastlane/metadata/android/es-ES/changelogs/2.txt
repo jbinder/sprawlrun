@@ -1,0 +1,5 @@
+Backup and restore. En Ajustes → Datos, exporta todo lo que la app guarda —perfil, progreso, logros, códice y carreras con sus rutas GPS— en un archivo JSON. Impórtalo para reemplazar los datos del dispositivo o combinarlos con los existentes.
+
+Corregido: un efecto de sonido interrumpía el audio y no lo reanudaba; una persecución podía dejar la música pausada hasta el final.
+
+Nuevo: la app reanuda la música tras una transmisión larga si no se reanuda sola. Se puede desactivar en Audio.

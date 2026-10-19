@@ -1,0 +1,9 @@
+NULL TIDE: segunda campaña, diez misiones. El sur se hundió hace once años; algo en Pump House Seven se disculpa nueve segundos por noche. Un agente debe llevar un papel por Drowned Mile. Cuatro voces nuevas. Elige campaña en Operaciones; progreso independiente.
+
+Corregido: sin Google Play Services, el GPS no registraba distancia. Ahora usa el proveedor GPS.
+
+Nuevo: historial, distancia mensual y calendario de carreras.
+
+Nuevo: exporta rutas GPX y reprodúcelas a tu ritmo.
+
+Además: 14 logros, códice por campaña, informes de intentos y tarjetas legibles.

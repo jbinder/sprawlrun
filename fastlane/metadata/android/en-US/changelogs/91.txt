@@ -1,0 +1,3 @@
+SPRAWL//RUN speaks Spanish: the interface, spoken splits, notifications and all three campaigns. The language follows the phone or is set in Settings. Story lines are spoken in a Spanish voice where the phone has one, otherwise in English. Community packs can carry their own translations.
+
+Fixed: packs and backups with accented letters import intact; the narrator no longer hangs on a stuck speech engine; text no longer breaks up into streaks on some phones.

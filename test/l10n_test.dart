@@ -84,6 +84,32 @@ void main() {
     }
   });
 
+  test('every changelog from 0.7.0 on fits what F-Droid shows', () {
+    // F-Droid cuts a changelog at 500 characters, mid-sentence and without
+    // saying so. Every one up to 0.6.0 was longer and is frozen as shipped;
+    // the full notes belong on the GitHub release.
+    for (final dir in Directory('fastlane/metadata/android').listSync().whereType<Directory>()) {
+      final changelogs = Directory('${dir.path}/changelogs');
+      if (!changelogs.existsSync()) continue;
+      for (final file in changelogs.listSync().whereType<File>()) {
+        final code = int.tryParse(file.uri.pathSegments.last.replaceAll('.txt', ''));
+        if (code == null || code < 91) continue;
+        expect(file.readAsStringSync().runes.length, lessThanOrEqualTo(500), reason: '${file.path} is cut off on F-Droid');
+      }
+    }
+  });
+
+  test('the English listing has a changelog for every APK of this version', () {
+    // One per ABI split: versionCode * 10 + 1, 2, 3.
+    final build = int.parse(RegExp(r'^version: .*\+(\d+)$', multiLine: true)
+        .firstMatch(File('pubspec.yaml').readAsStringSync())!
+        .group(1)!);
+    for (final abi in [1, 2, 3]) {
+      final file = File('fastlane/metadata/android/en-US/changelogs/${build * 10 + abi}.txt');
+      expect(file.existsSync(), isTrue, reason: '${file.path} is missing');
+    }
+  });
+
   test('every achievement has a name and a description', () {
     final en = lookupL(const Locale('en'));
     for (final a in kAchievements) {

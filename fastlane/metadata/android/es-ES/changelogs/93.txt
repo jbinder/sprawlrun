@@ -1,0 +1,3 @@
+SPRAWL//RUN habla español: la interfaz, los parciales hablados, las notificaciones y las tres campañas. El idioma sigue al del teléfono o se elige en Ajustes. La historia se narra con una voz en español si el teléfono la tiene; si no, en inglés. Los paquetes de la comunidad pueden traer sus propias traducciones.
+
+Corregido: los paquetes y las copias de seguridad con tildes se importan intactos; el narrador ya no se queda colgado; el texto ya no se rompe en rayas en algunos teléfonos.

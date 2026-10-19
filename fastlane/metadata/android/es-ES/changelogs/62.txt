@@ -1,0 +1,11 @@
+Tu contacto puede recordarte operaciones entre carreras. Elige cuándo; cada misión tiene un mensaje único con la voz de tu campaña.
+
+Ruido de señal: rumores, mareas y avisos. Silencioso de 22:00 a 07:00. Toca para leer; no hay audio.
+
+Permiso nuevo: RECEIVE_BOOT_COMPLETED restaura alarmas al reiniciar. Sin alarmas exactas ni permiso INTERNET.
+
+Nuevo: aviso para exportar carreras antes de desinstalar.
+
+Corregido: la app indica si el GPS está apagado.
+
+Además: logros de racha a 1, 3, 6 y 8 semanas.

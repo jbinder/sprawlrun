@@ -1,0 +1,11 @@
+THE WIRE: mensajes, carreras, operaciones, logros e información en una lista, de más reciente a más antigua. Toca una notificación para abrir el mensaje; las descartadas siguen disponibles.
+
+Informe semanal los domingos, según tu objetivo y con la voz de tu campaña. Activado por defecto; puedes desactivarlo.
+
+Avisos de parciales por kilómetro o milla, con tiempo parcial y total. En misiones, esperan al final de la escena o persecución.
+
+Pausa, reanuda o termina desde la notificación. Las carreras siguen y se guardan si cierras la app; al volver, puedes recuperarlas o descartarlas.
+
+Importa, actualiza o elimina paquetes de misiones desde Ajustes sin perder el progreso.
+
+Corregido: se oculta el aviso GPS al recuperar señal; historial, transcripción y botón Completar también funcionan mejor.

@@ -1,0 +1,11 @@
+THE WIRE: mensajes, carreras, operaciones, logros e intel, del más nuevo al antiguo. Lee también notificaciones descartadas.
+
+Informe dominical de tu semana y objetivo, con voz de campaña. Activado por defecto; desactivable.
+
+Parciales por km o milla y tiempo total; en misiones, al acabar escena o persecución.
+
+Pausa, reanuda o detén desde la notificación. La carrera sigue y se guarda al cerrar la app; al volver, recupérala o descártala.
+
+Importa, actualiza o elimina paquetes desde Ajustes sin perder progreso.
+
+Corregido: aviso GPS, gesto del historial, transcripción accesible y Completar tras la meta.

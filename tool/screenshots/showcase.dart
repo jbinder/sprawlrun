@@ -72,8 +72,12 @@ List<TracePoint> sampleRoute({
 final shotsTakenAt = DateTime(2026, 9, 27, 21, 0);
 
 /// A runner several weeks into the campaign, so no screen is empty, on a phone
-/// of [logicalSize].
-Future<AppState> seedShowcase(WidgetTester tester, {Size logicalSize = phoneSize}) async {
+/// of [logicalSize], who picked [language] in Settings (empty: the phone's).
+///
+/// The language has to be the runner's, not only the screen's: `AppState`
+/// localizes the story packs from it, so swapping the interface strings alone
+/// shows a Spanish screen around an English briefing.
+Future<AppState> seedShowcase(WidgetTester tester, {Size logicalSize = phoneSize, String language = ''}) async {
   // The run screen asks for notification permission before it starts the run,
   // and an unanswered platform call never returns in the harness — so the HUD
   // shots showed a run stuck on STANDBY at 00:00 until this answered it.
@@ -116,6 +120,7 @@ Future<AppState> seedShowcase(WidgetTester tester, {Size logicalSize = phoneSize
       Profile(
         callsign: 'MOLLY',
         weightKg: 68,
+        language: language,
         // The run HUD would otherwise call wakelock_plus, which has no
         // implementation in the test harness. It has no visual effect.
         keepScreenOn: false,

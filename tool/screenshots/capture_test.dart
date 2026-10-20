@@ -87,6 +87,10 @@ List<_Variant> _variants() {
 
 // The language being rendered; each group sets it before its shots.
 late _Variant _current;
+/// The language the seeded runner picked, so the story is in it too. The
+/// pseudo-locale has no story translation, and English is the phone's.
+String get _storyLanguage => _pseudo || _current.strings == null ? '' : _current.name;
+
 List<LocalizationsDelegate<dynamic>> get _delegates =>
     _current.strings == null ? L.localizationsDelegates : delegatesFor(_current.strings!);
 
@@ -137,13 +141,13 @@ void main() {
 void _shots() {
 
   testWidgets('dashboard', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const HomeShell(), state);
     await _shoot(tester, 'dashboard');
   });
 
   testWidgets('mission brief', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     final mission = state.currentMission!.mission;
     await _pump(tester, MissionBriefScreen(mission: mission), state);
     await tester.pump(_typedOut);
@@ -151,7 +155,7 @@ void _shots() {
   });
 
   testWidgets('target picker', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     final mission = state.currentMission!.mission;
     await _pump(tester, MissionBriefScreen(mission: mission), state);
     await tester.pump(_typedOut);
@@ -162,7 +166,7 @@ void _shots() {
   });
 
   testWidgets('run HUD mid-pursuit', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     final mission = state.currentMission!.mission;
 
     var now = DateTime(2026, 7, 27, 21, 14);
@@ -204,7 +208,7 @@ void _shots() {
   });
 
   testWidgets('unlock reveal', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     final mission = state.currentMission!.mission;
     // A LEGEND-tier card is the one worth showing: amber, the rarest band.
     final legend = kAchievements.firstWhere((a) => a.tier == AchTier.legend);
@@ -230,7 +234,7 @@ void _shots() {
   });
 
   testWidgets('run story', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     final mission = state.missionById('sp01')!;
     // A log shaped like a real playthrough: the opening two beats with their
     // recovery, a pursuit that was shaken, and the target falling at the end.
@@ -268,14 +272,14 @@ void _shots() {
   });
 
   testWidgets('mission packs', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const MissionsScreen(), state);
     await tester.pump(const Duration(milliseconds: 300));
     await _shoot(tester, 'packs');
   });
 
   testWidgets('stats', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const HomeShell(), state);
     await tester.tap(find.text(l10n.navStats));
     await tester.pump(const Duration(milliseconds: 300));
@@ -283,14 +287,14 @@ void _shots() {
   });
 
   testWidgets('history', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const HistoryScreen(), state);
     await tester.pump(const Duration(milliseconds: 300));
     await _shoot(tester, 'history');
   });
 
   testWidgets('achievements', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const HomeShell(), state);
     await tester.tap(find.text(l10n.navWall));
     await tester.pump(const Duration(milliseconds: 300));
@@ -298,7 +302,7 @@ void _shots() {
   });
 
   testWidgets('codex', (tester) async {
-    final state = await seedShowcase(tester);
+    final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const HomeShell(), state);
     await tester.tap(find.text(l10n.navCodex));
     await tester.pump(const Duration(milliseconds: 300));

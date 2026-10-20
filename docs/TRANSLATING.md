@@ -91,6 +91,12 @@ the ear, as with the rest of the spoken text.
   boxes. The description says when a string has little room. A test renders
   every screen with text 40% longer than English, so ordinary growth is fine —
   but a navigation tab that is three times longer will be cut.
+- **"At most N characters" is a hard limit.** A story string's description ends
+  with it where one applies: 90 for the weekly debrief openers, since the app
+  adds the week's figures after them in the notification; 180 for other
+  messages sent between runs; 260 for lines spoken aloud. Weblate counts the
+  characters under the text box. A longer translation fails the app's checks
+  and cannot be released until it is shortened.
 - **Spoken text is written for the ear.** Strings marked *SPOKEN ALOUD* are read
   by the phone's speech engine during a run. Write durations as words
   ("5 minutos 41"), never as `5:41`, which engines read as a time of day.

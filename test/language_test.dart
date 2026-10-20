@@ -65,14 +65,14 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('DATOS'), findsOneWidget, reason: 'the navigation, through L.of');
+    expect(find.text('MURO'), findsOneWidget, reason: 'the navigation, through L.of');
     expect(Fmt.weekday(DateTime(2026, 10, 12)), 'LUN', reason: 'and code with no context, through l10n');
     expect(state.week.label, 'ÚLTIMOS 7 DÍAS', reason: 'figures derived before the first frame');
 
     // Back to the phone's language, which the harness reports as English.
     await tester.runAsync(() => state.updateProfile(state.profile.copyWith(language: '')));
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.text('STATS'), findsOneWidget);
+    expect(find.text('WALL'), findsOneWidget);
     expect(Fmt.weekday(DateTime(2026, 10, 12)), 'MON');
   });
 
@@ -94,6 +94,6 @@ void main() {
     phone = const [Locale('es', 'ES')];
     await tester.runAsync(state.systemLocalesChanged);
     expect(state.locale, const Locale('es'));
-    expect(l10n.navStats, 'DATOS');
+    expect(l10n.navWall, 'MURO');
   });
 }

@@ -134,16 +134,27 @@ class SectionHeader extends StatelessWidget {
           const SizedBox(width: 8),
           // The title yields to the trailing widget rather than overflowing:
           // a pack title can be long, and the trailing part is the control.
-          Flexible(
-            child: Text(
-              title.toUpperCase(),
-              style: CyType.label(color: accent, size: 12),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+          // It takes all the room but a stub of rule; as a Flexible beside the
+          // Expanded rule it got half the room and was cut with space to spare.
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, box) => Row(
+                children: [
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: (box.maxWidth - 34).clamp(0, double.infinity)),
+                    child: Text(
+                      title.toUpperCase(),
+                      style: CyType.label(color: accent, size: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(child: Container(height: 1, color: Cy.rule)),
+                ],
+              ),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(child: Container(height: 1, color: Cy.rule)),
           if (trailing != null) ...[const SizedBox(width: 10), trailing!],
         ],
       ),

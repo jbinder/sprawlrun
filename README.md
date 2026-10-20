@@ -306,6 +306,14 @@ Translations, mission packs, bug reports and code are all welcome, and only
 code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
 Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
 
+### Translations
+
+Translated by the community on
+[Weblate](https://hosted.weblate.org/projects/sprawlrun/), and improving as it
+goes — corrections are welcome there.
+
+- **Spanish** — [@cristian01215](https://github.com/cristian01215)
+
 ## Adding missions
 
 A mission pack is one JSON file. Import it with **Settings → Mission packs →

@@ -533,7 +533,7 @@
     "wireRunAttempt": "INTENTO — {mission}",
     "spokenIntelIntercepted": "Intel interceptada: {title}. Completa la operación para descifrarla.",
     "channelReminders": "Recordatorios",
-    "channelRemindersDescription": "Tu contacto, preguntando si hoy sales a correr.",
+    "channelRemindersDescription": "Tu contacto, pregunta si hoy sales a correr.",
     "channelDebrief": "Informe semanal",
     "channelDebriefDescription": "Cómo fue tu semana, cuando se cierra.",
     "channelNoise": "Ruido de señal",

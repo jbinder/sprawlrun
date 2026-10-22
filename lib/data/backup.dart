@@ -163,10 +163,21 @@ class BackupService {
   final SignalLogRepository? signalLog;
 
   /// A filename that sorts chronologically and survives a share sheet.
-  static String suggestedFileName(DateTime at) {
-    String two(int v) => v.toString().padLeft(2, '0');
-    return 'sprawlrun-backup-${at.year}-${two(at.month)}-${two(at.day)}-${two(at.hour)}${two(at.minute)}.json';
-  }
+  static String suggestedFileName(DateTime at) => '$_manualPrefix${_stamp(at)}.json';
+
+  /// The name of an automatic backup. Its own prefix, because old automatic
+  /// backups are deleted by name, and a backup the runner exported by hand into
+  /// the same folder is not the app's to delete.
+  /// To the second, since two runs can be saved within one minute.
+  static String autoFileName(DateTime at) => '$autoPrefix${_stamp(at)}${_two(at.second)}.json';
+
+  static const autoPrefix = 'sprawlrun-autobackup-';
+  static const _manualPrefix = 'sprawlrun-backup-';
+
+  static String _stamp(DateTime at) =>
+      '${at.year}-${_two(at.month)}-${_two(at.day)}-${_two(at.hour)}${_two(at.minute)}';
+
+  static String _two(int v) => v.toString().padLeft(2, '0');
 
   /// Collects the whole device state, pulling each GPS trace back in — the run
   /// log is stored without them, so this is the one place that reassembles a

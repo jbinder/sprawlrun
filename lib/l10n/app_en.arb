@@ -202,6 +202,44 @@
       }
     }
   },
+  "autoBackupTitle": "AUTO-BACKUP",
+  "@autoBackupTitle": {
+    "description": "Settings → Data: heading of the optional automatic backup, written after every run. Capitals on purpose."
+  },
+  "autoBackupExplainer": "Optional. After every run, a backup is written to a folder you choose, and the three newest are kept. Choose a folder a sync app such as Syncthing copies to another device, and your runs survive losing the phone.",
+  "@autoBackupExplainer": {
+    "description": "Settings → Data: what automatic backups do. Syncthing is an app's name."
+  },
+  "autoBackupChoose": "Choose folder",
+  "@autoBackupChoose": {
+    "description": "Button: pick the folder for automatic backups, which turns them on."
+  },
+  "autoBackupChange": "Change folder",
+  "@autoBackupChange": {
+    "description": "Button: pick a different folder for automatic backups."
+  },
+  "autoBackupStop": "Turn off",
+  "@autoBackupStop": {
+    "description": "Button: stop automatic backups. Files already written stay in the folder."
+  },
+  "autoBackupTo": "On · writing to {folder}",
+  "@autoBackupTo": {
+    "description": "Status line under AUTO-BACKUP. folder is the chosen folder's name, e.g. \"Sync\".",
+    "placeholders": {
+      "folder": {
+        "type": "String"
+      }
+    }
+  },
+  "autoBackupFailed": "Auto-backup failed: {error}",
+  "@autoBackupFailed": {
+    "description": "Status line when the last automatic backup could not be written. error is the system's message, untranslated.",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "remove": "Remove",
   "@remove": {
     "description": "Button in the dialog removing an imported mission pack."

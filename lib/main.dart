@@ -9,6 +9,7 @@ import 'app.dart';
 import 'data/mission_repository.dart';
 import 'data/profile_repository.dart';
 import 'data/run_repository.dart';
+import 'services/backup_folder.dart';
 import 'services/location_service.dart';
 import 'services/narrator.dart';
 import 'services/signal_scheduler.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
     missions: MissionRepository(externalDir: Directory('${root.path}/mission_packs')),
     narrator: narrator,
     signals: SignalScheduler.platform(),
+    backupFolder: BackupFolder.platform(),
   );
 
   runApp(

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,7 @@ import '../models/signal_log.dart';
 import '../models/run_outcome.dart';
 import '../models/stats.dart';
 import '../services/achievement_engine.dart';
+import '../services/backup_folder.dart';
 import '../services/backup_nudge.dart';
 import '../services/narrator.dart';
 import '../services/signal_library.dart';
@@ -43,8 +45,10 @@ class AppState extends ChangeNotifier {
     SignalScheduler? signals,
     SignalLogRepository? signalLog,
     ActiveRunStore? activeRun,
+    BackupFolder? backupFolder,
     List<Locale> Function()? systemLocales,
   }) : _signals = signals ?? SignalScheduler.noop(),
+       _backupFolder = backupFolder ?? BackupFolder.none(),
        _systemLocales = systemLocales ?? (() => PlatformDispatcher.instance.locales),
        activeRun = activeRun ?? ActiveRunStore(profiles.root),
        // Next to the profile by default, so every caller — tests included —
@@ -74,6 +78,10 @@ class AppState extends ChangeNotifier {
   final SignalLogRepository signalLog;
 
   late final BackupService backups = BackupService(profiles: profiles, runs: runs, signalLog: signalLog);
+
+  /// Where automatic backups go. Defaults to none, so they are off everywhere
+  /// a test or platform does not say otherwise.
+  final BackupFolder _backupFolder;
 
   Profile profile = const Profile();
   List<RunRecord> runLog = const [];
@@ -198,6 +206,7 @@ class AppState extends ChangeNotifier {
       interruptedRun = null;
     }
     await _migrateAndDateAchievements();
+    autoBackupFolder = await _backupFolder.current();
     _applyLocale();
     _recompute();
     loading = false;
@@ -539,6 +548,9 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     // Today's reminder is moot now, and the next mission may have changed.
     await _rescheduleSignals();
+    // Not awaited: collecting every trace takes a moment, and the runner is
+    // waiting for the summary, not for the copy.
+    if (record.countsForStats) unawaited(autoBackup());
 
     // The mission that just became playable, if the campaign moved on.
     String? unlocked;
@@ -591,6 +603,77 @@ class AppState extends ChangeNotifier {
   /// cannot tell — see `Profile.lastExportAt`.
   Future<void> noteBackupExported() =>
       updateProfile(profile.copyWith(lastExportAt: DateTime.now()));
+
+  /// The folder automatic backups are written to, by name; null when they are
+  /// off, which they are until the runner chooses one.
+  String? autoBackupFolder;
+
+  /// Why the last automatic backup failed, until one succeeds. Not stored: the
+  /// next run tries again, and the backup nudge comes back on its own while
+  /// they keep failing, since only a written backup counts as an export.
+  String? autoBackupError;
+
+  /// How many automatic backups are kept; older ones are deleted.
+  static const autoBackupsKept = 3;
+
+  Future<void>? _autoBackupInFlight;
+
+  /// Asks the runner for a folder and, if they pick one, writes the first
+  /// backup to it at once — so a folder that cannot be written is found out
+  /// now, not after the next run. Returns whether automatic backups are on.
+  Future<bool> chooseAutoBackupFolder() async {
+    final chosen = await _backupFolder.choose();
+    if (chosen == null) return autoBackupFolder != null;
+    autoBackupFolder = chosen;
+    autoBackupError = null;
+    notifyListeners();
+    await autoBackup();
+    return true;
+  }
+
+  /// Turns automatic backups off. The files already written stay where they
+  /// are; they are the runner's.
+  Future<void> stopAutoBackup() async {
+    await _backupFolder.forget();
+    autoBackupFolder = null;
+    autoBackupError = null;
+    notifyListeners();
+  }
+
+  /// Writes a backup to the chosen folder, if there is one. Never throws: a
+  /// failure is kept in [autoBackupError] for Settings to show. A call while
+  /// one is being written waits for it instead of writing twice at once.
+  Future<void> autoBackup() async {
+    if (autoBackupFolder == null) return;
+    final running = _autoBackupInFlight;
+    if (running != null) return running;
+    final write = _writeAutoBackup();
+    _autoBackupInFlight = write;
+    try {
+      await write;
+    } finally {
+      _autoBackupInFlight = null;
+    }
+  }
+
+  Future<void> _writeAutoBackup() async {
+    try {
+      await _backupFolder.write(
+        BackupService.autoFileName(DateTime.now()),
+        await exportBackup(),
+        prefix: BackupService.autoPrefix,
+        keep: autoBackupsKept,
+      );
+      autoBackupError = null;
+      // An automatic backup is a kept one, which is more than a manual export
+      // can say — so it quiets the nudge the same way.
+      profile = profile.copyWith(lastExportAt: DateTime.now());
+      await profiles.save(profile);
+    } on Object catch (e) {
+      autoBackupError = '$e';
+    }
+    notifyListeners();
+  }
 
   /// Puts the backup nudge away until another ten runs or four weeks.
   Future<void> snoozeBackupNudge() =>

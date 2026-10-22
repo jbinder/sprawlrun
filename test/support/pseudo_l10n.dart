@@ -111,6 +111,27 @@ class PseudoL extends L {
   String runsSinceExport(int count) => pseudo(_en.runsSinceExport(count));
 
   @override
+  String get autoBackupTitle => pseudo(_en.autoBackupTitle);
+
+  @override
+  String get autoBackupExplainer => pseudo(_en.autoBackupExplainer);
+
+  @override
+  String get autoBackupChoose => pseudo(_en.autoBackupChoose);
+
+  @override
+  String get autoBackupChange => pseudo(_en.autoBackupChange);
+
+  @override
+  String get autoBackupStop => pseudo(_en.autoBackupStop);
+
+  @override
+  String autoBackupTo(String folder) => pseudo(_en.autoBackupTo(folder));
+
+  @override
+  String autoBackupFailed(String error) => pseudo(_en.autoBackupFailed(error));
+
+  @override
   String get remove => pseudo(_en.remove);
 
   @override

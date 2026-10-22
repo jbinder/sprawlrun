@@ -89,8 +89,23 @@ class _BackupControlsState extends State<BackupControls> {
           dense: true,
           onPressed: _busy ? null : () => _import(state),
         ),
+        const SizedBox(height: 22),
+        _AutoBackup(state: state, busy: _busy, run: _run),
       ],
     );
+  }
+
+  /// Runs [action] with the buttons disabled, and says what went wrong if it
+  /// throws.
+  Future<void> _run(Future<void> Function() action) async {
+    setState(() => _busy = true);
+    try {
+      await action();
+    } on Object catch (e) {
+      _say('$e', bad: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   void _say(String message, {bool bad = false}) {
@@ -266,6 +281,70 @@ class _ExportStatus extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Optional backups written after every run, to a folder the runner chose.
+/// Off until a folder is chosen; turning it off keeps what was written.
+class _AutoBackup extends StatelessWidget {
+  const _AutoBackup({required this.state, required this.busy, required this.run});
+
+  final AppState state;
+  final bool busy;
+  final Future<void> Function(Future<void> Function() action) run;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L.of(context);
+    final folder = state.autoBackupFolder;
+    final error = state.autoBackupError;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l.autoBackupTitle, style: CyType.label(size: 11, color: Cy.cyan)),
+        const SizedBox(height: 8),
+        if (folder != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                Icon(
+                  error == null ? Icons.check_circle_outline : Icons.warning_amber_rounded,
+                  size: 14,
+                  color: error == null ? Cy.green : Cy.amber,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    error == null ? l.autoBackupTo(folder) : l.autoBackupFailed(error),
+                    style: CyType.mono(size: 12, color: error == null ? Cy.ghost : Cy.amber),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        Text(l.autoBackupExplainer, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
+        const SizedBox(height: 14),
+        CyberButton(
+          label: busy ? l.working : (folder == null ? l.autoBackupChoose : l.autoBackupChange),
+          icon: Icons.folder_open_outlined,
+          style: CyberButtonStyle.ghost,
+          dense: true,
+          onPressed: busy ? null : () => run(state.chooseAutoBackupFolder),
+        ),
+        if (folder != null) ...[
+          const SizedBox(height: 10),
+          CyberButton(
+            label: l.autoBackupStop,
+            icon: Icons.folder_off_outlined,
+            style: CyberButtonStyle.ghost,
+            dense: true,
+            onPressed: busy ? null : () => run(state.stopAutoBackup),
+          ),
+        ],
+      ],
     );
   }
 }

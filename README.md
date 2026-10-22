@@ -130,6 +130,12 @@ Merging only ever adds, so bringing in an old backup cannot relock a mission.
 No storage permission is involved in either direction: export goes out through
 the share sheet, import comes in through the system document picker.
 
+**Or let it back itself up.** Optionally, choose a folder once and a backup is
+written there after every run, keeping the three newest. Pick one that Syncthing
+or a similar app copies to another device, and the run log survives losing the
+phone, without the app ever going online. Android's folder picker grants access
+to that one folder and nothing else.
+
 **Single routes travel too.** Any stored run opens onto its map; the share
 action there writes the trace as a **GPX 1.1** track, which OsmAnd, Strava,
 Komoot or any other map app will open.
@@ -223,6 +229,7 @@ next October if you do not finish. One switch in Settings turns it all off.
 **Your data**
 - Export and import everything as one JSON file — profile, progress, runs, traces
 - Import either replaces this device or merges, and merging can never relock a mission
+- Optional automatic backup after every run to a folder you choose, keeping the three newest
 - A reminder to export once your log holds runs that exist nowhere else, dismissable
 - Any single route exports as a GPX 1.1 track for OsmAnd, Strava or Komoot
 - No accounts, no ads, no analytics, no network permission, no Play Services
@@ -277,7 +284,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 574 tests
+flutter test                   # 581 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -367,7 +374,9 @@ Some notes on the shape of it:
 - **No accounts or sync.** There is no `INTERNET` permission in the manifest.
   Backups move by hand: exporting hands a file to the system share sheet and
   importing reads one back through the system document picker, so the app needs
-  no storage permission and never sees a file you did not choose. The merged
+  no storage permission and never sees a file you did not choose. Automatic
+  backups go to a folder chosen in the system folder picker, which grants that
+  one folder; getting them off the phone is left to a sync app of your choice. The merged
   manifest carries two things it did not ask for directly — `ACCESS_NETWORK_STATE`,
   pulled in by ExoPlayer via `just_audio`, which reads connectivity status and
   grants no network access; and a self-defined

@@ -17,9 +17,10 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Three platform additions the plugins do not cover: repairing a failed audio
- * focus handoff, making the mission notification actually visible, and
- * reading the GPS provider directly (see [GpsStream]).
+ * Four platform additions the plugins do not cover: repairing a failed audio
+ * focus handoff, making the mission notification actually visible, reading
+ * the GPS provider directly (see [GpsStream]), and writing automatic backups
+ * to a folder the runner chose (see [BackupFolder]).
  *
  * Android's transient audio focus is a loan: the music app pauses when we take
  * it and is supposed to resume when we give it back. Several popular players
@@ -46,13 +47,14 @@ import io.flutter.plugin.common.MethodChannel
  * The run calls these channels with no activity at all (GPS fixes, notice
  * updates, the music nudge), and re-registering GPS's stream handler under a
  * live subscription would orphan its LocationListener. Only the permission
- * request needs an activity, and it uses whichever one is [attached].
+ * request and the folder picker need an activity, and they use whichever one
+ * is [attached].
  */
 class MainActivity : FlutterActivity() {
     companion object {
         private const val ENGINE_ID = "sprawlrun"
 
-        /** The activity on screen, for the one call that needs an Activity. */
+        /** The activity on screen, for the calls that need an Activity. */
         private var attached: WeakReference<MainActivity>? = null
 
         // In the companion so the engine-lifetime channel handlers that call
@@ -66,6 +68,7 @@ class MainActivity : FlutterActivity() {
     private val audioChannelName = "io.github.jbinder.sprawlrun/audio"
     private val notificationChannelName = "io.github.jbinder.sprawlrun/notifications"
     private val gpsChannelName = "io.github.jbinder.sprawlrun/gps"
+    private val backupChannelName = "io.github.jbinder.sprawlrun/backup"
 
     /**
      * Hard-coded in geolocator's GeolocatorLocationService. Matching it is the
@@ -87,6 +90,11 @@ class MainActivity : FlutterActivity() {
     private val notificationRequestCode = 4711
 
     private var pendingNotificationResult: MethodChannel.Result? = null
+
+    private val folderRequestCode = 4712
+
+    private var pendingFolderResult: MethodChannel.Result? = null
+    private var pendingFolder: BackupFolder? = null
 
     override fun provideFlutterEngine(context: Context): FlutterEngine {
         FlutterEngineCache.getInstance().get(ENGINE_ID)?.let { return it }
@@ -144,6 +152,8 @@ class MainActivity : FlutterActivity() {
         // otherwise leave the run start waiting on it for ever.
         pendingNotificationResult?.success(false)
         pendingNotificationResult = null
+        pendingFolderResult?.success(null)
+        pendingFolderResult = null
         super.onDestroy()
         if (destroyEngine && engine != null && FlutterEngineCache.getInstance().get(ENGINE_ID) === engine) {
             FlutterEngineCache.getInstance().remove(ENGINE_ID)
@@ -179,6 +189,35 @@ class MainActivity : FlutterActivity() {
                         )
                         result.success(null)
                     }
+
+                    else -> result.notImplemented()
+                }
+            }
+
+        val folder = BackupFolder(app)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, backupChannelName)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    // The folder's name, or null when none is chosen.
+                    "current" -> result.success(folder.current()?.let { folder.name(it) ?: it.lastPathSegment })
+
+                    "choose" -> {
+                        val activity = attached?.get()
+                        if (activity == null) result.success(null) else activity.chooseFolder(folder, result)
+                    }
+
+                    "forget" -> {
+                        folder.forget()
+                        result.success(null)
+                    }
+
+                    "write" -> folder.write(
+                        call.argument<String>("name") ?: "",
+                        call.argument<ByteArray>("bytes") ?: ByteArray(0),
+                        call.argument<String>("prefix") ?: "",
+                        call.argument<Int>("keep") ?: 1,
+                        result
+                    )
 
                     else -> result.notImplemented()
                 }
@@ -335,6 +374,44 @@ class MainActivity : FlutterActivity() {
         }
         pendingNotificationResult = result
         requestPermissions(arrayOf(permission), notificationRequestCode)
+    }
+
+    private fun chooseFolder(folder: BackupFolder, result: MethodChannel.Result) {
+        // As with the permission request: one answer per call, so a second
+        // picker while one is open is turned away.
+        if (pendingFolderResult != null) {
+            result.success(null)
+            return
+        }
+        pendingFolderResult = result
+        pendingFolder = folder
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+        )
+        startActivityForResult(intent, folderRequestCode)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != folderRequestCode) return
+        val pending = pendingFolderResult ?: return
+        val folder = pendingFolder
+        pendingFolderResult = null
+        pendingFolder = null
+        val tree = data?.data
+        if (resultCode != RESULT_OK || tree == null || folder == null) {
+            pending.success(null)
+            return
+        }
+        try {
+            folder.keep(tree)
+            pending.success(folder.name(tree) ?: tree.lastPathSegment)
+        } catch (e: SecurityException) {
+            pending.error("notPersistable", e.message, null)
+        }
     }
 
     override fun onRequestPermissionsResult(

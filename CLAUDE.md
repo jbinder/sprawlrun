@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 574 tests
+fvm flutter test                                    # 581 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -224,6 +224,12 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   project from the run log and profile. (`active_run.json` is deliberately
   left out: it exists only while a run does.) Exported as *sent* entries only; the
   pending plan is rebuilt by whichever device restores it.
+- **The automatic-backup folder is Android's persisted permission, not a
+  setting.** `BackupFolder.kt` reads it from `persistedUriPermissions`; keep
+  it out of `Profile`, or a restore onto another phone brings back a folder
+  that device may not write to. It prunes only `sprawlrun-autobackup-*` files,
+  never manual exports saved into the same folder. Like the GPS and audio
+  channels, it cannot be reached from the test suite: check it on a device.
 - **The archive is split by year so launching never pays for it.** A re-plan
   reads and writes only the years that can hold a pending signal — this one,
   and next year across New Year — so its cost is flat however much history

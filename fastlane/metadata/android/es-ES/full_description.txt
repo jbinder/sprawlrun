@@ -41,6 +41,7 @@ TODO LO QUE HACE
 - Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio
 - Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd
 - Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
+- Copia automática opcional después de cada carrera, en la carpeta que elijas; si quieres, una que una app de sincronización como Syncthing copie a otro sitio
 - Un aviso para exportar cuando tu registro tiene carreras que no existen en ningún otro sitio
 - En inglés y en español, historia incluida, según el idioma del teléfono o elegido en Ajustes
 - Sin permiso de almacenamiento en ningún sentido: la hoja de compartir para sacar, el selector de documentos para traer

@@ -11,6 +11,7 @@ import 'energy.dart';
 import 'geo.dart';
 import 'location_service.dart';
 import 'split_readout.dart';
+import 'step_source.dart';
 import 'narrator.dart';
 import '../l10n/l10n.dart';
 
@@ -116,11 +117,14 @@ class LocationRestored extends RunEvent {
 /// and a [Narrator], so a test can run a whole 25-minute mission in
 /// milliseconds against synthetic fixes.
 class RunEngine extends ChangeNotifier {
-  RunEngine({required this.narrator, required this.location, DateTime Function()? clock})
+  RunEngine({required this.narrator, required this.location, this.stepSource, DateTime Function()? clock})
     : _now = clock ?? DateTime.now;
 
   final Narrator narrator;
   final LocationSource location;
+
+  /// Counts steps when the runner has turned that on. Null where nothing can.
+  final StepSource? stepSource;
   final DateTime Function() _now;
 
   // -- tuning ---------------------------------------------------------------
@@ -153,6 +157,11 @@ class RunEngine extends ChangeNotifier {
   /// Window used to estimate the runner's current pace when a chase opens.
   static const double chaseBaselineWindow = 180;
 
+  /// A step within this long means the runner is moving, whatever the GPS
+  /// says. The step counter reports within a second; a stride takes well
+  /// under one.
+  static const Duration steppingWithin = Duration(seconds: 3);
+
   // -- state ----------------------------------------------------------------
 
   RunPhase phase = RunPhase.idle;
@@ -164,6 +173,10 @@ class RunEngine extends ChangeNotifier {
   double distanceMeters = 0;
   double movingSeconds = 0;
   double smoothedSpeed = 0;
+
+  /// Steps this run, or null when nothing is counting them: step counting is
+  /// off, or the counter reported it cannot. See [RunRecord.steps].
+  int? steps;
 
   /// True once the target has been met. The run may continue afterwards.
   bool goalReached = false;
@@ -222,8 +235,13 @@ class RunEngine extends ChangeNotifier {
   final Set<String> _firedBeats = {};
   final List<_PaceSample> _paceSamples = [];
 
+  /// The counter's last total, which steps are counted from.
+  int? _stepTotal;
+  DateTime? _lastStepAt;
+
   Timer? _ticker;
   StreamSubscription<GeoFix>? _fixSub;
+  StreamSubscription<int>? _stepSub;
   StreamSubscription<NarrationEvent>? _narrationSub;
 
   // -- derived --------------------------------------------------------------
@@ -277,6 +295,19 @@ class RunEngine extends ChangeNotifier {
     // only when things started well meant the warning could never clear.
     _fixSub = location.fixes().listen(_onFix, onError: _onFixError);
 
+    if (profile.countSteps && stepSource != null) {
+      steps = 0;
+      _stepSub = stepSource!.counts().listen(
+        _onSteps,
+        // A counter that cannot count — no sensor, or the permission taken
+        // back — leaves the run without steps rather than claiming none.
+        onError: (Object e) {
+          debugPrint('step counter: $e');
+          if (_stepTotal == null) steps = null;
+        },
+      );
+    }
+
     _narrationSub = narrator.events.listen((e) {
       currentLine = e.line;
       if (e.line != null) transcript.add(e.line!);
@@ -322,6 +353,7 @@ class RunEngine extends ChangeNotifier {
     _ticker?.cancel();
     _detachStreams();
     await location.stop();
+    await stepSource?.stop();
     await narrator.stopAll();
 
     final record = _record(elapsed: _accumulated.inMilliseconds / 1000.0);
@@ -358,6 +390,7 @@ class RunEngine extends ChangeNotifier {
       chasesTotal: chasesTotal,
       chasesEvaded: chasesEvaded,
       beatsHeard: beatsHeard,
+      steps: steps,
       story: List.unmodifiable(story),
       trace: List.unmodifiable(trace),
     );
@@ -368,6 +401,7 @@ class RunEngine extends ChangeNotifier {
     _ticker?.cancel();
     _detachStreams();
     await location.stop();
+    await stepSource?.stop();
     await narrator.stopAll();
     phase = RunPhase.idle;
     _reset();
@@ -378,6 +412,9 @@ class RunEngine extends ChangeNotifier {
     distanceMeters = 0;
     movingSeconds = 0;
     smoothedSpeed = 0;
+    steps = null;
+    _stepTotal = null;
+    _lastStepAt = null;
     goalReached = false;
     activeChase = null;
     currentBeat = null;
@@ -423,6 +460,8 @@ class RunEngine extends ChangeNotifier {
   void _detachStreams() {
     unawaited(_fixSub?.cancel() ?? Future<void>.value());
     _fixSub = null;
+    unawaited(_stepSub?.cancel() ?? Future<void>.value());
+    _stepSub = null;
     unawaited(_narrationSub?.cancel() ?? Future<void>.value());
     _narrationSub = null;
   }
@@ -433,6 +472,31 @@ class RunEngine extends ChangeNotifier {
     _detachStreams();
     _events.close();
     super.dispose();
+  }
+
+  // -- steps ----------------------------------------------------------------
+
+  /// Whether a step landed just now. Moving time counts it as movement, so a
+  /// run through a GPS dropout — or under a roof — still has a moving time.
+  bool get _stepping => _lastStepAt != null && _now().difference(_lastStepAt!) <= steppingWithin;
+
+  /// The counter's total, from which this run's steps are the difference.
+  ///
+  /// The first total only sets where counting starts. Steps taken while the
+  /// run is paused by hand are not the run's; while auto-paused they are, and
+  /// two readings in a row with steps resume it, since walking off again is
+  /// exactly what auto-pause waits for.
+  void _onSteps(int total) {
+    final previous = _stepTotal;
+    _stepTotal = total;
+    if (previous == null || total <= previous) return;
+    if (phase != RunPhase.running && phase != RunPhase.autoPaused) return;
+
+    final wasStepping = _stepping;
+    steps = (steps ?? 0) + (total - previous);
+    _lastStepAt = _now();
+    if (phase == RunPhase.autoPaused && wasStepping) resume();
+    notifyListeners();
   }
 
   // -- position -------------------------------------------------------------
@@ -544,7 +608,7 @@ class RunEngine extends ChangeNotifier {
     }
 
     if (phase == RunPhase.running) {
-      final moving = smoothedSpeed >= movingThresholdMps;
+      final moving = smoothedSpeed >= movingThresholdMps || _stepping;
       if (moving) {
         movingSeconds += 1;
         _stillSince = null;

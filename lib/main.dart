@@ -13,6 +13,7 @@ import 'services/backup_folder.dart';
 import 'services/location_service.dart';
 import 'services/narrator.dart';
 import 'services/signal_scheduler.dart';
+import 'services/step_source.dart';
 import 'services/run_engine.dart';
 import 'state/app_state.dart';
 import 'theme/cyber_theme.dart';
@@ -35,6 +36,7 @@ Future<void> main() async {
     narrator: narrator,
     signals: SignalScheduler.platform(),
     backupFolder: BackupFolder.platform(),
+    stepSetup: StepSetup.platform(),
   );
 
   runApp(
@@ -42,7 +44,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider.value(value: appState),
         ChangeNotifierProvider(
-          create: (_) => RunEngine(narrator: narrator, location: GpsLocationSource()),
+          create: (_) => RunEngine(narrator: narrator, location: GpsLocationSource(), stepSource: SensorStepSource()),
         ),
       ],
       child: const SprawlRunApp(),

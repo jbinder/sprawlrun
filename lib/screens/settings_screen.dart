@@ -246,6 +246,27 @@ class SettingsScreen extends StatelessWidget {
                             value: profile.splitsEnabled,
                             onChanged: (v) => update(profile.copyWith(splitsEnabled: v)),
                           ),
+                          // Only where there is a counter to use: offering a
+                          // switch that can do nothing would cost the runner a
+                          // permission prompt for it.
+                          if (state.stepCounterAvailable) ...[
+                            const _Rule(),
+                            _SwitchRow(
+                              label: l.settingCountSteps,
+                              subtitle: l.settingCountStepsHint,
+                              value: profile.countSteps,
+                              onChanged: (v) async {
+                                final messenger = ScaffoldMessenger.of(context);
+                                if (v && !await state.setCountSteps(true)) {
+                                  messenger.showSnackBar(
+                                    SnackBar(content: Text(l10n.countStepsDenied, style: CyType.body(size: 14, color: Cy.ink))),
+                                  );
+                                } else if (!v) {
+                                  await state.setCountSteps(false);
+                                }
+                              },
+                            ),
+                          ],
                           const _Rule(),
                           _SwitchRow(
                             label: l.settingSeasonalEvents,

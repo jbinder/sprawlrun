@@ -1364,6 +1364,30 @@
   "@statKcal": {
     "description": "Label of a figure: calories burnt. Shown in uppercase."
   },
+  "statSteps": "Steps",
+  "@statSteps": {
+    "description": "Label of a figure: steps counted during the run. Shown in uppercase."
+  },
+  "statCadence": "Cadence",
+  "@statCadence": {
+    "description": "Label of a figure: average steps per minute while moving. Shown in uppercase."
+  },
+  "unitStepsPerMinute": "spm",
+  "@unitStepsPerMinute": {
+    "description": "Unit after the cadence figure: steps per minute, abbreviated."
+  },
+  "settingCountSteps": "Count steps",
+  "@settingCountSteps": {
+    "description": "Setting: count steps during runs with the phone's step sensor. Off by default."
+  },
+  "settingCountStepsHint": "Steps and cadence for each run, and moving time when GPS drops out. Asks for Android's physical-activity permission.",
+  "@settingCountStepsHint": {
+    "description": "Explains the Count steps setting under its switch."
+  },
+  "countStepsDenied": "Counting steps needs Android's physical-activity permission, so it stays off.",
+  "@countStepsDenied": {
+    "description": "Shown when the runner turned on Count steps but refused the permission."
+  },
   "freeRunAudioSplitsKm": "Free run — only a short readout at each kilometre will cut into your audio.",
   "freeRunAudioSplitsMile": "Free run — only a short readout at each mile will cut into your audio.",
   "freeRunAudioSilent": "Free run — nothing will interrupt your audio.",

@@ -10,6 +10,7 @@ import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/pack_strings.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
+import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/screens/history_screen.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/screens/mission_debrief_screen.dart';
@@ -145,11 +146,15 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
 
   testWidgets('run screen, mid-pursuit', (tester) async {
     final state = await seed(tester, logicalSize: narrow);
+    // Counting steps, so the fourth figure is on the row too.
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(countSteps: true)));
     var now = DateTime(2026, 7, 27, 21, 14);
     final location = FakeLocation();
+    final steps = FakeSteps();
     final engine = RunEngine(
       narrator: FakeNarrator(lineDuration: const Duration(seconds: 6)),
       location: location,
+      stepSource: steps,
       clock: () => now,
     );
     await pumpShowcase(
@@ -162,9 +167,11 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     for (var i = 0; i < 1500 && engine.activeChase == null; i++) {
       now = now.add(const Duration(seconds: 1));
       location.step(now, 3.2);
+      steps.take(3);
       await tester.pump(const Duration(seconds: 1));
     }
     expect(engine.activeChase, isNotNull, reason: 'no pursuit to look at');
+    expect(engine.steps, greaterThan(0), reason: 'the step figure is on screen');
     await tester.pump(const Duration(seconds: 2));
     await tester.tap(find.text(l10n.abort.toUpperCase()));
     await tester.pump(const Duration(milliseconds: 300));
@@ -174,6 +181,7 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     for (var i = 0; i < 900 && !engine.goalReached; i++) {
       now = now.add(const Duration(seconds: 1));
       location.step(now, 3.2);
+      steps.take(3);
       await tester.pump(const Duration(seconds: 1));
     }
     expect(engine.goalReached, isTrue);
@@ -185,7 +193,7 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     final state = await seed(tester, logicalSize: narrow);
     final mission = state.currentMission!.mission;
     final report = RunOutcomeReport(
-      record: run(at: DateTime(2026, 7, 27, 21, 14), meters: 8200, seconds: 2700, missionId: mission.id),
+      record: run(at: DateTime(2026, 7, 27, 21, 14), meters: 8200, seconds: 2700, missionId: mission.id, steps: 7950),
       newAchievements: [kAchievements.firstWhere((a) => a.tier == AchTier.legend)],
       codexRecovered: mission.codex.take(1).toList(),
       missionUnlocked: 'COOLING LOOP',
@@ -201,7 +209,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
 
   testWidgets('run detail', (tester) async {
     final state = await seed(tester, logicalSize: tall);
-    await pumpShowcase(tester, RunDetailScreen(run: state.runLog.first), state, delegates: delegates);
+    final counted = RunRecord.fromJson(state.runLog.first.toJson()..['steps'] = 7950);
+    await pumpShowcase(tester, RunDetailScreen(run: counted), state, delegates: delegates);
     for (var i = 0; i < 40 && find.text(l10n.loadingTrace).evaluate().isNotEmpty; i++) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
       await tester.pump();
@@ -236,6 +245,7 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
         ),
       ),
     );
+    state.stepCounterAvailable = true;
     await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
     await tester.tap(find.text(l10n.resetProgress.toUpperCase()));
     await tester.pump(const Duration(milliseconds: 300));

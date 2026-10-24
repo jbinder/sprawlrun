@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -8,6 +9,7 @@ import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/services/geo.dart';
 import 'package:sprawl_run/services/location_service.dart';
 import 'package:sprawl_run/services/narrator.dart';
+import 'package:sprawl_run/services/step_source.dart';
 
 /// A location source the test drives by hand, one step at a time.
 class FakeLocation implements LocationSource {
@@ -126,6 +128,30 @@ class FakeNarrator implements Narrator {
   Future<void> dispose() async => _events.close();
 }
 
+/// A step counter whose running total a test moves on.
+class FakeSteps implements StepSource {
+  final _controller = StreamController<int>.broadcast();
+  int total = 1000;
+  bool listened = false;
+
+  /// Takes [n] steps and reports the new total, as the sensor does.
+  void take(int n) {
+    total += n;
+    _controller.add(total);
+  }
+
+  void fail() => _controller.addError(PlatformException(code: 'denied'));
+
+  @override
+  Stream<int> counts() {
+    listened = true;
+    return _controller.stream;
+  }
+
+  @override
+  Future<void> stop() async {}
+}
+
 /// A throwaway directory that cleans itself up.
 Directory tempRoot(String label) =>
     Directory.systemTemp.createTempSync('sprawlrun_$label');
@@ -141,6 +167,7 @@ RunRecord run({
   int chasesEvaded = 0,
   double calories = 300,
   int beatsHeard = 0,
+  int? steps,
   List<StoryEvent> story = const [],
 }) => RunRecord(
   id: at.microsecondsSinceEpoch.toString(),
@@ -157,5 +184,6 @@ RunRecord run({
   chasesTotal: chasesTotal,
   chasesEvaded: chasesEvaded,
   beatsHeard: beatsHeard,
+  steps: steps,
   story: story,
 );

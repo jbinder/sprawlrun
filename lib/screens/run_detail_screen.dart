@@ -14,6 +14,7 @@ import '../theme/cyber_theme.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/panels.dart';
+import '../widgets/step_figures.dart';
 import '../widgets/route_trace.dart';
 import '../widgets/story_log.dart';
 import '../l10n/l10n.dart';
@@ -228,6 +229,10 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                               ),
                             ],
                           ),
+                          if (run.steps != null) ...[
+                            const SizedBox(height: 18),
+                            StepFigures(record: run, size: 20),
+                          ],
                         ],
                       ),
                     ),

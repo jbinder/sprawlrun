@@ -515,11 +515,19 @@ class _Telemetry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final steps = engine.steps;
+    // With steps the row holds four figures. The paces carry a unit and need
+    // the room; kcal and steps are bare numbers, so they take less of it —
+    // equal quarters ran each pace into the figure beside it.
+    final paceFlex = steps == null ? 1 : 3;
+    final countFlex = steps == null ? 1 : 2;
+    const gap = SizedBox(width: 8);
     return NeonPanel(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       child: Row(
         children: [
           Expanded(
+            flex: paceFlex,
             child: StatTile(
               label: L.of(context).statPaceNow,
               value: Fmt.pace(engine.currentPaceSecondsPerKm, units),
@@ -528,7 +536,9 @@ class _Telemetry extends StatelessWidget {
               accent: Cy.cyan,
             ),
           ),
+          gap,
           Expanded(
+            flex: paceFlex,
             child: StatTile(
               label: L.of(context).statAvgPace,
               value: Fmt.pace(engine.paceSecondsPerKm, units),
@@ -536,7 +546,9 @@ class _Telemetry extends StatelessWidget {
               size: 20,
             ),
           ),
+          gap,
           Expanded(
+            flex: countFlex,
             child: StatTile(
               label: L.of(context).statKcal,
               value: Fmt.calories(engine.calories),
@@ -544,6 +556,13 @@ class _Telemetry extends StatelessWidget {
               accent: Cy.amber,
             ),
           ),
+          if (steps != null) ...[
+            gap,
+            Expanded(
+              flex: countFlex,
+              child: StatTile(label: L.of(context).statSteps, value: '$steps', size: 20, accent: Cy.green),
+            ),
+          ],
         ],
       ),
     );

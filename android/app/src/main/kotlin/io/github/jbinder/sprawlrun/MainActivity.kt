@@ -17,10 +17,11 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
 
 /**
- * Four platform additions the plugins do not cover: repairing a failed audio
+ * Five platform additions the plugins do not cover: repairing a failed audio
  * focus handoff, making the mission notification actually visible, reading
- * the GPS provider directly (see [GpsStream]), and writing automatic backups
- * to a folder the runner chose (see [BackupFolder]).
+ * the GPS provider directly (see [GpsStream]) and the step counter (see
+ * [StepStream]), and writing automatic backups to a folder the runner chose
+ * (see [BackupFolder]).
  *
  * Android's transient audio focus is a loan: the music app pauses when we take
  * it and is supposed to resume when we give it back. Several popular players
@@ -47,7 +48,7 @@ import io.flutter.plugin.common.MethodChannel
  * The run calls these channels with no activity at all (GPS fixes, notice
  * updates, the music nudge), and re-registering GPS's stream handler under a
  * live subscription would orphan its LocationListener. Only the permission
- * request and the folder picker need an activity, and they use whichever one
+ * requests and the folder picker need an activity, and they use whichever one
  * is [attached].
  */
 class MainActivity : FlutterActivity() {
@@ -69,6 +70,8 @@ class MainActivity : FlutterActivity() {
     private val notificationChannelName = "io.github.jbinder.sprawlrun/notifications"
     private val gpsChannelName = "io.github.jbinder.sprawlrun/gps"
     private val backupChannelName = "io.github.jbinder.sprawlrun/backup"
+    private val stepsChannelName = "io.github.jbinder.sprawlrun/steps"
+    private val stepSetupChannelName = "io.github.jbinder.sprawlrun/step_setup"
 
     /**
      * Hard-coded in geolocator's GeolocatorLocationService. Matching it is the
@@ -92,6 +95,9 @@ class MainActivity : FlutterActivity() {
     private var pendingNotificationResult: MethodChannel.Result? = null
 
     private val folderRequestCode = 4712
+
+    private val stepsRequestCode = 4713
+    private var pendingStepsResult: MethodChannel.Result? = null
 
     private var pendingFolderResult: MethodChannel.Result? = null
     private var pendingFolder: BackupFolder? = null
@@ -154,6 +160,8 @@ class MainActivity : FlutterActivity() {
         pendingNotificationResult = null
         pendingFolderResult?.success(null)
         pendingFolderResult = null
+        pendingStepsResult?.success(false)
+        pendingStepsResult = null
         super.onDestroy()
         if (destroyEngine && engine != null && FlutterEngineCache.getInstance().get(ENGINE_ID) === engine) {
             FlutterEngineCache.getInstance().remove(ENGINE_ID)
@@ -188,6 +196,27 @@ class MainActivity : FlutterActivity() {
                             KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY)
                         )
                         result.success(null)
+                    }
+
+                    else -> result.notImplemented()
+                }
+            }
+
+        EventChannel(flutterEngine.dartExecutor.binaryMessenger, stepsChannelName)
+            .setStreamHandler(StepStream(app))
+
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, stepSetupChannelName)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "available" -> result.success(StepStream.sensor(app) != null)
+                    "granted" -> result.success(StepStream.hasPermission(app))
+                    "requestPermission" -> {
+                        val activity = attached?.get()
+                        if (activity == null) {
+                            result.success(StepStream.hasPermission(app))
+                        } else {
+                            activity.requestStepsPermission(result)
+                        }
                     }
 
                     else -> result.notImplemented()
@@ -376,6 +405,19 @@ class MainActivity : FlutterActivity() {
         requestPermissions(arrayOf(permission), notificationRequestCode)
     }
 
+    private fun requestStepsPermission(result: MethodChannel.Result) {
+        if (StepStream.hasPermission(this)) {
+            result.success(true)
+            return
+        }
+        if (pendingStepsResult != null) {
+            result.success(false)
+            return
+        }
+        pendingStepsResult = result
+        requestPermissions(arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION), stepsRequestCode)
+    }
+
     private fun chooseFolder(folder: BackupFolder, result: MethodChannel.Result) {
         // As with the permission request: one answer per call, so a second
         // picker while one is open is turned away.
@@ -420,6 +462,12 @@ class MainActivity : FlutterActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == stepsRequestCode) {
+            val steps = pendingStepsResult ?: return
+            pendingStepsResult = null
+            steps.success(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            return
+        }
         if (requestCode != notificationRequestCode) return
         val pending = pendingNotificationResult ?: return
         pendingNotificationResult = null

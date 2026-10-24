@@ -202,6 +202,9 @@ next October if you do not finish. One switch in Settings turns it all off.
   wait for the scene to end; switchable off
 - Live HUD: distance, pace, elapsed, goal ring, and the pursuit bar
 - Calories from the ACSM metabolic equations and your body mass
+- Optional step counting from the phone's own step sensor: steps and cadence per run,
+  and moving time that keeps counting when the GPS drops out. Off by default, since it
+  needs Android's physical-activity permission, which is asked for only when you turn it on
 - Route drawn as a neon trace, replayed at the pace you actually ran it
 
 **Progress**
@@ -284,7 +287,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 581 tests
+flutter test                   # 591 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -371,6 +374,10 @@ Some notes on the shape of it:
 
 - **No maps.** Tiles need a network. Routes are drawn from the stored trace as a
   neon filament on a grid.
+- **No distance from steps.** Step counting is there for steps, cadence and
+  moving time only. Turning steps into distance needs a stride length, which
+  would quietly make traces and pace untrustworthy; GPS measures distance or
+  nothing does.
 - **No accounts or sync.** There is no `INTERNET` permission in the manifest.
   Backups move by hand: exporting hands a file to the system share sheet and
   importing reads one back through the system document picker, so the app needs

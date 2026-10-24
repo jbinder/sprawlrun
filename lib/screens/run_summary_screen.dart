@@ -13,6 +13,7 @@ import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
+import '../widgets/step_figures.dart';
 import '../widgets/route_trace.dart';
 import '../widgets/unlock_reveal.dart';
 import '../l10n/l10n.dart';
@@ -465,6 +466,10 @@ class _SummaryGrid extends StatelessWidget {
               ),
             ],
           ),
+          if (record.steps != null) ...[
+            const SizedBox(height: 18),
+            StepFigures(record: record, size: 18),
+          ],
           const SizedBox(height: 14),
           Container(height: 1, color: Cy.rule),
           const SizedBox(height: 10),

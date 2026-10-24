@@ -26,6 +26,7 @@ import '../services/narrator.dart';
 import '../services/signal_library.dart';
 import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
+import '../services/step_source.dart';
 import '../services/stats_service.dart';
 import '../theme/season.dart';
 import '../util/clock.dart';
@@ -46,9 +47,11 @@ class AppState extends ChangeNotifier {
     SignalLogRepository? signalLog,
     ActiveRunStore? activeRun,
     BackupFolder? backupFolder,
+    StepSetup? stepSetup,
     List<Locale> Function()? systemLocales,
   }) : _signals = signals ?? SignalScheduler.noop(),
        _backupFolder = backupFolder ?? BackupFolder.none(),
+       _stepSetup = stepSetup ?? StepSetup.none(),
        _systemLocales = systemLocales ?? (() => PlatformDispatcher.instance.locales),
        activeRun = activeRun ?? ActiveRunStore(profiles.root),
        // Next to the profile by default, so every caller — tests included —
@@ -78,6 +81,20 @@ class AppState extends ChangeNotifier {
   final SignalLogRepository signalLog;
 
   late final BackupService backups = BackupService(profiles: profiles, runs: runs, signalLog: signalLog);
+
+  /// Whether this phone can count steps, and the permission for it.
+  final StepSetup _stepSetup;
+
+  /// The phone has a step counter, so Settings offers to use it.
+  bool stepCounterAvailable = false;
+
+  /// Turns step counting on or off. Turning it on asks for the permission it
+  /// needs, and stays off when that is refused. Returns whether it is on.
+  Future<bool> setCountSteps(bool on) async {
+    if (on && !await _stepSetup.request()) return false;
+    await updateProfile(profile.copyWith(countSteps: on));
+    return on;
+  }
 
   /// Where automatic backups go. Defaults to none, so they are off everywhere
   /// a test or platform does not say otherwise.
@@ -207,6 +224,14 @@ class AppState extends ChangeNotifier {
     }
     await _migrateAndDateAchievements();
     autoBackupFolder = await _backupFolder.current();
+    stepCounterAvailable = await _stepSetup.available();
+    // A setting can outlive its permission: taken back in Android's settings,
+    // or carried to another phone in a backup. Off, then, rather than on and
+    // silently counting nothing.
+    if (profile.countSteps && !(stepCounterAvailable && await _stepSetup.granted())) {
+      profile = profile.copyWith(countSteps: false);
+      await profiles.save(profile);
+    }
     _applyLocale();
     _recompute();
     loading = false;

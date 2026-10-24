@@ -21,6 +21,11 @@
     <!-- Android 13+ requires this to show the ongoing "mission active" notice. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <!-- Read only when the runner turns step counting on in Settings, which is
+         also the only place it is ever asked for. A runtime grant from
+         Android 10; below that the step counter needs none. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
     <!-- Alarms do not survive a reboot. Without this a reminder set on Friday
          is silently gone by Monday if the phone restarted in between. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>

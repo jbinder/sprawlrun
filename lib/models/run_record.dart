@@ -97,6 +97,7 @@ class RunRecord {
     this.chasesTotal = 0,
     this.chasesEvaded = 0,
     this.beatsHeard = 0,
+    this.steps,
     this.story = const [],
     this.trace = const [],
   });
@@ -124,6 +125,15 @@ class RunRecord {
   final int chasesTotal;
   final int chasesEvaded;
   final int beatsHeard;
+
+  /// Steps counted during the run, or null when nothing counted them — step
+  /// counting is off, or the phone has no step sensor. Zero is a real answer
+  /// and null is not, so the two are kept apart.
+  final int? steps;
+
+  /// Average steps per minute of moving time, or null without [steps] or
+  /// without a minute to average over.
+  double? get cadence => steps == null || movingSeconds < 60 ? null : steps! / (movingSeconds / 60);
 
   /// Everything that happened, in order. Empty for runs recorded before this
   /// existed, and for free runs, which have no story.
@@ -173,6 +183,7 @@ class RunRecord {
     chasesTotal: chasesTotal,
     chasesEvaded: chasesEvaded,
     beatsHeard: beatsHeard,
+    steps: steps,
     story: story,
     trace: trace ?? this.trace,
   );
@@ -193,6 +204,7 @@ class RunRecord {
     'chasesTotal': chasesTotal,
     'chasesEvaded': chasesEvaded,
     'beatsHeard': beatsHeard,
+    if (steps != null) 'steps': steps,
     if (story.isNotEmpty) 'story': story.map((e) => e.toJson()).toList(),
     'trace': trace.map((p) => p.toJson()).toList(),
   };
@@ -213,6 +225,7 @@ class RunRecord {
     chasesTotal: (json['chasesTotal'] as num?)?.toInt() ?? 0,
     chasesEvaded: (json['chasesEvaded'] as num?)?.toInt() ?? 0,
     beatsHeard: (json['beatsHeard'] as num?)?.toInt() ?? 0,
+    steps: (json['steps'] as num?)?.toInt(),
     story: (json['story'] as List? ?? [])
         .map((e) => StoryEvent.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),

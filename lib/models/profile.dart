@@ -219,6 +219,7 @@ class Profile {
     this.autoPause = true,
     this.keepScreenOn = true,
     this.splitsEnabled = true,
+    this.countSteps = false,
     this.activePackId,
     this.completedMissions = const <String>{},
     this.unlockedAchievements = const <String, DateTime>{},
@@ -299,6 +300,13 @@ class Profile {
   /// mid-scene would both delay the story and break the mood.
   final bool splitsEnabled;
 
+  /// Whether runs count steps. Off unless the runner turns it on, because it
+  /// needs Android's physical-activity permission, and the app asks for none it
+  /// does not have to. `AppState.load` turns it back off where the permission
+  /// is missing — a backup restored onto another phone carries the setting
+  /// but not the grant.
+  final bool countSteps;
+
   /// The mission pack the ops screen shows. Null means the first loaded pack,
   /// which is also what every profile from before packs were selectable
   /// resolves to.
@@ -362,6 +370,7 @@ class Profile {
     bool? autoPause,
     bool? keepScreenOn,
     bool? splitsEnabled,
+    bool? countSteps,
     String? activePackId,
     Set<String>? completedMissions,
     Map<String, DateTime>? unlockedAchievements,
@@ -391,6 +400,7 @@ class Profile {
     autoPause: autoPause ?? this.autoPause,
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
     splitsEnabled: splitsEnabled ?? this.splitsEnabled,
+    countSteps: countSteps ?? this.countSteps,
     activePackId: activePackId ?? this.activePackId,
     completedMissions: completedMissions ?? this.completedMissions,
     unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
@@ -422,6 +432,7 @@ class Profile {
     'autoPause': autoPause,
     'keepScreenOn': keepScreenOn,
     'splitsEnabled': splitsEnabled,
+    'countSteps': countSteps,
     if (activePackId != null) 'activePackId': activePackId,
     'completedMissions': completedMissions.toList(),
     'unlockedAchievements': unlockedAchievements.map((k, v) => MapEntry(k, v.toIso8601String())),
@@ -460,6 +471,7 @@ class Profile {
     autoPause: json['autoPause'] as bool? ?? true,
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,
     splitsEnabled: json['splitsEnabled'] as bool? ?? true,
+    countSteps: json['countSteps'] as bool? ?? false,
     activePackId: json['activePackId'] as String?,
     completedMissions: ((json['completedMissions'] as List?) ?? const []).map((e) => e as String).toSet(),
     unlockedAchievements: ((json['unlockedAchievements'] as Map?) ?? const {}).map(

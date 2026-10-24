@@ -825,6 +825,24 @@ class PseudoL extends L {
   String get statKcal => pseudo(_en.statKcal);
 
   @override
+  String get statSteps => pseudo(_en.statSteps);
+
+  @override
+  String get statCadence => pseudo(_en.statCadence);
+
+  @override
+  String get unitStepsPerMinute => pseudo(_en.unitStepsPerMinute);
+
+  @override
+  String get settingCountSteps => pseudo(_en.settingCountSteps);
+
+  @override
+  String get settingCountStepsHint => pseudo(_en.settingCountStepsHint);
+
+  @override
+  String get countStepsDenied => pseudo(_en.countStepsDenied);
+
+  @override
   String get freeRunAudioSplitsKm => pseudo(_en.freeRunAudioSplitsKm);
 
   @override

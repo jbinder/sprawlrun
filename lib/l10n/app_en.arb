@@ -1478,6 +1478,16 @@
     "description": "Title of the dialog confirming a run is ended before its goal."
   },
   "abortBodyFree": "You have not reached your target. The run will be logged as a failure.",
+  "abortBodyTooShort": "Under a minute and under {distance} so far: too short to log, so nothing will be saved.",
+  "@abortBodyTooShort": {
+    "description": "Abort dialog body when the run is still too short to be saved at all (under a minute and under the given distance).",
+    "placeholders": {
+      "distance": {
+        "type": "String",
+        "example": "0.10 km"
+      }
+    }
+  },
   "abortBodyMission": "You have not reached your target. {mission} will be logged as failed — the distance and time still count, and you can run it again.",
   "@abortBodyMission": {
     "description": "mission is the mission codename, e.g. DEAD DROP.",
@@ -1494,6 +1504,20 @@
   "runLogged": "RUN LOGGED",
   "@runLogged": {
     "description": "Above the result of a free run."
+  },
+  "runNotLogged": "NOT LOGGED",
+  "@runNotLogged": {
+    "description": "Above the result of a free run that was too short to be saved."
+  },
+  "runTooShort": "Too short to log: under a minute and under {distance}. It is not in your run log.",
+  "@runTooShort": {
+    "description": "On the summary of a run too short to be saved — a minute and the given distance are the minimum. Without it the run silently never appears in the log.",
+    "placeholders": {
+      "distance": {
+        "type": "String",
+        "example": "0.10 km"
+      }
+    }
   },
   "sectionPursuits": "PURSUITS",
   "@sectionPursuits": {

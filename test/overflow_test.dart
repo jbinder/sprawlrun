@@ -11,6 +11,7 @@ import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/pack_strings.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
 import 'package:sprawl_run/models/run_record.dart';
+import 'package:sprawl_run/util/format.dart';
 import 'package:sprawl_run/screens/history_screen.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/screens/mission_debrief_screen.dart';
@@ -208,6 +209,12 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
       engine: engine,
       delegates: delegates,
     );
+    // Still too short to log, which the abort dialog says instead.
+    await tester.tap(find.text(l10n.abort.toUpperCase()));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(l10n.abortBodyTooShort(Fmt.distanceWithUnit(100, state.profile.units))), findsOneWidget);
+    await tester.tap(find.text(l10n.keepGoing.toUpperCase()));
+    await tester.pump(const Duration(milliseconds: 300));
     for (var i = 0; i < 120; i++) {
       now = now.add(const Duration(seconds: 1));
       steps.take(3);
@@ -233,6 +240,22 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
     }
+  });
+
+  testWidgets('run summary, too short to log', (tester) async {
+    final state = await seed(tester, logicalSize: narrow);
+    final report = RunOutcomeReport(
+      record: run(
+        at: DateTime(2026, 7, 27, 21, 14),
+        meters: 90,
+        seconds: 40,
+        outcome: RunOutcome.discarded,
+        steps: 80,
+        estimatedMeters: 90,
+      ),
+    );
+    await pumpShowcase(tester, RunSummaryScreen(report: report, mission: null), state, delegates: delegates);
+    expect(find.text(l10n.runTooShort(Fmt.distanceWithUnit(100, state.profile.units))), findsOneWidget);
   });
 
   testWidgets('run detail', (tester) async {

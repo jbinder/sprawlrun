@@ -60,7 +60,9 @@ void main() {
   test('with no GPS at all, a treadmill run still covers its distance, from steps', () {
     fakeAsync((fake) {
       final run = begin(fake, goal: const RunGoal(GoalType.distance, 1000));
+      expect(run.engine.tooShortToLog, isTrue, reason: 'ending now would save nothing');
       go(fake, run, 300); // 180 steps a minute: running
+      expect(run.engine.tooShortToLog, isFalse);
       expect(run.engine.distanceEstimated, isTrue);
       expect(run.engine.goalReached, isTrue, reason: 'a distance target is reachable on a treadmill');
 

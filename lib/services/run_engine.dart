@@ -289,6 +289,11 @@ class RunEngine extends ChangeNotifier {
 
   double get remaining => goal.remaining(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters);
 
+  /// Ending now would leave nothing in the run log. See
+  /// [RunRecord.tooShortToLog].
+  bool get tooShortToLog =>
+      !goalReached && RunRecord.tooShortToLog(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters);
+
   /// See [RunRecord.distanceEstimated].
   bool get distanceEstimated => RunRecord.isEstimate(estimatedMeters, distanceMeters);
 
@@ -412,7 +417,9 @@ class RunEngine extends ChangeNotifier {
   RunRecord _record({required double elapsed}) {
     final outcome = goalReached
         ? RunOutcome.success
-        : (elapsed < 60 && distanceMeters < 100 ? RunOutcome.discarded : RunOutcome.failed);
+        : (RunRecord.tooShortToLog(elapsedSeconds: elapsed, distanceMeters: distanceMeters)
+              ? RunOutcome.discarded
+              : RunOutcome.failed);
 
     return RunRecord(
       id: '${startedAt?.microsecondsSinceEpoch ?? _now().microsecondsSinceEpoch}',

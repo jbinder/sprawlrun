@@ -123,6 +123,8 @@ void main() {
     test('short duration reads naturally either side of an hour', () {
       expect(Fmt.shortDuration(1800), '30m');
       expect(Fmt.shortDuration(4320), '1h 12m');
+      expect(Fmt.shortDuration(27), '27s', reason: 'not 0m, as if nothing happened');
+      expect(Fmt.shortDuration(0), '0m');
     });
 
     test('countdown degrades from days to minutes', () {

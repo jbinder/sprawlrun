@@ -247,7 +247,7 @@ class _RunScreenState extends State<RunScreen> {
     if (!confirmed && !engine.goalReached) {
       final abandon = await showDialog<bool>(
         context: context,
-        builder: (context) => _AbortDialog(mission: widget.mission),
+        builder: (context) => _AbortDialog(mission: widget.mission, tooShort: engine.tooShortToLog),
       );
       if (abandon != true || !mounted) return;
     }
@@ -831,9 +831,13 @@ class _Controls extends StatelessWidget {
 }
 
 class _AbortDialog extends StatelessWidget {
-  const _AbortDialog({required this.mission});
+  const _AbortDialog({required this.mission, required this.tooShort});
 
   final Mission? mission;
+
+  /// Ending now saves nothing, which is what the runner needs to be told
+  /// rather than that the run will be logged as failed.
+  final bool tooShort;
 
   @override
   Widget build(BuildContext context) {
@@ -849,7 +853,11 @@ class _AbortDialog extends StatelessWidget {
             Text(L.of(context).abortTitle, style: CyType.display(size: 18, color: Cy.magenta)),
             const SizedBox(height: 12),
             Text(
-              mission == null
+              tooShort
+                  ? L.of(context).abortBodyTooShort(
+                      Fmt.distanceWithUnit(100, context.read<AppState>().profile.units),
+                    )
+                  : mission == null
                   ? L.of(context).abortBodyFree
                   : L.of(context).abortBodyMission(mission!.codename),
               style: CyType.body(size: 15, color: Cy.inkDim, height: 1.35),

@@ -81,7 +81,7 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                         children: [
                           Text(
                             mission == null
-                                ? L.of(context).runLogged
+                                ? (record.countsForStats ? L.of(context).runLogged : L.of(context).runNotLogged)
                                 : L.of(context).operationNumber(mission!.order.toString().padLeft(2, '0')),
                             style: CyType.label(size: 10, color: Cy.inkDim),
                           ),
@@ -106,6 +106,28 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
 
                           _SummaryGrid(record: record, units: units),
                           const SizedBox(height: 16),
+
+                          // Otherwise it just never shows up in the log, which
+                          // reads as a bug — as it did to the first runner to
+                          // try a quick test.
+                          if (!record.countsForStats) ...[
+                            NeonPanel(
+                              accent: Cy.amber,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.info_outline, size: 18, color: Cy.amber),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      L.of(context).runTooShort(Fmt.distanceWithUnit(100, units)),
+                                      style: CyType.body(size: 15),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
 
                           if (record.trace.length > 1) ...[
                             SectionHeader(L.of(context).sectionRoute),

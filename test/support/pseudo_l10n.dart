@@ -909,6 +909,9 @@ class PseudoL extends L {
   String get abortBodyFree => pseudo(_en.abortBodyFree);
 
   @override
+  String abortBodyTooShort(String distance) => pseudo(_en.abortBodyTooShort(distance));
+
+  @override
   String abortBodyMission(String mission) => pseudo(_en.abortBodyMission(mission));
 
   @override
@@ -916,6 +919,12 @@ class PseudoL extends L {
 
   @override
   String get runLogged => pseudo(_en.runLogged);
+
+  @override
+  String get runNotLogged => pseudo(_en.runNotLogged);
+
+  @override
+  String runTooShort(String distance) => pseudo(_en.runTooShort(distance));
 
   @override
   String get sectionPursuits => pseudo(_en.sectionPursuits);

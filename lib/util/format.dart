@@ -15,8 +15,10 @@ abstract final class Fmt {
     return h > 0 ? '$h:$mm:$ss' : '$mm:$ss';
   }
 
-  /// Compact duration for lists: `48m`, `1h 12m`.
+  /// Compact duration for lists: `48m`, `1h 12m` — and `27s` under a minute,
+  /// where `0m` would claim nothing happened.
   static String shortDuration(double seconds) {
+    if (seconds > 0 && seconds < 59.5) return '${seconds.round()}s';
     final minutes = (seconds / 60).round();
     if (minutes < 60) return '${minutes}m';
     return '${minutes ~/ 60}h ${(minutes % 60).toString().padLeft(2, '0')}m';

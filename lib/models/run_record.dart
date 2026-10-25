@@ -167,6 +167,12 @@ class RunRecord {
   bool get isSuccess => outcome == RunOutcome.success;
   bool get countsForStats => outcome != RunOutcome.discarded;
 
+  /// Too little to be worth logging: an accidental start, discarded so it
+  /// cannot pollute stats or streaks. One rule for the run and the dialogs
+  /// that warn about it.
+  static bool tooShortToLog({required double elapsedSeconds, required double distanceMeters}) =>
+      elapsedSeconds < 60 && distanceMeters < 100;
+
   double get km => distanceMeters / 1000.0;
 
   /// Seconds per kilometre, based on moving time. Zero-distance runs report 0

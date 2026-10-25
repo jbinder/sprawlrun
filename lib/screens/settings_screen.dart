@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/profile.dart';
+import '../models/stride.dart';
 import '../services/app_version.dart';
 import '../services/stats_service.dart';
 import '../state/app_state.dart';
@@ -67,6 +68,17 @@ class SettingsScreen extends StatelessWidget {
                             onIncrease: () =>
                                 update(profile.copyWith(weightKg: (profile.weightKg + 1).clamp(30, 200))),
                           ),
+                          // Only for turning steps into distance, so only
+                          // asked of a runner who counts them.
+                          if (profile.countSteps) ...[
+                            const _Rule(),
+                            _StepperRow(
+                              label: l.settingHeight,
+                              value: Fmt.height(profile.heightCm, profile.units),
+                              onDecrease: () => update(profile.copyWith(heightCm: _nextHeight(profile, -1))),
+                              onIncrease: () => update(profile.copyWith(heightCm: _nextHeight(profile, 1))),
+                            ),
+                          ],
                           const _Rule(),
                           _PickerRow<String>(
                             label: l.settingLanguage,
@@ -720,6 +732,15 @@ class _PickerRow<T> extends StatelessWidget {
     );
     if (picked != null && picked != value) onChanged(picked);
   }
+}
+
+/// One step of the height stepper: a centimetre, or an inch in imperial
+/// units. Starts from [Stride.defaultHeightCm] when no height is given yet.
+double _nextHeight(Profile profile, int direction) {
+  final current = profile.heightCm > 0 ? profile.heightCm : Stride.defaultHeightCm;
+  if (profile.heightCm <= 0) return current;
+  final step = profile.units == UnitSystem.metric ? 1.0 : 2.54;
+  return (current + direction * step).clamp(100, 230).toDouble();
 }
 
 class _StepperRow extends StatelessWidget {

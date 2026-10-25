@@ -7,6 +7,7 @@ import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../models/run_record.dart';
+import '../models/stride.dart';
 import 'energy.dart';
 import 'geo.dart';
 import 'location_service.dart';
@@ -162,12 +163,23 @@ class RunEngine extends ChangeNotifier {
   /// under one.
   static const Duration steppingWithin = Duration(seconds: 3);
 
+  /// No fix for this long, and distance is counted from steps instead. GPS
+  /// reports every second; a few missed are a gap, not a reason to estimate.
+  static const Duration estimateAfter = Duration(seconds: 5);
+
+  /// The span of step readings cadence is judged over, to tell walking steps
+  /// from running ones.
+  static const Duration cadenceWindow = Duration(seconds: 10);
+
   // -- state ----------------------------------------------------------------
 
   RunPhase phase = RunPhase.idle;
   Mission? mission;
   RunGoal goal = RunGoal.defaultGoal;
   Profile profile = const Profile();
+
+  /// Turns steps into distance while there is no GPS. Given at [start].
+  Stride stride = Stride.of(const []);
 
   DateTime? startedAt;
   double distanceMeters = 0;
@@ -177,6 +189,13 @@ class RunEngine extends ChangeNotifier {
   /// Steps this run, or null when nothing is counting them: step counting is
   /// off, or the counter reported it cannot. See [RunRecord.steps].
   int? steps;
+
+  /// The part of [distanceMeters] counted from steps. See
+  /// [RunRecord.estimatedMeters].
+  double estimatedMeters = 0;
+
+  /// Stride measured this run, from the seconds with GPS and steps together.
+  StrideSample strides = const StrideSample();
 
   /// True once the target has been met. The run may continue afterwards.
   bool goalReached = false;
@@ -239,6 +258,18 @@ class RunEngine extends ChangeNotifier {
   int? _stepTotal;
   DateTime? _lastStepAt;
 
+  /// Recent readings as (when, steps this run), for [_cadence].
+  final List<(DateTime, int)> _stepTimes = [];
+
+  /// Steps since the last fix, so an estimate that starts after
+  /// [estimateAfter] still covers the seconds before it.
+  int _stepsSinceFix = 0;
+
+  /// Distance is being counted from steps; the next fix starts the GPS over
+  /// from where it is rather than adding the straight line across the gap.
+  bool _estimating = false;
+  int _stepsAtLastTick = 0;
+
   Timer? _ticker;
   StreamSubscription<GeoFix>? _fixSub;
   StreamSubscription<int>? _stepSub;
@@ -258,6 +289,9 @@ class RunEngine extends ChangeNotifier {
 
   double get remaining => goal.remaining(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters);
 
+  /// See [RunRecord.distanceEstimated].
+  bool get distanceEstimated => RunRecord.isEstimate(estimatedMeters, distanceMeters);
+
   /// Seconds per kilometre over the whole run so far.
   double get paceSecondsPerKm => distanceMeters < 20 ? 0 : elapsedSeconds / (distanceMeters / 1000.0);
 
@@ -274,12 +308,18 @@ class RunEngine extends ChangeNotifier {
 
   // -- lifecycle ------------------------------------------------------------
 
-  Future<LocationReadiness> start({Mission? mission, required RunGoal goal, required Profile profile}) async {
+  Future<LocationReadiness> start({
+    Mission? mission,
+    required RunGoal goal,
+    required Profile profile,
+    Stride? stride,
+  }) async {
     if (isActive) return LocationReadiness.ready;
 
     this.mission = mission;
     this.goal = goal;
     this.profile = profile;
+    this.stride = stride ?? Stride.of(const [], heightCm: profile.heightCm);
 
     _reset();
 
@@ -391,6 +431,8 @@ class RunEngine extends ChangeNotifier {
       chasesEvaded: chasesEvaded,
       beatsHeard: beatsHeard,
       steps: steps,
+      estimatedMeters: estimatedMeters,
+      strides: strides.isEmpty ? null : strides,
       story: List.unmodifiable(story),
       trace: List.unmodifiable(trace),
     );
@@ -415,6 +457,12 @@ class RunEngine extends ChangeNotifier {
     steps = null;
     _stepTotal = null;
     _lastStepAt = null;
+    estimatedMeters = 0;
+    strides = const StrideSample();
+    _stepTimes.clear();
+    _stepsSinceFix = 0;
+    _estimating = false;
+    _stepsAtLastTick = 0;
     goalReached = false;
     activeChase = null;
     currentBeat = null;
@@ -493,10 +541,55 @@ class RunEngine extends ChangeNotifier {
     if (phase != RunPhase.running && phase != RunPhase.autoPaused) return;
 
     final wasStepping = _stepping;
-    steps = (steps ?? 0) + (total - previous);
+    final taken = total - previous;
+    steps = (steps ?? 0) + taken;
     _lastStepAt = _now();
+    _stepTimes.add((_lastStepAt!, steps!));
+    while (_lastStepAt!.difference(_stepTimes.first.$1) > cadenceWindow) {
+      _stepTimes.removeAt(0);
+    }
     if (phase == RunPhase.autoPaused && wasStepping) resume();
+    _stepsSinceFix += taken;
+    if (!_gpsFresh) _estimateFromSteps();
     notifyListeners();
+  }
+
+  /// Steps per minute over the last few readings, or 0 before there are two.
+  double get _cadence {
+    if (_stepTimes.length < 2) return 0;
+    final (from, atFrom) = _stepTimes.first;
+    final (to, atTo) = _stepTimes.last;
+    final seconds = to.difference(from).inMilliseconds / 1000;
+    return seconds < 2 ? 0 : (atTo - atFrom) / seconds * 60;
+  }
+
+  /// A fix arrived within [estimateAfter]. Never true before the first fix —
+  /// a treadmill run with no GPS at all is counted from steps throughout.
+  bool get _gpsFresh {
+    final at = _lastFixAt;
+    return at != null && _now().difference(at) < estimateAfter;
+  }
+
+  /// Counts the steps since the last fix as distance, at the stride for the
+  /// current cadence — so a run without GPS still moves the goal, the chases
+  /// and the splits, rather than standing at zero.
+  void _estimateFromSteps() {
+    final taken = _stepsSinceFix;
+    _stepsSinceFix = 0;
+    if (taken <= 0) return;
+    _estimating = true;
+    final cadence = _cadence;
+    // The first readings come before there is a cadence to go by; a stride
+    // between the two is the least wrong for them.
+    final perStep = cadence > 0 ? stride.at(cadence) : (stride.walk + stride.run) / 2;
+    final meters = taken * perStep;
+    distanceMeters += meters;
+    estimatedMeters += meters;
+    if (cadence > 0) {
+      final speed = perStep * cadence / 60;
+      smoothedSpeed = smoothedSpeed == 0 ? speed : smoothedSpeed * 0.6 + speed * 0.4;
+    }
+    activeChase?.covered = distanceMeters - activeChase!.startDistance;
   }
 
   // -- position -------------------------------------------------------------
@@ -529,9 +622,19 @@ class RunEngine extends ChangeNotifier {
     }
     if (fix.accuracy > maxAcceptableAccuracy) return;
     _lastFixAt = _now();
+    _stepsSinceFix = 0;
 
     if (phase != RunPhase.running && phase != RunPhase.autoPaused) {
       _lastFix = fix;
+      return;
+    }
+
+    // Back from a stretch counted in steps: those already covered the gap,
+    // and the straight line from the last fix would count it twice.
+    if (_estimating) {
+      _estimating = false;
+      _lastFix = fix;
+      _addTracePoint(fix);
       return;
     }
 
@@ -604,6 +707,7 @@ class RunEngine extends ChangeNotifier {
       if (distanceMeters - _distanceAtLastTick < 0.5) {
         smoothedSpeed = max(0, smoothedSpeed - speedDecayPerSecond);
       }
+      _learnStride();
       _distanceAtLastTick = distanceMeters;
     }
 
@@ -628,6 +732,17 @@ class RunEngine extends ChangeNotifier {
     _maybeFireBeat();
     _maybeReadSplit();
     notifyListeners();
+  }
+
+  /// Adds the last second to [strides] when it had both steps and GPS to
+  /// measure them against. Seconds counted from steps teach nothing.
+  void _learnStride() {
+    final now = steps ?? 0;
+    final taken = now - _stepsAtLastTick;
+    _stepsAtLastTick = now;
+    if (taken <= 0 || _estimating || !_gpsFresh) return;
+    final meters = distanceMeters - _distanceAtLastTick;
+    strides = strides.add(running: _cadence >= Stride.runningCadence, steps: taken, meters: meters);
   }
 
   /// Reads out each kilometre (or mile) as the run passes it.

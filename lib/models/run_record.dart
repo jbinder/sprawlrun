@@ -1,4 +1,5 @@
 import 'goal.dart';
+import 'stride.dart';
 
 enum RunOutcome {
   /// Goal met and the runner closed the mission out.
@@ -98,6 +99,8 @@ class RunRecord {
     this.chasesEvaded = 0,
     this.beatsHeard = 0,
     this.steps,
+    this.estimatedMeters = 0,
+    this.strides,
     this.story = const [],
     this.trace = const [],
   });
@@ -134,6 +137,25 @@ class RunRecord {
   /// Average steps per minute of moving time, or null without [steps] or
   /// without a minute to average over.
   double? get cadence => steps == null || movingSeconds < 60 ? null : steps! / (movingSeconds / 60);
+
+  /// The part of [distanceMeters] counted from steps, because the GPS had
+  /// nothing to give then — a treadmill, a tunnel, a run indoors.
+  final double estimatedMeters;
+
+  /// What this run measured about the runner's stride, for [Stride.of]. Null
+  /// without steps, or without a second of GPS and steps together.
+  final StrideSample? strides;
+
+  /// Enough of the distance came from steps that it is shown as an estimate
+  /// (`≈`), and the run's pace is no record. It still counts for totals,
+  /// streaks and its goal: the runner did cover about that far.
+  bool get distanceEstimated => isEstimate(estimatedMeters, distanceMeters);
+
+  /// The rule for [distanceEstimated], shared with the run in progress: a
+  /// tenth from steps, so the seconds before the first fix of an outdoor run
+  /// do not mark it.
+  static bool isEstimate(double estimatedMeters, double distanceMeters) =>
+      estimatedMeters > 0 && estimatedMeters >= distanceMeters * 0.1;
 
   /// Everything that happened, in order. Empty for runs recorded before this
   /// existed, and for free runs, which have no story.
@@ -184,6 +206,8 @@ class RunRecord {
     chasesEvaded: chasesEvaded,
     beatsHeard: beatsHeard,
     steps: steps,
+    estimatedMeters: estimatedMeters,
+    strides: strides,
     story: story,
     trace: trace ?? this.trace,
   );
@@ -205,6 +229,8 @@ class RunRecord {
     'chasesEvaded': chasesEvaded,
     'beatsHeard': beatsHeard,
     if (steps != null) 'steps': steps,
+    if (estimatedMeters > 0) 'estimatedMeters': estimatedMeters,
+    if (strides case final s? when !s.isEmpty) 'strides': s.toJson(),
     if (story.isNotEmpty) 'story': story.map((e) => e.toJson()).toList(),
     'trace': trace.map((p) => p.toJson()).toList(),
   };
@@ -226,6 +252,8 @@ class RunRecord {
     chasesEvaded: (json['chasesEvaded'] as num?)?.toInt() ?? 0,
     beatsHeard: (json['beatsHeard'] as num?)?.toInt() ?? 0,
     steps: (json['steps'] as num?)?.toInt(),
+    estimatedMeters: (json['estimatedMeters'] as num?)?.toDouble() ?? 0,
+    strides: json['strides'] is Map ? StrideSample.fromJson(Map<String, dynamic>.from(json['strides'] as Map)) : null,
     story: (json['story'] as List? ?? [])
         .map((e) => StoryEvent.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),

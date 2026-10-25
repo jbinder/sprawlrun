@@ -37,7 +37,7 @@ TODO LO QUE HACE
 - Distancia, tiempo, calorías y misiones superadas por semana y por mes, con barras diarias y tu registro completo de carreras
 - La vista larga: semanas y meses anteriores, distancia por mes desde tu primera carrera, cada día que corriste en un calendario de puntos
 - Calorías calculadas con las ecuaciones metabólicas del ACSM y tu peso real, no con un multiplicador inventado
-- Conteo de pasos opcional: pasos y cadencia de cada carrera, y tiempo en movimiento cuando falla el GPS. Desactivado salvo que lo actives, que es el único momento en que se pide el permiso de actividad física de Android
+- Conteo de pasos opcional: pasos y cadencia de cada carrera, tiempo en movimiento cuando falla el GPS, y distancia a partir de los pasos donde no hay GPS, como en una cinta de correr, con una zancada aprendida de tus propias carreras. Desactivado salvo que lo actives, que es el único momento en que se pide el permiso de actividad física de Android
 - Cuarenta y ocho entradas del códice, cada una se desbloquea solo cuando un personaje la ha mencionado: no se puede leer por adelantado
 - Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio
 - Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd

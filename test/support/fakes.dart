@@ -6,6 +6,7 @@ import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
+import 'package:sprawl_run/models/stride.dart';
 import 'package:sprawl_run/services/geo.dart';
 import 'package:sprawl_run/services/location_service.dart';
 import 'package:sprawl_run/services/narrator.dart';
@@ -168,6 +169,8 @@ RunRecord run({
   double calories = 300,
   int beatsHeard = 0,
   int? steps,
+  double estimatedMeters = 0,
+  StrideSample? strides,
   List<StoryEvent> story = const [],
 }) => RunRecord(
   id: at.microsecondsSinceEpoch.toString(),
@@ -185,5 +188,7 @@ RunRecord run({
   chasesEvaded: chasesEvaded,
   beatsHeard: beatsHeard,
   steps: steps,
+  estimatedMeters: estimatedMeters,
+  strides: strides,
   story: story,
 );

@@ -840,6 +840,15 @@ class PseudoL extends L {
   String get settingCountStepsHint => pseudo(_en.settingCountStepsHint);
 
   @override
+  String get settingHeight => pseudo(_en.settingHeight);
+
+  @override
+  String get distanceFromSteps => pseudo(_en.distanceFromSteps);
+
+  @override
+  String get locationFromSteps => pseudo(_en.locationFromSteps);
+
+  @override
   String get countStepsDenied => pseudo(_en.countStepsDenied);
 
   @override

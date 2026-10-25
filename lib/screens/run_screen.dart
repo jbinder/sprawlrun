@@ -94,6 +94,7 @@ class _RunScreenState extends State<RunScreen> {
       mission: widget.mission,
       goal: widget.goal,
       profile: app.profile,
+      stride: app.stride,
     );
     // Disposed mid-start: dispose has already stopped the service, so there is
     // nothing left to promote or listen to.
@@ -291,7 +292,8 @@ class _RunScreenState extends State<RunScreen> {
             child: Column(
               children: [
                 _RunHeader(engine: engine, mission: widget.mission),
-                if (_locationTrouble != null) _LocationWarning(readiness: _locationTrouble!),
+                if (_locationTrouble != null)
+                  _LocationWarning(readiness: _locationTrouble!, countingSteps: engine.steps != null),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
@@ -388,13 +390,16 @@ class _RunHeader extends StatelessWidget {
 }
 
 class _LocationWarning extends StatelessWidget {
-  const _LocationWarning({required this.readiness});
+  const _LocationWarning({required this.readiness, required this.countingSteps});
 
   final LocationReadiness readiness;
+  final bool countingSteps;
 
   @override
   Widget build(BuildContext context) {
-    final message = switch (readiness) {
+    // Counting steps, the run still has a distance, just an estimated one —
+    // which is what the runner needs to hear instead of "none".
+    final message = countingSteps ? L.of(context).locationFromSteps : switch (readiness) {
       LocationReadiness.serviceDisabled => L.of(context).locationServiceOff,
       LocationReadiness.denied => L.of(context).locationDenied,
       LocationReadiness.deniedForever => L.of(context).locationDeniedForever,
@@ -415,7 +420,7 @@ class _LocationWarning extends StatelessWidget {
           const SizedBox(width: 9),
           Expanded(
             child: Text(
-              '$message ${L.of(context).locationTimeStillWorks}',
+              countingSteps ? message : '$message ${L.of(context).locationTimeStillWorks}',
               style: CyType.body(size: 13, color: Cy.amber),
             ),
           ),
@@ -463,10 +468,10 @@ class _PrimaryReadout extends StatelessWidget {
     final isTime = engine.goal.isTime;
     final primary = isTime
         ? Fmt.clock(engine.elapsedSeconds)
-        : Fmt.distance(engine.distanceMeters, units);
+        : Fmt.distance(engine.distanceMeters, units, estimated: engine.distanceEstimated);
     final primaryUnit = isTime ? '' : Fmt.distanceUnit(units);
     final secondary = isTime
-        ? '${Fmt.distance(engine.distanceMeters, units)} ${Fmt.distanceUnit(units)}'
+        ? Fmt.distanceWithUnit(engine.distanceMeters, units, estimated: engine.distanceEstimated)
         : Fmt.clock(engine.elapsedSeconds);
 
     return GoalRing(

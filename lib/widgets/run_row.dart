@@ -48,7 +48,7 @@ class RunRow extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(Fmt.distanceWithUnit(run.distanceMeters, units), style: CyType.readout(15, Cy.ink)),
+              Text(Fmt.distanceWithUnit(run.distanceMeters, units, estimated: run.distanceEstimated), style: CyType.readout(15, Cy.ink)),
               const SizedBox(height: 3),
               Text(Fmt.clock(run.elapsedSeconds), style: CyType.mono(size: 11, color: Cy.inkDim)),
             ],

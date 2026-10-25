@@ -1380,9 +1380,21 @@
   "@settingCountSteps": {
     "description": "Setting: count steps during runs with the phone's step sensor. Off by default."
   },
-  "settingCountStepsHint": "Steps and cadence for each run, and moving time when GPS drops out. Asks for Android's physical-activity permission.",
+  "settingCountStepsHint": "Steps and cadence for each run, and distance from steps when there is no GPS, as on a treadmill. Asks for Android's physical-activity permission.",
   "@settingCountStepsHint": {
     "description": "Explains the Count steps setting under its switch."
+  },
+  "settingHeight": "Height",
+  "@settingHeight": {
+    "description": "Setting: the runner's body height. Shown only while Count steps is on; used to guess stride length until the runner's own runs have measured it."
+  },
+  "distanceFromSteps": "FROM STEPS",
+  "@distanceFromSteps": {
+    "description": "Tag on a run whose distance was mostly estimated from steps because there was no GPS (treadmill, indoors). The distance is shown with ≈."
+  },
+  "locationFromSteps": "No GPS. Distance is estimated from your steps until it is back.",
+  "@locationFromSteps": {
+    "description": "Warning on the run screen when location is unavailable but steps are being counted, so distance continues as an estimate."
   },
   "countStepsDenied": "Counting steps needs Android's physical-activity permission, so it stays off.",
   "@countStepsDenied": {

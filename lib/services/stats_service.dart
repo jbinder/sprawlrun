@@ -103,8 +103,9 @@ abstract final class StatsService {
 
     var bestPace = 0.0;
     for (final r in scoring) {
-      // Only runs of 3 km+ qualify — a 400 m sprint is not a pace record.
-      if (r.distanceMeters >= 3000 && r.paceSecondsPerKm > 0) {
+      // Only runs of 3 km+ qualify — a 400 m sprint is not a pace record —
+      // and only measured ones: a stride guessed a little long is no record.
+      if (r.distanceMeters >= 3000 && r.paceSecondsPerKm > 0 && !r.distanceEstimated) {
         bestPace = bestPace == 0 ? r.paceSecondsPerKm : min(bestPace, r.paceSecondsPerKm);
       }
     }

@@ -22,19 +22,21 @@ abstract final class Fmt {
     return '${minutes ~/ 60}h ${(minutes % 60).toString().padLeft(2, '0')}m';
   }
 
-  static String distance(double meters, UnitSystem units) {
+  /// [estimated] marks a distance counted from steps with `≈`.
+  static String distance(double meters, UnitSystem units, {bool estimated = false}) {
+    final mark = estimated ? '≈' : '';
     if (units == UnitSystem.imperial) {
       final miles = meters / 1609.344;
-      return miles < 10 ? miles.toStringAsFixed(2) : miles.toStringAsFixed(1);
+      return '$mark${miles < 10 ? miles.toStringAsFixed(2) : miles.toStringAsFixed(1)}';
     }
     final km = meters / 1000;
-    return km < 10 ? km.toStringAsFixed(2) : km.toStringAsFixed(1);
+    return '$mark${km < 10 ? km.toStringAsFixed(2) : km.toStringAsFixed(1)}';
   }
 
   static String distanceUnit(UnitSystem units) => units == UnitSystem.imperial ? 'mi' : 'km';
 
-  static String distanceWithUnit(double meters, UnitSystem units) =>
-      '${distance(meters, units)} ${distanceUnit(units)}';
+  static String distanceWithUnit(double meters, UnitSystem units, {bool estimated = false}) =>
+      '${distance(meters, units, estimated: estimated)} ${distanceUnit(units)}';
 
   /// `5:42` per km (or per mile). Returns `--:--` when there is no useful pace.
   static String pace(double secondsPerKm, UnitSystem units) {
@@ -60,6 +62,14 @@ abstract final class Fmt {
       buf.write(s[i]);
     }
     return buf.toString();
+  }
+
+  /// `178 cm`, or `5′10″` in imperial units; a dash when not given.
+  static String height(double cm, UnitSystem units) {
+    if (cm <= 0) return '—';
+    if (units == UnitSystem.metric) return '${cm.round()} cm';
+    final inches = (cm / 2.54).round();
+    return '${inches ~/ 12}′${inches % 12}″';
   }
 
   static String weight(double kg, UnitSystem units) =>

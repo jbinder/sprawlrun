@@ -176,6 +176,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                         ),
                         CyberTag(L.of(context).targetTag(run.goal.toString()), color: Cy.ghost),
                         if (run.isTimeOnly) CyberTag(L.of(context).timeOnly, color: Cy.amber),
+                        if (run.distanceEstimated) CyberTag(L.of(context).distanceFromSteps, color: Cy.amber),
                       ],
                     ),
                     const SizedBox(height: 18),
@@ -187,7 +188,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                               Expanded(
                                 child: StatTile(
                                   label: L.of(context).statDistance,
-                                  value: Fmt.distance(run.distanceMeters, units),
+                                  value: Fmt.distance(run.distanceMeters, units, estimated: run.distanceEstimated),
                                   unit: Fmt.distanceUnit(units),
                                   accent: Cy.cyan,
                                 ),

@@ -21,6 +21,7 @@ import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
+import 'package:sprawl_run/services/location_service.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/util/clock.dart';
 import 'package:sprawl_run/widgets/unlock_reveal.dart';
@@ -189,11 +190,38 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     await tester.pump(const Duration(minutes: 2));
   });
 
+  testWidgets('run screen, on a treadmill', (tester) async {
+    final state = await seed(tester, logicalSize: narrow);
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(countSteps: true)));
+    var now = DateTime(2026, 7, 27, 21, 14);
+    final steps = FakeSteps();
+    final engine = RunEngine(
+      narrator: FakeNarrator(),
+      location: FakeLocation(readiness: LocationReadiness.gpsDisabled),
+      stepSource: steps,
+      clock: () => now,
+    );
+    await pumpShowcase(
+      tester,
+      RunScreen(mission: state.currentMission!.mission, goal: const RunGoal(GoalType.distance, 5000)),
+      state,
+      engine: engine,
+      delegates: delegates,
+    );
+    for (var i = 0; i < 120; i++) {
+      now = now.add(const Duration(seconds: 1));
+      steps.take(3);
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(engine.distanceEstimated, isTrue, reason: 'the ≈ distance and the steps warning are on screen');
+    await tester.pump(const Duration(minutes: 2));
+  });
+
   testWidgets('run summary and its reveal', (tester) async {
     final state = await seed(tester, logicalSize: narrow);
     final mission = state.currentMission!.mission;
     final report = RunOutcomeReport(
-      record: run(at: DateTime(2026, 7, 27, 21, 14), meters: 8200, seconds: 2700, missionId: mission.id, steps: 7950),
+      record: run(at: DateTime(2026, 7, 27, 21, 14), meters: 8200, seconds: 2700, missionId: mission.id, steps: 7950, estimatedMeters: 8200),
       newAchievements: [kAchievements.firstWhere((a) => a.tier == AchTier.legend)],
       codexRecovered: mission.codex.take(1).toList(),
       missionUnlocked: 'COOLING LOOP',
@@ -209,7 +237,11 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
 
   testWidgets('run detail', (tester) async {
     final state = await seed(tester, logicalSize: tall);
-    final counted = RunRecord.fromJson(state.runLog.first.toJson()..['steps'] = 7950);
+    final counted = RunRecord.fromJson(
+      state.runLog.first.toJson()
+        ..['steps'] = 7950
+        ..['estimatedMeters'] = state.runLog.first.distanceMeters,
+    );
     await pumpShowcase(tester, RunDetailScreen(run: counted), state, delegates: delegates);
     for (var i = 0; i < 40 && find.text(l10n.loadingTrace).evaluate().isNotEmpty; i++) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
@@ -242,6 +274,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
         state.profile.copyWith(
           signals: state.profile.signals.copyWith(remindersEnabled: true, ambientPerWeek: 4),
           lastExportAt: DateTime(2026, 8, 1),
+          countSteps: true,
+          heightCm: 183,
         ),
       ),
     );

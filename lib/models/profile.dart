@@ -205,6 +205,7 @@ class Profile {
     this.callsign = 'RUNNER',
     this.language = '',
     this.weightKg = 72,
+    this.heightCm = 0,
     this.units = UnitSystem.metric,
     this.streakGoal = const StreakGoal(),
     this.streakGoalChanges = const [],
@@ -242,6 +243,12 @@ class Profile {
   String? get languageCode => language.isEmpty ? null : language;
 
   final double weightKg;
+
+  /// The runner's height, or 0 when not given — 0 rather than null so
+  /// [copyWith] can set it back. Used only for a first guess at stride length
+  /// (`Stride.of`) until the runner's own runs have measured it.
+  final double heightCm;
+
   final UnitSystem units;
   final StreakGoal streakGoal;
 
@@ -356,6 +363,7 @@ class Profile {
     String? callsign,
     String? language,
     double? weightKg,
+    double? heightCm,
     UnitSystem? units,
     StreakGoal? streakGoal,
     List<StreakGoalChange>? streakGoalChanges,
@@ -386,6 +394,7 @@ class Profile {
     callsign: callsign ?? this.callsign,
     language: language ?? this.language,
     weightKg: weightKg ?? this.weightKg,
+    heightCm: heightCm ?? this.heightCm,
     units: units ?? this.units,
     streakGoal: streakGoal ?? this.streakGoal,
     streakGoalChanges: streakGoalChanges ?? this.streakGoalChanges,
@@ -418,6 +427,7 @@ class Profile {
     'callsign': callsign,
     if (language.isNotEmpty) 'language': language,
     'weightKg': weightKg,
+    if (heightCm > 0) 'heightCm': heightCm,
     'units': units.name,
     'streakGoal': streakGoal.toJson(),
     'streakGoalChanges': [for (final c in streakGoalChanges) c.toJson()],
@@ -450,6 +460,7 @@ class Profile {
     callsign: json['callsign'] as String? ?? 'RUNNER',
     language: json['language'] as String? ?? '',
     weightKg: (json['weightKg'] as num?)?.toDouble() ?? 72,
+    heightCm: (json['heightCm'] as num?)?.toDouble() ?? 0,
     units: UnitSystem.values.firstWhere((u) => u.name == json['units'], orElse: () => UnitSystem.metric),
     streakGoal: json['streakGoal'] == null
         ? const StreakGoal()

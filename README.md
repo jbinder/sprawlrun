@@ -205,6 +205,9 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Optional step counting from the phone's own step sensor: steps and cadence per run,
   and moving time that keeps counting when the GPS drops out. Off by default, since it
   needs Android's physical-activity permission, which is asked for only when you turn it on
+- Distance from steps where there is no GPS — a treadmill, a tunnel, a run indoors — at
+  a stride learned from your own runs with GPS, starting from your height until it has
+  measured enough. Marked `≈`, and never a pace record
 - Route drawn as a neon trace, replayed at the pace you actually ran it
 
 **Progress**
@@ -287,7 +290,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 591 tests
+flutter test                   # 603 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -366,6 +369,14 @@ Some notes on the shape of it:
   advancing it, so slow movement accumulates instead of being thrown away;
   physically impossible jumps are rejected until several in a row suggest the
   device really did move.
+- **Distance from steps is a fallback, and says so.** Steps become distance only
+  after five seconds without a fix, and the first fix back starts the GPS over
+  from where it is rather than adding the straight line across the gap. The
+  stride is derived like everything else: each run stores what it measured —
+  steps and GPS distance over the same seconds, split into walking and running
+  by cadence — and the last 30 runs give the stride, with height only as the
+  first guess. A run with a tenth or more of its distance from steps shows it
+  as `≈` and sets no pace record; it has no trace to draw.
 - **Auto-pause requires a live GPS.** With no fixes arriving there is no way to
   tell a stopped runner from a lost signal, and freezing the clock would quietly
   ruin a time-based mission.
@@ -374,10 +385,6 @@ Some notes on the shape of it:
 
 - **No maps.** Tiles need a network. Routes are drawn from the stored trace as a
   neon filament on a grid.
-- **No distance from steps.** Step counting is there for steps, cadence and
-  moving time only. Turning steps into distance needs a stride length, which
-  would quietly make traces and pace untrustworthy; GPS measures distance or
-  nothing does.
 - **No accounts or sync.** There is no `INTERNET` permission in the manifest.
   Backups move by hand: exporting hands a file to the system share sheet and
   importing reads one back through the system document picker, so the app needs

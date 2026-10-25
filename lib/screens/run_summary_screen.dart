@@ -410,7 +410,7 @@ class _SummaryGrid extends StatelessWidget {
               Expanded(
                 child: StatTile(
                   label: L.of(context).statDistance,
-                  value: Fmt.distance(record.distanceMeters, units),
+                  value: Fmt.distance(record.distanceMeters, units, estimated: record.distanceEstimated),
                   unit: Fmt.distanceUnit(units),
                   accent: Cy.cyan,
                 ),
@@ -481,10 +481,19 @@ class _SummaryGrid extends StatelessWidget {
                 Fmt.dateTime(record.startedAt),
                 style: CyType.mono(size: 11, color: Cy.ghost),
               ),
-              const Spacer(),
-              Text(
-                record.isTimeOnly ? L.of(context).timeOnly : L.of(context).movingTime(Fmt.shortDuration(record.movingSeconds)),
-                style: CyType.mono(size: 11, color: Cy.ghost),
+              const SizedBox(width: 12),
+              // Wraps rather than overflows: with the from-steps note it is
+              // longer than the row in some languages.
+              Expanded(
+                child: Text(
+                  record.isTimeOnly
+                      ? L.of(context).timeOnly
+                      : record.distanceEstimated
+                      ? '${L.of(context).distanceFromSteps} · ${L.of(context).movingTime(Fmt.shortDuration(record.movingSeconds))}'
+                      : L.of(context).movingTime(Fmt.shortDuration(record.movingSeconds)),
+                  textAlign: TextAlign.end,
+                  style: CyType.mono(size: 11, color: Cy.ghost),
+                ),
               ),
             ],
           ),

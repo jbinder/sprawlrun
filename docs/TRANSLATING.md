@@ -3,7 +3,9 @@
 Thank you for helping. Translations happen on **Weblate** — no git, no code, just
 the strings and a description of where each one appears:
 
-**→ https://hosted.weblate.org/projects/sprawlrun/** *(project being set up)*
+**→ https://hosted.weblate.org/engage/sprawlrun/**
+
+<a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/multi-auto.svg" alt="Translation status"></a>
 
 Whatever you translate arrives in the app as a pull request the maintainer
 reviews. A language does not have to be finished to ship: any string not yet
@@ -25,19 +27,16 @@ Your work reaches the app with the next release after the maintainer merges it.
 To review an existing language rather than add one, use the same steps: open
 the language and use **Suggest** on any string that reads wrong.
 
-### While the Weblate project is being approved
+### Without Weblate
 
-If the link above does not open yet, you have two options:
-
-- **Wait.** Hosted Weblate approves free projects by hand, which takes a while.
-- **Translate the file directly.** Download
-  [`lib/l10n/app_en.arb`](../lib/l10n/app_en.arb) and save it as
-  `app_<code>.arb`, where the code is your language's two-letter code, e.g.
-  `app_fr.arb`. Change the text after each `"key":` and leave everything else
-  alone: the keys, the lines starting with `"@"`, and every `{placeholder}`.
-  Save the file as UTF-8, then attach it to a new
-  [issue](https://github.com/jbinder/sprawlrun/issues), or open a pull request
-  if you know how. It is imported into Weblate, so none of the work is lost.
+If you would rather not use Weblate, translate the file directly. Download
+[`lib/l10n/app_en.arb`](../lib/l10n/app_en.arb) and save it as
+`app_<code>.arb`, where the code is your language's two-letter code, e.g.
+`app_fr.arb`. Change the text after each `"key":` and leave everything else
+alone: the keys, the lines starting with `"@"`, and every `{placeholder}`.
+Save the file as UTF-8, then attach it to a new
+[issue](https://github.com/jbinder/sprawlrun/issues), or open a pull request
+if you know how. It is imported into Weblate, so none of the work is lost.
 
 ## What there is to translate
 

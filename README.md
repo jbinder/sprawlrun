@@ -321,9 +321,13 @@ Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
 
 ### Translations
 
+<a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/multi-auto.svg" alt="Translation status"></a>
+
 Translated by the community on
-[Weblate](https://hosted.weblate.org/projects/sprawlrun/), and improving as it
-goes — corrections are welcome there.
+[Weblate](https://hosted.weblate.org/engage/sprawlrun/), and improving as it
+goes — corrections are welcome there. Thanks to
+[Hosted Weblate](https://weblate.org/) for hosting the translations of this
+libre project for free.
 
 - **Spanish** — [@cristian01215](https://github.com/cristian01215)
 

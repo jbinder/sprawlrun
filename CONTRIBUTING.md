@@ -10,12 +10,11 @@ in the browser, without git. Fixing a word in an existing language is as
 welcome as adding a new one.
 
 **[docs/TRANSLATING.md](docs/TRANSLATING.md)** has the link, step-by-step
-instructions, the rules, a glossary, and what to do while the Weblate project is
-still being approved.
+instructions, the rules, a glossary, and how to translate without Weblate.
 
 Names of places and characters stay as they are in every language, so runners
-can talk about the same streets. The story packs are English for now;
-translating them is planned.
+can talk about the same streets. The story packs are translated on Weblate
+too, one component per campaign.
 
 ## Write missions
 

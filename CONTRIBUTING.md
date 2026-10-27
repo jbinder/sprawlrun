@@ -25,8 +25,10 @@ packs → Import pack** and play it, with no build needed.
 
 ## Report a bug or suggest something
 
-Open an [issue](https://github.com/jbinder/sprawlrun/issues). For a problem
-during a run, say what the phone is and whether the screen was off.
+Open an [issue](https://github.com/jbinder/sprawlrun/issues/new/choose). The
+bug form asks for what it usually takes to find a problem that only shows on a
+real phone, mid-run: the app version, the phone and its Android flavour, and
+whether the screen was off.
 
 ## Code
 
@@ -40,3 +42,8 @@ flutter test
 The [README](README.md) explains the architecture and what the tests cover.
 Text a runner reads never goes into the code as a literal. It goes into
 `lib/l10n/app_en.arb`, with a description for translators.
+
+## Conduct
+
+Everyone taking part — in issues, pull requests or on Weblate — is asked to
+follow the [code of conduct](CODE_OF_CONDUCT.md).

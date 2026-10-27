@@ -1,0 +1,20 @@
+name: Idea
+description: Something the app could do, or do differently.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What you would like, and what it would help with on your runs.
+    validations:
+      required: true
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: How you work around it now, how another app does it, sketches.
+  - type: markdown
+    attributes:
+      value: |
+        A few things are left out on purpose — maps, accounts, sync, anything that needs the internet. The README's *Deliberate omissions* says why.

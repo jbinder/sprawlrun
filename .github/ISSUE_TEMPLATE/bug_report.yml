@@ -1,0 +1,81 @@
+name: Bug report
+description: Something went wrong in the app, during a run or around it.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. The questions below are what it usually takes to find a bug that only shows on real phones, in real runs.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: And what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to make it happen
+      description: The steps that lead to it, if you know them. "It happened once, mid-run" is a fine answer too.
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: At the very bottom of Settings, e.g. "v0.7.0 · build 9".
+    validations:
+      required: true
+  - type: dropdown
+    id: source
+    attributes:
+      label: Installed from
+      options:
+        - F-Droid
+        - GitHub release
+        - Built it myself
+    validations:
+      required: true
+  - type: input
+    id: phone
+    attributes:
+      label: Phone and Android version
+      description: e.g. "Fairphone 5, Android 14".
+    validations:
+      required: true
+  - type: dropdown
+    id: rom
+    attributes:
+      label: Android flavour
+      description: The app uses no Google services, but location and step sensors behave differently between ROMs.
+      options:
+        - Stock, with Google services
+        - Stock, Google services removed or disabled
+        - /e/OS
+        - LineageOS
+        - GrapheneOS
+        - CalyxOS
+        - Other (say which below)
+    validations:
+      required: true
+  - type: checkboxes
+    id: context
+    attributes:
+      label: During the problem
+      description: Tick whatever applies.
+      options:
+        - label: It was during a run
+        - label: The screen was off
+        - label: Music or another audio app was playing
+        - label: Step counting was on
+        - label: There was no GPS (indoors, a treadmill, battery saver)
+        - label: The app was swiped away or the phone restarted
+  - type: input
+    id: language
+    attributes:
+      label: App language
+      description: If it is not English.
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: Screenshots, a screen recording, or a backup file if the problem is about your data. Leave out anything private — a backup holds your routes.

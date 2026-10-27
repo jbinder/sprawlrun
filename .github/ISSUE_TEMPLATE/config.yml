@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Translate or correct a translation
+    url: https://hosted.weblate.org/engage/sprawlrun/
+    about: Translations are made on Weblate, in the browser, without git.
+  - name: Write a mission pack
+    url: https://github.com/jbinder/sprawlrun/blob/main/docs/MISSION_PACKS.md
+    about: The pack format, with a worked example.

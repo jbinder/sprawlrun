@@ -18,6 +18,8 @@ you to slow down.*
 <a href="https://f-droid.org/packages/io.github.jbinder.sprawlrun"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80"></a>
 <a href="https://github.com/jbinder/sprawlrun/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" alt="Get it on GitHub" height="80"></a>
 
+<a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/svg-badge.svg" alt="Translation status"></a>
+
 <br>
 
 <img src="docs/screenshots/dashboard.png" width="248" alt="Dashboard">

@@ -32,7 +32,7 @@ abstract final class GpxExport {
       ..writeln('  <trk>')
       ..writeln('    <name>${_xml(name)}</name>')
       // OsmAnd and Strava both read this to pick the activity icon.
-      ..writeln('    <type>running</type>')
+      ..writeln('    <type>${run.isWalk ? 'walking' : 'running'}</type>')
       ..writeln('    <trkseg>');
 
     for (final p in trace) {

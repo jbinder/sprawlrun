@@ -1,4 +1,5 @@
 import '../l10n/l10n.dart';
+import 'run_record.dart' show Activity;
 enum UnitSystem { metric, imperial }
 
 enum StreakMetric { minutes, kilometres, missions }
@@ -221,6 +222,7 @@ class Profile {
     this.keepScreenOn = true,
     this.splitsEnabled = true,
     this.countSteps = false,
+    this.lastActivity = Activity.run,
     this.activePackId,
     this.completedMissions = const <String>{},
     this.unlockedAchievements = const <String, DateTime>{},
@@ -314,6 +316,10 @@ class Profile {
   /// but not the grant.
   final bool countSteps;
 
+  /// What the briefing offers first: whatever the runner chose last time, so
+  /// someone who always walks sets it once and a runner never sees it change.
+  final Activity lastActivity;
+
   /// The mission pack the ops screen shows. Null means the first loaded pack,
   /// which is also what every profile from before packs were selectable
   /// resolves to.
@@ -379,6 +385,7 @@ class Profile {
     bool? keepScreenOn,
     bool? splitsEnabled,
     bool? countSteps,
+    Activity? lastActivity,
     String? activePackId,
     Set<String>? completedMissions,
     Map<String, DateTime>? unlockedAchievements,
@@ -410,6 +417,7 @@ class Profile {
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
     splitsEnabled: splitsEnabled ?? this.splitsEnabled,
     countSteps: countSteps ?? this.countSteps,
+    lastActivity: lastActivity ?? this.lastActivity,
     activePackId: activePackId ?? this.activePackId,
     completedMissions: completedMissions ?? this.completedMissions,
     unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
@@ -443,6 +451,7 @@ class Profile {
     'keepScreenOn': keepScreenOn,
     'splitsEnabled': splitsEnabled,
     'countSteps': countSteps,
+    'lastActivity': lastActivity.name,
     if (activePackId != null) 'activePackId': activePackId,
     'completedMissions': completedMissions.toList(),
     'unlockedAchievements': unlockedAchievements.map((k, v) => MapEntry(k, v.toIso8601String())),
@@ -483,6 +492,7 @@ class Profile {
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,
     splitsEnabled: json['splitsEnabled'] as bool? ?? true,
     countSteps: json['countSteps'] as bool? ?? false,
+    lastActivity: Activity.parse(json['lastActivity']),
     activePackId: json['activePackId'] as String?,
     completedMissions: ((json['completedMissions'] as List?) ?? const []).map((e) => e as String).toSet(),
     unlockedAchievements: ((json['unlockedAchievements'] as Map?) ?? const {}).map(

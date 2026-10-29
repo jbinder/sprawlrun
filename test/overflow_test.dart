@@ -141,6 +141,24 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     await show(tester, const MissionBriefScreen(mission: null));
   });
 
+  testWidgets('free walk briefing', (tester) async {
+    final state = await seed(tester, logicalSize: tall);
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(lastActivity: Activity.walk)));
+    await pumpShowcase(tester, const MissionBriefScreen(mission: null), state, delegates: delegates);
+    expect(find.text(l10n.activityWalkExplainer), findsOneWidget);
+    expect(find.text(l10n.startWalk.toUpperCase()), findsOneWidget);
+  });
+
+  testWidgets('walk summary', (tester) async {
+    final state = await seed(tester, logicalSize: narrow);
+    final report = RunOutcomeReport(
+      record: run(at: DateTime(2026, 7, 27, 21, 14), meters: 4200, seconds: 2900, activity: Activity.walk),
+      newAchievements: [kAchievements.firstWhere((a) => a.id == 'walk_first')],
+    );
+    await pumpShowcase(tester, RunSummaryScreen(report: report, mission: null), state, delegates: delegates);
+    expect(find.text(l10n.walkLogged), findsOneWidget);
+  });
+
   testWidgets('debriefing', (tester) async {
     final state = await seed(tester, logicalSize: tall);
     await pumpShowcase(tester, MissionDebriefScreen(mission: state.missionById('sp02')!), state, delegates: delegates);
@@ -263,7 +281,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     final counted = RunRecord.fromJson(
       state.runLog.first.toJson()
         ..['steps'] = 7950
-        ..['estimatedMeters'] = state.runLog.first.distanceMeters,
+        ..['estimatedMeters'] = state.runLog.first.distanceMeters
+        ..['activity'] = 'walk',
     );
     await pumpShowcase(tester, RunDetailScreen(run: counted), state, delegates: delegates);
     for (var i = 0; i < 40 && find.text(l10n.loadingTrace).evaluate().isNotEmpty; i++) {

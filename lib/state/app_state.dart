@@ -210,7 +210,12 @@ class AppState extends ChangeNotifier {
   List<MissionPack>? _libraryPacks;
   SignalLibrary? _libraryCache;
 
+  /// Everything the run log adds up to, walks included — what the stats show.
   LifetimeStats lifetime = LifetimeStats.empty;
+
+  /// The same without walks, which earn only their own achievements. Every
+  /// achievement card, progress bar and unlock reads this one.
+  LifetimeStats achievementStats = LifetimeStats.empty;
   StreakStatus streak = StreakStatus.empty;
   PeriodStats week = PeriodStats.empty;
 
@@ -259,7 +264,7 @@ class AppState extends ChangeNotifier {
     next = _startWireReadAt(next);
 
     if (runLog.isNotEmpty) {
-      final stats = StatsService.lifetime(runLog, next.streakTargets);
+      final stats = StatsService.forAchievements(runLog, next.streakTargets);
       if (AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet()).isNotEmpty) {
         final earlier = AchievementEngine.backfill(runLog, next.streakTargets, next.unlockedAchievements);
         next = next.copyWith(
@@ -563,7 +568,7 @@ class AppState extends ChangeNotifier {
 
     // Achievements are evaluated against the stats the new run produces, using
     // the streak goal the runner has set right now.
-    final stats = StatsService.lifetime(runLog, next.streakTargets);
+    final stats = StatsService.forAchievements(runLog, next.streakTargets);
     final earned = AchievementEngine.newlyEarned(stats, next.unlockedAchievements.keys.toSet());
     if (earned.isNotEmpty) {
       final now = DateTime.now();
@@ -765,10 +770,11 @@ class AppState extends ChangeNotifier {
   }
 
   List<AchievementView> get achievementWall =>
-      AchievementEngine.wall(lifetime, profile.unlockedAchievements);
+      AchievementEngine.wall(achievementStats, profile.unlockedAchievements);
 
   void _recompute() {
     lifetime = StatsService.lifetime(runLog, profile.streakTargets);
+    achievementStats = StatsService.forAchievements(runLog, profile.streakTargets);
     streak = StatsService.streak(runLog, profile.streakTargets);
     week = StatsService.lastDays(runLog, 7, label: l10n.lastDays(7));
   }

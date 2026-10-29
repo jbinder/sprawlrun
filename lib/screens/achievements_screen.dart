@@ -59,7 +59,7 @@ class _AchievementsScreenState extends State<AchievementsScreen> {
         ),
         const SizedBox(height: 18),
         for (final view in shown) ...[
-          Padding(padding: gutter, child: _AchievementCard(view: view, stats: state.lifetime)),
+          Padding(padding: gutter, child: _AchievementCard(view: view, stats: state.achievementStats)),
           const SizedBox(height: 8),
         ],
       ],

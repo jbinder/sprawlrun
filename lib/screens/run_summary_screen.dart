@@ -81,7 +81,11 @@ class _RunSummaryScreenState extends State<RunSummaryScreen> {
                         children: [
                           Text(
                             mission == null
-                                ? (record.countsForStats ? L.of(context).runLogged : L.of(context).runNotLogged)
+                                ? (!record.countsForStats
+                                      ? L.of(context).runNotLogged
+                                      : record.isWalk
+                                      ? L.of(context).walkLogged
+                                      : L.of(context).runLogged)
                                 : L.of(context).operationNumber(mission!.order.toString().padLeft(2, '0')),
                             style: CyType.label(size: 10, color: Cy.inkDim),
                           ),

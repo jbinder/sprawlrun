@@ -736,6 +736,30 @@
   "@startRun": {
     "description": "Button starting a free run (no mission)."
   },
+  "startWalk": "Start walk",
+  "@startWalk": {
+    "description": "Button starting a free walk (no mission), when Walk is chosen on the briefing."
+  },
+  "activityRun": "RUN",
+  "@activityRun": {
+    "description": "Briefing toggle: this outing is a run. Paired with WALK."
+  },
+  "activityWalk": "WALK",
+  "@activityWalk": {
+    "description": "Briefing toggle: this outing is a walk. Paired with RUN."
+  },
+  "activityWalkExplainer": "Same missions, at walking pace: pursuits expect a brisk walk, not a run. Walks count for your totals and streak, and earn their own achievements.",
+  "@activityWalkExplainer": {
+    "description": "Shown under the RUN/WALK toggle on the briefing while WALK is chosen."
+  },
+  "walkLogged": "WALK LOGGED",
+  "@walkLogged": {
+    "description": "Above the result of a free walk. The walk counterpart of RUN LOGGED."
+  },
+  "tagWalk": "WALK",
+  "@tagWalk": {
+    "description": "Tag on a run in the log or its detail that was a walk."
+  },
   "beginOperation": "Begin operation",
   "@beginOperation": {
     "description": "Button starting a mission (\"operation\")."
@@ -1925,6 +1949,10 @@
   "@achCategorySeasonal": {
     "description": "Achievement category: seasonal events."
   },
+  "achCategoryWalking": "ON FOOT",
+  "@achCategoryWalking": {
+    "description": "Achievement category: achievements earned by walks (walking instead of running)."
+  },
   "achDist5kTitle": "First Kilometres",
   "@achDist5kTitle": {
     "description": "Achievement name (dist_5k). A playful cyberpunk title; translate the spirit rather than word for word."
@@ -2476,6 +2504,38 @@
   "achSamhainYears2Desc": "Run between 10 October and 2 November in two different years.",
   "@achSamhainYears2Desc": {
     "description": "What achievement \"Returning Spirit\" asks for."
+  },
+  "achWalkFirstTitle": "Street Level",
+  "@achWalkFirstTitle": {
+    "description": "Achievement name (walk_first). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWalkFirstDesc": "Finish your first walk.",
+  "@achWalkFirstDesc": {
+    "description": "What achievement \"Street Level\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+  },
+  "achWalk10kTitle": "Pavement Ghost",
+  "@achWalk10kTitle": {
+    "description": "Achievement name (walk_10k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWalk10kDesc": "Walk 10 km across all walks.",
+  "@achWalk10kDesc": {
+    "description": "What achievement \"Pavement Ghost\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+  },
+  "achWalk50kTitle": "The Long Way Round",
+  "@achWalk50kTitle": {
+    "description": "Achievement name (walk_50k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWalk50kDesc": "Walk 50 km across all walks.",
+  "@achWalk50kDesc": {
+    "description": "What achievement \"The Long Way Round\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+  },
+  "achWalk100kTitle": "Sprawl Wanderer",
+  "@achWalk100kTitle": {
+    "description": "Achievement name (walk_100k). A playful cyberpunk title; translate the spirit rather than word for word."
+  },
+  "achWalk100kDesc": "Walk 100 km across all walks.",
+  "@achWalk100kDesc": {
+    "description": "What achievement \"Sprawl Wanderer\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
   },
   "streakGoalMissions": "{count, plural, =1{1 mission} other{{count} missions}}",
   "@streakGoalMissions": {

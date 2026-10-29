@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
+import '../models/run_record.dart' show Activity;
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
@@ -29,10 +30,12 @@ class MissionBriefScreen extends StatefulWidget {
 
 class _MissionBriefScreenState extends State<MissionBriefScreen> {
   late RunGoal _goal;
+  late Activity _activity;
 
   @override
   void initState() {
     super.initState();
+    _activity = context.read<AppState>().profile.lastActivity;
     final mission = widget.mission;
     _goal = mission == null
         ? RunGoal.defaultGoal
@@ -196,6 +199,15 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       const SizedBox(height: 18),
                     ],
                     SectionHeader(L.of(context).setYourTarget),
+                    _ActivityPicker(activity: _activity, onChanged: (a) => setState(() => _activity = a)),
+                    const SizedBox(height: 8),
+                    if (_activity == Activity.walk) ...[
+                      Text(
+                        L.of(context).activityWalkExplainer,
+                        style: CyType.body(size: 14, color: Cy.inkDim, height: 1.35),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                     _GoalPicker(
                       goal: _goal,
                       units: state.profile.units,
@@ -218,9 +230,18 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(18, 6, 18, 16),
                 child: CyberButton(
-                  label: mission == null ? L.of(context).startRun : L.of(context).beginOperation,
+                  label: mission != null
+                      ? L.of(context).beginOperation
+                      : _activity == Activity.walk
+                      ? L.of(context).startWalk
+                      : L.of(context).startRun,
                   icon: Icons.play_arrow_rounded,
                   onPressed: () async {
+                    final app = context.read<AppState>();
+                    if (app.profile.lastActivity != _activity) {
+                      await app.updateProfile(app.profile.copyWith(lastActivity: _activity));
+                    }
+                    if (!context.mounted) return;
                     if (mission != null) {
                       await context.read<AppState>().rememberGoal(
                         mission,
@@ -231,7 +252,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                     await Navigator.of(context).pushReplacement(
                       MaterialPageRoute<void>(
                         builder: (_) =>
-                            RunScreen(mission: mission, goal: _goal),
+                            RunScreen(mission: mission, goal: _goal, activity: _activity),
                       ),
                     );
                   },
@@ -241,6 +262,40 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Run or walk. Above the goal, since it is decided first and changes what a
+/// pursuit will ask for.
+class _ActivityPicker extends StatelessWidget {
+  const _ActivityPicker({required this.activity, required this.onChanged});
+
+  final Activity activity;
+  final ValueChanged<Activity> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _ModeButton(
+            label: L.of(context).activityRun,
+            icon: Icons.directions_run,
+            selected: activity == Activity.run,
+            onTap: () => onChanged(Activity.run),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _ModeButton(
+            label: L.of(context).activityWalk,
+            icon: Icons.directions_walk,
+            selected: activity == Activity.walk,
+            onTap: () => onChanged(Activity.walk),
+          ),
+        ),
+      ],
     );
   }
 }

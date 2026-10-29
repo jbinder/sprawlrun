@@ -438,6 +438,24 @@ class PseudoL extends L {
   String get startRun => pseudo(_en.startRun);
 
   @override
+  String get startWalk => pseudo(_en.startWalk);
+
+  @override
+  String get activityRun => pseudo(_en.activityRun);
+
+  @override
+  String get activityWalk => pseudo(_en.activityWalk);
+
+  @override
+  String get activityWalkExplainer => pseudo(_en.activityWalkExplainer);
+
+  @override
+  String get walkLogged => pseudo(_en.walkLogged);
+
+  @override
+  String get tagWalk => pseudo(_en.tagWalk);
+
+  @override
   String get beginOperation => pseudo(_en.beginOperation);
 
   @override
@@ -1218,6 +1236,9 @@ class PseudoL extends L {
   String get achCategorySeasonal => pseudo(_en.achCategorySeasonal);
 
   @override
+  String get achCategoryWalking => pseudo(_en.achCategoryWalking);
+
+  @override
   String get achDist5kTitle => pseudo(_en.achDist5kTitle);
 
   @override
@@ -1630,6 +1651,30 @@ class PseudoL extends L {
 
   @override
   String get achSamhainYears2Desc => pseudo(_en.achSamhainYears2Desc);
+
+  @override
+  String get achWalkFirstTitle => pseudo(_en.achWalkFirstTitle);
+
+  @override
+  String get achWalkFirstDesc => pseudo(_en.achWalkFirstDesc);
+
+  @override
+  String get achWalk10kTitle => pseudo(_en.achWalk10kTitle);
+
+  @override
+  String get achWalk10kDesc => pseudo(_en.achWalk10kDesc);
+
+  @override
+  String get achWalk50kTitle => pseudo(_en.achWalk50kTitle);
+
+  @override
+  String get achWalk50kDesc => pseudo(_en.achWalk50kDesc);
+
+  @override
+  String get achWalk100kTitle => pseudo(_en.achWalk100kTitle);
+
+  @override
+  String get achWalk100kDesc => pseudo(_en.achWalk100kDesc);
 
   @override
   String streakGoalMissions(int count) => pseudo(_en.streakGoalMissions(count));

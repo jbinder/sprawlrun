@@ -33,10 +33,11 @@ TODO LO QUE HACE
 - Recordatorios de tu contacto según tu horario, y ruido de señal ambiental opcional
 - The wire: cada mensaje, carrera, operación superada, logro e intel en un solo flujo, que se abre directamente al tocar una notificación; un punto en su icono avisa de que llegó una señal desde la última vez que miraste
 - Un informe el domingo por la tarde que repasa tu semana frente a tu propio objetivo, con la misma voz; desactivable
-- 69 logros en siete categorías, y una racha semanal que defines tú en minutos, kilómetros o misiones; una semana sin terminar nunca la rompe
+- 73 logros en ocho categorías, y una racha semanal que defines tú en minutos, kilómetros o misiones; una semana sin terminar nunca la rompe
 - Distancia, tiempo, calorías y misiones superadas por semana y por mes, con barras diarias y tu registro completo de carreras
 - La vista larga: semanas y meses anteriores, distancia por mes desde tu primera carrera, cada día que corriste en un calendario de puntos
 - Calorías calculadas con las ecuaciones metabólicas del ACSM y tu peso real, no con un multiplicador inventado
+- Caminar en lugar de correr: las mismas misiones a paso de caminata, persecuciones que piden caminar rápido, y logros propios
 - Conteo de pasos opcional: pasos y cadencia de cada carrera, tiempo en movimiento cuando falla el GPS, y distancia a partir de los pasos donde no hay GPS, como en una cinta de correr, con una zancada aprendida de tus propias carreras. Desactivado salvo que lo actives, que es el único momento en que se pide el permiso de actividad física de Android
 - Cuarenta y ocho entradas del códice, cada una se desbloquea solo cuando un personaje la ha mencionado: no se puede leer por adelantado
 - Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio

@@ -8,6 +8,7 @@ import '../models/goal.dart';
 import '../models/mission.dart';
 import '../data/active_run_store.dart';
 import '../models/profile.dart';
+import '../models/run_record.dart' show Activity;
 import '../services/location_service.dart';
 import '../services/mission_notice.dart';
 import '../services/notification_permission.dart';
@@ -26,10 +27,11 @@ import '../l10n/l10n.dart';
 /// The live run. Everything on this screen is legible at arm's length while
 /// moving, which drives the type sizes and the very small number of controls.
 class RunScreen extends StatefulWidget {
-  const RunScreen({super.key, required this.mission, required this.goal});
+  const RunScreen({super.key, required this.mission, required this.goal, this.activity = Activity.run});
 
   final Mission? mission;
   final RunGoal goal;
+  final Activity activity;
 
   @override
   State<RunScreen> createState() => _RunScreenState();
@@ -94,6 +96,7 @@ class _RunScreenState extends State<RunScreen> {
       mission: widget.mission,
       goal: widget.goal,
       profile: app.profile,
+      activity: widget.activity,
       stride: app.stride,
     );
     // Disposed mid-start: dispose has already stopped the service, so there is

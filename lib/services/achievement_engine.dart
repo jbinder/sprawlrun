@@ -4,7 +4,8 @@ import '../models/run_record.dart';
 import '../models/stats.dart';
 import 'stats_service.dart';
 
-/// Turns lifetime stats into the achievement wall.
+/// Turns lifetime stats into the achievement wall. The stats it is given are
+/// [StatsService.forAchievements]'s, which keep walks to their own ladder.
 ///
 /// Nothing here is stateful. The profile stores only *when* each achievement
 /// was first earned, for display; whether it is earned is always re-derived,
@@ -41,13 +42,13 @@ abstract final class AchievementEngine {
     // the last of them is placed the replay can stop. Without this the loop
     // always walks the entire log looking for achievements that will never be
     // earned, which is quadratic in the number of runs.
-    final finalStats = StatsService.lifetime(chronological, goal);
+    final finalStats = StatsService.forAchievements(chronological, goal);
     final out = <String, DateTime>{};
     final pending = kAchievements.where((a) => a.isEarned(finalStats)).toList();
     if (pending.isEmpty) return const {};
     for (var i = 0; i < chronological.length && pending.isNotEmpty; i++) {
       // Stats as they stood once this run was logged.
-      final stats = StatsService.lifetime(chronological.sublist(0, i + 1), goal);
+      final stats = StatsService.forAchievements(chronological.sublist(0, i + 1), goal);
       // Dated to the end of the run: that is the moment the threshold was
       // crossed, and it matches what a live unlock would have recorded.
       final at = chronological[i].endedAt;

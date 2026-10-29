@@ -97,15 +97,27 @@ abstract final class StatsService {
     return out;
   }
 
-  static LifetimeStats lifetime(List<RunRecord> runs, WeeklyTargets goals, {DateTime? now}) {
-    final scoring = runs.where((r) => r.countsForStats).toList();
-    if (scoring.isEmpty) return LifetimeStats.empty;
+  /// Everything the run log adds up to. Walks count like runs, except for
+  /// pace, unless [includeWalks] is false — see [forAchievements].
+  static LifetimeStats lifetime(
+    List<RunRecord> runs,
+    WeeklyTargets goals, {
+    DateTime? now,
+    bool includeWalks = true,
+  }) {
+    final walks = runs.where((r) => r.countsForStats && r.isWalk).toList();
+    final walked = walks.fold(0.0, (s, r) => s + r.distanceMeters);
+    final scoring = runs.where((r) => r.countsForStats && (includeWalks || !r.isWalk)).toList();
+    if (scoring.isEmpty) {
+      return walks.isEmpty ? LifetimeStats.empty : LifetimeStats(walks: walks.length, walkedMeters: walked);
+    }
 
     var bestPace = 0.0;
     for (final r in scoring) {
       // Only runs of 3 km+ qualify — a 400 m sprint is not a pace record —
       // and only measured ones: a stride guessed a little long is no record.
-      if (r.distanceMeters >= 3000 && r.paceSecondsPerKm > 0 && !r.distanceEstimated) {
+      // A walk is no pace record either; it is not trying to be one.
+      if (r.distanceMeters >= 3000 && r.paceSecondsPerKm > 0 && !r.distanceEstimated && !r.isWalk) {
         bestPace = bestPace == 0 ? r.paceSecondsPerKm : min(bestPace, r.paceSecondsPerKm);
       }
     }
@@ -145,10 +157,18 @@ abstract final class StatsService {
       hallowsEveRuns: scoring.where((r) => r.startedAt.month == 10 && r.startedAt.day == 31).length,
       samhainRuns: samhain.length,
       samhainYears: samhain.map((r) => r.startedAt.year).toSet().length,
+      walks: walks.length,
+      walkedMeters: walked,
       firstRunAt: sortedByDate.first.startedAt,
       lastRunAt: sortedByDate.last.startedAt,
     );
   }
+
+  /// What the achievement wall is judged on: the runs alone, plus the walk
+  /// totals the walking achievements need. Walks earn only their own —
+  /// a 10 km walk is not a 10 km run, and a walked streak is not a run one.
+  static LifetimeStats forAchievements(List<RunRecord> runs, WeeklyTargets goals, {DateTime? now}) =>
+      lifetime(runs, goals, now: now, includeWalks: false);
 
   static StreakStatus streak(List<RunRecord> runs, WeeklyTargets goals, {DateTime? now}) {
     final at = now ?? appNow();

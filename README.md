@@ -113,7 +113,7 @@ ACSM metabolic equations and your body mass — no invented multipliers.</td>
 <td>The long view: distance per month since day one, and every month as a dot
 calendar lit by how far you ran. Tap a month or a day to see the runs behind
 it.</td>
-<td><b>69 achievements</b> across seven categories and four tiers. Progress is
+<td><b>73 achievements</b> across eight categories and four tiers. Progress is
 recomputed from your run log every time, so it can never drift out of step with
 what you actually did.</td>
 </tr>
@@ -200,6 +200,9 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Pause, resume or stop from the notification, without unlocking into the app;
   a run left paused is brought up after 15, 30 and 60 minutes, then left alone
 - A time or distance target per run, and free runs with no story at all
+- Walk instead of run, chosen on the briefing: the same missions at walking pace, with
+  pursuits scaled to a brisk walk rather than a jog. Walks count for totals and the
+  streak, earn their own achievements and set no pace record
 - Kilometre (or mile) splits read out with the split and total time — on a mission they
   wait for the scene to end; switchable off
 - Live HUD: distance, pace, elapsed, goal ring, and the pursuit bar
@@ -215,7 +218,7 @@ next October if you do not finish. One switch in Settings turns it all off.
 **Progress**
 - This week and this month at a glance, steppable back to your first run
 - A long-term history: distance per month, and every month as a dot calendar
-- 69 achievements across seven categories and four tiers
+- 73 achievements across eight categories and four tiers — walks earn their own
 - A weekly streak you define yourself — minutes, kilometres or missions
 - Full run log, grouped by month, with every run's detail and trace
 
@@ -292,7 +295,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 605 tests
+flutter test                   # 618 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so

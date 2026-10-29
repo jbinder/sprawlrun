@@ -139,7 +139,7 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        _NextUnlocks(stats: state.lifetime),
+        _NextUnlocks(stats: state.achievementStats),
       ],
     );
   }

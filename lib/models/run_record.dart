@@ -12,6 +12,17 @@ enum RunOutcome {
   discarded,
 }
 
+/// How the runner covered the distance. Chosen on the briefing; a walk plays
+/// the same missions and counts for the same totals and streak, but earns only
+/// the walking achievements and sets no pace record.
+enum Activity {
+  run,
+  walk;
+
+  /// Stored by name, so an unknown value from a newer build reads as a run.
+  static Activity parse(Object? name) => Activity.values.firstWhere((a) => a.name == name, orElse: () => Activity.run);
+}
+
 /// One GPS fix, trimmed to what the summary trace and stats actually need.
 class TracePoint {
   const TracePoint({
@@ -92,6 +103,7 @@ class RunRecord {
     required this.calories,
     required this.goal,
     required this.outcome,
+    this.activity = Activity.run,
     this.missionId,
     this.missionCodename,
     this.missionOrder,
@@ -119,6 +131,11 @@ class RunRecord {
   final double calories;
   final RunGoal goal;
   final RunOutcome outcome;
+
+  /// A run unless the runner chose to walk. Every run recorded before walking
+  /// existed was a run.
+  final Activity activity;
+  bool get isWalk => activity == Activity.walk;
 
   /// Null for a free run with no story attached.
   final String? missionId;
@@ -205,6 +222,7 @@ class RunRecord {
     calories: calories,
     goal: goal,
     outcome: outcome ?? this.outcome,
+    activity: activity,
     missionId: missionId,
     missionCodename: missionCodename,
     missionOrder: missionOrder,
@@ -228,6 +246,7 @@ class RunRecord {
     'calories': calories,
     'goal': goal.toJson(),
     'outcome': outcome.name,
+    if (isWalk) 'activity': activity.name,
     if (missionId != null) 'missionId': missionId,
     if (missionCodename != null) 'missionCodename': missionCodename,
     if (missionOrder != null) 'missionOrder': missionOrder,
@@ -251,6 +270,7 @@ class RunRecord {
     calories: (json['calories'] as num?)?.toDouble() ?? 0,
     goal: RunGoal.fromJson(Map<String, dynamic>.from(json['goal'] as Map)),
     outcome: RunOutcome.values.firstWhere((o) => o.name == json['outcome'], orElse: () => RunOutcome.failed),
+    activity: Activity.parse(json['activity']),
     missionId: json['missionId'] as String?,
     missionCodename: json['missionCodename'] as String?,
     missionOrder: (json['missionOrder'] as num?)?.toInt(),

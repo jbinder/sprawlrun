@@ -175,6 +175,7 @@ class _RunDetailScreenState extends State<RunDetailScreen> {
                           filled: run.isSuccess,
                         ),
                         CyberTag(L.of(context).targetTag(run.goal.toString()), color: Cy.ghost),
+                        if (run.isWalk) CyberTag(L.of(context).tagWalk, color: Cy.cyan),
                         if (run.isTimeOnly) CyberTag(L.of(context).timeOnly, color: Cy.amber),
                         if (run.distanceEstimated) CyberTag(L.of(context).distanceFromSteps, color: Cy.amber),
                       ],

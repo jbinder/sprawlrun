@@ -171,6 +171,7 @@ RunRecord run({
   int? steps,
   double estimatedMeters = 0,
   StrideSample? strides,
+  Activity activity = Activity.run,
   List<StoryEvent> story = const [],
 }) => RunRecord(
   id: at.microsecondsSinceEpoch.toString(),
@@ -182,6 +183,7 @@ RunRecord run({
   calories: calories,
   goal: const RunGoal(GoalType.time, 1800),
   outcome: outcome,
+  activity: activity,
   missionId: missionId,
   missionCodename: missionId?.toUpperCase(),
   chasesTotal: chasesTotal,

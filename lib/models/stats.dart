@@ -71,6 +71,8 @@ class LifetimeStats {
     this.hallowsEveRuns = 0,
     this.samhainRuns = 0,
     this.samhainYears = 0,
+    this.walks = 0,
+    this.walkedMeters = 0,
     this.firstRunAt,
     this.lastRunAt,
   });
@@ -118,6 +120,12 @@ class LifetimeStats {
   /// seasonal events switched on — the run happened either way.
   final int samhainRuns;
   final int samhainYears;
+
+  /// Walks, and the distance walked — what the walking achievements count.
+  /// Always counted, including in [StatsService.forAchievements], where walks
+  /// are left out of everything else.
+  final int walks;
+  final double walkedMeters;
 
   final DateTime? firstRunAt;
   final DateTime? lastRunAt;

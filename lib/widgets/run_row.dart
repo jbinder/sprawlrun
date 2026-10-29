@@ -31,10 +31,20 @@ class RunRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  run.missionCodename ?? L.of(context).freeRun,
-                  overflow: TextOverflow.ellipsis,
-                  style: CyType.display(size: 12, color: Cy.ink),
+                Row(
+                  children: [
+                    if (run.isWalk) ...[
+                      Icon(Icons.directions_walk, size: 13, color: Cy.cyan, semanticLabel: L.of(context).tagWalk),
+                      const SizedBox(width: 4),
+                    ],
+                    Flexible(
+                      child: Text(
+                        run.missionCodename ?? L.of(context).freeRun,
+                        overflow: TextOverflow.ellipsis,
+                        style: CyType.display(size: 12, color: Cy.ink),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 3),
                 Text(

@@ -15,8 +15,13 @@ import 'support/fakes.dart';
 /// [metersPerSecond] can vary per second so a test can slow down or sprint;
 /// returning 0 simulates standing still.
 class Harness {
-  Harness(this.fake, {Mission? mission, RunGoal? goal, Profile profile = const Profile()})
-    : start = DateTime(2026, 7, 22, 19, 0) {
+  Harness(
+    this.fake, {
+    Mission? mission,
+    RunGoal? goal,
+    Profile profile = const Profile(),
+    this.activity = Activity.run,
+  }) : start = DateTime(2026, 7, 22, 19, 0) {
     location = FakeLocation();
     narrator = FakeNarrator();
     engine = RunEngine(narrator: narrator, location: location, clock: now);
@@ -27,6 +32,7 @@ class Harness {
 
   final FakeAsync fake;
   final DateTime start;
+  final Activity activity;
   late final FakeLocation location;
   late final FakeNarrator narrator;
   late final RunEngine engine;
@@ -37,7 +43,7 @@ class Harness {
   DateTime now() => start.add(fake.elapsed);
 
   void begin() {
-    engine.start(mission: _mission, goal: _goal, profile: _profile);
+    engine.start(mission: _mission, goal: _goal, profile: _profile, activity: activity);
     fake.flushMicrotasks();
   }
 
@@ -414,6 +420,38 @@ void main() {
         expect(h.engine.chasesTotal, 1);
         expect(h.narrator.spokenText, contains('escaped'));
         expect(h.narrator.sfxPlayed, contains('chase_clear'));
+      });
+    });
+
+    group('on a walk', () {
+      Harness walk(FakeAsync fake) => Harness(
+        fake,
+        mission: missionWith([beat('b0', fraction: 0.2, chase: chase())]),
+        goal: RunGoal.seconds(1200),
+        activity: Activity.walk,
+      )..begin();
+
+      test('a brisk walk escapes, measured against the walker\'s own pace', () {
+        fakeAsync((fake) {
+          final h = walk(fake);
+          h.steady(250, 1.4); // an ordinary walking pace
+          expect(h.engine.activeChase, isNotNull);
+          // 1.2 × 1.4 m/s. Judged on the running floor of 1.9 m/s, this
+          // would need a jog of 2.3 m/s and every walker would be caught.
+          h.steady(70, 1.8);
+          expect(h.engine.chasesEvaded, 1);
+          expect(h.engine.snapshot().activity, Activity.walk);
+        });
+      });
+
+      test('and strolling on is still caught', () {
+        fakeAsync((fake) {
+          final h = walk(fake);
+          h.steady(250, 1.4);
+          h.steady(70, 1.4);
+          expect(h.engine.chasesTotal, 1);
+          expect(h.engine.chasesEvaded, 0);
+        });
       });
     });
 

@@ -23,7 +23,7 @@ extension AchTierStyle on AchTier {
   };
 }
 
-enum AchCategory { distance, endurance, missions, pursuit, discipline, anomaly, seasonal }
+enum AchCategory { distance, endurance, missions, pursuit, discipline, anomaly, seasonal, walking }
 
 extension AchCategoryLabel on AchCategory {
   String get label => switch (this) {
@@ -34,6 +34,7 @@ extension AchCategoryLabel on AchCategory {
     AchCategory.discipline => l10n.achCategoryDiscipline,
     AchCategory.anomaly => l10n.achCategoryAnomaly,
     AchCategory.seasonal => l10n.achCategorySeasonal,
+    AchCategory.walking => l10n.achCategoryWalking,
   };
 
   IconData get icon => switch (this) {
@@ -44,6 +45,7 @@ extension AchCategoryLabel on AchCategory {
     AchCategory.discipline => Icons.local_fire_department_outlined,
     AchCategory.anomaly => Icons.blur_on_outlined,
     AchCategory.seasonal => Icons.nights_stay_outlined,
+    AchCategory.walking => Icons.directions_walk,
   };
 }
 
@@ -671,6 +673,41 @@ const List<AchievementDef> kAchievements = [
     metric: _samhainYears,
     format: _count,
   ),
+
+  // ---- Walking ------------------------------------------------------------
+  // The only achievements a walk earns; every other one counts runs alone.
+  AchievementDef(
+    id: 'walk_first',
+    category: AchCategory.walking,
+    tier: AchTier.street,
+    target: 1,
+    metric: _walks,
+    format: _count,
+  ),
+  AchievementDef(
+    id: 'walk_10k',
+    category: AchCategory.walking,
+    tier: AchTier.chrome,
+    target: 10000,
+    metric: _walked,
+    format: _km,
+  ),
+  AchievementDef(
+    id: 'walk_50k',
+    category: AchCategory.walking,
+    tier: AchTier.ice,
+    target: 50000,
+    metric: _walked,
+    format: _km,
+  ),
+  AchievementDef(
+    id: 'walk_100k',
+    category: AchCategory.walking,
+    tier: AchTier.legend,
+    target: 100000,
+    metric: _walked,
+    format: _km,
+  ),
 ];
 
 // Top-level metric accessors — const list entries cannot hold closures.
@@ -685,6 +722,8 @@ double _samhainMissions(LifetimeStats s) => _packMissions(s, 'samhain');
 double _hallowsEve(LifetimeStats s) => s.hallowsEveRuns.toDouble();
 double _samhainRuns(LifetimeStats s) => s.samhainRuns.toDouble();
 double _samhainYears(LifetimeStats s) => s.samhainYears.toDouble();
+double _walks(LifetimeStats s) => s.walks.toDouble();
+double _walked(LifetimeStats s) => s.walkedMeters;
 
 /// Cleared missions belonging to one pack, recognised by the id prefix its
 /// missions share. `test/campaign_test.dart` holds every bundled pack to this
@@ -782,6 +821,10 @@ String achievementTitle(L l, String id) => switch (id) {
   'hallows_eve' => l.achHallowsEveTitle,
   'samhain_5' => l.achSamhain5Title,
   'samhain_years_2' => l.achSamhainYears2Title,
+  'walk_first' => l.achWalkFirstTitle,
+  'walk_10k' => l.achWalk10kTitle,
+  'walk_50k' => l.achWalk50kTitle,
+  'walk_100k' => l.achWalk100kTitle,
   _ => id,
 };
 
@@ -856,5 +899,9 @@ String achievementDescription(L l, String id) => switch (id) {
   'hallows_eve' => l.achHallowsEveDesc,
   'samhain_5' => l.achSamhain5Desc,
   'samhain_years_2' => l.achSamhainYears2Desc,
+  'walk_first' => l.achWalkFirstDesc,
+  'walk_10k' => l.achWalk10kDesc,
+  'walk_50k' => l.achWalk50kDesc,
+  'walk_100k' => l.achWalk100kDesc,
   _ => '',
 };

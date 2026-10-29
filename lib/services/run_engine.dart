@@ -178,6 +178,9 @@ class RunEngine extends ChangeNotifier {
   RunGoal goal = RunGoal.defaultGoal;
   Profile profile = const Profile();
 
+  /// Running or walking; decides how fast a chase expects the runner to go.
+  Activity activity = Activity.run;
+
   /// Turns steps into distance while there is no GPS. Given at [start].
   Stride stride = Stride.of(const []);
 
@@ -317,9 +320,12 @@ class RunEngine extends ChangeNotifier {
     Mission? mission,
     required RunGoal goal,
     required Profile profile,
+    Activity activity = Activity.run,
     Stride? stride,
   }) async {
     if (isActive) return LocationReadiness.ready;
+
+    this.activity = activity;
 
     this.mission = mission;
     this.goal = goal;
@@ -431,6 +437,7 @@ class RunEngine extends ChangeNotifier {
       calories: Energy.kcal(distanceMeters: distanceMeters, seconds: elapsed, weightKg: profile.weightKg),
       goal: goal,
       outcome: outcome,
+      activity: activity,
       missionId: mission?.id,
       missionCodename: mission?.codename,
       missionOrder: mission?.order,
@@ -945,7 +952,8 @@ class RunEngine extends ChangeNotifier {
   /// Clamped at both ends: a chase that opens in the first minute would
   /// otherwise be scaled off a near-zero baseline and be trivially winnable,
   /// and a downhill sprint just before a chase should not make the next one
-  /// impossible.
+  /// impossible. A walk has its own band — held to the running floor, a
+  /// walker at 1.4 m/s would be asked for a jog and lose every chase.
   double _baselineSpeed() {
     final now = elapsedSeconds;
     _PaceSample? oldest;
@@ -961,7 +969,7 @@ class RunEngine extends ChangeNotifier {
     } else if (now > 0) {
       speed = distanceMeters / now;
     }
-    return speed.clamp(1.9, 4.6);
+    return activity == Activity.walk ? speed.clamp(0.9, 2.2) : speed.clamp(1.9, 4.6);
   }
 }
 

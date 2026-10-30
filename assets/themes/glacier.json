@@ -1,0 +1,24 @@
+{
+  "id": "glacier",
+  "name": "GLACIER",
+  "names": {
+    "es": "GLACIAR"
+  },
+  "author": "SPRAWL//RUN",
+  "colours": {
+    "background": "#04080F",
+    "panel": "#0A121E",
+    "panelRaised": "#111C2C",
+    "rule": "#1F3048",
+    "primary": "#6EA8FF",
+    "primaryDim": "#2F5A99",
+    "hostile": "#FF4D6D",
+    "hostileDim": "#8A2238",
+    "story": "#FFD27A",
+    "success": "#4DFFC3",
+    "failure": "#FF6A3D",
+    "locked": "#3A4C63",
+    "text": "#E4EEFA",
+    "textDim": "#8095AE"
+  }
+}

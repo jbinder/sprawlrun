@@ -12,7 +12,6 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
-import 'package:sprawl_run/theme/cyber_palette.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
 import 'package:sprawl_run/util/clock.dart';
 
@@ -154,18 +153,27 @@ void main() {
   group('colours', () {
     tearDown(() => debugNow = null);
 
-    testWidgets('a swatch per look, and tapping one picks it', (tester) async {
+    testWidgets('a swatch per theme, and tapping one picks it', (tester) async {
       debugNow = DateTime(2026, 7, 27, 21);
       final state = await pumpSettings(tester);
-      expect(state.profile.look, Look.neon, reason: 'the year-round look by default');
+      expect(state.profile.theme, 'neon', reason: 'the year-round look by default');
       for (final name in ['NEON', 'SYNTHWAVE', 'GLACIER', 'VOLT']) {
         expect(find.text(name), findsOneWidget);
       }
+      expect(find.text('IMPORT THEME'), findsOneWidget);
 
       await tester.tap(find.text('GLACIER'));
       await tester.pump(const Duration(milliseconds: 100));
-      expect(state.profile.look, Look.glacier);
+      expect(state.profile.theme, 'glacier');
+      expect(state.palette.cyan, state.theme.palette.cyan);
       expect(find.textContaining('wears its own colours'), findsNothing, reason: 'no season in July');
+    });
+
+    testWidgets('the picked theme credits its author', (tester) async {
+      debugNow = DateTime(2026, 7, 27, 21);
+      await pumpSettings(tester, profile: const Profile(theme: 'glacier'));
+      expect(find.text('GLACIER by SPRAWL//RUN'), findsOneWidget);
+      expect(find.byTooltip('Remove GLACIER'), findsNothing, reason: 'a shipped theme cannot be removed');
     });
 
     testWidgets('in season, the picker says the season overrides it', (tester) async {

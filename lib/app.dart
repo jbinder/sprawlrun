@@ -29,10 +29,9 @@ class SprawlRunApp extends StatelessWidget {
     // read at build time — so when either changes, everything beneath is
     // rebuilt rather than just whatever happens to depend on this.
     final season = context.select<AppState, Season?>((s) => s.season);
-    // Like the season, the year-round one until the profile is loaded.
-    final look = context.select<AppState, Look>((s) => s.loading ? Look.neon : s.profile.look);
+    final palette = context.select<AppState, CyPalette>((s) => s.palette);
     final locale = context.select<AppState, Locale>((s) => s.locale);
-    if (Season.apply(season, otherwise: look.palette)) {
+    if (Season.apply(season, otherwise: palette)) {
       SystemChrome.setSystemUIOverlayStyle(cyberOverlayStyle);
       void mark(Element e) {
         e.markNeedsBuild();

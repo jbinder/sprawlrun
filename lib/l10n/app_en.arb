@@ -1637,21 +1637,140 @@
       }
     }
   },
-  "lookNeon": "NEON",
-  "@lookNeon": {
-    "description": "Colour scheme name, under its swatch: the default cyan and magenta look. At most 10 characters."
+  "themeBy": "{theme} by {author}",
+  "@themeBy": {
+    "description": "Under the colour swatches: the picked theme and who made it. Both are names; keep them as they are.",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      },
+      "author": {
+        "type": "String"
+      }
+    }
   },
-  "lookSynth": "SYNTHWAVE",
-  "@lookSynth": {
-    "description": "Colour scheme name, under its swatch: hot pink and violet, after the music genre. At most 10 characters."
+  "themeImport": "Import theme",
+  "@themeImport": {
+    "description": "Button: add a colour theme from a JSON file."
   },
-  "lookGlacier": "GLACIER",
-  "@lookGlacier": {
-    "description": "Colour scheme name, under its swatch: cold blues, like ice. At most 10 characters."
+  "themeFileType": "Colour theme",
+  "@themeFileType": {
+    "description": "File type label in the system file picker."
   },
-  "lookVolt": "VOLT",
-  "@lookVolt": {
-    "description": "Colour scheme name, under its swatch: electric yellow on black, like hazard tape. At most 10 characters."
+  "themeTooLarge": "That file is far too large to be a colour theme.",
+  "@themeTooLarge": {
+    "description": "Error when importing a colour theme."
+  },
+  "themeImported": "Imported {theme} and put it on.",
+  "@themeImported": {
+    "description": "After importing a colour theme, which is applied straight away. The theme is a name; keep it.",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "themeRemoveTooltip": "Remove {theme}",
+  "@themeRemoveTooltip": {
+    "description": "Tooltip of the delete button beside an imported colour theme.",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "themeRemoved": "Removed {theme}.",
+  "@themeRemoved": {
+    "description": "After removing an imported colour theme.",
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "themeErrorNotATheme": "That is not a colour theme — it needs an \"id\", a \"name\" and a block of \"colours\".",
+  "@themeErrorNotATheme": {
+    "description": "Error when importing a colour theme. Keep the quoted words in English: they are JSON keys."
+  },
+  "themeErrorBadId": "The theme id may only use lower-case letters, digits, \"-\" and \"_\", up to 32 of them.",
+  "@themeErrorBadId": {
+    "description": "Error when importing a colour theme."
+  },
+  "themeErrorBuiltInId": "A built-in theme already uses the id \"{id}\". Give yours another.",
+  "@themeErrorBuiltInId": {
+    "description": "Error when importing a colour theme.",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "themeErrorBadName": "The theme needs a name of 1 to {max} characters.",
+  "@themeErrorBadName": {
+    "description": "Error when importing a colour theme.",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "themeErrorNames": "The \"names\" block must map language codes such as \"es\" to names.",
+  "@themeErrorNames": {
+    "description": "Error when importing a colour theme. Keep \"names\" in English: it is a JSON key."
+  },
+  "themeErrorUnknownRole": "\"{role}\" is not a colour a theme sets. Check the spelling against docs/THEMES.md.",
+  "@themeErrorUnknownRole": {
+    "description": "Error when importing a colour theme. The role is a JSON key; keep it.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "themeErrorMissingRole": "The theme does not set \"{role}\".",
+  "@themeErrorMissingRole": {
+    "description": "Error when importing a colour theme. The role is a JSON key; keep it.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "themeErrorBadColour": "\"{role}\" is {value}, not a colour written like #00F0FF.",
+  "@themeErrorBadColour": {
+    "description": "Error when importing a colour theme. The role is a JSON key; keep it.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "themeErrorContrast": "\"{role}\" is too close to \"panel\" to read. It needs a contrast of at least {ratio}:1.",
+  "@themeErrorContrast": {
+    "description": "Error when importing a colour theme. Role names are JSON keys; keep them.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "ratio": {
+        "type": "String"
+      }
+    }
+  },
+  "themeErrorSameColour": "\"{first}\" and \"{second}\" are the same colour, so they could not be told apart.",
+  "@themeErrorSameColour": {
+    "description": "Error when importing a colour theme. Role names are JSON keys; keep them.",
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
   },
   "sectionStreak": "STREAK",
   "@sectionStreak": {

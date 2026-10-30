@@ -1,0 +1,21 @@
+{
+  "id": "synth",
+  "name": "SYNTHWAVE",
+  "author": "SPRAWL//RUN",
+  "colours": {
+    "background": "#0A0612",
+    "panel": "#140C1F",
+    "panelRaised": "#1E122D",
+    "rule": "#35224A",
+    "primary": "#FF3FD2",
+    "primaryDim": "#8C2275",
+    "hostile": "#9D6BFF",
+    "hostileDim": "#4F3290",
+    "story": "#6FF3FF",
+    "success": "#3DFFA2",
+    "failure": "#FF4A3D",
+    "locked": "#4B3D5C",
+    "text": "#F1E0F2",
+    "textDim": "#9E86A6"
+  }
+}

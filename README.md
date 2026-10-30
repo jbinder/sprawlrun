@@ -177,8 +177,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Twenty missions across two campaigns, paced to the target you pick
 - Seasonal events: from 10 October to 2 November the app takes on a Halloween
   look and sound, with a four-mission operation of its own — switchable off
-- Four colour schemes to pick from in Settings — neon, synthwave, glacier and
-  volt — which a season dresses over while it lasts
+- Four colour themes to pick from in Settings — neon, synthwave, glacier and
+  volt — or import your own; a season dresses over them while it lasts
 - Optional reminders from your handler on the days and at the time you choose,
   written in the voice of the campaign you are playing
 - Optional signal noise: the city talking between runs, silent, never overnight,
@@ -322,8 +322,8 @@ this README cannot drift from what the app actually looks like.
 
 ## Contributing
 
-Translations, mission packs, bug reports and code are all welcome, and only
-code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
+Translations, mission packs, colour themes, bug reports and code are all
+welcome, and only code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
 Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
 
 ### Translations
@@ -349,19 +349,30 @@ Every pack is its own campaign with its own chain of missions. The ops screen
 shows one at a time; **All packs** lists them all, grouped into active and done,
 and finishing the last mission of a pack offers the next one that's still open.
 
+## Adding colour themes
+
+A colour theme is one small JSON file: a name and fourteen colours, each
+named for its role (`primary`, `hostile`, `story`, `success`…) rather than its
+hue. Import your own with **Settings → Identity → Colours → Import theme**,
+with no rebuild needed. To ship one with the app, add it to `assets/themes/` in
+a pull request. The app finds it there by itself, and `test/theme_test.dart`
+checks that it stays readable. See **[docs/THEMES.md](docs/THEMES.md)** for the
+format, the rules and `glacier.json` as a worked example.
+
 ## Layout
 
 ```
 lib/
   models/       Mission, StoryBeat, RunGoal, RunRecord, Profile, Achievement
-  data/         JSON repositories (runs, profile, mission packs) + backup + GPX
+  data/         JSON repositories (runs, profile, mission packs, themes) + backup + GPX
   services/     run_engine · narrator · location · stats · energy · achievements
   state/        AppState — the single source of truth the UI reads
   screens/      dashboard · brief · run HUD · summary · stats · history · wall · codex · settings
   widgets/      backdrop · panels · glitch text · rings & bars · route trace
-  theme/        palette and typography
+  theme/        palette, colour themes, seasons and typography
   l10n/         interface text: app_en.arb is the source, app_<lang>.arb the translations
 assets/missions/l10n/  story text: <pack>_en.arb is generated from the pack, <pack>_<lang>.arb translates it
+assets/themes/  the shipped colour themes, one JSON file each
 tool/           SFX, icon, screenshot, pseudo-locale and pack-string generators
 ```
 

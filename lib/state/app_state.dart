@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
@@ -10,6 +11,7 @@ import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
 import '../data/signal_log_repository.dart';
+import '../data/theme_repository.dart';
 import '../models/achievement.dart';
 import '../models/goal.dart';
 import '../models/mission.dart';
@@ -29,6 +31,8 @@ import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
 import '../services/step_source.dart';
 import '../services/stats_service.dart';
+import '../theme/colour_theme.dart';
+import '../theme/cyber_palette.dart';
 import '../theme/season.dart';
 import '../util/clock.dart';
 import '../l10n/l10n.dart';
@@ -46,6 +50,7 @@ class AppState extends ChangeNotifier {
     required this.narrator,
     SignalScheduler? signals,
     SignalLogRepository? signalLog,
+    ThemeRepository? themeRepository,
     ActiveRunStore? activeRun,
     BackupFolder? backupFolder,
     StepSetup? stepSetup,
@@ -57,7 +62,8 @@ class AppState extends ChangeNotifier {
        activeRun = activeRun ?? ActiveRunStore(profiles.root),
        // Next to the profile by default, so every caller — tests included —
        // gets a working log without having to name a directory for it.
-       signalLog = signalLog ?? SignalLogRepository(profiles.root);
+       signalLog = signalLog ?? SignalLogRepository(profiles.root),
+       themeRepository = themeRepository ?? ThemeRepository(importDir: Directory('${profiles.root.path}/themes'));
 
   final ProfileRepository profiles;
 
@@ -72,6 +78,7 @@ class AppState extends ChangeNotifier {
   ActiveRunSnapshot? interruptedRun;
   final RunRepository runs;
   final MissionRepository missions;
+  final ThemeRepository themeRepository;
   final Narrator narrator;
 
   /// Delivers the between-run messages. Defaults to doing nothing, so tests
@@ -225,6 +232,7 @@ class AppState extends ChangeNotifier {
     profile = await profiles.load();
     runLog = await runs.loadAll();
     _sourcePacks = await missions.loadPacks();
+    themes = await themeRepository.loadThemes();
     interruptedRun = await activeRun.load();
     // Finished and recorded, but the app died before the copy was cleared:
     // nothing was lost, and offering it back would record it twice.
@@ -287,6 +295,38 @@ class AppState extends ChangeNotifier {
   /// from 0.5.0 already carries the latest data version, and no `wireReadAt`.
   static Profile _startWireReadAt(Profile p) =>
       p.wireReadAt == null ? p.copyWith(wireReadAt: DateTime.now()) : p;
+
+  // -- colours --------------------------------------------------------------
+
+  /// Every colour theme on offer, NEON first. See [ThemeRepository].
+  List<ColourTheme> themes = const [ColourTheme.neon];
+
+  /// The theme the runner picked, or NEON when it is not loaded.
+  ColourTheme get theme => themes.firstWhere((t) => t.id == profile.theme, orElse: () => ColourTheme.neon);
+
+  /// The colours the app is drawn in: the season's while one is in force,
+  /// otherwise the runner's theme. The year-round one while loading.
+  CyPalette get palette => season?.palette ?? (loading ? CyPalette.standard : theme.palette);
+
+  /// Imports a theme from the text of a picked file and puts it on at once —
+  /// the runner picked the file to see it. Throws [ThemeFormatException].
+  Future<ColourTheme> importTheme(String source) async {
+    final imported = await themeRepository.importTheme(source);
+    themes = await themeRepository.loadThemes();
+    await updateProfile(profile.copyWith(theme: imported.id));
+    return imported;
+  }
+
+  /// Removes an imported theme, going back to NEON if it was the one on.
+  Future<void> removeTheme(String id) async {
+    await themeRepository.removeTheme(id);
+    themes = await themeRepository.loadThemes();
+    if (profile.theme == id) {
+      await updateProfile(profile.copyWith(theme: ColourTheme.neon.id));
+    } else {
+      notifyListeners();
+    }
+  }
 
   // -- season ---------------------------------------------------------------
 

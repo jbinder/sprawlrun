@@ -1011,16 +1011,55 @@ class PseudoL extends L {
   String settingLookSeason(String season) => pseudo(_en.settingLookSeason(season));
 
   @override
-  String get lookNeon => pseudo(_en.lookNeon);
+  String themeBy(String theme, String author) => pseudo(_en.themeBy(theme, author));
 
   @override
-  String get lookSynth => pseudo(_en.lookSynth);
+  String get themeImport => pseudo(_en.themeImport);
 
   @override
-  String get lookGlacier => pseudo(_en.lookGlacier);
+  String get themeFileType => pseudo(_en.themeFileType);
 
   @override
-  String get lookVolt => pseudo(_en.lookVolt);
+  String get themeTooLarge => pseudo(_en.themeTooLarge);
+
+  @override
+  String themeImported(String theme) => pseudo(_en.themeImported(theme));
+
+  @override
+  String themeRemoveTooltip(String theme) => pseudo(_en.themeRemoveTooltip(theme));
+
+  @override
+  String themeRemoved(String theme) => pseudo(_en.themeRemoved(theme));
+
+  @override
+  String get themeErrorNotATheme => pseudo(_en.themeErrorNotATheme);
+
+  @override
+  String get themeErrorBadId => pseudo(_en.themeErrorBadId);
+
+  @override
+  String themeErrorBuiltInId(String id) => pseudo(_en.themeErrorBuiltInId(id));
+
+  @override
+  String themeErrorBadName(int max) => pseudo(_en.themeErrorBadName(max));
+
+  @override
+  String get themeErrorNames => pseudo(_en.themeErrorNames);
+
+  @override
+  String themeErrorUnknownRole(String role) => pseudo(_en.themeErrorUnknownRole(role));
+
+  @override
+  String themeErrorMissingRole(String role) => pseudo(_en.themeErrorMissingRole(role));
+
+  @override
+  String themeErrorBadColour(String role, String value) => pseudo(_en.themeErrorBadColour(role, value));
+
+  @override
+  String themeErrorContrast(String role, String ratio) => pseudo(_en.themeErrorContrast(role, ratio));
+
+  @override
+  String themeErrorSameColour(String first, String second) => pseudo(_en.themeErrorSameColour(first, second));
 
   @override
   String get sectionStreak => pseudo(_en.sectionStreak);

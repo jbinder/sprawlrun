@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
@@ -14,6 +13,7 @@ import 'package:sprawl_run/services/narrator.dart';
 import 'package:sprawl_run/services/signal_planner.dart';
 import 'package:sprawl_run/services/stats_service.dart';
 import 'package:sprawl_run/state/app_state.dart';
+import 'package:sprawl_run/theme/colour_theme.dart';
 import 'package:sprawl_run/theme/cyber_palette.dart';
 import 'package:sprawl_run/theme/season.dart';
 import 'package:sprawl_run/util/clock.dart';
@@ -62,33 +62,16 @@ void main() {
     });
   });
 
-  group('the runner\'s look', () {
-    test('is worn outside a season and yields to one inside it', () {
-      expect(Season.apply(null, otherwise: CyPalette.glacier), isTrue, reason: 'a new look is a change');
-      expect(Cy.cyan, CyPalette.glacier.cyan);
-      expect(Season.apply(null, otherwise: CyPalette.glacier), isFalse);
+  test("a season is worn over the runner's theme, which comes back when it ends", () {
+    final glacier = ColourTheme.parse(File('assets/themes/glacier.json').readAsStringSync()).palette;
+    expect(Season.apply(null, otherwise: glacier), isTrue, reason: 'a new theme is a change');
+    expect(Cy.cyan, glacier.cyan);
+    expect(Season.apply(null, otherwise: glacier), isFalse);
 
-      Season.apply(Season.samhain, otherwise: CyPalette.glacier);
-      expect(Cy.cyan, CyPalette.samhain.cyan);
-      expect(Season.apply(null, otherwise: CyPalette.glacier), isTrue);
-      expect(Cy.cyan, CyPalette.glacier.cyan, reason: 'it comes back when the season ends');
-    });
-
-    test('is stored by name and decodes from a profile that lacks it', () {
-      expect(Profile.fromJson(const {'callsign': 'CASE'}).look, Look.neon);
-      expect(Profile.fromJson(const Profile(look: Look.volt).toJson()).look, Look.volt);
-      expect(Profile.fromJson(const {'look': 'chartreuse'}).look, Look.neon, reason: 'a look from a newer build');
-    });
-
-    test('every look keeps the roles apart, and success is the same green family', () {
-      for (final look in Look.values) {
-        final p = look.palette;
-        final roles = {p.cyan, p.magenta, p.amber, p.green, p.red};
-        expect(roles, hasLength(5), reason: '\${look.name} gives two roles one colour');
-        final hsv = HSVColor.fromColor(p.green);
-        expect(hsv.hue, inInclusiveRange(80, 165), reason: '\${look.name}: a met goal should look met');
-      }
-    });
+    Season.apply(Season.samhain, otherwise: glacier);
+    expect(Cy.cyan, CyPalette.samhain.cyan);
+    expect(Season.apply(null, otherwise: glacier), isTrue);
+    expect(Cy.cyan, glacier.cyan);
   });
 
   test('every seasonal sound effect has its file', () {

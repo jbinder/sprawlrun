@@ -26,7 +26,7 @@ TODO LO QUE HACE
 
 - Veinte misiones en dos campañas, adaptadas al objetivo que elijas
 - Eventos de temporada: aspecto, sonido y una operación de cuatro misiones de Halloween del 10 de octubre al 2 de noviembre, desactivables
-- Cuatro esquemas de color para elegir: neón, synthwave, glaciar y voltio
+- Cuatro temas de color para elegir (neón, synthwave, glaciar y voltio), o importa el tuyo
 - Persecuciones ajustadas a tu propio ritmo de los últimos tres minutos, o desactivadas
 - Cada kilómetro o milla se anuncia con su parcial y tu tiempo total; en una misión, entre escenas
 - Once voces sintetizadas que bajan tu música y te la devuelven

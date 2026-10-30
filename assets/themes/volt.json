@@ -1,0 +1,24 @@
+{
+  "id": "volt",
+  "name": "VOLT",
+  "names": {
+    "es": "VOLTIO"
+  },
+  "author": "SPRAWL//RUN",
+  "colours": {
+    "background": "#080806",
+    "panel": "#12120C",
+    "panelRaised": "#1B1B12",
+    "rule": "#33331F",
+    "primary": "#FFE53B",
+    "primaryDim": "#8F7F12",
+    "hostile": "#FF3D7F",
+    "hostileDim": "#8C1F45",
+    "story": "#5CE1FF",
+    "success": "#39FF88",
+    "failure": "#FF4A2E",
+    "locked": "#4A4A38",
+    "text": "#F2F0E2",
+    "textDim": "#9C9A84"
+  }
+}

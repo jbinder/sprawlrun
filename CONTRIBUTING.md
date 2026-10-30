@@ -1,6 +1,6 @@
 # Contributing to SPRAWL//RUN
 
-Thanks for wanting to help. There are three ways in, and none of them needs
+Thanks for wanting to help. There are four ways in, and none of them needs
 Flutter installed.
 
 ## Translate the interface
@@ -22,6 +22,15 @@ A mission pack is one JSON file. Import it in the app with **Settings → Missio
 packs → Import pack** and play it, with no build needed.
 **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** describes the format, and
 `assets/missions/sprawl_prime.json` is a worked example.
+
+## Make a colour theme
+
+A colour theme is one JSON file with a name and fourteen colours, each named
+for its role. Import it in the app with **Settings → Identity → Colours →
+Import theme** and see it straight away, with no build needed. To ship it with
+the app, add the file to `assets/themes/` in a pull request.
+**[docs/THEMES.md](docs/THEMES.md)** describes the format and the readability
+rules a theme has to pass, and `assets/themes/glacier.json` is a worked example.
 
 ## Report a bug or suggest something
 

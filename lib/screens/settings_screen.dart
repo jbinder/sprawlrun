@@ -14,6 +14,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
 import '../widgets/pack_controls.dart';
 import '../widgets/panels.dart';
+import '../widgets/theme_controls.dart';
 import '../l10n/l10n.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -100,12 +101,7 @@ class SettingsScreen extends StatelessWidget {
                             onChanged: (v) => update(profile.copyWith(units: v)),
                           ),
                           const _Rule(),
-                          _LookRow(
-                            label: l.settingLook,
-                            value: profile.look,
-                            season: state.season?.title,
-                            onChanged: (v) => update(profile.copyWith(look: v)),
-                          ),
+                          ThemeControls(label: l.settingLook),
                         ],
                       ),
                     ),
@@ -656,114 +652,6 @@ class _SegmentRow<T> extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-/// The runner's colours, as one swatch per [Look] drawn in that look's own
-/// palette — a name alone says little about a colour. Picking one recolours
-/// the app at once, so the screen itself is the preview.
-class _LookRow extends StatelessWidget {
-  const _LookRow({
-    required this.label,
-    required this.value,
-    required this.season,
-    required this.onChanged,
-  });
-
-  final String label;
-  final Look value;
-
-  /// The title of the season overriding the look, if one is in force.
-  final String? season;
-  final ValueChanged<Look> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = L.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: CyType.body(size: 15, weight: FontWeight.w600)),
-        const SizedBox(height: 10),
-        Row(
-          children: [
-            for (final look in Look.values) ...[
-              if (look != Look.values.first) const SizedBox(width: 8),
-              Expanded(
-                child: _LookSwatch(
-                  name: switch (look) {
-                    Look.neon => l.lookNeon,
-                    Look.synth => l.lookSynth,
-                    Look.glacier => l.lookGlacier,
-                    Look.volt => l.lookVolt,
-                  },
-                  palette: look.palette,
-                  selected: look == value,
-                  onTap: () => onChanged(look),
-                ),
-              ),
-            ],
-          ],
-        ),
-        if (season != null) ...[const SizedBox(height: 10), _Note(l.settingLookSeason(season!))],
-      ],
-    );
-  }
-}
-
-class _LookSwatch extends StatelessWidget {
-  const _LookSwatch({required this.name, required this.palette, required this.selected, required this.onTap});
-
-  final String name;
-  final CyPalette palette;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget bar(Color c) => Expanded(child: Container(height: 4, color: c));
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          children: [
-            Container(
-              height: 40,
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: palette.v0id,
-                border: Border.all(color: selected ? Cy.cyan : Cy.rule, width: selected ? 2 : 1),
-                boxShadow: selected ? glow(Cy.cyan, blur: 10, opacity: 0.35) : null,
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // "You" leads, as it does on every screen; then the threat,
-                  // the story voice and success.
-                  Row(children: [bar(palette.cyan)]),
-                  Row(
-                    children: [
-                      bar(palette.magenta),
-                      const SizedBox(width: 3),
-                      bar(palette.amber),
-                      const SizedBox(width: 3),
-                      bar(palette.green),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 6),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(name, maxLines: 1, style: CyType.mono(size: 10, color: selected ? Cy.cyan : Cy.inkDim)),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

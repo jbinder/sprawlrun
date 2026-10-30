@@ -1,4 +1,5 @@
 import '../l10n/l10n.dart';
+import '../theme/cyber_palette.dart' show Look;
 import 'run_record.dart' show Activity;
 enum UnitSystem { metric, imperial }
 
@@ -217,6 +218,7 @@ class Profile {
     this.sfxVolume = 0.9,
     this.ambientBed = false,
     this.seasonalEvents = true,
+    this.look = Look.neon,
     this.chasesEnabled = true,
     this.autoPause = true,
     this.keepScreenOn = true,
@@ -300,6 +302,10 @@ class Profile {
   /// handler traffic. See `theme/season.dart`.
   final bool seasonalEvents;
 
+  /// The colours the runner picked. A season in force overrides them for its
+  /// window; they come back when it ends.
+  final Look look;
+
   final bool chasesEnabled;
   final bool autoPause;
   final bool keepScreenOn;
@@ -380,6 +386,7 @@ class Profile {
     double? sfxVolume,
     bool? ambientBed,
     bool? seasonalEvents,
+    Look? look,
     bool? chasesEnabled,
     bool? autoPause,
     bool? keepScreenOn,
@@ -412,6 +419,7 @@ class Profile {
     sfxVolume: sfxVolume ?? this.sfxVolume,
     ambientBed: ambientBed ?? this.ambientBed,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
+    look: look ?? this.look,
     chasesEnabled: chasesEnabled ?? this.chasesEnabled,
     autoPause: autoPause ?? this.autoPause,
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
@@ -446,6 +454,7 @@ class Profile {
     'sfxVolume': sfxVolume,
     'ambientBed': ambientBed,
     'seasonalEvents': seasonalEvents,
+    'look': look.name,
     'chasesEnabled': chasesEnabled,
     'autoPause': autoPause,
     'keepScreenOn': keepScreenOn,
@@ -487,6 +496,7 @@ class Profile {
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,
     ambientBed: json['ambientBed'] as bool? ?? false,
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
+    look: Look.parse(json['look']),
     chasesEnabled: json['chasesEnabled'] as bool? ?? true,
     autoPause: json['autoPause'] as bool? ?? true,
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,

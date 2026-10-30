@@ -76,13 +76,15 @@ enum Season {
   static Season? get active => _active;
   static Season? _active;
 
-  /// Puts [season]'s palette in force. Returns whether anything changed;
-  /// colours are read at build time, so whoever calls this rebuilds what
-  /// lies beneath it — `SprawlRunApp` does.
-  static bool apply(Season? season) {
-    if (season == _active) return false;
+  /// Puts [season]'s palette in force, or [otherwise] — the runner's own
+  /// look — when there is none. Returns whether anything changed; colours are
+  /// read at build time, so whoever calls this rebuilds what lies beneath
+  /// it — `SprawlRunApp` does.
+  static bool apply(Season? season, {CyPalette otherwise = CyPalette.standard}) {
+    final palette = season?.palette ?? otherwise;
+    if (season == _active && identical(palette, Cy.palette)) return false;
     _active = season;
-    Cy.use(season?.palette ?? CyPalette.standard);
+    Cy.use(palette);
     return true;
   }
 

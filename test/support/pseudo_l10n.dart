@@ -1005,6 +1005,24 @@ class PseudoL extends L {
   String get unitsMiles => pseudo(_en.unitsMiles);
 
   @override
+  String get settingLook => pseudo(_en.settingLook);
+
+  @override
+  String settingLookSeason(String season) => pseudo(_en.settingLookSeason(season));
+
+  @override
+  String get lookNeon => pseudo(_en.lookNeon);
+
+  @override
+  String get lookSynth => pseudo(_en.lookSynth);
+
+  @override
+  String get lookGlacier => pseudo(_en.lookGlacier);
+
+  @override
+  String get lookVolt => pseudo(_en.lookVolt);
+
+  @override
   String get sectionStreak => pseudo(_en.sectionStreak);
 
   @override

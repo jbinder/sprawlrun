@@ -1624,6 +1624,35 @@
   "@unitsMiles": {
     "description": "Unit choice: imperial."
   },
+  "settingLook": "Colours",
+  "@settingLook": {
+    "description": "Setting: which colour scheme the whole app is drawn in. A row of swatches follows."
+  },
+  "settingLookSeason": "{season} wears its own colours until it ends. Yours come back after.",
+  "@settingLookSeason": {
+    "description": "Shown under the colour swatches while a seasonal event overrides them. The season is an event name such as SAMHAIN PROTOCOL; keep it as it is.",
+    "placeholders": {
+      "season": {
+        "type": "String"
+      }
+    }
+  },
+  "lookNeon": "NEON",
+  "@lookNeon": {
+    "description": "Colour scheme name, under its swatch: the default cyan and magenta look. At most 10 characters."
+  },
+  "lookSynth": "SYNTHWAVE",
+  "@lookSynth": {
+    "description": "Colour scheme name, under its swatch: hot pink and violet, after the music genre. At most 10 characters."
+  },
+  "lookGlacier": "GLACIER",
+  "@lookGlacier": {
+    "description": "Colour scheme name, under its swatch: cold blues, like ice. At most 10 characters."
+  },
+  "lookVolt": "VOLT",
+  "@lookVolt": {
+    "description": "Colour scheme name, under its swatch: electric yellow on black, like hazard tape. At most 10 characters."
+  },
   "sectionStreak": "STREAK",
   "@sectionStreak": {
     "description": "Settings section: the weekly target that keeps a streak going."

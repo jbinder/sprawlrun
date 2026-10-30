@@ -177,6 +177,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Twenty missions across two campaigns, paced to the target you pick
 - Seasonal events: from 10 October to 2 November the app takes on a Halloween
   look and sound, with a four-mission operation of its own — switchable off
+- Four colour schemes to pick from in Settings — neon, synthwave, glacier and
+  volt — which a season dresses over while it lasts
 - Optional reminders from your handler on the days and at the time you choose,
   written in the voice of the campaign you are playing
 - Optional signal noise: the city talking between runs, silent, never overnight,

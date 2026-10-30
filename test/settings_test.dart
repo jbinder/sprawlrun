@@ -12,7 +12,9 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
+import 'package:sprawl_run/theme/cyber_palette.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
+import 'package:sprawl_run/util/clock.dart';
 
 import 'support/fakes.dart';
 
@@ -147,6 +149,36 @@ void main() {
     // file I/O, which never completes in a widget test's fake-async zone.
     // persistence_test.dart covers the round trip to disk.
     expect(state.profile.resumeMusic, isFalse);
+  });
+
+  group('colours', () {
+    tearDown(() => debugNow = null);
+
+    testWidgets('a swatch per look, and tapping one picks it', (tester) async {
+      debugNow = DateTime(2026, 7, 27, 21);
+      final state = await pumpSettings(tester);
+      expect(state.profile.look, Look.neon, reason: 'the year-round look by default');
+      for (final name in ['NEON', 'SYNTHWAVE', 'GLACIER', 'VOLT']) {
+        expect(find.text(name), findsOneWidget);
+      }
+
+      await tester.tap(find.text('GLACIER'));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(state.profile.look, Look.glacier);
+      expect(find.textContaining('wears its own colours'), findsNothing, reason: 'no season in July');
+    });
+
+    testWidgets('in season, the picker says the season overrides it', (tester) async {
+      debugNow = DateTime(2026, 10, 30, 8);
+      await pumpSettings(tester);
+      expect(find.textContaining('SAMHAIN PROTOCOL wears its own colours'), findsOneWidget);
+    });
+
+    testWidgets('with seasonal events off, nothing overrides it', (tester) async {
+      debugNow = DateTime(2026, 10, 30, 8);
+      await pumpSettings(tester, profile: const Profile(seasonalEvents: false));
+      expect(find.textContaining('wears its own colours'), findsNothing);
+    });
   });
 
   testWidgets('the colophon shows the installed version and build', (tester) async {

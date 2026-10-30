@@ -22,6 +22,7 @@
     "backupMergedMissions": "{count, plural, =1{1 misión} other{{count} misiones}}",
     "backupMergedAchievements": "{count, plural, =1{1 logro} other{{count} logros}}",
     "backupMergedCodex": "{count, plural, =1{1 entrada del códice} other{{count} entradas del códice}}",
+    "backupMergedThemes": "{count, plural, =1{1 tema de color} other{{count} temas de color}}",
     "backupMerged": "Fusionado: {items}.",
     "backupAlreadyHere": "{count} ya estaban aquí.",
     "backupFound": "COPIA ENCONTRADA",

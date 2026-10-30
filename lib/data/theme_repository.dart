@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -54,21 +55,14 @@ class ThemeRepository {
     }
 
     final imported = <ColourTheme>[];
-    if (await importDir.exists()) {
-      final files = await importDir
-          .list()
-          .where((e) => e is File && e.path.toLowerCase().endsWith('.json'))
-          .cast<File>()
-          .toList();
-      for (final file in files) {
-        try {
-          final theme = ColourTheme.parse(await file.readAsString());
-          // A shipped theme added later under the same id wins over the import.
-          if (builtInIds.contains(theme.id) || !importedIds.add(theme.id)) continue;
-          imported.add(theme);
-        } on Object catch (e) {
-          loadErrors.add('${file.uri.pathSegments.last}: $e');
-        }
+    for (final file in await _importedFiles()) {
+      try {
+        final theme = ColourTheme.parse(await file.readAsString());
+        // A shipped theme added later under the same id wins over the import.
+        if (builtInIds.contains(theme.id) || !importedIds.add(theme.id)) continue;
+        imported.add(theme);
+      } on Object catch (e) {
+        loadErrors.add('${file.uri.pathSegments.last}: $e');
       }
     }
 
@@ -95,6 +89,59 @@ class ThemeRepository {
     await importDir.create(recursive: true);
     await writeAtomically(File('${importDir.path}/${theme.id}.json'), source);
     return theme;
+  }
+
+  /// The imported themes as their files have them, for a backup: they are
+  /// the runner's own and exist nowhere else. Only the ones that still load.
+  Future<List<Map<String, dynamic>>> importedForBackup() async {
+    final themes = <Map<String, dynamic>>[];
+    for (final file in await _importedFiles()) {
+      try {
+        final source = await file.readAsString();
+        ColourTheme.parse(source);
+        themes.add(Map<String, dynamic>.from(jsonDecode(source) as Map));
+      } on Object {
+        continue;
+      }
+    }
+    return themes;
+  }
+
+  /// Puts back the themes a backup carried, each checked as an import is.
+  /// [replace] makes this device's imported themes exactly the backup's;
+  /// otherwise only the ones it lacks are added, and a theme it already has
+  /// under the same id stays as it is here. One that no longer passes — or
+  /// whose id a shipped theme has taken since — is skipped rather than
+  /// failing the restore. Returns how many were added.
+  Future<int> restore(List<Map<String, dynamic>> themes, {required bool replace}) async {
+    if (replace) {
+      for (final file in await _importedFiles()) {
+        await file.delete();
+      }
+    }
+    await loadThemes();
+    final have = {...importedIds};
+    var added = 0;
+    for (final raw in themes) {
+      if (have.contains(raw['id'])) continue;
+      try {
+        final theme = await importTheme(jsonEncode(raw));
+        have.add(theme.id);
+        added++;
+      } on ThemeFormatException {
+        continue;
+      }
+    }
+    return added;
+  }
+
+  Future<List<File>> _importedFiles() async {
+    if (!await importDir.exists()) return const [];
+    return importDir
+        .list()
+        .where((e) => e is File && e.path.toLowerCase().endsWith('.json'))
+        .cast<File>()
+        .toList();
   }
 
   /// Deletes an imported theme. Its id is checked by [ColourTheme.parse] on

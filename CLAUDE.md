@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 638 tests
+fvm flutter test                                    # 643 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -218,10 +218,12 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   run *with its trace*, which is complete precisely because stats, streaks and
   achievements are derived. Add a field to `Profile` or `RunRecord` and it rides
   along for free; add a new persisted *file* and it will not, so extend
-  `BackupService.collect` and `import` at the same time. There is one such
-  store so far: `signals/<year>.json`, the archive behind THE WIRE — the only
+  `BackupService.collect` and `import` at the same time. There are two such
+  stores so far: `signals/<year>.json`, the archive behind THE WIRE — the only
   thing on it that is stored, since runs, clears, achievements and intel all
-  project from the run log and profile. (`active_run.json` is deliberately
+  project from the run log and profile — and `themes/`, the runner's imported
+  colour themes, carried as their JSON and re-checked on restore. (Imported
+  mission packs are not carried; that predates this rule.) (`active_run.json` is deliberately
   left out: it exists only while a run does.) Exported as *sent* entries only; the
   pending plan is rebuilt by whichever device restores it.
 - **The automatic-backup folder is Android's persisted permission, not a

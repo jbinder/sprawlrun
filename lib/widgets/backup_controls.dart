@@ -166,6 +166,7 @@ class _BackupControlsState extends State<BackupControls> {
       if (r.missionsAdded > 0) l10n.backupMergedMissions(r.missionsAdded),
       if (r.achievementsAdded > 0) l10n.backupMergedAchievements(r.achievementsAdded),
       if (r.codexAdded > 0) l10n.backupMergedCodex(r.codexAdded),
+      if (r.themesAdded > 0) l10n.backupMergedThemes(r.themesAdded),
     ];
     final merged = l10n.backupMerged(parts.join(', '));
     return r.runsAlreadyPresent > 0 ? '$merged ${l10n.backupAlreadyHere(r.runsAlreadyPresent)}' : merged;

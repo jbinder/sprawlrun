@@ -6,6 +6,7 @@ import 'package:sprawl_run/data/backup.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/data/signal_log_repository.dart';
+import 'package:sprawl_run/data/theme_repository.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
@@ -23,6 +24,7 @@ Future<BackupService> seed(
     profiles: ProfileRepository(root),
     runs: RunRepository(Directory('${root.path}/runs')),
     signalLog: SignalLogRepository(root),
+    themes: ThemeRepository(importDir: Directory('${root.path}/themes')),
   );
   await service.profiles.save(profile);
   for (final record in runs) {
@@ -48,6 +50,8 @@ RunRecord traced(DateTime at, {int points = 3}) => RunRecord(
 );
 
 void main() {
+  // Restoring themes reads the shipped ones from the asset bundle.
+  TestWidgetsFlutterBinding.ensureInitialized();
   late Directory source;
   late Directory target;
 
@@ -343,6 +347,89 @@ void main() {
         'runs': const [],
       });
       expect(BackupArchive.parse(legacy).signals, isEmpty);
+    });
+  });
+
+  group('colour themes', () {
+    // Imported themes are files of their own, like the signal archive, so
+    // they are carried explicitly.
+    String theme(String id, {String name = 'MINE'}) {
+      final base = jsonDecode(File('assets/themes/glacier.json').readAsStringSync()) as Map<String, dynamic>;
+      return jsonEncode({...base, 'id': id, 'name': name});
+    }
+
+    test('an imported theme travels with a backup; shipped ones do not', () async {
+      final from = await seed(tempRoot('src'), profile: const Profile(theme: 'mine'));
+      await from.themes!.loadThemes();
+      await from.themes!.importTheme(theme('mine'));
+
+      final archive = BackupArchive.parse(await from.exportToJson());
+      expect(archive.themes.map((t) => t['id']), ['mine']);
+
+      final to = await seed(tempRoot('dst'));
+      final report = await to.import(archive, ImportMode.replace);
+      expect(report.themesAdded, 1);
+      final themes = await to.themes!.loadThemes();
+      expect(themes.map((t) => t.id), contains('mine'));
+      expect((await to.profiles.load()).theme, 'mine', reason: 'and the profile that picked it');
+    });
+
+    test('replacing leaves exactly the backup\'s themes', () async {
+      final from = await seed(tempRoot('src'));
+      await from.themes!.loadThemes();
+      await from.themes!.importTheme(theme('theirs'));
+
+      final to = await seed(tempRoot('dst'));
+      await to.themes!.loadThemes();
+      await to.themes!.importTheme(theme('local', name: 'LOCAL'));
+      await to.import(BackupArchive.parse(await from.exportToJson()), ImportMode.replace);
+
+      await to.themes!.loadThemes();
+      expect(to.themes!.importedIds, {'theirs'});
+    });
+
+    test('merging adds what is missing and keeps this device\'s version of the rest', () async {
+      final from = await seed(tempRoot('src'));
+      await from.themes!.loadThemes();
+      await from.themes!.importTheme(theme('shared', name: 'FROM BACKUP'));
+      await from.themes!.importTheme(theme('new'));
+
+      final to = await seed(tempRoot('dst'));
+      await to.themes!.loadThemes();
+      await to.themes!.importTheme(theme('shared', name: 'ON DEVICE'));
+      final report = await to.import(BackupArchive.parse(await from.exportToJson()), ImportMode.merge);
+
+      expect(report.themesAdded, 1);
+      final themes = await to.themes!.loadThemes();
+      expect(themes.firstWhere((t) => t.id == 'shared').name, 'ON DEVICE');
+      expect(to.themes!.importedIds, {'shared', 'new'});
+    });
+
+    test('a theme that no longer passes is skipped, not fatal', () async {
+      final archive = BackupArchive(
+        exportedAt: DateTime(2026, 10, 30),
+        profile: const Profile(),
+        runs: const [],
+        themes: [
+          {'id': 'broken'},
+          {...jsonDecode(theme('glacier')) as Map<String, dynamic>},
+          {...jsonDecode(theme('fine')) as Map<String, dynamic>},
+        ],
+      );
+      final to = await seed(tempRoot('dst'));
+      final report = await to.import(BackupArchive.parse(jsonEncode(archive.toJson())), ImportMode.replace);
+      expect(report.themesAdded, 1, reason: 'a shipped id and a broken file are both skipped');
+    });
+
+    test('a backup from before themes restores with none', () {
+      final legacy = jsonEncode({
+        'format': BackupArchive.magic,
+        'version': 1,
+        'exportedAt': DateTime(2026).toIso8601String(),
+        'profile': const Profile().toJson(),
+        'runs': const [],
+      });
+      expect(BackupArchive.parse(legacy).themes, isEmpty);
     });
   });
 

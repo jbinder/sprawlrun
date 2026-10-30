@@ -78,6 +78,9 @@ class PseudoL extends L {
   String backupMergedCodex(int count) => pseudo(_en.backupMergedCodex(count));
 
   @override
+  String backupMergedThemes(int count) => pseudo(_en.backupMergedThemes(count));
+
+  @override
   String backupMerged(String items) => pseudo(_en.backupMerged(items));
 
   @override

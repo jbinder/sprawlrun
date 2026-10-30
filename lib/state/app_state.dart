@@ -88,7 +88,12 @@ class AppState extends ChangeNotifier {
   /// What the handlers have sent; the timeline's only stored ingredient.
   final SignalLogRepository signalLog;
 
-  late final BackupService backups = BackupService(profiles: profiles, runs: runs, signalLog: signalLog);
+  late final BackupService backups = BackupService(
+    profiles: profiles,
+    runs: runs,
+    signalLog: signalLog,
+    themes: themeRepository,
+  );
 
   /// Whether this phone can count steps, and the permission for it.
   final StepSetup _stepSetup;
@@ -774,6 +779,7 @@ class AppState extends ChangeNotifier {
       await profiles.save(profile);
     }
     runLog = await runs.loadAll();
+    themes = await themeRepository.loadThemes();
     await narrator.applyProfile(profile);
     _recompute();
     notifyListeners();

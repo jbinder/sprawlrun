@@ -6,6 +6,7 @@ import '../models/signal_log.dart';
 import 'profile_repository.dart';
 import 'run_repository.dart';
 import 'signal_log_repository.dart';
+import 'theme_repository.dart';
 import '../l10n/l10n.dart';
 
 /// Everything the app knows about a runner, in one portable JSON document.
@@ -20,6 +21,7 @@ class BackupArchive {
     required this.profile,
     required this.runs,
     this.signals = const [],
+    this.themes = const [],
   });
 
   /// Marker in the JSON that identifies the file as ours. Checked on import so
@@ -41,6 +43,10 @@ class BackupArchive {
   /// the timeline existed, which simply restore with no signal history.
   final List<SignalLogEntry> signals;
 
+  /// The colour themes the runner imported, as their files have them. Shipped
+  /// themes are not carried: every install has those already.
+  final List<Map<String, dynamic>> themes;
+
   int get traceCount => runs.where((r) => r.trace.isNotEmpty).length;
 
   Map<String, dynamic> toJson() => {
@@ -50,6 +56,7 @@ class BackupArchive {
     'profile': profile.toJson(),
     'runs': runs.map((r) => r.toJson()).toList(),
     if (signals.isNotEmpty) 'signals': signals.map((e) => e.toJson()).toList(),
+    if (themes.isNotEmpty) 'themes': themes,
   };
 
   /// Parses an exported document.
@@ -103,6 +110,11 @@ class BackupArchive {
           .map(SignalLogEntry.tryParse)
           .whereType<SignalLogEntry>()
           .toList(),
+      // Additive too. Each is checked again when it is restored.
+      themes: [
+        for (final entry in decoded['themes'] as List? ?? const [])
+          if (entry is Map) Map<String, dynamic>.from(entry),
+      ],
     );
   }
 }
@@ -136,6 +148,7 @@ class ImportReport {
     required this.missionsAdded,
     required this.achievementsAdded,
     required this.codexAdded,
+    this.themesAdded = 0,
   });
 
   final ImportMode mode;
@@ -144,6 +157,7 @@ class ImportReport {
   final int missionsAdded;
   final int achievementsAdded;
   final int codexAdded;
+  final int themesAdded;
 }
 
 /// Reads and writes [BackupArchive]s against the real repositories.
@@ -152,7 +166,7 @@ class ImportReport {
 /// decides where an exported string goes. That keeps the whole round trip
 /// testable without a device.
 class BackupService {
-  BackupService({required this.profiles, required this.runs, this.signalLog});
+  BackupService({required this.profiles, required this.runs, this.signalLog, this.themes});
 
   final ProfileRepository profiles;
   final RunRepository runs;
@@ -161,6 +175,10 @@ class BackupService {
   /// profile, so it has to be collected and restored explicitly. Optional only
   /// so the run-log tests need not build one.
   final SignalLogRepository? signalLog;
+
+  /// The runner's imported colour themes: files of their own, so they are
+  /// carried explicitly like [signalLog]. Optional for the same reason.
+  final ThemeRepository? themes;
 
   /// A filename that sorts chronologically and survives a share sheet.
   static String suggestedFileName(DateTime at) => '$_manualPrefix${_stamp(at)}.json';
@@ -196,6 +214,7 @@ class BackupService {
       // Only what has been sent. The pending plan is rebuilt by whichever
       // device restores this, from its own settings.
       signals: await signalLog?.sent(now) ?? const [],
+      themes: await themes?.importedForBackup() ?? const [],
     );
   }
 
@@ -210,6 +229,7 @@ class BackupService {
       await runs.replaceAll(archive.runs);
       await profiles.save(archive.profile);
       await signalLog?.replaceAll(archive.signals);
+      final themesAdded = await themes?.restore(archive.themes, replace: true) ?? 0;
       return ImportReport(
         mode: mode,
         runsAdded: archive.runs.length,
@@ -217,6 +237,7 @@ class BackupService {
         missionsAdded: archive.profile.completedMissions.length,
         achievementsAdded: archive.profile.unlockedAchievements.length,
         codexAdded: archive.profile.unlockedCodex.length,
+        themesAdded: themesAdded,
       );
     }
 
@@ -236,6 +257,7 @@ class BackupService {
     final merged = _mergeProfiles(local, archive.profile);
     await profiles.save(merged);
     await signalLog?.merge(archive.signals);
+    final themesAdded = await themes?.restore(archive.themes, replace: false) ?? 0;
 
     return ImportReport(
       mode: mode,
@@ -244,6 +266,7 @@ class BackupService {
       missionsAdded: merged.completedMissions.length - local.completedMissions.length,
       achievementsAdded: merged.unlockedAchievements.length - local.unlockedAchievements.length,
       codexAdded: merged.unlockedCodex.length - local.unlockedCodex.length,
+      themesAdded: themesAdded,
     );
   }
 

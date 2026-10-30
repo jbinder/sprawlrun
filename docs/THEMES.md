@@ -23,8 +23,12 @@ replaces the old one. That is the edit-and-reimport loop while you make one.
 An import may not take the id of a built-in or shipped theme. Removing an
 imported theme (the bin beside it while it is picked) goes back to NEON.
 
-Imported themes stay on the phone and are not part of a backup. A restore onto
-a phone without the theme draws NEON until it is imported there too.
+Imported themes are part of a backup (Settings → Data), so a new phone gets them
+back with everything else. Restoring a backup in full leaves exactly the themes
+it carried. Merging one adds the themes this phone lacks and keeps its own
+version of any it already has. A theme that no longer passes the rules below,
+or whose id a shipped theme has taken since, is skipped. A profile whose theme
+is gone draws NEON.
 
 A season, such as SAMHAIN PROTOCOL from 10 October to 2 November, wears its
 own colours over whichever theme is picked, and the theme comes back when it

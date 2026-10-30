@@ -130,6 +130,15 @@
       }
     }
   },
+  "backupMergedThemes": "{count, plural, =1{1 colour theme} other{{count} colour themes}}",
+  "@backupMergedThemes": {
+    "description": "Part of the list in backupMerged: imported colour themes the backup added.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "backupMerged": "Merged {items}.",
   "@backupMerged": {
     "description": "After merging a backup. items is a comma-separated list like \"3 new runs, 1 mission\".",

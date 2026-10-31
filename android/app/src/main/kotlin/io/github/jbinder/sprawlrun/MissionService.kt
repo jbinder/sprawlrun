@@ -242,6 +242,13 @@ class MissionService : Service() {
             .setContentIntent(buildBringToFrontIntent())
             .setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            // Silent whatever the channel says. The channel is created LOW,
+            // but a runner can raise it in system settings, and since this
+            // notice is re-posted on every tick that changes the countdown, a
+            // channel with sound then peeped all run long. The narrator is the
+            // run's voice; this notice never makes a sound.
+            .setSilent(true)
+            .setOnlyAlertOnce(true)
             // Android 12+ holds a foreground-service notification back for up
             // to ten seconds unless it is told not to. For a run that is ten
             // seconds of the runner wondering whether the mission started.

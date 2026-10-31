@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 644 tests
+fvm flutter test                                    # 645 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -328,13 +328,16 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   `MissionService` posts itself — audible because the run's own channel is
   silent by design. A later update cannot raise any of them, only the
   runner can in Android settings, so changing them means a new channel id.
-- **Three things about that notification are load-bearing**, and none of them
+- **Four things about that notification are load-bearing**, and none of them
   fail loudly: `FOREGROUND_SERVICE_IMMEDIATE`, or Android 12+ defers it by up
   to ten seconds; `R.drawable.ic_notification` plus `res/raw/keep.xml`, or the
   resource shrinker strips an icon only ever resolved by name, the small icon
   resolves to 0, and Android silently replaces the whole notification with its
-  own "app is running" placeholder; and that icon being a transparent
-  silhouette, since only its alpha channel survives.
+  own "app is running" placeholder; that icon being a transparent
+  silhouette, since only its alpha channel survives; and `setSilent(true)`,
+  since the notice is re-posted every second on a time goal and a runner can
+  give its channel a sound, which then peeps all run (`mission_notice_test`
+  reads the source for it).
 
 ## A run must survive the app being closed
 

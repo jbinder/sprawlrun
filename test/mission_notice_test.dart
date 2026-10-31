@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -99,5 +101,21 @@ void main() {
     final calls = record();
     await MissionNotice.platform().start('x', tracking: true);
     expect(calls, isEmpty);
+  });
+
+  // The run notice is re-posted whenever its text changes — every second on a
+  // time goal. Its channel is created silent, but a runner can give it a
+  // sound in system settings, and then every repost peeped for the whole run.
+  // Only the builder's own setSilent overrides the channel. Kotlin is out of
+  // reach of this suite, so this reads the source: weaker than running it,
+  // but it fails the moment the line goes.
+  test('the run notification stays silent whatever its channel allows', () {
+    final source = File('android/app/src/main/kotlin/io/github/jbinder/sprawlrun/MissionService.kt').readAsStringSync();
+    final start = source.indexOf('private fun buildNotification(');
+    expect(start, isNot(-1), reason: 'buildNotification moved; point this test at the run notice builder');
+    final end = source.indexOf('.build()\n    }', start);
+    final builder = source.substring(start, end).replaceAll(RegExp(r'//.*'), '');
+    expect(builder, contains('.setSilent(true)'));
+    expect(builder, contains('.setOnlyAlertOnce(true)'));
   });
 }

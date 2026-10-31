@@ -1429,6 +1429,14 @@
   "@locationFromSteps": {
     "description": "Warning on the run screen when location is unavailable but steps are being counted, so distance continues as an estimate."
   },
+  "gpsQuiet": "No GPS signal yet — indoors, perhaps. Distance starts counting when one arrives; time-based targets still work.",
+  "@gpsQuiet": {
+    "description": "Calm note on the run screen when location is on but no GPS signal has arrived for half a minute (typically indoors) and steps are not being counted. Not an error: nothing is switched off."
+  },
+  "gpsQuietSteps": "No GPS signal yet — indoors, perhaps. Distance is estimated from your steps until one arrives.",
+  "@gpsQuietSteps": {
+    "description": "Calm note on the run screen when location is on but no GPS signal has arrived for half a minute (typically indoors), while steps are counted so distance continues as an estimate. Not an error: nothing is switched off."
+  },
   "countStepsDenied": "Counting steps needs Android's physical-activity permission, so it stays off.",
   "@countStepsDenied": {
     "description": "Shown when the runner turned on Count steps but refused the permission."

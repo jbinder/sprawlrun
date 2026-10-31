@@ -286,6 +286,8 @@
     "settingHeight": "Estatura",
     "distanceFromSteps": "POR PASOS",
     "locationFromSteps": "Sin GPS. La distancia se estima a partir de tus pasos hasta que vuelva.",
+    "gpsQuiet": "Aún sin señal GPS; quizá estás en interior. La distancia empezará a contar cuando llegue; los objetivos de tiempo siguen funcionando.",
+    "gpsQuietSteps": "Aún sin señal GPS; quizá estás en interior. La distancia se estima a partir de tus pasos hasta que llegue.",
     "countStepsDenied": "Contar pasos necesita el permiso de actividad física de Android, así que sigue desactivado.",
     "freeRunAudioSplitsKm": "Carrera libre: solo un breve aviso en cada kilómetro interrumpirá tu audio.",
     "freeRunAudioSplitsMile": "Carrera libre: solo un breve aviso en cada milla interrumpirá tu audio.",

@@ -152,6 +152,12 @@ class RunEngine extends ChangeNotifier {
   /// Fixes older than this mean the GPS is effectively dead.
   static const Duration fixStaleAfter = Duration(seconds: 30);
 
+  /// No usable fix for this long, with location itself working, and the run
+  /// screen says so — see [gpsQuiet]. The same span after which the engine
+  /// stops trusting the GPS for auto-pause; a slow cold start outdoors may
+  /// show the note briefly, which is fine for a note that clears itself.
+  static const Duration gpsQuietAfter = fixStaleAfter;
+
   /// Minimum silence between two interludes, so beats never stack up.
   static const Duration minBeatGap = Duration(seconds: 45);
 
@@ -296,6 +302,19 @@ class RunEngine extends ChangeNotifier {
   /// [RunRecord.tooShortToLog].
   bool get tooShortToLog =>
       !goalReached && RunRecord.tooShortToLog(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters);
+
+  /// Location is on and allowed, yet no usable fix has arrived for
+  /// [gpsQuietAfter] — indoors, usually. Not trouble: nothing is switched off
+  /// and nothing needs fixing, so the run screen says it calmly rather than
+  /// with the warning a disabled GPS gets, and that warning takes precedence.
+  /// Read from the clock rather than kept as a flag, so it clears with the
+  /// first fix and the next tick redraws it.
+  bool get gpsQuiet {
+    if (phase != RunPhase.running && phase != RunPhase.autoPaused) return false;
+    if (_locationTroubled) return false;
+    final since = _lastFixAt ?? startedAt;
+    return since != null && _now().difference(since) >= gpsQuietAfter;
+  }
 
   /// See [RunRecord.distanceEstimated].
   bool get distanceEstimated => RunRecord.isEstimate(estimatedMeters, distanceMeters);

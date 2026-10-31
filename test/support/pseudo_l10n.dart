@@ -870,6 +870,12 @@ class PseudoL extends L {
   String get locationFromSteps => pseudo(_en.locationFromSteps);
 
   @override
+  String get gpsQuiet => pseudo(_en.gpsQuiet);
+
+  @override
+  String get gpsQuietSteps => pseudo(_en.gpsQuietSteps);
+
+  @override
   String get countStepsDenied => pseudo(_en.countStepsDenied);
 
   @override

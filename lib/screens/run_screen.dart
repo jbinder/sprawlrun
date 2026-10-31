@@ -296,7 +296,12 @@ class _RunScreenState extends State<RunScreen> {
               children: [
                 _RunHeader(engine: engine, mission: widget.mission),
                 if (_locationTrouble != null)
-                  _LocationWarning(readiness: _locationTrouble!, countingSteps: engine.steps != null),
+                  _LocationWarning(readiness: _locationTrouble!, countingSteps: engine.steps != null)
+                else if (engine.gpsQuiet)
+                  _LocationBox(
+                    message: engine.steps != null ? L.of(context).gpsQuietSteps : L.of(context).gpsQuiet,
+                    color: Cy.inkDim,
+                  ),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.fromLTRB(18, 8, 18, 8),
@@ -412,21 +417,35 @@ class _LocationWarning extends StatelessWidget {
       LocationReadiness.gpsDisabled => L.of(context).locationGpsOff,
       LocationReadiness.ready => '',
     };
+    return _LocationBox(
+      message: countingSteps ? message : '$message ${L.of(context).locationTimeStillWorks}',
+      color: Cy.amber,
+    );
+  }
+}
+
+/// The strip under the header that says how location is doing: amber when
+/// something is switched off ([_LocationWarning]), the dim text colour when
+/// it is only quiet — no signal indoors is not something to fix, and a box
+/// shaped like a warning would say otherwise.
+class _LocationBox extends StatelessWidget {
+  const _LocationBox({required this.message, required this.color});
+
+  final String message;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-      decoration: BoxDecoration(color: Cy.amber.withValues(alpha: 0.1), border: Border.all(color: Cy.amber)),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.1), border: Border.all(color: color)),
       child: Row(
         children: [
-          Icon(Icons.satellite_alt_outlined, size: 15, color: Cy.amber),
+          Icon(Icons.satellite_alt_outlined, size: 15, color: color),
           const SizedBox(width: 9),
-          Expanded(
-            child: Text(
-              countingSteps ? message : '$message ${L.of(context).locationTimeStillWorks}',
-              style: CyType.body(size: 13, color: Cy.amber),
-            ),
-          ),
+          Expanded(child: Text(message, style: CyType.body(size: 13, color: color))),
         ],
       ),
     );

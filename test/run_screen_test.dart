@@ -169,6 +169,23 @@ void main() {
     await _stop(tester, run);
   });
 
+  testWidgets('no GPS signal for half a minute shows a calm note, which the first fix clears', (tester) async {
+    final run = await _startRun(tester);
+
+    // Indoors: the clock runs, no fix arrives.
+    for (var i = 0; i < 31; i++) {
+      run._clock.now = run._clock.now.add(const Duration(seconds: 1));
+      await tester.pump(const Duration(seconds: 1));
+    }
+    expect(find.text(l10n.gpsQuiet), findsOneWidget);
+    expect(find.textContaining(l10n.locationTimeStillWorks), findsNothing, reason: 'quiet, not the warning for a GPS switched off');
+
+    await run.run(tester, 1, mps: 0);
+    expect(find.text(l10n.gpsQuiet), findsNothing);
+
+    await _stop(tester, run);
+  });
+
   // The notification's buttons work without opening the app — including after
   // it has been swiped away, when the run carries on with no screen at all.
   testWidgets('Pause and Resume on the notification pause and resume the run', (tester) async {

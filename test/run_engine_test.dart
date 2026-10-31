@@ -753,6 +753,38 @@ void main() {
       });
     });
 
+    test('half a minute without a fix is quiet GPS, not trouble, and the first fix ends it', () {
+      fakeAsync((fake) {
+        // Indoors: location is on and allowed, the stream is open, and no
+        // fix ever comes. A real run on 2026-10-31 went 25 minutes like this
+        // with nothing on screen but the ≈ on its distance.
+        final h = Harness(fake, goal: RunGoal.seconds(1500))..begin();
+        h.runBlind(29);
+        expect(h.engine.gpsQuiet, isFalse, reason: 'a cold start outdoors can take this long');
+        h.runBlind(2);
+        expect(h.engine.gpsQuiet, isTrue);
+
+        h.steady(1, 3.0);
+        expect(h.engine.gpsQuiet, isFalse, reason: 'a fix arrived');
+        h.runBlind(31);
+        expect(h.engine.gpsQuiet, isTrue, reason: 'and the signal went again');
+
+        h.location.fail(LocationReadiness.gpsDisabled);
+        fake.flushMicrotasks();
+        expect(h.engine.gpsQuiet, isFalse, reason: 'the warning for a disabled GPS says it instead');
+        h.engine.abort();
+        fake.flushMicrotasks();
+      });
+    });
+
+    test('steady fixes never read as quiet', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: RunGoal.seconds(600))..begin();
+        h.steady(180, 3.0);
+        expect(h.engine.gpsQuiet, isFalse);
+      });
+    });
+
     test('the warning clears when GPS comes back mid-run', () {
       fakeAsync((fake) {
         // Found on a real run: the warning appeared when GPS was switched off

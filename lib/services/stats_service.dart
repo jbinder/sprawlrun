@@ -16,7 +16,7 @@ abstract final class StatsService {
   /// Monday 00:00 local time for the week containing [d].
   static DateTime weekStart(DateTime d) {
     final day = DateTime(d.year, d.month, d.day);
-    return day.subtract(Duration(days: day.weekday - DateTime.monday));
+    return addDays(day, DateTime.monday - day.weekday);
   }
 
   static DateTime monthStart(DateTime d) => DateTime(d.year, d.month);
@@ -178,12 +178,12 @@ abstract final class StatsService {
     final thisWeek = weekStart(at);
     final goal = goals.goalFor(thisWeek);
     final currentValue = _valueFor(weekly[thisWeek], goal);
-    final nextWeek = thisWeek.add(const Duration(days: 7));
+    final nextWeek = addDays(thisWeek, 7);
 
     // Each past week lit by the target it had, not by today's.
     final recent = <bool>[];
     for (var i = 11; i >= 0; i--) {
-      final week = thisWeek.subtract(Duration(days: 7 * i));
+      final week = addDays(thisWeek, -7 * i);
       recent.add(_met(weekly[week], goals.goalFor(week)));
     }
 
@@ -233,6 +233,10 @@ abstract final class StatsService {
   /// Returns (current streak, longest streak) in weeks, each week judged
   /// against the target in force that week.
   ///
+  /// Weeks are stepped with [addDays], never a 7-day `Duration`: across a
+  /// clock change that lands an hour off the Monday-midnight keys, every
+  /// earlier week reads as empty and the streak ends there.
+  ///
   /// The current week is only *counted* once its target is met, but a week
   /// still in progress never breaks the streak — otherwise every Monday
   /// morning would wipe out months of work.
@@ -244,10 +248,10 @@ abstract final class StatsService {
     if (_met(weekly[cursor], goals.goalFor(cursor))) {
       current = 1;
     }
-    cursor = cursor.subtract(const Duration(days: 7));
+    cursor = addDays(cursor, -7);
     while (_met(weekly[cursor], goals.goalFor(cursor))) {
       current++;
-      cursor = cursor.subtract(const Duration(days: 7));
+      cursor = addDays(cursor, -7);
     }
 
     if (weekly.isEmpty) return (current, current);
@@ -263,7 +267,7 @@ abstract final class StatsService {
       } else {
         run = 0;
       }
-      week = week.add(const Duration(days: 7));
+      week = addDays(week, 7);
     }
 
     return (current, max(longest, current));

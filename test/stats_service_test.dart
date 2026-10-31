@@ -178,6 +178,28 @@ void main() {
       expect(status.metThisWeek, isFalse);
     });
 
+    // Summer time ended on Sunday 25 October 2026 in most of Europe. Stepping
+    // back 7 × 24 h from Monday 26 October lands at 01:00 on the 19th, beside
+    // the week's midnight key, and lost a real streak. (In a zone without
+    // DST this passes trivially; the maintainer's machine has one.)
+    test('survives the clocks changing between weeks', () {
+      final runs = [
+        run(at: DateTime(2026, 10, 14, 7), seconds: 2400),
+        run(at: DateTime(2026, 10, 21, 17), seconds: 2400),
+        run(at: DateTime(2026, 10, 31, 9), seconds: 2400),
+      ];
+      final status = StatsService.streak(runs, minutesGoal, now: DateTime(2026, 10, 31, 11));
+      expect(status.weeks, 3);
+      expect(status.longestWeeks, 3);
+      expect(status.recentWeeks.reversed.take(3), everyElement(isTrue));
+
+      final spring = [
+        run(at: DateTime(2026, 3, 25, 7), seconds: 2400),
+        run(at: DateTime(2026, 4, 1, 7), seconds: 2400),
+      ];
+      expect(StatsService.streak(spring, minutesGoal, now: DateTime(2026, 4, 2)).weeks, 2);
+    });
+
     test('reports the last twelve weeks for the history strip', () {
       final runs = [run(at: monday(0).add(const Duration(hours: 9)), seconds: 2400)];
       final status = StatsService.streak(runs, minutesGoal, now: wednesday);

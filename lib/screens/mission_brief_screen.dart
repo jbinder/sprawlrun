@@ -198,9 +198,10 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       ),
                       const SizedBox(height: 18),
                     ],
-                    SectionHeader(L.of(context).setYourTarget),
-                    _ActivityPicker(activity: _activity, onChanged: (a) => setState(() => _activity = a)),
-                    const SizedBox(height: 8),
+                    SectionHeader(
+                      L.of(context).setYourTarget,
+                      trailing: _ActivityPicker(activity: _activity, onChanged: (a) => setState(() => _activity = a)),
+                    ),
                     if (_activity == Activity.walk) ...[
                       Text(
                         L.of(context).activityWalkExplainer,
@@ -266,8 +267,12 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
   }
 }
 
-/// Run or walk. Above the goal, since it is decided first and changes what a
-/// pursuit will ask for.
+/// Run or walk, as a small switch at the end of the SET YOUR TARGET line.
+///
+/// It changes only what a pursuit asks for, so it is a setting beside the
+/// target rather than a step before it: as a pair of full-width boxes above
+/// the panel it outweighed the TIME | DISTANCE pair inside, and read as the
+/// main decision on the screen.
 class _ActivityPicker extends StatelessWidget {
   const _ActivityPicker({required this.activity, required this.onChanged});
 
@@ -276,26 +281,60 @@ class _ActivityPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _ModeButton(
+    return DecoratedBox(
+      decoration: BoxDecoration(border: Border.all(color: Cy.rule)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _ActivitySegment(
             label: L.of(context).activityRun,
             icon: Icons.directions_run,
             selected: activity == Activity.run,
             onTap: () => onChanged(Activity.run),
           ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: _ModeButton(
+          Container(width: 1, height: 26, color: Cy.rule),
+          _ActivitySegment(
             label: L.of(context).activityWalk,
             icon: Icons.directions_walk,
             selected: activity == Activity.walk,
             onTap: () => onChanged(Activity.walk),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActivitySegment extends StatelessWidget {
+  const _ActivitySegment({required this.label, required this.icon, required this.selected, required this.onTap});
+
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? Cy.cyan : Cy.ghost;
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          height: 26,
+          padding: const EdgeInsets.symmetric(horizontal: 9),
+          color: selected ? Cy.cyan.withValues(alpha: 0.12) : null,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 13, color: color),
+              const SizedBox(width: 5),
+              Text(label, style: CyType.mono(size: 10, color: color, letterSpacing: 1.4)),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 }

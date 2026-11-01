@@ -15,6 +15,7 @@ import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
+import 'package:sprawl_run/services/battery_optimization.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
@@ -77,7 +78,12 @@ final shotsTakenAt = DateTime(2026, 9, 27, 21, 0);
 /// The language has to be the runner's, not only the screen's: `AppState`
 /// localizes the story packs from it, so swapping the interface strings alone
 /// shows a Spanish screen around an English briefing.
-Future<AppState> seedShowcase(WidgetTester tester, {Size logicalSize = phoneSize, String language = ''}) async {
+Future<AppState> seedShowcase(
+  WidgetTester tester, {
+  Size logicalSize = phoneSize,
+  String language = '',
+  BatteryOptimization? battery,
+}) async {
   // The run screen asks for notification permission before it starts the run,
   // and an unanswered platform call never returns in the harness — so the HUD
   // shots showed a run stuck on STANDBY at 00:00 until this answered it.
@@ -109,6 +115,7 @@ Future<AppState> seedShowcase(WidgetTester tester, {Size logicalSize = phoneSize
     runs: runs,
     missions: MissionRepository(externalDir: Directory('${root.path}/packs')),
     narrator: FakeNarrator(),
+    battery: battery,
   );
 
   // Anchored to today so regenerating always shows a live current week.

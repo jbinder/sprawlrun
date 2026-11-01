@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -282,6 +284,8 @@ class SettingsScreen extends StatelessWidget {
                               },
                             ),
                           ],
+                          const _Rule(),
+                          const _BatteryRow(),
                           const _Rule(),
                           _SwitchRow(
                             label: l.settingSeasonalEvents,
@@ -575,6 +579,70 @@ class _TimeRow extends StatelessWidget {
           ),
         ),
         _SmallButton(icon: Icons.add, onTap: () => onChanged(_shifted(_step))),
+      ],
+    );
+  }
+}
+
+/// Whether Android may stop a run to save battery, with the way to ask it not
+/// to. Read again whenever Settings opens: the runner can change it in
+/// Android's settings at any time, and this row must not tell them otherwise.
+class _BatteryRow extends StatefulWidget {
+  const _BatteryRow();
+
+  @override
+  State<_BatteryRow> createState() => _BatteryRowState();
+}
+
+class _BatteryRowState extends State<_BatteryRow> {
+  bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(context.read<AppState>().recheckBattery());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final optimized = context.select<AppState, bool>((s) => s.batteryOptimized);
+    final l = L.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l.settingBattery, style: CyType.body(size: 15, weight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text(
+                optimized ? l.settingBatteryOptimized : l.settingBatteryExempt,
+                style: CyType.body(size: 12, color: optimized ? Cy.amber : Cy.ghost, height: 1.3),
+              ),
+            ],
+          ),
+        ),
+        if (optimized) ...[
+          const SizedBox(width: 10),
+          CyberButton(
+            label: l.batteryAllow,
+            expand: false,
+            dense: true,
+            onPressed: _busy
+                ? null
+                : () async {
+                    setState(() => _busy = true);
+                    await context.read<AppState>().requestBatteryExemption();
+                    if (mounted) setState(() => _busy = false);
+                  },
+          ),
+        ] else
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Icon(Icons.check, size: 18, color: Cy.green),
+          ),
       ],
     );
   }

@@ -22,6 +22,7 @@ import '../models/signal_log.dart';
 import '../models/run_outcome.dart';
 import '../models/stats.dart';
 import '../models/stride.dart';
+import '../services/battery_optimization.dart';
 import '../services/achievement_engine.dart';
 import '../services/backup_folder.dart';
 import '../services/backup_nudge.dart';
@@ -54,8 +55,10 @@ class AppState extends ChangeNotifier {
     ActiveRunStore? activeRun,
     BackupFolder? backupFolder,
     StepSetup? stepSetup,
+    BatteryOptimization? battery,
     List<Locale> Function()? systemLocales,
   }) : _signals = signals ?? SignalScheduler.noop(),
+       _battery = battery ?? BatteryOptimization.none,
        _backupFolder = backupFolder ?? BackupFolder.none(),
        _stepSetup = stepSetup ?? StepSetup.none(),
        _systemLocales = systemLocales ?? (() => PlatformDispatcher.instance.locales),
@@ -97,6 +100,38 @@ class AppState extends ChangeNotifier {
 
   /// Whether this phone can count steps, and the permission for it.
   final StepSetup _stepSetup;
+
+  final BatteryOptimization _battery;
+
+  /// Whether Android may stop the app to save battery, which a vendor battery
+  /// manager did to a run in its foreground service. Read at load and again
+  /// whenever Settings or a briefing might act on it, since the runner can
+  /// change it in system settings at any time.
+  bool batteryOptimized = false;
+
+  /// Asked once, before a run, and never again unprompted: the briefing's
+  /// question is a suggestion, and Settings keeps the way back to it.
+  bool get shouldAskBatteryExemption => batteryOptimized && !profile.batteryAsked;
+
+  Future<void> recheckBattery() async {
+    final now = await _battery.optimized();
+    if (now == batteryOptimized) return;
+    batteryOptimized = now;
+    notifyListeners();
+  }
+
+  /// Shows Android's dialog and remembers that it was asked.
+  Future<void> requestBatteryExemption() async {
+    batteryOptimized = !await _battery.requestExemption();
+    if (!profile.batteryAsked) {
+      await updateProfile(profile.copyWith(batteryAsked: true));
+    } else {
+      notifyListeners();
+    }
+  }
+
+  /// Remembers that the runner said not now, so the briefing does not ask again.
+  Future<void> declineBatteryExemption() => updateProfile(profile.copyWith(batteryAsked: true));
 
   /// The phone has a step counter, so Settings offers to use it.
   bool stepCounterAvailable = false;
@@ -248,6 +283,7 @@ class AppState extends ChangeNotifier {
     await _migrateAndDateAchievements();
     autoBackupFolder = await _backupFolder.current();
     stepCounterAvailable = await _stepSetup.available();
+    batteryOptimized = await _battery.optimized();
     // A setting can outlive its permission: taken back in Android's settings,
     // or carried to another phone in a backup. Off, then, rather than on and
     // silently counting nothing.

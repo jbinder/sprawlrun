@@ -26,6 +26,11 @@
          Android 10; below that the step counter needs none. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
 
+    <!-- Lets the app ask, once and with Android's own dialog, to be left out
+         of battery optimisation: a vendor battery manager killed a run in its
+         foreground service. Asked before a run, never required. -->
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+
     <!-- Alarms do not survive a reboot. Without this a reminder set on Friday
          is silently gone by Monday if the phone restarted in between. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>

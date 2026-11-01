@@ -223,6 +223,7 @@ class Profile {
     this.keepScreenOn = true,
     this.splitsEnabled = true,
     this.countSteps = false,
+    this.batteryAsked = false,
     this.lastActivity = Activity.run,
     this.activePackId,
     this.completedMissions = const <String>{},
@@ -323,6 +324,10 @@ class Profile {
   /// but not the grant.
   final bool countSteps;
 
+  /// Whether the briefing has asked, once, for the app to be left out of
+  /// battery optimisation. Settings offers it again whatever this says.
+  final bool batteryAsked;
+
   /// What the briefing offers first: whatever the runner chose last time, so
   /// someone who always walks sets it once and a runner never sees it change.
   final Activity lastActivity;
@@ -393,6 +398,7 @@ class Profile {
     bool? keepScreenOn,
     bool? splitsEnabled,
     bool? countSteps,
+    bool? batteryAsked,
     Activity? lastActivity,
     String? activePackId,
     Set<String>? completedMissions,
@@ -426,6 +432,7 @@ class Profile {
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
     splitsEnabled: splitsEnabled ?? this.splitsEnabled,
     countSteps: countSteps ?? this.countSteps,
+    batteryAsked: batteryAsked ?? this.batteryAsked,
     lastActivity: lastActivity ?? this.lastActivity,
     activePackId: activePackId ?? this.activePackId,
     completedMissions: completedMissions ?? this.completedMissions,
@@ -461,6 +468,7 @@ class Profile {
     'keepScreenOn': keepScreenOn,
     'splitsEnabled': splitsEnabled,
     'countSteps': countSteps,
+    'batteryAsked': batteryAsked,
     'lastActivity': lastActivity.name,
     if (activePackId != null) 'activePackId': activePackId,
     'completedMissions': completedMissions.toList(),
@@ -503,6 +511,7 @@ class Profile {
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,
     splitsEnabled: json['splitsEnabled'] as bool? ?? true,
     countSteps: json['countSteps'] as bool? ?? false,
+    batteryAsked: json['batteryAsked'] as bool? ?? false,
     lastActivity: Activity.parse(json['lastActivity']),
     activePackId: json['activePackId'] as String?,
     completedMissions: ((json['completedMissions'] as List?) ?? const []).map((e) => e as String).toSet(),

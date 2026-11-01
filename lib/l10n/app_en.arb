@@ -1296,6 +1296,34 @@
   "@spokenRunResumed": {
     "description": "SPOKEN ALOUD by the speech engine when an interrupted run is resumed, so write it for the ear. At most 260 characters."
   },
+  "batteryTitle": "KEEP RUNS ALIVE",
+  "@batteryTitle": {
+    "description": "Title of the one-time dialog before a run, asking to let the app run in the background without battery optimisation."
+  },
+  "batteryBody": "To save battery, your phone may stop SPRAWL//RUN in the middle of a run. Let it run in the background and Android leaves your runs alone. You can change this in Settings at any time.",
+  "@batteryBody": {
+    "description": "Body of the one-time dialog before a run. Allow opens Android's own dialog to turn battery optimisation off for the app."
+  },
+  "batteryAllow": "Allow",
+  "@batteryAllow": {
+    "description": "Button opening Android's dialog to let the app run in the background without battery optimisation."
+  },
+  "batteryNotNow": "Not now",
+  "@batteryNotNow": {
+    "description": "Button declining the battery dialog; the run starts anyway and the dialog does not come back."
+  },
+  "settingBattery": "Run in the background",
+  "@settingBattery": {
+    "description": "Settings row: whether Android may stop the app to save battery during a run."
+  },
+  "settingBatteryOptimized": "Your phone may stop a run to save battery.",
+  "@settingBatteryOptimized": {
+    "description": "Settings row subtitle while battery optimisation is on for the app; shown with an Allow button."
+  },
+  "settingBatteryExempt": "Allowed. Your phone leaves runs alone.",
+  "@settingBatteryExempt": {
+    "description": "Settings row subtitle once the app is exempt from battery optimisation."
+  },
   "keepRun": "Keep run",
   "@keepRun": {
     "description": "Button saving an interrupted run."

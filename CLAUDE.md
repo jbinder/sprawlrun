@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 660 tests
+fvm flutter test                                    # 667 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -367,6 +367,13 @@ the activity. Two things now prevent that, and both are needed:
   same id: the gap is not run time, heard beats stay heard, read splits are
   not read again, and a pursuit cut off mid-way is uncounted and run again in
   full. The file stays until the resumed run saves over it.
+
+Being a foreground service is not always enough: a vendor battery manager
+SIGKILLed one at importance 125 (`dumpsys activity exit-info` shows it). The
+briefing therefore asks once, before a run, to be left out of battery
+optimisation (`BatteryOptimization`, answered before the run starts), and
+Settings → Run shows where it stands.
+
 The notification's Pause/Resume and Stop ride on the same arrangement:
 `MissionService.onAction` is set once per engine in `installChannels` and calls
 `noticeAction` on the engine's channel, so the buttons reach the run with no

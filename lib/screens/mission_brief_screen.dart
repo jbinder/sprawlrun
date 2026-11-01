@@ -243,6 +243,12 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                       await app.updateProfile(app.profile.copyWith(lastActivity: _activity));
                     }
                     if (!context.mounted) return;
+                    // Before the run, not during it: Android's dialog is
+                    // answered first, so the clock never runs behind it.
+                    if (app.shouldAskBatteryExemption) {
+                      await askBatteryExemption(context, app);
+                      if (!context.mounted) return;
+                    }
                     if (mission != null) {
                       await context.read<AppState>().rememberGoal(
                         mission,
@@ -584,5 +590,55 @@ class _PresetChip extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Once, before a run: asks to be left out of battery optimisation, which is
+/// what a vendor battery manager used to kill a run mid-way. Either answer is
+/// remembered, so it is never asked again unprompted; Settings keeps the way
+/// back. Completes once Android's own dialog, if opened, is closed.
+Future<void> askBatteryExemption(BuildContext context, AppState app) async {
+  final allow = await showDialog<bool>(
+    context: context,
+    builder: (context) => Dialog(
+      backgroundColor: Colors.transparent,
+      child: NeonPanel(
+        accent: Cy.amber,
+        lit: true,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.battery_alert_outlined, size: 18, color: Cy.amber),
+                const SizedBox(width: 10),
+                Expanded(child: Text(L.of(context).batteryTitle, style: CyType.display(size: 15, color: Cy.amber))),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(L.of(context).batteryBody, style: CyType.body(size: 14, color: Cy.ink, height: 1.4)),
+            const SizedBox(height: 18),
+            CyberButton(
+              label: L.of(context).batteryAllow,
+              dense: true,
+              onPressed: () => Navigator.of(context).pop(true),
+            ),
+            const SizedBox(height: 10),
+            CyberButton(
+              label: L.of(context).batteryNotNow,
+              style: CyberButtonStyle.ghost,
+              dense: true,
+              onPressed: () => Navigator.of(context).pop(false),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+  if (allow == true) {
+    await app.requestBatteryExemption();
+  } else {
+    await app.declineBatteryExemption();
   }
 }

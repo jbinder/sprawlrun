@@ -777,6 +777,27 @@ class PseudoL extends L {
   String get spokenRunResumed => pseudo(_en.spokenRunResumed);
 
   @override
+  String get batteryTitle => pseudo(_en.batteryTitle);
+
+  @override
+  String get batteryBody => pseudo(_en.batteryBody);
+
+  @override
+  String get batteryAllow => pseudo(_en.batteryAllow);
+
+  @override
+  String get batteryNotNow => pseudo(_en.batteryNotNow);
+
+  @override
+  String get settingBattery => pseudo(_en.settingBattery);
+
+  @override
+  String get settingBatteryOptimized => pseudo(_en.settingBatteryOptimized);
+
+  @override
+  String get settingBatteryExempt => pseudo(_en.settingBatteryExempt);
+
+  @override
   String get keepRun => pseudo(_en.keepRun);
 
   @override

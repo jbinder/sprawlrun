@@ -10,6 +10,7 @@ import 'data/mission_repository.dart';
 import 'data/profile_repository.dart';
 import 'data/run_repository.dart';
 import 'services/backup_folder.dart';
+import 'services/battery_optimization.dart';
 import 'services/location_service.dart';
 import 'services/narrator.dart';
 import 'services/signal_scheduler.dart';
@@ -37,6 +38,7 @@ Future<void> main() async {
     signals: SignalScheduler.platform(),
     backupFolder: BackupFolder.platform(),
     stepSetup: StepSetup.platform(),
+    battery: BatteryOptimization.platform(),
   );
 
   runApp(

@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import android.view.KeyEvent
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -99,6 +102,9 @@ class MainActivity : FlutterActivity() {
     private val stepsRequestCode = 4713
     private var pendingStepsResult: MethodChannel.Result? = null
 
+    private val batteryRequestCode = 4714
+    private var pendingBatteryResult: MethodChannel.Result? = null
+
     private var pendingFolderResult: MethodChannel.Result? = null
     private var pendingFolder: BackupFolder? = null
 
@@ -162,6 +168,8 @@ class MainActivity : FlutterActivity() {
         pendingFolderResult = null
         pendingStepsResult?.success(false)
         pendingStepsResult = null
+        pendingBatteryResult?.success(!batteryOptimized(this))
+        pendingBatteryResult = null
         super.onDestroy()
         if (destroyEngine && engine != null && FlutterEngineCache.getInstance().get(ENGINE_ID) === engine) {
             FlutterEngineCache.getInstance().remove(ENGINE_ID)
@@ -266,6 +274,18 @@ class MainActivity : FlutterActivity() {
                             result.success(hasNotificationPermission(app))
                         } else {
                             activity.requestNotificationPermission(result)
+                        }
+                    }
+
+                    // See requestBatteryExemption.
+                    "batteryOptimized" -> result.success(batteryOptimized(app))
+
+                    "requestBatteryExemption" -> {
+                        val activity = attached?.get()
+                        if (activity == null) {
+                            result.success(!batteryOptimized(app))
+                        } else {
+                            activity.requestBatteryExemption(result)
                         }
                     }
 
@@ -405,6 +425,43 @@ class MainActivity : FlutterActivity() {
         requestPermissions(arrayOf(permission), notificationRequestCode)
     }
 
+    /** Whether Android may stop this app to save battery. False below 6.0,
+     *  which had no such optimisation to be exempt from. */
+    private fun batteryOptimized(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return false
+        val power = context.getSystemService(PowerManager::class.java) ?: return false
+        return !power.isIgnoringBatteryOptimizations(context.packageName)
+    }
+
+    /**
+     * Asks Android to leave the app out of battery optimisation, with its own
+     * one-tap dialog, and answers once that dialog is closed — so a run never
+     * starts behind it. Being a foreground service was not enough on a real
+     * device: a vendor battery manager killed a run at 4.6 of 5 km (SIGKILL,
+     * importance 125). Answers whether the app is now exempt.
+     */
+    private fun requestBatteryExemption(result: MethodChannel.Result) {
+        if (!batteryOptimized(this)) {
+            result.success(true)
+            return
+        }
+        if (pendingBatteryResult != null) {
+            result.success(false)
+            return
+        }
+        pendingBatteryResult = result
+        try {
+            @Suppress("BatteryLife")
+            val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:$packageName"))
+            @Suppress("DEPRECATION")
+            startActivityForResult(intent, batteryRequestCode)
+        } catch (e: Exception) {
+            // A ROM without the dialog: nothing to ask, nothing changed.
+            pendingBatteryResult = null
+            result.success(false)
+        }
+    }
+
     private fun requestStepsPermission(result: MethodChannel.Result) {
         if (StepStream.hasPermission(this)) {
             result.success(true)
@@ -438,6 +495,12 @@ class MainActivity : FlutterActivity() {
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == batteryRequestCode) {
+            // The dialog's result code says nothing reliable; ask the system.
+            pendingBatteryResult?.success(!batteryOptimized(this))
+            pendingBatteryResult = null
+            return
+        }
         if (requestCode != folderRequestCode) return
         val pending = pendingFolderResult ?: return
         val folder = pendingFolder

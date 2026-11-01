@@ -22,6 +22,7 @@ import 'package:sprawl_run/screens/run_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
+import 'package:sprawl_run/services/battery_optimization.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/services/location_service.dart';
 import 'package:sprawl_run/state/app_state.dart';
@@ -77,8 +78,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
 
   /// The showcase, with its packs in the language under test. Under the
   /// English the harness reports, so the translation is filed under `en`.
-  Future<AppState> seed(WidgetTester tester, {Size logicalSize = tall}) async {
-    final state = await seedShowcase(tester, logicalSize: logicalSize);
+  Future<AppState> seed(WidgetTester tester, {Size logicalSize = tall, BatteryOptimization? battery}) async {
+    final state = await seedShowcase(tester, logicalSize: logicalSize, battery: battery);
     state.debugTranslatePacks('en', story);
     return state;
   }
@@ -149,6 +150,18 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     await pumpShowcase(tester, MissionBriefScreen(mission: state.currentMission!.mission), state, delegates: delegates);
     await tester.pump(const Duration(seconds: 20)); // typed out
     await tester.tap(find.text(l10n.goalDistance));
+    await tester.pump(const Duration(milliseconds: 300));
+  });
+
+  testWidgets('briefing, asking once to keep runs alive', (tester) async {
+    final state = await seed(tester, logicalSize: narrow, battery: BatteryOptimization(optimized: () async => true, requestExemption: () async => false));
+    expect(state.shouldAskBatteryExemption, isTrue);
+    await pumpShowcase(tester, const MissionBriefScreen(mission: null), state, delegates: delegates);
+    await tester.tap(find.text(l10n.startRun.toUpperCase()));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(l10n.batteryTitle), findsOneWidget);
+    await tester.tap(find.text(l10n.batteryNotNow.toUpperCase()));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
     await tester.pump(const Duration(milliseconds: 300));
   });
 
@@ -325,7 +338,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
   });
 
   testWidgets('settings, every row showing', (tester) async {
-    final state = await seed(tester, logicalSize: const Size(360, 6000));
+    // Optimised, so the battery row carries its warning and its button.
+    final state = await seed(tester, logicalSize: const Size(360, 6000), battery: BatteryOptimization(optimized: () async => true, requestExemption: () async => false));
     await tester.runAsync(
       () => state.updateProfile(
         state.profile.copyWith(
@@ -338,6 +352,7 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     );
     state.stepCounterAvailable = true;
     await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
+    expect(find.text(l10n.settingBatteryOptimized), findsOneWidget);
     await tester.tap(find.text(l10n.resetProgress.toUpperCase()));
     await tester.pump(const Duration(milliseconds: 300));
   });

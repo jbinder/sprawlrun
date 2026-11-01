@@ -570,6 +570,29 @@ class AppState extends ChangeNotifier {
     return report;
   }
 
+  /// How long after its last save an interrupted run can still be picked up.
+  /// Past this the runner has long since stopped, and carrying the clock on
+  /// from a cold start would be a different run wearing this one's name.
+  static const Duration resumeWithin = Duration(minutes: 30);
+
+  /// Whether [saved] can still be resumed: recent enough, and its mission
+  /// (if any) still there to run.
+  bool canResume(ActiveRunSnapshot saved) {
+    if (appNow().difference(saved.record.endedAt) > resumeWithin) return false;
+    final id = saved.record.missionId;
+    return id == null || missionById(id) != null;
+  }
+
+  /// Hands the interrupted run over to be resumed, and takes it off offer.
+  /// The file stays: it is the run's only copy until the resumed run saves
+  /// over it under the same id, so dying again before that loses nothing.
+  ActiveRunSnapshot? takeInterruptedRun() {
+    final saved = interruptedRun;
+    interruptedRun = null;
+    notifyListeners();
+    return saved;
+  }
+
   Future<void> discardInterruptedRun() async {
     final saved = interruptedRun;
     if (saved == null) return;

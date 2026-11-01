@@ -27,11 +27,22 @@ import '../l10n/l10n.dart';
 /// The live run. Everything on this screen is legible at arm's length while
 /// moving, which drives the type sizes and the very small number of controls.
 class RunScreen extends StatefulWidget {
-  const RunScreen({super.key, required this.mission, required this.goal, this.activity = Activity.run});
+  const RunScreen({super.key, required this.mission, required this.goal, this.activity = Activity.run, this.resumeFrom});
+
+  /// A run the process died in, to carry on from where it was last saved.
+  /// [mission], [goal] and [activity] are its own.
+  factory RunScreen.resume(ActiveRunSnapshot saved, {Key? key, required Mission? mission}) => RunScreen(
+    key: key,
+    mission: mission,
+    goal: saved.record.goal,
+    activity: saved.record.activity,
+    resumeFrom: saved,
+  );
 
   final Mission? mission;
   final RunGoal goal;
   final Activity activity;
+  final ActiveRunSnapshot? resumeFrom;
 
   @override
   State<RunScreen> createState() => _RunScreenState();
@@ -98,6 +109,8 @@ class _RunScreenState extends State<RunScreen> {
       profile: app.profile,
       activity: widget.activity,
       stride: app.stride,
+      resumeFrom: widget.resumeFrom?.record,
+      codexHeard: widget.resumeFrom?.codexHeard ?? const [],
     );
     // Disposed mid-start: dispose has already stopped the service, so there is
     // nothing left to promote or listen to.

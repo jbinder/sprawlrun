@@ -22,6 +22,7 @@ import '../widgets/progress.dart';
 import 'mission_brief_screen.dart';
 import 'mission_debrief_screen.dart';
 import 'missions_screen.dart';
+import 'run_screen.dart';
 import 'run_summary_screen.dart';
 import '../l10n/l10n.dart';
 
@@ -851,6 +852,7 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
     final state = context.watch<AppState>();
     final run = widget.saved.record;
     final what = run.missionCodename ?? L.of(context).freeRunName;
+    final resumable = state.canResume(widget.saved);
 
     return NeonPanel(
       accent: Cy.amber,
@@ -873,13 +875,27 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
           ),
           const SizedBox(height: 6),
           Text(
-            L.of(context).runInterruptedBody(Fmt.dateTime(run.endedAt)),
+            resumable
+                ? L.of(context).runInterruptedResumeBody(Fmt.dateTime(run.endedAt))
+                : L.of(context).runInterruptedBody(Fmt.dateTime(run.endedAt)),
             style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
           ),
           const SizedBox(height: 14),
+          // Resuming leads while it is possible: a runner whose phone killed
+          // the app wants the run back, not a record of how far it got.
+          if (resumable) ...[
+            CyberButton(
+              label: L.of(context).resumeRun,
+              icon: Icons.play_arrow_rounded,
+              dense: true,
+              onPressed: _busy ? null : () => _resume(state),
+            ),
+            const SizedBox(height: 8),
+          ],
           CyberButton(
             label: _busy ? L.of(context).working : L.of(context).keepRun,
             icon: Icons.save_outlined,
+            style: resumable ? CyberButtonStyle.ghost : CyberButtonStyle.primary,
             dense: true,
             onPressed: _busy ? null : () => _keep(state),
           ),
@@ -892,6 +908,16 @@ class _InterruptedRunCardState extends State<_InterruptedRunCard> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> _resume(AppState state) async {
+    final id = widget.saved.record.missionId;
+    final mission = id == null ? null : state.missionById(id);
+    final saved = state.takeInterruptedRun();
+    if (saved == null) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(builder: (_) => RunScreen.resume(saved, mission: mission)),
     );
   }
 

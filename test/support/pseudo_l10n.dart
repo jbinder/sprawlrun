@@ -768,6 +768,15 @@ class PseudoL extends L {
   String runInterruptedBody(String when) => pseudo(_en.runInterruptedBody(when));
 
   @override
+  String runInterruptedResumeBody(String when) => pseudo(_en.runInterruptedResumeBody(when));
+
+  @override
+  String get resumeRun => pseudo(_en.resumeRun);
+
+  @override
+  String get spokenRunResumed => pseudo(_en.spokenRunResumed);
+
+  @override
   String get keepRun => pseudo(_en.keepRun);
 
   @override

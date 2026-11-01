@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/app.dart';
+import 'package:sprawl_run/data/active_run_store.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/achievement.dart';
@@ -114,6 +115,20 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     expect(state.season, isNotNull);
     expect(state.backupNudge, isNotNull);
     await pumpShowcase(tester, const HomeShell(), state, delegates: delegates);
+  });
+
+  testWidgets('home, with a run the phone killed, to resume', (tester) async {
+    final state = await seed(tester, logicalSize: tall);
+    final mission = state.currentMission!.mission;
+    // Saved five minutes ago, so all three choices are on the card.
+    state.interruptedRun = ActiveRunSnapshot(
+      record: run(at: appNow().subtract(const Duration(minutes: 31)), meters: 4626, seconds: 1546, missionId: mission.id),
+      codexHeard: const [],
+    );
+    expect(state.canResume(state.interruptedRun!), isTrue);
+    await pumpShowcase(tester, const HomeShell(), state, delegates: delegates);
+    expect(find.text(l10n.resumeRun.toUpperCase()), findsOneWidget);
+    expect(find.text(l10n.keepRun.toUpperCase()), findsOneWidget);
   });
 
   testWidgets('home, with a campaign finished', (tester) async {

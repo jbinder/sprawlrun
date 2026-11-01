@@ -341,6 +341,8 @@ class RunEngine extends ChangeNotifier {
     required Profile profile,
     Activity activity = Activity.run,
     Stride? stride,
+    RunRecord? resumeFrom,
+    List<String> codexHeard = const [],
   }) async {
     if (isActive) return LocationReadiness.ready;
 
@@ -352,6 +354,7 @@ class RunEngine extends ChangeNotifier {
     this.stride = stride ?? Stride.of(const [], heightCm: profile.heightCm);
 
     _reset();
+    final pendingChase = resumeFrom == null ? null : _restore(resumeFrom, codexHeard);
 
     final readiness = await location.prepare();
     if (readiness != LocationReadiness.ready) {
@@ -366,7 +369,7 @@ class RunEngine extends ChangeNotifier {
     _fixSub = location.fixes().listen(_onFix, onError: _onFixError);
 
     if (profile.countSteps && stepSource != null) {
-      steps = 0;
+      steps = resumeFrom?.steps ?? 0;
       _stepSub = stepSource!.counts().listen(
         _onSteps,
         // A counter that cannot count — no sensor, or the permission taken
@@ -384,15 +387,79 @@ class RunEngine extends ChangeNotifier {
       notifyListeners();
     });
 
-    startedAt = _now();
-    _segmentStart = startedAt;
+    // A resumed run keeps its start, and so its id: the copy on disk is
+    // overwritten rather than joined by a second one.
+    startedAt = resumeFrom?.startedAt ?? _now();
+    _segmentStart = _now();
     phase = RunPhase.running;
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
 
     await narrator.setAmbientBed(profile.ambientBed);
     notifyListeners();
+    if (resumeFrom != null) _announceResume(pendingChase);
     _tick(); // fire the opening beat immediately rather than a second late
     return readiness;
+  }
+
+  /// Puts back a run the process died in, from what was last saved of it.
+  ///
+  /// The time between that save and now is not run time: the clock carries
+  /// on from the saved elapsed, as after a pause. The GPS starts over from the
+  /// first new fix, so the gap is not crossed in a straight line. Beats
+  /// already heard stay heard. A pursuit cut off mid-way is taken out of the
+  /// count and returned, to be run again in full — the runner neither escaped
+  /// nor was caught; the phone was. Returns that pursuit, if any.
+  ChaseSpec? _restore(RunRecord saved, List<String> codexHeard) {
+    _accumulated = Duration(milliseconds: (saved.elapsedSeconds * 1000).round());
+    distanceMeters = saved.distanceMeters;
+    _distanceAtLastTick = saved.distanceMeters;
+    movingSeconds = saved.movingSeconds;
+    estimatedMeters = saved.estimatedMeters;
+    strides = saved.strides ?? const StrideSample();
+    goalReached = saved.isSuccess;
+    chasesTotal = saved.chasesTotal;
+    chasesEvaded = saved.chasesEvaded;
+    beatsHeard = saved.beatsHeard;
+    trace.addAll(saved.trace);
+    if (trace.isNotEmpty) _lastTracePointAt = trace.last.elapsedSeconds;
+    codexUnlocked.addAll(codexHeard);
+    story.addAll(saved.story);
+    for (final e in story) {
+      if (e.kind == StoryEventKind.beat && e.ref != null) _firedBeats.add(e.ref!);
+    }
+
+    final unit = profile.isMetric ? 1000.0 : 1609.344;
+    _splitsDone = _spokenSplits = (distanceMeters / unit).floor();
+    _lastSplitAt = _spokenSplitAt = saved.elapsedSeconds;
+
+    final lastChase = story.lastIndexWhere(
+      (e) => e.kind == StoryEventKind.chaseStarted || e.kind == StoryEventKind.chaseEnded,
+    );
+    if (lastChase == -1 || story[lastChase].kind != StoryEventKind.chaseStarted) return null;
+    final pursuer = story.removeAt(lastChase).ref;
+    chasesTotal--;
+    for (final beat in mission?.beats ?? const <StoryBeat>[]) {
+      if (beat.chase?.pursuer == pursuer) return beat.chase;
+    }
+    return null;
+  }
+
+  /// Says the run is back before anything else is, and holds the story until
+  /// it has — then runs again any pursuit the phone cut short.
+  void _announceResume(ChaseSpec? pendingChase) {
+    _beatPlaying = true;
+    unawaited(
+      narrator
+          .speakBeat([StoryLine(speaker: 'SYSTEM', text: l10n.spokenRunResumed, language: l10n.localeName)])
+          .whenComplete(() {
+            _beatPlaying = false;
+            _lastBeatEndedAt = _now();
+            if (pendingChase != null && profile.chasesEnabled && phase == RunPhase.running) {
+              _startChase(pendingChase);
+            }
+            notifyListeners();
+          }),
+    );
   }
 
   void pause() {

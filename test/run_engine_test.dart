@@ -1,5 +1,6 @@
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -44,6 +45,26 @@ class Harness {
 
   void begin() {
     engine.start(mission: _mission, goal: _goal, profile: _profile, activity: activity);
+    fake.flushMicrotasks();
+  }
+
+  /// Starts this harness's engine as the app does after the process died:
+  /// from what was last saved of the run.
+  void resume(RunRecord saved, {List<String> codexHeard = const []}) {
+    engine.start(
+      mission: _mission,
+      goal: _goal,
+      profile: _profile,
+      activity: activity,
+      resumeFrom: saved,
+      codexHeard: codexHeard,
+    );
+    fake.flushMicrotasks();
+  }
+
+  /// The app being killed: the run is gone from memory, nothing is recorded.
+  void die() {
+    engine.abort();
     fake.flushMicrotasks();
   }
 
@@ -555,6 +576,113 @@ void main() {
         final h = Harness(fake, goal: RunGoal.seconds(120))..begin();
         h.steady(150, 3.0);
         expect(h.engine.snapshot().outcome, RunOutcome.success);
+      });
+    });
+  });
+
+  // A Sony battery manager killed a foreground-service run at 4.6 of 5 km on
+  // 2026-11-01. The snapshot survived; there was no way to carry on from it.
+  group('resuming after the process died', () {
+    test('carries on from the snapshot: same run, same clock, beats not repeated', () {
+      fakeAsync((fake) {
+        final mission = missionWith([beat('b0', fraction: 0), beat('b1', fraction: 0.5)]);
+        final first = Harness(fake, mission: mission, goal: RunGoal.seconds(600))..begin();
+        first.steady(120, 3.0);
+        final saved = first.engine.snapshot();
+        first.die();
+
+        fake.elapse(const Duration(minutes: 10)); // the runner restarts the app
+
+        final h = Harness(fake, mission: mission, goal: RunGoal.seconds(600))..resume(saved);
+        expect(h.engine.elapsedSeconds, closeTo(saved.elapsedSeconds, 0.01), reason: 'the gap is not run time');
+        expect(h.engine.distanceMeters, saved.distanceMeters);
+        expect(h.engine.snapshot().id, saved.id, reason: 'it saves over its own copy');
+        expect(h.engine.trace, hasLength(saved.trace.length));
+        expect(h.narrator.spokenText.first, l10n.spokenRunResumed);
+
+        h.steady(200, 3.0);
+        expect(h.narrator.spokenText, isNot(contains('line for b0')), reason: 'heard before the phone killed it');
+        expect(h.narrator.spokenText, contains('line for b1'), reason: 'due at 300 s of run time');
+        expect(h.engine.elapsedSeconds, closeTo(320, 2));
+        // The first fix after the gap starts the GPS over: no straight line
+        // across ten minutes of not knowing.
+        expect(h.engine.distanceMeters, closeTo(saved.distanceMeters + 199 * 3, 10));
+        expect(h.engine.beatsHeard, 2);
+      });
+    });
+
+    test('a run that had already met its goal comes back met', () {
+      fakeAsync((fake) {
+        final first = Harness(fake, goal: RunGoal.seconds(120))..begin();
+        first.steady(150, 3.0);
+        final saved = first.engine.snapshot();
+        first.die();
+
+        final h = Harness(fake, goal: RunGoal.seconds(120))..resume(saved);
+        expect(h.engine.goalReached, isTrue);
+        h.steady(10, 3.0);
+        expect(h.engine.story.where((e) => e.kind == StoryEventKind.goal), hasLength(1));
+      });
+    });
+
+    test('a split already read out is not read again', () {
+      fakeAsync((fake) {
+        final first = Harness(fake, goal: RunGoal.seconds(3600))..begin();
+        first.steady(400, 3.0); // past the first kilometre
+        final saved = first.engine.snapshot();
+        first.die();
+
+        final h = Harness(fake, goal: RunGoal.seconds(3600))..resume(saved);
+        h.steady(60, 3.0);
+        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre 1.')), isEmpty);
+        h.steady(300, 3.0);
+        expect(h.narrator.spokenText.where((t) => t.startsWith('Kilometre 2.')), hasLength(1));
+      });
+    });
+
+    test('a pursuit the phone cut short is run again in full, and counted once', () {
+      fakeAsync((fake) {
+        final pursuit = ChaseSpec(
+          duration: const Duration(seconds: 60),
+          paceFactor: 1.2,
+          pursuer: 'TEST DRONE',
+          escapedLines: const [StoryLine(speaker: 'SIX', text: 'escaped')],
+          caughtLines: const [StoryLine(speaker: 'SIX', text: 'caught')],
+        );
+        final mission = missionWith([beat('b0', fraction: 0.2, chase: pursuit)]);
+        final first = Harness(fake, mission: mission, goal: RunGoal.seconds(1200))..begin();
+        first.steady(250, 3.0);
+        expect(first.engine.activeChase, isNotNull);
+        first.steady(20, 3.0);
+        final saved = first.engine.snapshot();
+        first.die();
+
+        final h = Harness(fake, mission: mission, goal: RunGoal.seconds(1200))..resume(saved);
+        expect(h.engine.chasesTotal, 0, reason: 'neither escaped nor caught: the phone was');
+        h.steady(3, 3.0); // the resume line ends
+        expect(h.engine.activeChase, isNotNull, reason: 'the pursuit starts again');
+        expect(h.engine.chasesTotal, 1);
+
+        h.steady(70, 4.2);
+        expect(h.engine.chasesEvaded, 1);
+        expect(h.engine.story.where((e) => e.kind == StoryEventKind.chaseStarted), hasLength(1));
+      });
+    });
+
+    test('intel heard before the phone killed it is kept', () {
+      fakeAsync((fake) {
+        final mission = missionWith(
+          [beat('b0', fraction: 0, codex: 'cdx_a')],
+          codex: const [CodexEntry(id: 'cdx_a', title: 'A', category: 'PLACES', body: 'a')],
+        );
+        final first = Harness(fake, mission: mission, goal: RunGoal.seconds(600))..begin();
+        first.steady(30, 3.0);
+        final saved = first.engine.snapshot();
+        final heard = List.of(first.engine.codexUnlocked);
+        first.die();
+
+        final h = Harness(fake, mission: mission, goal: RunGoal.seconds(600))..resume(saved, codexHeard: heard);
+        expect(h.engine.codexUnlocked, ['cdx_a']);
       });
     });
   });

@@ -1279,6 +1279,23 @@
       }
     }
   },
+  "runInterruptedResumeBody": "The app was closed before this run was finished, last saved {when}. Pick it up where it stopped, keep it as it stood then, or let it go.",
+  "@runInterruptedResumeBody": {
+    "description": "Body of the card offering back a run the app was closed during, while it is recent enough to resume. The three choices are the buttons Resume, Keep run and Discard.",
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "resumeRun": "Resume run",
+  "@resumeRun": {
+    "description": "Button continuing a run the app was closed during, from where it was last saved."
+  },
+  "spokenRunResumed": "Link restored. Picking up where you stopped.",
+  "@spokenRunResumed": {
+    "description": "SPOKEN ALOUD by the speech engine when an interrupted run is resumed, so write it for the ear. At most 260 characters."
+  },
   "keepRun": "Keep run",
   "@keepRun": {
     "description": "Button saving an interrupted run."

@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 650 tests
+fvm flutter test                                    # 660 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -360,7 +360,13 @@ the activity. Two things now prevent that, and both are needed:
   left on the next launch is a run the process died in, offered back on the home
   screen to keep or discard. `clearIf` takes the run's id, so a late decision
   about an old run never deletes a newer run's copy.
-
+- **A run killed in the last 30 minutes can be resumed, not only kept.**
+  "Keep run" files the snapshot as finishing then would have — a mission short
+  of its goal becomes a failure — and was being read as "carry on".
+  `RunEngine.start(resumeFrom:)` rebuilds the run from the snapshot under the
+  same id: the gap is not run time, heard beats stay heard, read splits are
+  not read again, and a pursuit cut off mid-way is uncounted and run again in
+  full. The file stays until the resumed run saves over it.
 The notification's Pause/Resume and Stop ride on the same arrangement:
 `MissionService.onAction` is set once per engine in `installChannels` and calls
 `noticeAction` on the engine's channel, so the buttons reach the run with no

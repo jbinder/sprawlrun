@@ -7,6 +7,7 @@ import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/state/app_state.dart';
+import 'package:sprawl_run/util/clock.dart';
 
 import 'support/fakes.dart';
 
@@ -130,6 +131,44 @@ void main() {
       await state.discardInterruptedRun();
 
       expect((await state.activeRun.load())?.record.startedAt, DateTime(2026, 10, 4, 9));
+    });
+  });
+
+  // "Keep run" only files the run as it stood; a runner whose phone killed
+  // the app at 4.6 of 5 km wanted the run back.
+  group('resuming', () {
+    // The snapshot's last save is 09:31:20 (09:00 plus 1880 s).
+    tearDown(() => debugNow = null);
+
+    test('is offered for half an hour after the last save, then only keeping or discarding', () async {
+      await ActiveRunStore(root).save(snapshot(missionId: 'sp01'));
+      final state = newState();
+      await state.load();
+      final saved = state.interruptedRun!;
+
+      debugNow = DateTime(2026, 10, 4, 9, 45);
+      expect(state.canResume(saved), isTrue);
+      debugNow = DateTime(2026, 10, 4, 10, 2);
+      expect(state.canResume(saved), isFalse, reason: 'a cold start would be another run under this one\'s name');
+    });
+
+    test('is not offered for a mission that is no longer there', () async {
+      await ActiveRunStore(root).save(snapshot(missionId: 'removed_pack_op'));
+      final state = newState();
+      await state.load();
+      debugNow = DateTime(2026, 10, 4, 9, 35);
+      expect(state.canResume(state.interruptedRun!), isFalse);
+    });
+
+    test('takes it off offer but keeps the file until the resumed run saves over it', () async {
+      await ActiveRunStore(root).save(snapshot());
+      final state = newState();
+      await state.load();
+
+      final taken = state.takeInterruptedRun();
+      expect(taken?.record.distanceMeters, 4200);
+      expect(state.interruptedRun, isNull);
+      expect(state.activeRun.file.existsSync(), isTrue, reason: 'its only copy, should the phone kill it again');
     });
   });
 }

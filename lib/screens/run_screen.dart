@@ -294,7 +294,7 @@ class _RunScreenState extends State<RunScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                _RunHeader(engine: engine, mission: widget.mission),
+                _RunHeader(engine: engine, mission: widget.mission, activity: widget.activity),
                 if (_locationTrouble != null)
                   _LocationWarning(readiness: _locationTrouble!, countingSteps: engine.steps != null)
                 else if (engine.gpsQuiet)
@@ -344,10 +344,11 @@ class _RunScreenState extends State<RunScreen> {
 }
 
 class _RunHeader extends StatelessWidget {
-  const _RunHeader({required this.engine, required this.mission});
+  const _RunHeader({required this.engine, required this.mission, required this.activity});
 
   final RunEngine engine;
   final Mission? mission;
+  final Activity activity;
 
   @override
   Widget build(BuildContext context) {
@@ -372,10 +373,21 @@ class _RunHeader extends StatelessWidget {
                   style: CyType.label(size: 9),
                 ),
                 const SizedBox(height: 3),
-                Text(
-                  mission?.codename ?? L.of(context).unlogged,
-                  overflow: TextOverflow.ellipsis,
-                  style: CyType.display(size: 14, color: Cy.ink),
+                Row(
+                  children: [
+                    // As in the run log: a walk is marked beside its name.
+                    if (activity == Activity.walk) ...[
+                      Icon(Icons.directions_walk, size: 15, color: Cy.cyan, semanticLabel: L.of(context).tagWalk),
+                      const SizedBox(width: 5),
+                    ],
+                    Flexible(
+                      child: Text(
+                        mission?.codename ?? L.of(context).unlogged,
+                        overflow: TextOverflow.ellipsis,
+                        style: CyType.display(size: 14, color: Cy.ink),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

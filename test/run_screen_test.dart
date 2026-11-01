@@ -11,6 +11,7 @@ import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:sprawl_run/models/run_record.dart' show Activity;
 import 'package:sprawl_run/screens/run_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
@@ -66,7 +67,7 @@ class _Clock {
   final location = FakeLocation();
 }
 
-Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500}) async {
+Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500, Activity activity = Activity.run}) async {
   final root = tempRoot('runscreen');
   addTearDown(() => root.deleteSync(recursive: true));
   tester.view.physicalSize = const Size(1179, 2556);
@@ -114,7 +115,7 @@ Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500}) async {
           data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(0.85)),
           child: child!,
         ),
-        home: RunScreen(mission: mission, goal: RunGoal(GoalType.time, goalSeconds)),
+        home: RunScreen(mission: mission, goal: RunGoal(GoalType.time, goalSeconds), activity: activity),
       ),
     ),
   );
@@ -166,6 +167,19 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('TRANSCRIPT'), findsNothing);
 
+    await _stop(tester, run);
+  });
+
+  testWidgets('a walk is marked beside its name, as in the run log', (tester) async {
+    final walk = await _startRun(tester, activity: Activity.walk);
+    expect(walk.engine.activity, Activity.walk, reason: 'and the engine records it as one');
+    expect(find.byIcon(Icons.directions_walk), findsOneWidget);
+    await _stop(tester, walk);
+  });
+
+  testWidgets('a run carries no walk mark', (tester) async {
+    final run = await _startRun(tester);
+    expect(find.byIcon(Icons.directions_walk), findsNothing);
     await _stop(tester, run);
   });
 

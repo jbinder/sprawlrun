@@ -5,6 +5,7 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/services/achievement_engine.dart';
 import 'package:sprawl_run/services/stats_service.dart';
+import 'package:sprawl_run/util/clock.dart';
 
 import 'support/fakes.dart';
 
@@ -41,6 +42,9 @@ void main() {
     expect(stats.walks, 1);
     expect(stats.walkedMeters, 5000);
 
+    // "This week" is read from the clock; keep it the week of the walk.
+    debugNow = day(2);
+    addTearDown(() => debugNow = null);
     final walkedWeek = StatsService.streak([run(at: day(1), activity: Activity.walk)], const StreakGoal());
     expect(walkedWeek.currentValue, greaterThan(0), reason: 'a walk moves the weekly target');
   });

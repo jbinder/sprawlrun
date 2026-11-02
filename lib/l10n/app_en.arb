@@ -1690,6 +1690,23 @@
   "@settingLook": {
     "description": "Setting: which colour scheme the whole app is drawn in. A row of swatches follows."
   },
+  "settingLookPack": "{pack} wears its own colours while it is selected. Yours come back with another pack.",
+  "@settingLookPack": {
+    "description": "Shown under the colour swatches while the selected mission pack brings its own colours. The pack is a campaign name such as NULL TIDE; keep it as it is.",
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
+  "settingPackColours": "Pack colours",
+  "@settingPackColours": {
+    "description": "Setting: let a mission pack that brings its own colour theme recolour the app while it is selected."
+  },
+  "settingPackColoursHint": "A mission pack may bring its own colours. Off, yours stay on whatever pack you play.",
+  "@settingPackColoursHint": {
+    "description": "Explains the Pack colours setting."
+  },
   "settingLookSeason": "{season} wears its own colours until it ends. Yours come back after.",
   "@settingLookSeason": {
     "description": "Shown under the colour swatches while a seasonal event overrides them. The season is an event name such as SAMHAIN PROTOCOL; keep it as it is.",
@@ -2934,7 +2951,16 @@
       }
     }
   },
-  "packErrorTranslations": "The \"translations\" block must map language codes such as \"es\" to strings.",
+  "packErrorTheme": "The pack's \"theme\" cannot be used. {reason}",
+  "@packErrorTheme": {
+    "description": "Importing a mission pack whose colour theme is broken. Keep \"theme\" as it is: a field name in the file. The reason is another message explaining what is wrong.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "packErrorTranslations":"The \"translations\" block must map language codes such as \"es\" to strings.",
   "@packErrorTranslations": {
     "description": "Keep \"translations\" and \"es\" as they are: a field name and a language code in the file."
   },

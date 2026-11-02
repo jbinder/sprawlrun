@@ -345,9 +345,24 @@ class AppState extends ChangeNotifier {
   /// The theme the runner picked, or NEON when it is not loaded.
   ColourTheme get theme => themes.firstWhere((t) => t.id == profile.theme, orElse: () => ColourTheme.neon);
 
+  /// The theme the selected pack brings, if it brings one the phone can
+  /// draw and the runner lets packs choose. A pack naming a theme id this
+  /// phone does not have brings nothing.
+  ColourTheme? get packTheme {
+    if (loading || !profile.packColours) return null;
+    final pack = activePack;
+    if (pack == null) return null;
+    if (pack.ownTheme != null) return pack.ownTheme;
+    for (final t in themes) {
+      if (t.id == pack.themeId) return t;
+    }
+    return null;
+  }
+
   /// The colours the app is drawn in: the season's while one is in force,
-  /// otherwise the runner's theme. The year-round one while loading.
-  CyPalette get palette => season?.palette ?? (loading ? CyPalette.standard : theme.palette);
+  /// then the selected pack's, then the runner's theme. The year-round one
+  /// while loading.
+  CyPalette get palette => season?.palette ?? (loading ? CyPalette.standard : (packTheme ?? theme).palette);
 
   /// Imports a theme from the text of a picked file and puts it on at once —
   /// the runner picked the file to see it. Throws [ThemeFormatException].

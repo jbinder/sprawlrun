@@ -21,7 +21,9 @@ too, one component per campaign.
 A mission pack is one JSON file. Import it in the app with **Settings → Mission
 packs → Import pack** and play it, with no build needed.
 **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** describes the format, and
-`assets/missions/sprawl_prime.json` is a worked example.
+`assets/missions/sprawl_prime.json` is a worked example. A pack can bring its
+own colours too, worn while it is selected: name a theme or carry one whole in
+its `theme` field.
 
 ## Make a colour theme
 
@@ -31,6 +33,7 @@ Import theme** and see it straight away, with no build needed. To ship it with
 the app, add the file to `assets/themes/` in a pull request.
 **[docs/THEMES.md](docs/THEMES.md)** describes the format and the readability
 rules a theme has to pass, and `assets/themes/glacier.json` is a worked example.
+The same file, pasted into a mission pack's `theme` field, dresses that pack.
 
 ## Report a bug or suggest something
 

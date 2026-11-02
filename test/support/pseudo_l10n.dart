@@ -1047,6 +1047,15 @@ class PseudoL extends L {
   String get settingLook => pseudo(_en.settingLook);
 
   @override
+  String settingLookPack(String pack) => pseudo(_en.settingLookPack(pack));
+
+  @override
+  String get settingPackColours => pseudo(_en.settingPackColours);
+
+  @override
+  String get settingPackColoursHint => pseudo(_en.settingPackColoursHint);
+
+  @override
   String settingLookSeason(String season) => pseudo(_en.settingLookSeason(season));
 
   @override
@@ -1843,6 +1852,9 @@ class PseudoL extends L {
 
   @override
   String packErrorDuplicateId(String id) => pseudo(_en.packErrorDuplicateId(id));
+
+  @override
+  String packErrorTheme(String reason) => pseudo(_en.packErrorTheme(reason));
 
   @override
   String get packErrorTranslations => pseudo(_en.packErrorTranslations);

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import '../theme/colour_theme.dart';
 import 'goal.dart';
 import 'signal_ref.dart';
 
@@ -403,6 +406,8 @@ class MissionPack {
     this.signals = const SignalPool(),
     this.season,
     this.translations = const {},
+    this.themeId,
+    this.ownTheme,
   });
 
   final String id;
@@ -423,7 +428,33 @@ class MissionPack {
     signals: signals,
     season: season,
     translations: {...translations, language: strings},
+    themeId: themeId,
+    ownTheme: ownTheme,
   );
+
+  /// The colours a pack asks to be drawn in while it is selected: a theme it
+  /// names by id (`"theme": "glacier"`), resolved against the themes on the
+  /// phone, or one it carries whole in the theme file format. At most one is
+  /// set. The runner can refuse both (`Profile.packColours`), and a season in
+  /// force overrides them. See docs/MISSION_PACKS.md.
+  final String? themeId;
+  final ColourTheme? ownTheme;
+
+  /// Reads a pack's `theme` field leniently — a theme that would not pass
+  /// the rules is left out, so a bad one costs the colours, never the pack.
+  /// The importer refuses it with a reason instead; `campaign_test` checks
+  /// the shipped packs.
+  static (String?, ColourTheme?) _theme(Object? raw) {
+    if (raw is String) return (raw, null);
+    if (raw is Map) {
+      try {
+        return (null, ColourTheme.parse(jsonEncode(raw)));
+      } on ThemeFormatException {
+        return (null, null);
+      }
+    }
+    return (null, null);
+  }
 
   /// A seasonal event pack names its season (`samhain`), and is only offered
   /// — and only heard from — while that season is in force. Progress through
@@ -440,8 +471,11 @@ class MissionPack {
         .map((e) => Mission.fromJson(Map<String, dynamic>.from(e as Map), packId: id))
         .toList()
       ..sort((a, b) => a.order.compareTo(b.order));
+    final (themeId, ownTheme) = _theme(json['theme']);
     return MissionPack(
       id: id,
+      themeId: themeId,
+      ownTheme: ownTheme,
       title: json['title'] as String? ?? id,
       tagline: json['tagline'] as String? ?? '',
       missions: missions,

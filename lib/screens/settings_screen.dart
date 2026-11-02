@@ -104,6 +104,13 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           ThemeControls(label: l.settingLook),
+                          const _Rule(),
+                          _SwitchRow(
+                            label: l.settingPackColours,
+                            subtitle: l.settingPackColoursHint,
+                            value: profile.packColours,
+                            onChanged: (v) => update(profile.copyWith(packColours: v)),
+                          ),
                         ],
                       ),
                     ),

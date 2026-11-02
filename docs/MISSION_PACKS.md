@@ -33,6 +33,7 @@ but later fails to load is skipped, with the error listed in Settings.
   "title": "SPRAWL PRIME",
   "tagline": "Ten runs through the BAMA corridor.",
   "season": "samhain",               // optional; see below
+  "theme": "glacier",                // optional; see below
   "missions": [ /* Mission */ ]
 }
 ```
@@ -45,6 +46,25 @@ nothing changes for a run already recorded against it. A seasonal pack's
 `signals` cut in on whichever campaign the runner is playing rather than
 replacing it. A season the app does not know is never in force, so a pack naming one imports but is never offered; `campaign_test` checks the id. Leave the field out
 for an ordinary campaign. The shipped example is `assets/missions/samhain.json`.
+
+`theme` dresses the app in the pack's own colours while it is the selected
+pack. It takes one of two forms:
+
+- **A theme id**, such as `"glacier"`: one of the themes in
+  [docs/THEMES.md](THEMES.md). NEON and the themes in `assets/themes/` are on
+  every phone. An id the phone does not have — someone else's imported theme,
+  say — brings no colours, and the pack plays in the runner's own.
+- **A whole theme**: the contents of a theme file, `id`, `name` and all
+  fourteen `colours`, as an object. It has to pass the same readability rules
+  as an imported theme, and an import that fails them is refused with the
+  reason. It is not added to the theme picker; it exists only while the pack
+  is selected.
+
+A season in force wears its colours over the pack's, and the runner can turn
+pack colours off in **Settings → Identity → Pack colours**, which keeps their
+own theme on every pack. Leave the field out and the pack plays in whatever
+the runner picked. `campaign_test` holds a shipped pack to the themes that
+ship with the app.
 
 ### Mission
 

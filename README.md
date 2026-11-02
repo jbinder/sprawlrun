@@ -20,6 +20,8 @@ you to slow down.*
 
 <a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/svg-badge.svg" alt="Translation status"></a>
 
+**[Contribute](#contributing)**: translate it, write missions, make a colour theme — none of it needs Flutter.
+
 <br>
 
 <img src="docs/screenshots/dashboard.png" width="248" alt="Dashboard">
@@ -194,7 +196,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 - A codex of forty-eight entries that unlock only once a character has mentioned them
 - Every run keeps a story log; cleared missions open onto a debriefing of every attempt
 - Importable mission packs: pick a JSON file and it appears; import a newer version to
-  update it, remove it without losing progress
+  update it, remove it without losing progress; a pack can bring its own colours,
+  which you can switch off
 
 **Running**
 - GPS tracking that keeps going with the screen off, or with the app swiped away, with
@@ -259,6 +262,50 @@ next October if you do not finish. One switch in Settings turns it all off.
 
 <br>
 
+# Contributing
+
+Translations, mission packs, colour themes, bug reports and code are all
+welcome, and only code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
+Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
+
+## Translations
+
+<a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/multi-auto.svg" alt="Translation status"></a>
+
+Translated by the community on
+[Weblate](https://hosted.weblate.org/engage/sprawlrun/), and improving as it
+goes — corrections are welcome there. Thanks to
+[Hosted Weblate](https://weblate.org/) for hosting the translations of this
+libre project for free.
+
+- **Spanish** — [@cristian01215](https://github.com/cristian01215)
+
+## Adding missions
+
+A mission pack is one JSON file. Import it with **Settings → Mission packs →
+Import pack** — no rebuild, no app update, no storage permission. See **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** for
+the format, and `assets/missions/sprawl_prime.json` or `null_tide.json` for a
+worked example.
+
+Every pack is its own campaign with its own chain of missions. The ops screen
+shows one at a time; **All packs** lists them all, grouped into active and done,
+and finishing the last mission of a pack offers the next one that's still open.
+A pack can also bring its own colours — a theme it names or carries whole — worn
+while it is the selected pack, unless the runner switches **Pack colours** off.
+
+## Adding colour themes
+
+A colour theme is one small JSON file: a name and fourteen colours, each
+named for its role (`primary`, `hostile`, `story`, `success`…) rather than its
+hue. Import your own with **Settings → Identity → Colours → Import theme**,
+with no rebuild needed. To ship one with the app, add it to `assets/themes/` in
+a pull request. The app finds it there by itself, and `test/theme_test.dart`
+checks that it stays readable. A mission pack can bring a theme of its own,
+worn while the pack is selected. See **[docs/THEMES.md](docs/THEMES.md)** for the
+format, the rules and `glacier.json` as a worked example.
+
+<br>
+
 # Technical
 
 Flutter, targeting Android first with iOS scaffolding already in place. Built
@@ -297,7 +344,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 618 tests
+flutter test                   # 676 tests
 ```
 
 The run engine takes its location source, narrator and clock by injection, so
@@ -319,45 +366,6 @@ flutter test tool/screenshots/capture_test.dart # regenerates docs + store scree
 
 The screenshot tool drives the real widgets with seeded data, so the images in
 this README cannot drift from what the app actually looks like.
-
-## Contributing
-
-Translations, mission packs, colour themes, bug reports and code are all
-welcome, and only code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
-Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
-
-### Translations
-
-<a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/multi-auto.svg" alt="Translation status"></a>
-
-Translated by the community on
-[Weblate](https://hosted.weblate.org/engage/sprawlrun/), and improving as it
-goes — corrections are welcome there. Thanks to
-[Hosted Weblate](https://weblate.org/) for hosting the translations of this
-libre project for free.
-
-- **Spanish** — [@cristian01215](https://github.com/cristian01215)
-
-## Adding missions
-
-A mission pack is one JSON file. Import it with **Settings → Mission packs →
-Import pack** — no rebuild, no app update, no storage permission. See **[docs/MISSION_PACKS.md](docs/MISSION_PACKS.md)** for
-the format, and `assets/missions/sprawl_prime.json` or `null_tide.json` for a
-worked example.
-
-Every pack is its own campaign with its own chain of missions. The ops screen
-shows one at a time; **All packs** lists them all, grouped into active and done,
-and finishing the last mission of a pack offers the next one that's still open.
-
-## Adding colour themes
-
-A colour theme is one small JSON file: a name and fourteen colours, each
-named for its role (`primary`, `hostile`, `story`, `success`…) rather than its
-hue. Import your own with **Settings → Identity → Colours → Import theme**,
-with no rebuild needed. To ship one with the app, add it to `assets/themes/` in
-a pull request. The app finds it there by itself, and `test/theme_test.dart`
-checks that it stays readable. See **[docs/THEMES.md](docs/THEMES.md)** for the
-format, the rules and `glacier.json` as a worked example.
 
 ## Layout
 

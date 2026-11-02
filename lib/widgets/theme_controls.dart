@@ -40,6 +40,7 @@ class _ThemeControlsState extends State<ThemeControls> {
     final current = state.theme;
     final language = state.locale.languageCode;
     final season = state.season;
+    final pack = season == null && state.packTheme != null ? state.activePack : null;
     final l = L.of(context);
 
     return Column(
@@ -71,6 +72,9 @@ class _ThemeControlsState extends State<ThemeControls> {
         if (season != null) ...[
           const SizedBox(height: 10),
           Text(l.settingLookSeason(season.title), style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
+        ] else if (pack != null) ...[
+          const SizedBox(height: 10),
+          Text(l.settingLookPack(pack.title), style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
         ],
         if (current.author != null || repo.importedIds.contains(current.id)) ...[
           const SizedBox(height: 10),

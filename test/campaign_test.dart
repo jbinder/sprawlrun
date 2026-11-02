@@ -7,6 +7,7 @@ import 'package:sprawl_run/models/achievement.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/signal_log.dart';
 import 'package:sprawl_run/services/narrator.dart';
+import 'package:sprawl_run/theme/colour_theme.dart';
 import 'package:sprawl_run/theme/season.dart';
 
 /// Guards the shipped campaign against the kinds of damage that only show up
@@ -29,10 +30,12 @@ void main() {
 
 void _checks(String path) {
   late MissionPack pack;
+  late Map<String, dynamic> json;
 
   setUpAll(() {
     final raw = File(path).readAsStringSync();
-    pack = MissionPack.fromJson(Map<String, dynamic>.from(jsonDecode(raw) as Map));
+    json = Map<String, dynamic>.from(jsonDecode(raw) as Map);
+    pack = MissionPack.fromJson(json);
   });
 
   test('the pack holds its missions in unbroken order: ten, or a few for an event', () {
@@ -322,6 +325,23 @@ void _checks(String path) {
   test('a seasonal pack names a season the app knows', () {
     if (pack.season == null) return;
     expect(Season.values.map((s) => s.id), contains(pack.season));
+  });
+
+  test('a pack\'s colours are a theme every phone has, or one that passes on its own', () {
+    // A shipped pack can count only on the themes that ship with it: an
+    // imported one may be on this phone and not the next.
+    final theme = json['theme'];
+    if (theme == null) return;
+    if (theme is String) {
+      final shipped = {
+        ColourTheme.neon.id,
+        for (final f in Directory('assets/themes').listSync().whereType<File>())
+          (jsonDecode(f.readAsStringSync()) as Map)['id'],
+      };
+      expect(shipped, contains(theme));
+    } else {
+      expect(() => ColourTheme.parse(jsonEncode(theme)), returnsNormally);
+    }
   });
 
   test('there is enough story to fill the run', () {

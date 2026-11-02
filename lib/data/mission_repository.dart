@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../models/mission.dart';
 import '../models/pack_strings.dart';
+import '../theme/colour_theme.dart';
 import 'atomic_write.dart';
 import '../l10n/l10n.dart';
 
@@ -191,6 +192,7 @@ class MissionRepository {
       }
     }
     _checkTranslations((jsonDecode(source) as Map)['translations'], pack);
+    _checkTheme((jsonDecode(source) as Map)['theme']);
 
     await externalDir.create(recursive: true);
     final target = File('${externalDir.path}/$fileName');
@@ -219,6 +221,23 @@ class MissionRepository {
         if (value is! String) throw PackImportException(l10n.packErrorTranslations);
         if (!keys.containsKey(key)) throw PackImportException(l10n.packErrorTranslationKey(language, '$key'));
       }
+    }
+  }
+
+  /// Refuses a `theme` that is neither a theme id nor a theme the app would
+  /// import on its own, saying why — `MissionPack.fromJson` would otherwise
+  /// drop it without a word, and the author would wonder where the colours went.
+  static void _checkTheme(Object? raw) {
+    if (raw == null) return;
+    if (raw is String) {
+      if (!RegExp(r'^[a-z0-9_-]{1,32}$').hasMatch(raw)) throw PackImportException(l10n.packErrorTheme(l10n.themeErrorBadId));
+      return;
+    }
+    if (raw is! Map) throw PackImportException(l10n.packErrorTheme(l10n.themeErrorNotATheme));
+    try {
+      ColourTheme.parse(jsonEncode(raw));
+    } on ThemeFormatException catch (e) {
+      throw PackImportException(l10n.packErrorTheme(e.message));
     }
   }
 

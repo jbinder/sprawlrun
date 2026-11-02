@@ -140,6 +140,8 @@ MissionPack _walk(MissionPack pack, _Offer offer, {String? language}) {
     title: pack.title,
     tagline: opt('tagline', pack.tagline, 'One line under the campaign\'s name (${pack.title}) in the pack list.') ?? '',
     season: pack.season,
+    themeId: pack.themeId,
+    ownTheme: pack.ownTheme,
     signals: pool('signals', pack.signals, ''),
     missions: [
       for (final m in pack.missions)

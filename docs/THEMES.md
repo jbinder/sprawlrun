@@ -35,6 +35,12 @@ own colours over whichever theme is picked, and the theme comes back when it
 ends. Settings says so under the swatches. Switching off **Seasonal events**
 puts the picked theme back at once.
 
+A mission pack can bring a theme too, by id or carried whole in its `theme`
+field (see [docs/MISSION_PACKS.md](MISSION_PACKS.md)). It is worn while that
+pack is selected. So the order is: a season in force, then the selected pack's
+theme, then the one the runner picked. Switching off **Pack colours** skips
+the middle step.
+
 ## Shape
 
 ```jsonc

@@ -218,6 +218,7 @@ class Profile {
     this.ambientBed = false,
     this.seasonalEvents = true,
     this.theme = 'neon',
+    this.packColours = true,
     this.chasesEnabled = true,
     this.autoPause = true,
     this.keepScreenOn = true,
@@ -301,6 +302,11 @@ class Profile {
   /// and whatever follows: palette, backdrop, sounds, the event pack and its
   /// handler traffic. See `theme/season.dart`.
   final bool seasonalEvents;
+
+  /// Whether a mission pack that brings its own colours wears them while it
+  /// is the selected pack. Off, the runner's [theme] stays on whatever pack is
+  /// selected. A season in force overrides both.
+  final bool packColours;
 
   /// The id of the colour theme the runner picked (`theme/colour_theme.dart`).
   /// A season in force overrides it for its window; it comes back when the
@@ -393,6 +399,7 @@ class Profile {
     bool? ambientBed,
     bool? seasonalEvents,
     String? theme,
+    bool? packColours,
     bool? chasesEnabled,
     bool? autoPause,
     bool? keepScreenOn,
@@ -427,6 +434,7 @@ class Profile {
     ambientBed: ambientBed ?? this.ambientBed,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     theme: theme ?? this.theme,
+    packColours: packColours ?? this.packColours,
     chasesEnabled: chasesEnabled ?? this.chasesEnabled,
     autoPause: autoPause ?? this.autoPause,
     keepScreenOn: keepScreenOn ?? this.keepScreenOn,
@@ -463,6 +471,7 @@ class Profile {
     'ambientBed': ambientBed,
     'seasonalEvents': seasonalEvents,
     'theme': theme,
+    'packColours': packColours,
     'chasesEnabled': chasesEnabled,
     'autoPause': autoPause,
     'keepScreenOn': keepScreenOn,
@@ -506,6 +515,7 @@ class Profile {
     ambientBed: json['ambientBed'] as bool? ?? false,
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',
+    packColours: json['packColours'] as bool? ?? true,
     chasesEnabled: json['chasesEnabled'] as bool? ?? true,
     autoPause: json['autoPause'] as bool? ?? true,
     keepScreenOn: json['keepScreenOn'] as bool? ?? true,

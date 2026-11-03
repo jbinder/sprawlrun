@@ -18,6 +18,8 @@ you to slow down.*
 <a href="https://f-droid.org/packages/io.github.jbinder.sprawlrun"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80"></a>
 <a href="https://github.com/jbinder/sprawlrun/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" alt="Get it on GitHub" height="80"></a>
 
+<a href="https://github.com/jbinder/sprawlrun/actions/workflows/tests.yml"><img src="https://github.com/jbinder/sprawlrun/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+<a href="https://github.com/jbinder/sprawlrun/actions/workflows/build.yml"><img src="https://github.com/jbinder/sprawlrun/actions/workflows/build.yml/badge.svg" alt="Build"></a>
 <a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/svg-badge.svg" alt="Translation status"></a>
 
 **[Contribute](#contributing)**: translate it, write missions, make a colour theme — none of it needs Flutter.
@@ -346,6 +348,10 @@ Android SDK notes, learned the hard way:
 flutter analyze                # clean
 flutter test                   # 676 tests
 ```
+
+GitHub Actions runs both on every push and pull request (`.github/workflows/tests.yml`),
+and builds the unsigned release APK the way F-Droid does, failing if any
+Google Play Services code has crept in (`build.yml`).
 
 The run engine takes its location source, narrator and clock by injection, so
 `test/run_engine_test.dart` plays whole missions against synthetic GPS in

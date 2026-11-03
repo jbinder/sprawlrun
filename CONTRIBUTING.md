@@ -51,6 +51,9 @@ flutter analyze   # must stay clean
 flutter test
 ```
 
+GitHub Actions runs the same two on your pull request, and builds the APK. A
+red check there shows which test failed.
+
 The [README](README.md) explains the architecture and what the tests cover.
 Text a runner reads never goes into the code as a literal. It goes into
 `lib/l10n/app_en.arb`, with a description for translators.

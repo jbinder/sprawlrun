@@ -1,0 +1,64 @@
+# Builds the release APK the way F-Droid's build server does — unsigned, with
+# no key.properties — and checks it carries no Google Play Services code.
+# Nothing is published: the APK is kept as a run artifact for a few days.
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      # AGP needs JDK 17; newer ones break its jdkImage transform.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # The Flutter version lives in .fvmrc only.
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter build apk --release --split-per-abi --target-platform=android-arm64
+
+      # The app is free of Play Services because three pieces of Gradle config
+      # hold together (see CLAUDE.md); a new plugin can quietly undo that.
+      - name: No com.google classes in the APK
+        run: |
+          apk=build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          dexdump=$(ls -d "$ANDROID_HOME"/build-tools/*/ | sort -V | tail -1)dexdump
+          dir=$(mktemp -d)
+          unzip -q "$apk" 'classes*.dex' -d "$dir"
+          found=$(for dex in "$dir"/classes*.dex; do "$dexdump" "$dex"; done | grep "Class descriptor  : 'Lcom/google/" || true)
+          if [ -n "$found" ]; then
+            echo "::error::The APK contains com.google classes:"
+            echo "$found" | head -40
+            exit 1
+          fi
+          echo "No com.google classes."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sprawlrun-arm64-v8a-unsigned
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+          retention-days: 7

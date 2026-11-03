@@ -129,7 +129,8 @@ To ship a theme with the app, open a pull request that adds one file,
    `success` is green, `names` only uses languages the app ships, and `author`
    is there. You need Flutter for this. If you don't have it, importing the
    file in the app checks the format and the contrast rules, so open the pull
-   request anyway and the maintainer runs the rest.
+   request anyway: GitHub Actions runs the tests on it and shows the result
+   on the pull request.
 
 Then add the theme to the list in the README's *Everything it does* section and
 to the store descriptions in `fastlane/metadata/android/*/full_description.txt`.

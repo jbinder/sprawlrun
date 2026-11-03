@@ -141,8 +141,8 @@ GitHub before starting one, so the work does not render as boxes.
 
 ## Checking your work
 
-Before a pull request from Weblate is merged, the maintainer runs the test
-suite, which checks that each translation keeps its placeholders and that no
+Every pull request from Weblate runs the test suite on GitHub Actions before
+it is merged. It checks that each translation keeps its placeholders and that no
 screen overflows in any shipped language on a small phone. Weblate itself flags
 a broken placeholder or plural as you type. If you can build the app yourself,
 `flutter test --dart-define=LOCALE=<code> tool/screenshots/capture_test.dart`

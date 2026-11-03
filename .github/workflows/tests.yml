@@ -1,0 +1,39 @@
+# Analyzer and the whole test suite, on every push and pull request.
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # A zone with daylight saving, so the streak tests that cross a clock
+      # change cross a real one, as they do on the phone.
+      TZ: Europe/Vienna
+    steps:
+      - uses: actions/checkout@v4
+
+      # The Flutter version lives in .fvmrc only.
+      - id: fvm
+        run: echo "flutter=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter }}
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test

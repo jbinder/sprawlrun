@@ -23,6 +23,12 @@ fvm dart run tool/gen_pseudo_l10n.dart              # after any ARB change
 fvm dart run tool/pack_strings.dart                 # after any pack text change; reports translations
 ```
 
+GitHub Actions runs the analyzer and the tests (`.github/workflows/tests.yml`)
+and an unsigned arm64 release build with a dexdump check for `com/google`
+classes (`build.yml`) on every push and pull request. Both read the Flutter
+version from `.fvmrc`, so bump it there only. The tests run in
+`Europe/Vienna`, so the streak tests cross a real clock change.
+
 Android builds take 3–6 minutes. Run them in the background with a monitor rather
 than blocking on a foreground timeout.
 
@@ -114,9 +120,10 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
 - **Translations arrive from Weblate as pull requests; the source does not.**
   `app_en.arb`, `values/strings.xml`, the en-US listing and the generated
   `assets/missions/l10n/<pack>_en.arb` are edited here only — Weblate has
-  source editing off. Before merging a Weblate PR run `l10n_test`,
-  `pack_strings_test` and `overflow_test` (the latter renders every shipped language
-  at 360 dp, so a long Spanish word that breaks a screen fails there). A *new*
+  source editing off. Merge a Weblate PR only once its Tests check is
+  green: it runs the whole suite, including `l10n_test`, `pack_strings_test`
+  and `overflow_test` (the latter renders every shipped language at 360 dp, so
+  a long Spanish word that breaks a screen fails there). A *new*
   language also needs its line in `res/xml/locales_config.xml` — `l10n_test`
   names it — and a `languageName`, then a screenshot run for its listing.
   Rules and glossary for translators: `docs/TRANSLATING.md`.

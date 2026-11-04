@@ -182,7 +182,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Seasonal events: from 10 October to 2 November the app takes on a Halloween
   look and sound, with a four-mission operation of its own — switchable off
 - Four colour themes to pick from in Settings — neon, synthwave, glacier and
-  volt — or import your own; a season dresses over them while it lasts
+  volt — or make your own in the app's theme editor, with a colour picker and a
+  live readability check, or import one; a season dresses over them while it lasts
 - Optional reminders from your handler on the days and at the time you choose,
   written in the voice of the campaign you are playing
 - Optional signal noise: the city talking between runs, silent, never overnight,
@@ -299,7 +300,8 @@ while it is the selected pack, unless the runner switches **Pack colours** off.
 
 A colour theme is one small JSON file: a name and fourteen colours, each
 named for its role (`primary`, `hostile`, `story`, `success`…) rather than its
-hue. Import your own with **Settings → Identity → Colours → Import theme**,
+hue. Make your own in the app with **Settings → Identity → Colours → Make your own**
+and export it with the share button, or import a file with **Import theme**,
 with no rebuild needed. To ship one with the app, add it to `assets/themes/` in
 a pull request. The app finds it there by itself, and `test/theme_test.dart`
 checks that it stays readable. A mission pack can bring a theme of its own,
@@ -346,7 +348,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 676 tests
+flutter test                   # 686 tests
 ```
 
 GitHub Actions runs both on every push and pull request (`.github/workflows/tests.yml`),

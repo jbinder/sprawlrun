@@ -20,6 +20,11 @@ import 'package:sprawl_run/screens/missions_screen.dart';
 import 'package:sprawl_run/screens/run_detail_screen.dart';
 import 'package:sprawl_run/screens/run_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
+import 'package:sprawl_run/screens/theme_editor_screen.dart';
+import 'package:sprawl_run/theme/theme_draft.dart';
+import 'package:sprawl_run/theme/colour_theme.dart';
+import 'package:sprawl_run/widgets/colour_picker.dart';
+import 'package:sprawl_run/widgets/panels.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
 import 'package:sprawl_run/services/battery_optimization.dart';
@@ -335,6 +340,28 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
       await tester.pump();
     }
+  });
+
+  testWidgets('theme editor, every colour, one too faint, and the picker', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 2400));
+    final glacier = state.themes.singleWhere((t) => t.id == 'glacier');
+    final draft = ThemeDraft(base: glacier.palette, name: 'MY GLACIER')..set('text', glacier.palette.panelHi);
+    await pumpShowcase(tester, ThemeEditorScreen(draft: draft), state, delegates: delegates);
+    expect(draft.issue, isA<LowContrast>());
+    expect(tester.widget<CyberButton>(find.byType(CyberButton)).onPressed, isNull, reason: 'an unreadable theme cannot be saved');
+    await tester.tap(find.byIcon(Icons.expand_more));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text(l10n.themeRoleHostileDim));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(ColourPicker), findsOneWidget);
+  });
+
+  testWidgets('settings, wearing a theme of the runner\'s own', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 6000));
+    final glacier = state.themes.singleWhere((t) => t.id == 'glacier');
+    await tester.runAsync(() => state.saveThemeDraft(ThemeDraft(base: glacier.palette, name: 'MINE')));
+    await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
+    expect(find.text(l10n.themeEditOwn.toUpperCase()), findsOneWidget);
   });
 
   testWidgets('settings, every row showing', (tester) async {

@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../data/theme_repository.dart';
+import '../screens/theme_editor_screen.dart';
 import '../state/app_state.dart';
 import '../theme/colour_theme.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
+import '../theme/theme_draft.dart';
 import '../util/picked_text.dart';
 import 'panels.dart';
 import '../l10n/l10n.dart';
@@ -89,6 +95,11 @@ class _ThemeControlsState extends State<ThemeControls> {
               if (repo.importedIds.contains(current.id)) ...[
                 CyberTag(l.packImported, color: Cy.green),
                 IconButton(
+                  onPressed: _busy ? null : () => _export(current),
+                  icon: Icon(Icons.ios_share, size: 18, color: Cy.inkDim),
+                  tooltip: l.themeExportTooltip(current.nameIn(language)),
+                ),
+                IconButton(
                   onPressed: _busy ? null : () => _remove(state, current),
                   icon: Icon(Icons.delete_outline, size: 18, color: Cy.inkDim),
                   tooltip: l.themeRemoveTooltip(current.nameIn(language)),
@@ -102,6 +113,14 @@ class _ThemeControlsState extends State<ThemeControls> {
           Text(error, style: CyType.mono(size: 11, color: Cy.red)),
         ],
         const SizedBox(height: 12),
+        CyberButton(
+          label: repo.importedIds.contains(current.id) ? l.themeEditOwn : l.themeMakeOwn,
+          icon: Icons.tune,
+          style: CyberButtonStyle.ghost,
+          dense: true,
+          onPressed: _busy ? null : () => _edit(state, current, own: repo.importedIds.contains(current.id)),
+        ),
+        const SizedBox(height: 8),
         CyberButton(
           label: _busy ? l.working : l.themeImport,
           icon: Icons.palette_outlined,
@@ -140,6 +159,40 @@ class _ThemeControlsState extends State<ThemeControls> {
       _say(e.message, bad: true);
     } on Object catch (e) {
       _say(l10n.importFailed('$e'), bad: true);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// Opens the editor on [theme] itself when it is the runner's own, or on a
+  /// copy of it to save as a new one.
+  void _edit(AppState state, ColourTheme theme, {required bool own}) {
+    final name = theme.nameIn(state.locale.languageCode);
+    final copyName = l10n.themeCopyName(name);
+    final draft = own
+        ? ThemeDraft.of(theme)
+        : ThemeDraft(
+            base: theme.palette,
+            name: copyName.length > ColourTheme.maxNameLength ? copyName.substring(0, ColourTheme.maxNameLength).trim() : copyName,
+          );
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => ThemeEditorScreen(draft: draft)));
+  }
+
+  /// Hands the theme's file to the share sheet, to keep or pass on.
+  Future<void> _export(ColourTheme theme) async {
+    setState(() => _busy = true);
+    try {
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/${theme.id}.json');
+      await file.writeAsString(theme.toJson());
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(file.path, mimeType: 'application/json')],
+          subject: l10n.themeShareSubject(theme.name),
+        ),
+      );
+    } on Object catch (e) {
+      _say(l10n.exportFailed('$e'), bad: true);
     } finally {
       if (mounted) setState(() => _busy = false);
     }

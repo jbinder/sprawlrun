@@ -17,6 +17,19 @@ colours. Picking one recolours the whole app at once.
 3. **Imported.** **Settings → Identity → Colours → Import theme** opens the
    system file picker. You don't need a rebuild, an app update or a storage
    permission, and the theme is put on as soon as it imports.
+4. **Made in the app.** **Make your own** opens the theme editor on a copy of
+   the theme you are wearing. It leads with four colours — background,
+   primary, hostile and story — and moving one moves the shades that belong
+   to it, as far from it as they were in the copied theme. **All colours**
+   sets any of the fourteen on its own. A preview shows the result, and the
+   editor names any role the rules below refuse, with its contrast; it will
+   not save until the theme passes. While you wear your own theme, the same
+   button reads **Edit colours** and changes it in place, and the share button
+   beside it exports it as a theme file, ready to import elsewhere or to
+   contribute.
+
+A theme made in the app is stored like an imported one, under an id of its
+own (`custom-1`, `custom-2`…), and counts as imported everywhere below.
 
 An imported theme is stored under its `id`, so importing a revised version
 replaces the old one. That is the edit-and-reimport loop while you make one.

@@ -32,6 +32,7 @@ import '../services/signal_planner.dart';
 import '../services/signal_scheduler.dart';
 import '../services/step_source.dart';
 import '../services/stats_service.dart';
+import '../theme/theme_draft.dart';
 import '../theme/colour_theme.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/season.dart';
@@ -371,6 +372,19 @@ class AppState extends ChangeNotifier {
     themes = await themeRepository.loadThemes();
     await updateProfile(profile.copyWith(theme: imported.id));
     return imported;
+  }
+
+  /// Saves a theme made in the editor and puts it on: over the theme it
+  /// was made from when it changes one in place, otherwise as a new one
+  /// under the first free `custom-N` id. It goes through the same door as an
+  /// imported file, so the same rules hold and a backup carries it.
+  Future<ColourTheme> saveThemeDraft(ThemeDraft draft) {
+    final taken = {for (final t in themes) t.id};
+    var id = draft.id;
+    for (var n = 1; id == null; n++) {
+      if (!taken.contains('custom-$n')) id = 'custom-$n';
+    }
+    return importTheme(draft.toTheme(id).toJson());
   }
 
   /// Removes an imported theme, going back to NEON if it was the one on.

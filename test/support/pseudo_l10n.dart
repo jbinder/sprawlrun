@@ -1906,4 +1906,124 @@ class PseudoL extends L {
 
   @override
   String get languageName => pseudo(_en.languageName);
+
+  @override
+  String get themeMakeOwn => pseudo(_en.themeMakeOwn);
+
+  @override
+  String get themeEditOwn => pseudo(_en.themeEditOwn);
+
+  @override
+  String themeCopyName(String name) => pseudo(_en.themeCopyName(name));
+
+  @override
+  String themeExportTooltip(String name) => pseudo(_en.themeExportTooltip(name));
+
+  @override
+  String themeShareSubject(String name) => pseudo(_en.themeShareSubject(name));
+
+  @override
+  String themeSaved(String name) => pseudo(_en.themeSaved(name));
+
+  @override
+  String get themeEditorTitle => pseudo(_en.themeEditorTitle);
+
+  @override
+  String get themeEditorName => pseudo(_en.themeEditorName);
+
+  @override
+  String get themeEditorPreview => pseudo(_en.themeEditorPreview);
+
+  @override
+  String get themeEditorMain => pseudo(_en.themeEditorMain);
+
+  @override
+  String get themeEditorAll => pseudo(_en.themeEditorAll);
+
+  @override
+  String get themeEditorAllHint => pseudo(_en.themeEditorAllHint);
+
+  @override
+  String get themeEditorReadable => pseudo(_en.themeEditorReadable);
+
+  @override
+  String themeEditorLowContrast(String role, String ratio, String needed) => pseudo(_en.themeEditorLowContrast(role, ratio, needed));
+
+  @override
+  String themeEditorSameColour(String first, String second) => pseudo(_en.themeEditorSameColour(first, second));
+
+  @override
+  String get themeEditorSave => pseudo(_en.themeEditorSave);
+
+  @override
+  String get themeEditorLeaveTitle => pseudo(_en.themeEditorLeaveTitle);
+
+  @override
+  String get themeEditorLeaveBody => pseudo(_en.themeEditorLeaveBody);
+
+  @override
+  String get themeEditorKeepEditing => pseudo(_en.themeEditorKeepEditing);
+
+  @override
+  String get themePickerHex => pseudo(_en.themePickerHex);
+
+  @override
+  String get themePickerUse => pseudo(_en.themePickerUse);
+
+  @override
+  String get themePreviewHeading => pseudo(_en.themePreviewHeading);
+
+  @override
+  String get themePreviewBody => pseudo(_en.themePreviewBody);
+
+  @override
+  String get themePreviewStory => pseudo(_en.themePreviewStory);
+
+  @override
+  String get themePreviewPursuit => pseudo(_en.themePreviewPursuit);
+
+  @override
+  String get themePreviewButton => pseudo(_en.themePreviewButton);
+
+  @override
+  String get themeRoleBackground => pseudo(_en.themeRoleBackground);
+
+  @override
+  String get themeRolePanel => pseudo(_en.themeRolePanel);
+
+  @override
+  String get themeRolePanelRaised => pseudo(_en.themeRolePanelRaised);
+
+  @override
+  String get themeRoleRule => pseudo(_en.themeRoleRule);
+
+  @override
+  String get themeRolePrimary => pseudo(_en.themeRolePrimary);
+
+  @override
+  String get themeRolePrimaryDim => pseudo(_en.themeRolePrimaryDim);
+
+  @override
+  String get themeRoleHostile => pseudo(_en.themeRoleHostile);
+
+  @override
+  String get themeRoleHostileDim => pseudo(_en.themeRoleHostileDim);
+
+  @override
+  String get themeRoleStory => pseudo(_en.themeRoleStory);
+
+  @override
+  String get themeRoleSuccess => pseudo(_en.themeRoleSuccess);
+
+  @override
+  String get themeRoleFailure => pseudo(_en.themeRoleFailure);
+
+  @override
+  String get themeRoleLocked => pseudo(_en.themeRoleLocked);
+
+  @override
+  String get themeRoleText => pseudo(_en.themeRoleText);
+
+  @override
+  String get themeRoleTextDim => pseudo(_en.themeRoleTextDim);
 }

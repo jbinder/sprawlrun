@@ -3102,5 +3102,204 @@
   "languageName": "English",
   "@languageName": {
     "description": "The name of THIS language, written in itself — \"Español\" in Spanish, \"Deutsch\" in German. Listed in the language picker."
+  },
+  "themeMakeOwn": "Make your own",
+  "@themeMakeOwn": {
+    "description": "Button under the colour swatches: opens the theme editor on a copy of the theme being worn."
+  },
+  "themeEditOwn": "Edit colours",
+  "@themeEditOwn": {
+    "description": "Button under the colour swatches when the theme being worn is the runner's own: opens it in the theme editor."
+  },
+  "themeCopyName": "MY {name}",
+  "@themeCopyName": {
+    "description": "Starting name of a theme made from a copy of another. The name is a theme name such as SYNTHWAVE; keep it. Cut to 16 characters if longer.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "themeExportTooltip": "Export {name}",
+  "@themeExportTooltip": {
+    "description": "Tooltip of the button that shares the theme being worn as a file. The name is a theme name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "themeShareSubject": "SPRAWL//RUN colour theme: {name}",
+  "@themeShareSubject": {
+    "description": "Subject when a colour theme file is shared. The name is a theme name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "themeSaved": "{name} saved and on.",
+  "@themeSaved": {
+    "description": "Shown after saving a theme in the theme editor; the app is now drawn in it. The name is a theme name.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "themeEditorTitle": "THEME EDITOR",
+  "@themeEditorTitle": {
+    "description": "Title of the screen where the runner makes their own colour theme. Set in capitals."
+  },
+  "themeEditorName": "Name",
+  "@themeEditorName": {
+    "description": "Label of the theme's name field in the theme editor."
+  },
+  "themeEditorPreview": "PREVIEW",
+  "@themeEditorPreview": {
+    "description": "Section heading in the theme editor: a sample of the app drawn in the theme's colours."
+  },
+  "themeEditorMain": "MAIN COLOURS",
+  "@themeEditorMain": {
+    "description": "Section heading in the theme editor: the four colours most runners change."
+  },
+  "themeEditorAll": "ALL COLOURS",
+  "@themeEditorAll": {
+    "description": "Section heading in the theme editor, folded by default: every one of the fourteen colours."
+  },
+  "themeEditorAllHint": "Changing a main colour also changes the shades that go with it.",
+  "@themeEditorAllHint": {
+    "description": "Under ALL COLOURS in the theme editor."
+  },
+  "themeEditorReadable": "Readable everywhere.",
+  "@themeEditorReadable": {
+    "description": "Theme editor: the colours pass every contrast check and can be saved."
+  },
+  "themeEditorLowContrast": "{role} is hard to read on a panel: {ratio}:1, needs {needed}:1.",
+  "@themeEditorLowContrast": {
+    "description": "Theme editor: why the theme cannot be saved yet. The role is a colour's name such as Text; the ratios are contrast numbers such as 3.1.",
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "ratio": {
+        "type": "String"
+      },
+      "needed": {
+        "type": "String"
+      }
+    }
+  },
+  "themeEditorSameColour": "{first} and {second} are the same colour, so they could not be told apart.",
+  "@themeEditorSameColour": {
+    "description": "Theme editor: why the theme cannot be saved yet. Both are colour names such as Hostile.",
+    "placeholders": {
+      "first": {
+        "type": "String"
+      },
+      "second": {
+        "type": "String"
+      }
+    }
+  },
+  "themeEditorSave": "Save and wear",
+  "@themeEditorSave": {
+    "description": "Button in the theme editor: saves the theme and recolours the app in it."
+  },
+  "themeEditorLeaveTitle": "LEAVE WITHOUT SAVING?",
+  "@themeEditorLeaveTitle": {
+    "description": "Dialog title when leaving the theme editor with unsaved changes. Set in capitals."
+  },
+  "themeEditorLeaveBody": "Your changes to this theme will be lost.",
+  "@themeEditorLeaveBody": {
+    "description": "Dialog body when leaving the theme editor with unsaved changes."
+  },
+  "themeEditorKeepEditing": "Keep editing",
+  "@themeEditorKeepEditing": {
+    "description": "Dialog button: stay in the theme editor."
+  },
+  "themePickerHex": "Hex code",
+  "@themePickerHex": {
+    "description": "Label of the field for a colour written as six hex digits, such as 00F0FF."
+  },
+  "themePickerUse": "Use",
+  "@themePickerUse": {
+    "description": "Colour picker dialog button: take the picked colour."
+  },
+  "themePreviewHeading": "OPERATION",
+  "@themePreviewHeading": {
+    "description": "Theme editor preview: a sample heading. Set in capitals."
+  },
+  "themePreviewBody": "Secondary text, like a mission's objective.",
+  "@themePreviewBody": {
+    "description": "Theme editor preview: a sample line in the dimmer text colour."
+  },
+  "themePreviewStory": "Your handler talks in this colour.",
+  "@themePreviewStory": {
+    "description": "Theme editor preview: a sample story line, in the story colour."
+  },
+  "themePreviewPursuit": "PURSUIT",
+  "@themePreviewPursuit": {
+    "description": "Theme editor preview: a sample tag in the hostile colour, as a chase is shown. Set in capitals."
+  },
+  "themePreviewButton": "START RUN",
+  "@themePreviewButton": {
+    "description": "Theme editor preview: a sample button label. Set in capitals."
+  },
+  "themeRoleBackground": "Background",
+  "@themeRoleBackground": {
+    "description": "A colour role in the theme editor: behind everything."
+  },
+  "themeRolePanel": "Panel",
+  "@themeRolePanel": {
+    "description": "A colour role in the theme editor: the surface of cards and panels."
+  },
+  "themeRolePanelRaised": "Raised panel",
+  "@themeRolePanelRaised": {
+    "description": "A colour role in the theme editor: fields and buttons on a panel."
+  },
+  "themeRoleRule": "Lines",
+  "@themeRoleRule": {
+    "description": "A colour role in the theme editor: hairlines and panel borders."
+  },
+  "themeRolePrimary": "Primary",
+  "@themeRolePrimary": {
+    "description": "A colour role in the theme editor: the runner's own accent, buttons and progress."
+  },
+  "themeRolePrimaryDim": "Primary, dim",
+  "@themeRolePrimaryDim": {
+    "description": "A colour role in the theme editor: the quieter form of Primary."
+  },
+  "themeRoleHostile": "Hostile",
+  "@themeRoleHostile": {
+    "description": "A colour role in the theme editor: pursuers and danger."
+  },
+  "themeRoleHostileDim": "Hostile, dim",
+  "@themeRoleHostileDim": {
+    "description": "A colour role in the theme editor: the quieter form of Hostile."
+  },
+  "themeRoleStory": "Story",
+  "@themeRoleStory": {
+    "description": "A colour role in the theme editor: story lines and handler messages."
+  },
+  "themeRoleSuccess": "Success",
+  "@themeRoleSuccess": {
+    "description": "A colour role in the theme editor: a met goal. Best kept a green."
+  },
+  "themeRoleFailure": "Failure",
+  "@themeRoleFailure": {
+    "description": "A colour role in the theme editor: a missed goal or an error."
+  },
+  "themeRoleLocked": "Locked",
+  "@themeRoleLocked": {
+    "description": "A colour role in the theme editor: locked and unavailable things."
+  },
+  "themeRoleText": "Text",
+  "@themeRoleText": {
+    "description": "A colour role in the theme editor: body text."
+  },
+  "themeRoleTextDim": "Text, dim",
+  "@themeRoleTextDim": {
+    "description": "A colour role in the theme editor: secondary text."
   }
 }

@@ -110,22 +110,7 @@ class ColourTheme {
       colours[role] = colour;
     }
 
-    final palette = CyPalette(
-      v0id: colours['background']!,
-      panel: colours['panel']!,
-      panelHi: colours['panelRaised']!,
-      rule: colours['rule']!,
-      cyan: colours['primary']!,
-      cyanDim: colours['primaryDim']!,
-      magenta: colours['hostile']!,
-      magentaDim: colours['hostileDim']!,
-      amber: colours['story']!,
-      green: colours['success']!,
-      red: colours['failure']!,
-      ghost: colours['locked']!,
-      ink: colours['text']!,
-      inkDim: colours['textDim']!,
-    );
+    final palette = paletteOf(colours);
     final problem = legibilityProblem(palette);
     if (problem != null) throw ThemeFormatException(problem);
 
@@ -137,6 +122,54 @@ class ColourTheme {
       palette: palette,
     );
   }
+
+  /// [palette] by role, the keys of a theme file's `colours` block.
+  static Map<String, Color> rolesOf(CyPalette p) => {
+    'background': p.v0id,
+    'panel': p.panel,
+    'panelRaised': p.panelHi,
+    'rule': p.rule,
+    'primary': p.cyan,
+    'primaryDim': p.cyanDim,
+    'hostile': p.magenta,
+    'hostileDim': p.magentaDim,
+    'story': p.amber,
+    'success': p.green,
+    'failure': p.red,
+    'locked': p.ghost,
+    'text': p.ink,
+    'textDim': p.inkDim,
+  };
+
+  /// The palette for a full set of [roles].
+  static CyPalette paletteOf(Map<String, Color> c) => CyPalette(
+    v0id: c['background']!,
+    panel: c['panel']!,
+    panelHi: c['panelRaised']!,
+    rule: c['rule']!,
+    cyan: c['primary']!,
+    cyanDim: c['primaryDim']!,
+    magenta: c['hostile']!,
+    magentaDim: c['hostileDim']!,
+    amber: c['story']!,
+    green: c['success']!,
+    red: c['failure']!,
+    ghost: c['locked']!,
+    ink: c['text']!,
+    inkDim: c['textDim']!,
+  );
+
+  /// `#RRGGBB`, as a theme file writes a colour.
+  static String hex(Color c) => '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}';
+
+  /// This theme as a theme file, ready to import on another phone.
+  String toJson() => const JsonEncoder.withIndent('  ').convert({
+    'id': id,
+    'name': name,
+    if (names.isNotEmpty) 'names': names,
+    'author': ?author,
+    'colours': {for (final MapEntry(:key, :value) in rolesOf(palette).entries) key: hex(value)},
+  });
 
   /// `#RRGGBB`, opaque only: a translucent panel would show the backdrop
   /// through every screen.
@@ -155,19 +188,33 @@ class ColourTheme {
   /// Why [palette] cannot be read, or null if it can: body text, secondary
   /// text and every accent role against the panel they sit on, and the five
   /// accent roles each a colour of their own.
-  static String? legibilityProblem(CyPalette p) {
-    String? low(String role, Color c, double min) =>
-        contrast(c, p.panel) < min ? l10n.themeErrorContrast(role, min.toStringAsFixed(1)) : null;
-    final accents = {'primary': p.cyan, 'hostile': p.magenta, 'story': p.amber, 'success': p.green, 'failure': p.red};
-    final found =
-        low('text', p.ink, minTextContrast) ??
-        low('textDim', p.inkDim, minDimTextContrast) ??
-        [for (final e in accents.entries) low(e.key, e.value, minAccentContrast)].nonNulls.firstOrNull;
-    if (found != null) return found;
+  static String? legibilityProblem(CyPalette p) => switch (legibilityIssue(p)) {
+    null => null,
+    LowContrast(:final role, :final needed) => l10n.themeErrorContrast(role, needed.toStringAsFixed(1)),
+    SameColour(:final first, :final second) => l10n.themeErrorSameColour(first, second),
+  };
+
+  /// The first thing that makes [p] hard to read, by role, or null. The theme
+  /// editor words it for the runner; [legibilityProblem] for a theme author.
+  static LegibilityIssue? legibilityIssue(CyPalette p) {
+    final checks = {
+      'text': (p.ink, minTextContrast),
+      'textDim': (p.inkDim, minDimTextContrast),
+      'primary': (p.cyan, minAccentContrast),
+      'hostile': (p.magenta, minAccentContrast),
+      'story': (p.amber, minAccentContrast),
+      'success': (p.green, minAccentContrast),
+      'failure': (p.red, minAccentContrast),
+    };
+    for (final MapEntry(key: role, value: (colour, min)) in checks.entries) {
+      final ratio = contrast(colour, p.panel);
+      if (ratio < min) return LowContrast(role, ratio, min);
+    }
     final seen = <Color, String>{};
-    for (final MapEntry(key: role, value: colour) in accents.entries) {
+    for (final role in const ['primary', 'hostile', 'story', 'success', 'failure']) {
+      final colour = checks[role]!.$1;
       final other = seen[colour];
-      if (other != null) return l10n.themeErrorSameColour(other, role);
+      if (other != null) return SameColour(other, role);
       seen[colour] = role;
     }
     return null;
@@ -178,6 +225,26 @@ class ColourTheme {
     final la = a.computeLuminance(), lb = b.computeLuminance();
     return (la > lb ? la + 0.05 : lb + 0.05) / (la > lb ? lb + 0.05 : la + 0.05);
   }
+}
+
+/// Why a palette cannot be read; see [ColourTheme.legibilityIssue].
+sealed class LegibilityIssue {
+  const LegibilityIssue();
+}
+
+/// [role] stands out from the panel by only [ratio]:1, and needs [needed]:1.
+class LowContrast extends LegibilityIssue {
+  const LowContrast(this.role, this.ratio, this.needed);
+  final String role;
+  final double ratio;
+  final double needed;
+}
+
+/// Two accent roles share a colour, so they could not be told apart.
+class SameColour extends LegibilityIssue {
+  const SameColour(this.first, this.second);
+  final String first;
+  final String second;
 }
 
 /// A theme file that cannot be used, with a message fit to show the runner.

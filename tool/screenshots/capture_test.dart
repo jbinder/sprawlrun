@@ -40,6 +40,8 @@ import 'package:sprawl_run/screens/missions_screen.dart';
 import 'package:sprawl_run/screens/run_detail_screen.dart';
 import 'package:sprawl_run/screens/run_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
+import 'package:sprawl_run/screens/theme_editor_screen.dart';
+import 'package:sprawl_run/theme/theme_draft.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/widgets/unlock_reveal.dart';
@@ -118,6 +120,7 @@ const Map<String, int> _storeOrder = {
   'history': 6,
   'achievements': 7,
   'codex': 8,
+  'theme-editor': 9,
 };
 
 void main() {
@@ -144,6 +147,14 @@ void _shots() {
     final state = await seedShowcase(tester, language: _storyLanguage);
     await _pump(tester, const HomeShell(), state);
     await _shoot(tester, 'dashboard');
+  });
+
+  testWidgets('theme editor', (tester) async {
+    final state = await seedShowcase(tester, language: _storyLanguage);
+    final synth = state.themes.singleWhere((t) => t.id == 'synth');
+    final draft = ThemeDraft(base: synth.palette, name: l10n.themeCopyName(synth.nameIn(state.locale.languageCode)));
+    await _pump(tester, ThemeEditorScreen(draft: draft), state);
+    await _shoot(tester, 'theme-editor');
   });
 
   testWidgets('mission brief', (tester) async {

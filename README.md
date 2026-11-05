@@ -204,7 +204,11 @@ next October if you do not finish. One switch in Settings turns it all off.
 
 **Running**
 - GPS tracking that keeps going with the screen off, or with the app swiped away, with
-  auto-pause; a run the app dies in is kept and offered back
+  auto-pause; a run the phone kills can be resumed where it stopped for 30 minutes,
+  and is kept either way
+- Asks once, before a run, to be left out of battery optimisation, because some phones'
+  battery managers kill a running app regardless. Never required; Settings shows where
+  it stands
 - Pause, resume or stop from the notification, without unlocking into the app;
   a run left paused is brought up after 15, 30 and 60 minutes, then left alone
 - A time or distance target per run, and free runs with no story at all
@@ -213,7 +217,8 @@ next October if you do not finish. One switch in Settings turns it all off.
   streak, earn their own achievements and set no pace record
 - Kilometre (or mile) splits read out with the split and total time — on a mission they
   wait for the scene to end; switchable off
-- Live HUD: distance, pace, elapsed, goal ring, and the pursuit bar
+- Live HUD: distance, pace, elapsed, goal ring, and the pursuit bar, with a quiet note
+  when the GPS has had no signal for 30 seconds
 - Calories from the ACSM metabolic equations and your body mass
 - Optional step counting from the phone's own step sensor: steps and cadence per run,
   and moving time that keeps counting when the GPS drops out. Off by default, since it

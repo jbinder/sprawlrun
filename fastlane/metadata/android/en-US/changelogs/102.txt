@@ -1,0 +1,3 @@
+On foot. Walk instead of run, with its own pursuits and achievements. Optional step counting, with distance from steps where there is no GPS. Make your own colour theme, or import one; packs can bring theirs. Automatic backups. A run the phone kills can now be resumed. Report bugs and ideas from Settings.
+
+Fixed: a clock change could break a streak; the run notification could peep all run.

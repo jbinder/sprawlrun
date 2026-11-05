@@ -30,7 +30,8 @@ TODO LO QUE HACE
 - Persecuciones ajustadas a tu propio ritmo de los últimos tres minutos, o desactivadas
 - Cada kilómetro o milla se anuncia con su parcial y tu tiempo total; en una misión, entre escenas
 - Once voces sintetizadas que bajan tu música y te la devuelven
-- Pausar, reanudar o parar desde la notificación, con un aviso si una carrera se queda en pausa; la carrera sigue aunque cierres la app, y se conserva aunque el sistema la mate
+- Pausar, reanudar o parar desde la notificación, con un aviso si una carrera se queda en pausa; la carrera sigue aunque cierres la app, y si el teléfono la mata puedes reanudarla donde se detuvo
+- Pide una vez, antes de correr, quedar fuera de la optimización de batería, porque algunos teléfonos matan las apps en marcha de todos modos. Nunca es obligatorio
 - Recordatorios de tu contacto según tu horario, y ruido de señal ambiental opcional
 - The wire: cada mensaje, carrera, operación superada, logro e intel en un solo flujo, que se abre directamente al tocar una notificación; un punto en su icono avisa de que llegó una señal desde la última vez que miraste
 - Un informe el domingo por la tarde que repasa tu semana frente a tu propio objetivo, con la misma voz; desactivable
@@ -41,11 +42,12 @@ TODO LO QUE HACE
 - Caminar en lugar de correr: las mismas misiones a paso de caminata, persecuciones que piden caminar rápido, y logros propios
 - Conteo de pasos opcional: pasos y cadencia de cada carrera, tiempo en movimiento cuando falla el GPS, y distancia a partir de los pasos donde no hay GPS, como en una cinta de correr, con una zancada aprendida de tus propias carreras. Desactivado salvo que lo actives, que es el único momento en que se pide el permiso de actividad física de Android
 - Cuarenta y ocho entradas del códice, cada una se desbloquea solo cuando un personaje la ha mencionado: no se puede leer por adelantado
-- Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio
+- Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio. Un paquete puede traer sus propios colores, y puedes desactivarlos
 - Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd
 - Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
 - Copia automática opcional después de cada carrera, en la carpeta que elijas; si quieres, una que una app de sincronización como Syncthing copie a otro sitio
 - Un aviso para exportar cuando tu registro tiene carreras que no existen en ningún otro sitio
+- Informa de un fallo o sugiere una idea desde Ajustes: el formulario se abre en tu navegador con la versión de la app ya indicada
 - En inglés y en español, historia incluida, según el idioma del teléfono o elegido en Ajustes
 - Sin permiso de almacenamiento en ningún sentido: la hoja de compartir para sacar, el selector de documentos para traer
 

@@ -1,0 +1,3 @@
+A pie. Camina en lugar de correr, con persecuciones y logros propios. Conteo de pasos opcional, con distancia a partir de los pasos donde no hay GPS. Crea tu propio tema de color o importa uno; los paquetes pueden traer el suyo. Copias automáticas. Una carrera que el teléfono mata ya se puede reanudar. Informa de fallos e ideas desde Ajustes.
+
+Corregido: un cambio de hora podía romper una racha; la notificación de carrera podía pitar sin parar.

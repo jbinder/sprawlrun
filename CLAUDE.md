@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 686 tests
+fvm flutter test                                    # 691 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -289,6 +289,11 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   call that only changes the text goes through `notify` instead. It holds a
   partial wake lock too: being in the foreground does not keep the CPU awake,
   and a frozen process stalls the ticker that fires story beats.
+- **Links leave through an intent, not `url_launcher`.** Settings → Contribute
+  calls `openLink` on the notifications channel, which fires `ACTION_VIEW` for
+  an https address. `url_launcher` would be one more Android plugin to clear
+  for proprietary code, for one line of Kotlin. `contribute_test` checks the
+  issue-form file names and field ids the links prefill.
 - **Signals are notifications and are never spoken.** The messages handlers
   send between runs (`lib/services/signal_planner.dart`) use their own `Signal`
   type rather than `StoryLine`, precisely so nothing can hand one to the

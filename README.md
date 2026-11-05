@@ -251,6 +251,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Optional automatic backup after every run to a folder you choose, keeping the three newest
 - A reminder to export once your log holds runs that exist nowhere else, dismissable
 - Any single route exports as a GPX 1.1 track for OsmAnd, Strava or Komoot
+- Report a bug or suggest an idea from Settings: the form opens in your browser
+  with the app version already filled in
 - No accounts, no ads, no analytics, no network permission, no Play Services
 
 ---
@@ -348,7 +350,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 686 tests
+flutter test                   # 691 tests
 ```
 
 GitHub Actions runs both on every push and pull request (`.github/workflows/tests.yml`),
@@ -424,6 +426,8 @@ Some notes on the shape of it:
 - **No maps.** Tiles need a network. Routes are drawn from the stored trace as a
   neon filament on a grid.
 - **No accounts or sync.** There is no `INTERNET` permission in the manifest.
+  The links under Settings → Contribute hand an address to your browser when
+  tapped; the app itself sends nothing.
   Backups move by hand: exporting hands a file to the system share sheet and
   importing reads one back through the system document picker, so the app needs
   no storage permission and never sees a file you did not choose. Automatic

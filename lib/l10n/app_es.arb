@@ -671,5 +671,11 @@
     "themeRoleFailure": "Fallo",
     "themeRoleLocked": "Bloqueado",
     "themeRoleText": "Texto",
-    "themeRoleTextDim": "Texto, tenue"
+    "themeRoleTextDim": "Texto, tenue",
+    "sectionContribute": "CONTRIBUIR",
+    "contributeNote": "Estos botones abren GitHub en tu navegador, y escribir allí requiere una cuenta gratuita. La app sigue sin conexión.",
+    "contributeBug": "Informar de un fallo",
+    "contributeIdea": "Sugerir una idea",
+    "contributeHow": "Cómo contribuir",
+    "contributeNoBrowser": "Ningún navegador pudo abrir {url}"
 }

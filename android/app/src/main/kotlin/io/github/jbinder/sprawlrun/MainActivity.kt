@@ -2,6 +2,7 @@ package io.github.jbinder.sprawlrun
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -274,6 +275,26 @@ class MainActivity : FlutterActivity() {
                             result.success(hasNotificationPermission(app))
                         } else {
                             activity.requestNotificationPermission(result)
+                        }
+                    }
+
+                    // Settings → Contribute. The browser fetches the page, so
+                    // this needs no INTERNET permission. Only https: the Dart
+                    // side has no business opening anything else.
+                    "openLink" -> {
+                        val url = call.argument<String>("url")
+                        if (url == null || !url.startsWith("https://")) {
+                            result.success(false)
+                        } else {
+                            try {
+                                app.startActivity(
+                                    Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                                )
+                                result.success(true)
+                            } catch (_: ActivityNotFoundException) {
+                                result.success(false)
+                            }
                         }
                     }
 

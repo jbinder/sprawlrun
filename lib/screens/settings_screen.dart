@@ -14,6 +14,7 @@ import '../util/clock.dart';
 import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
+import '../widgets/contribute_controls.dart';
 import '../widgets/pack_controls.dart';
 import '../widgets/panels.dart';
 import '../widgets/theme_controls.dart';
@@ -395,6 +396,10 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 20),
+
+                    SectionHeader(l.sectionContribute, accent: Cy.green),
+                    const NeonPanel(child: ContributeControls()),
                     const SizedBox(height: 24),
                     const _Colophon(),
                   ],

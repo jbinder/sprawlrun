@@ -38,7 +38,8 @@ The same file, pasted into a mission pack's `theme` field, dresses that pack.
 
 ## Report a bug or suggest something
 
-Open an [issue](https://github.com/jbinder/sprawlrun/issues/new/choose). The
+Open an [issue](https://github.com/jbinder/sprawlrun/issues/new/choose), or use
+**Settings → Contribute** in the app, which fills in the version for you. The
 bug form asks for what it usually takes to find a problem that only shows on a
 real phone, mid-run: the app version, the phone and its Android flavour, and
 whether the screen was off.

@@ -2026,4 +2026,22 @@ class PseudoL extends L {
 
   @override
   String get themeRoleTextDim => pseudo(_en.themeRoleTextDim);
+
+  @override
+  String get sectionContribute => pseudo(_en.sectionContribute);
+
+  @override
+  String get contributeNote => pseudo(_en.contributeNote);
+
+  @override
+  String get contributeBug => pseudo(_en.contributeBug);
+
+  @override
+  String get contributeIdea => pseudo(_en.contributeIdea);
+
+  @override
+  String get contributeHow => pseudo(_en.contributeHow);
+
+  @override
+  String contributeNoBrowser(String url) => pseudo(_en.contributeNoBrowser(url));
 }

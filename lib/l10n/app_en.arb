@@ -3301,5 +3301,34 @@
   "themeRoleTextDim": "Text, dim",
   "@themeRoleTextDim": {
     "description": "A colour role in the theme editor: secondary text."
+  },
+  "sectionContribute": "CONTRIBUTE",
+  "@sectionContribute": {
+    "description": "Settings section: report a bug, suggest an idea, or help with the app. Set in capitals."
+  },
+  "contributeNote": "These open GitHub in your browser, and writing there needs a free account. The app itself stays offline.",
+  "@contributeNote": {
+    "description": "Above the buttons of the CONTRIBUTE section in Settings."
+  },
+  "contributeBug": "Report a bug",
+  "@contributeBug": {
+    "description": "Button in Settings: opens the bug report form on GitHub."
+  },
+  "contributeIdea": "Suggest an idea",
+  "@contributeIdea": {
+    "description": "Button in Settings: opens the feature request form on GitHub."
+  },
+  "contributeHow": "How to contribute",
+  "@contributeHow": {
+    "description": "Button in Settings: opens the guide to translating, writing missions, making themes and code."
+  },
+  "contributeNoBrowser": "No browser could open {url}",
+  "@contributeNoBrowser": {
+    "description": "Shown when the phone has no browser for a link from Settings. The url stays as it is.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
   }
 }

@@ -215,7 +215,6 @@ class Profile {
     this.voiceEnabled = true,
     this.speechRate = 0.52,
     this.sfxVolume = 0.9,
-    this.ambientBed = false,
     this.music = noMusic,
     this.musicVolume = 0.7,
     this.seasonalEvents = true,
@@ -297,17 +296,21 @@ class Profile {
   final double speechRate;
   final double sfxVolume;
 
-  /// Low ambient drone under the HUD for runners with no music of their own.
-  final bool ambientBed;
-
-  /// What plays during a run: [noMusic], or the id of a song. One field because
-  /// the ways of choosing will grow, and each is a value here.
+  /// What the app plays during a run: [noMusic], [ambientMusic], or the id of a
+  /// song. One field because they exclude each other, and because later choices
+  /// then need no migration.
   final String music;
 
   static const String noMusic = 'off';
 
-  bool get generatedMusicOn => music != noMusic;
+  /// The low synth drone, for runners with no music of their own.
+  static const String ambientMusic = 'ambient';
 
+  bool get ambientBedOn => music == ambientMusic;
+
+  bool get generatedMusicOn => music != noMusic && music != ambientMusic;
+
+  /// How loud [music] plays, whichever it is.
   final double musicVolume;
 
   /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
@@ -408,7 +411,6 @@ class Profile {
     bool? voiceEnabled,
     double? speechRate,
     double? sfxVolume,
-    bool? ambientBed,
     String? music,
     double? musicVolume,
     bool? seasonalEvents,
@@ -445,7 +447,6 @@ class Profile {
     voiceEnabled: voiceEnabled ?? this.voiceEnabled,
     speechRate: speechRate ?? this.speechRate,
     sfxVolume: sfxVolume ?? this.sfxVolume,
-    ambientBed: ambientBed ?? this.ambientBed,
     music: music ?? this.music,
     musicVolume: musicVolume ?? this.musicVolume,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
@@ -484,7 +485,8 @@ class Profile {
     'voiceEnabled': voiceEnabled,
     'speechRate': speechRate,
     'sfxVolume': sfxVolume,
-    'ambientBed': ambientBed,
+    // Still written so an older build rolled back to keeps the runner's choice.
+    'ambientBed': ambientBedOn,
     'music': music,
     'musicVolume': musicVolume,
     'seasonalEvents': seasonalEvents,
@@ -510,6 +512,14 @@ class Profile {
     if (wireReadAt != null) 'wireReadAt': wireReadAt!.toIso8601String(),
   };
 
+  /// Up to 0.8.0 the drone had a switch of its own, `ambientBed`. Read here and
+  /// not in a migration, so a backup from then converts as it loads, whatever
+  /// `dataVersion` it carries.
+  static String _musicFrom(Map<String, dynamic> json) {
+    final music = json['music'] as String? ?? noMusic;
+    return music == noMusic && json['ambientBed'] == true ? ambientMusic : music;
+  }
+
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
     callsign: json['callsign'] as String? ?? 'RUNNER',
     language: json['language'] as String? ?? '',
@@ -530,8 +540,7 @@ class Profile {
     voiceEnabled: json['voiceEnabled'] as bool? ?? true,
     speechRate: (json['speechRate'] as num?)?.toDouble() ?? 0.52,
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,
-    ambientBed: json['ambientBed'] as bool? ?? false,
-    music: json['music'] as String? ?? noMusic,
+    music: _musicFrom(json),
     musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.7,
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',

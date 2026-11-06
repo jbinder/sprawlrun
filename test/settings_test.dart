@@ -136,6 +136,41 @@ void main() {
     expect(find.text('Force music back on'), findsNothing);
   });
 
+  group('run music', () {
+    Future<void> pick(WidgetTester tester, String option) async {
+      await tester.tap(find.text('Run music'));
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.text(option).last);
+      // The answer resumes in the fake zone and then writes the profile, so the
+      // real file I/O needs turns outside it before the screen rebuilds.
+      for (var i = 0; i < 10; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+    }
+
+    testWidgets('one choice among off, the bed and the songs', (tester) async {
+      final state = await pumpSettings(tester);
+      expect(find.text('The app plays no music of its own. Yours carries on.'), findsOneWidget);
+
+      await pick(tester, 'Ambient bed');
+      expect(state.profile.music, Profile.ambientMusic);
+      expect(state.profile.ambientBedOn, isTrue);
+      expect(state.profile.generatedMusicOn, isFalse);
+      expect(find.text('Music volume'), findsOneWidget);
+
+      await pick(tester, 'Neon Pursuit');
+      expect(state.profile.music, 'neon_pursuit');
+      expect(state.profile.ambientBedOn, isFalse);
+      expect(state.profile.generatedMusicOn, isTrue);
+      expect(find.text('Music volume'), findsOneWidget);
+
+      await pick(tester, 'Off');
+      expect(state.profile.music, Profile.noMusic);
+      expect(find.text('Music volume'), findsNothing);
+    });
+  });
+
   testWidgets('toggling the resume-music repair persists it', (tester) async {
     final state = await pumpSettings(tester);
     expect(state.profile.resumeMusic, isTrue, reason: 'on by default');

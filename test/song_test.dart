@@ -125,6 +125,12 @@ void main() {
 
     test('the minimal song is fine', () => expect(parse((_) {}).id, 'test'));
 
+    test('a song can\'t take an id the music setting keeps for itself', () {
+      for (final id in reservedSongIds) {
+        expect(() => parse((json) => json['id'] = id), fails('taken by the music setting'));
+      }
+    });
+
     test('text that is not JSON is refused', () {
       expect(() => Song.parse('not json'), fails('not JSON'));
       expect(() => Song.parse('[]'), fails('not a song'));

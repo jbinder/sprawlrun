@@ -20,6 +20,10 @@ class SongFormatException implements Exception {
 
 const int beatsPerBar = 4;
 
+/// Choices in the music setting that are not songs, present and planned. It
+/// stores either these or a song id in one field, so a song can't be called one.
+const Set<String> reservedSongIds = {'off', 'ambient', 'shuffle', 'best', 'folder'};
+
 /// The longest note, in seconds, that a bus can hold.
 const double maxNoteSeconds = 9;
 
@@ -262,6 +266,7 @@ class _SongParser {
 
     final id = _string(json, 'id');
     if (!_idPattern.hasMatch(id)) throw SongFormatException('Bad id "$id": use a-z, 0-9, _ and -');
+    if (reservedSongIds.contains(id)) throw SongFormatException('The id "$id" is taken by the music setting');
     final bars = _int(json, 'bars', 1, _maxBars);
     final loopFrom = _int(json, 'loopFrom', 0, bars - 1);
     final buses = _buses(bars);

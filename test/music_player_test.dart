@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:sprawl_run/data/song_library.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -212,6 +213,25 @@ void main() {
       expect(profile.musicVolume, 0.7);
     });
 
+    test('the drone\'s old switch becomes the choice', () {
+      expect(Profile.fromJson(const {'ambientBed': true}).music, Profile.ambientMusic);
+      expect(Profile.fromJson(const {'ambientBed': true, 'music': 'off'}).ambientBedOn, isTrue);
+      expect(Profile.fromJson(const {'ambientBed': false}).music, Profile.noMusic);
+      expect(
+        Profile.fromJson(const {'ambientBed': true, 'music': 'neon_pursuit'}).music,
+        'neon_pursuit',
+        reason: 'a song already replaced the bed',
+      );
+    });
+
+    test('moving off the drone is not undone by the old switch', () {
+      const before = Profile(music: Profile.ambientMusic);
+      expect(before.toJson()['ambientBed'], isTrue);
+      final saved = before.copyWith(music: Profile.noMusic).toJson();
+      expect(saved['ambientBed'], isFalse);
+      expect(Profile.fromJson(saved).music, Profile.noMusic);
+    });
+
     test('the choice survives a round trip', () {
       final profile = Profile.fromJson(const Profile(music: 'neon_pursuit', musicVolume: 0.4).toJson());
       expect(profile.music, 'neon_pursuit');
@@ -278,7 +298,115 @@ void main() {
     });
   });
 
+  group('the ambient bed', () {
+    testWidgets('starting it does not wait for a loop that never ends', (tester) async {
+      await tester.runAsync(() async {
+        final bed = _LoopingPlayer();
+        final subject = AudioNarrator(
+          bedPlayer: bed,
+          resumeGuard: MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}),
+        );
+        await subject.init(const Profile(music: Profile.ambientMusic));
+
+        await subject.setAmbientBed(true).timeout(const Duration(seconds: 5));
+        expect(bed.playing, isTrue);
+      });
+    });
+
+    testWidgets('a settings change only ever stops it, since a run starts it', (tester) async {
+      await tester.runAsync(() async {
+        final bed = _LoopingPlayer();
+        final subject = AudioNarrator(
+          bedPlayer: bed,
+          resumeGuard: MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}),
+        );
+        await subject.init(const Profile());
+
+        await subject.applyProfile(const Profile(music: Profile.ambientMusic));
+        expect(bed.playing, isFalse);
+
+        await subject.setAmbientBed(true).timeout(const Duration(seconds: 5));
+        await subject.applyProfile(const Profile(music: 'neon_pursuit'));
+        expect(bed.playing, isFalse);
+      });
+    });
+  });
+
+  group('the ambient bed in a run', () {
+    Future<(AudioNarrator, _LoopingPlayer)> started(Profile profile) async {
+      final bed = _LoopingPlayer();
+      final subject = AudioNarrator(
+        bedPlayer: bed,
+        resumeGuard: MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}),
+      );
+      await subject.init(profile);
+      await subject.setAmbientBed(profile.ambientBedOn);
+      return (subject, bed);
+    }
+
+    testWidgets('pausing the run holds it and resuming lets it go', (tester) async {
+      await tester.runAsync(() async {
+        final (subject, bed) = await started(const Profile(music: Profile.ambientMusic));
+        expect(bed.playing, isTrue);
+        await subject.setMusicPaused(true);
+        expect(bed.playing, isFalse);
+        await subject.setMusicPaused(false);
+        expect(bed.playing, isTrue);
+      });
+    });
+
+    testWidgets('resuming starts nothing for a runner who did not choose it', (tester) async {
+      await tester.runAsync(() async {
+        final (subject, bed) = await started(const Profile());
+        await subject.setMusicPaused(true);
+        await subject.setMusicPaused(false);
+        expect(bed.playing, isFalse);
+      });
+    });
+
+    testWidgets('nothing brings it back after the run has stopped it', (tester) async {
+      await tester.runAsync(() async {
+        final (subject, bed) = await started(const Profile(music: Profile.ambientMusic));
+        await subject.stopAll();
+        await subject.setMusicPaused(false);
+        expect(bed.playing, isFalse);
+      });
+    });
+
+    testWidgets('a new run does not inherit the last one\'s pause', (tester) async {
+      await tester.runAsync(() async {
+        final (subject, bed) = await started(const Profile(music: Profile.ambientMusic));
+        await subject.setMusicPaused(true);
+        await subject.stopAll();
+        await subject.setAmbientBed(true);
+        expect(bed.playing, isTrue);
+      });
+    });
+
+    testWidgets('it follows the music volume and not the effects volume', (tester) async {
+      await tester.runAsync(() async {
+        const profile = Profile(music: Profile.ambientMusic, musicVolume: 0.4, sfxVolume: 1);
+        final (subject, bed) = await started(profile);
+        final atFour = bed.volume;
+        await subject.applyProfile(profile.copyWith(sfxVolume: 0.2));
+        expect(bed.volume, atFour);
+        await subject.applyProfile(profile.copyWith(musicVolume: 0.8));
+        expect(bed.volume, closeTo(atFour * 2, 0.0001));
+      });
+    });
+  });
+
   group('RunEngine', () {
+    test('a run asks for the bed only when it is the choice', () async {
+      for (final (music, expected) in [(Profile.ambientMusic, true), ('neon_pursuit', false), (Profile.noMusic, false)]) {
+        final narrator = FakeNarrator();
+        final engine = RunEngine(narrator: narrator, location: FakeLocation());
+        await engine.start(goal: const RunGoal(GoalType.time, 600), profile: Profile(music: music));
+        expect(narrator.ambientBed, expected, reason: music);
+        await engine.abort();
+      }
+    });
+
     test('a manual pause holds the music and resuming lets it go', () async {
       final narrator = FakeNarrator();
       final engine = RunEngine(narrator: narrator, location: FakeLocation());
@@ -292,4 +420,44 @@ void main() {
       await engine.abort();
     });
   });
+}
+
+/// Behaves as just_audio does for a looping source: play() completes only when
+/// the player is paused or stopped, which is what once hung every caller.
+class _LoopingPlayer extends AudioPlayer {
+  _LoopingPlayer() : super(handleAudioSessionActivation: false);
+
+  Completer<void>? _playback;
+
+  @override
+  bool get playing => _playback != null;
+
+  @override
+  Future<void> play() => (_playback ??= Completer<void>()).future;
+
+  void _end() {
+    _playback?.complete();
+    _playback = null;
+  }
+
+  @override
+  Future<void> pause() async => _end();
+
+  @override
+  Future<void> stop() async => _end();
+
+  @override
+  Future<Duration?> setAsset(String assetPath, {String? package, bool preload = true, Duration? initialPosition, dynamic tag}) async =>
+      null;
+
+  double _volume = 1;
+
+  @override
+  double get volume => _volume;
+
+  @override
+  Future<void> setVolume(double volume) async => _volume = volume;
+
+  @override
+  Future<void> setLoopMode(LoopMode mode) async {}
 }

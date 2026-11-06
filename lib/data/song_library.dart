@@ -12,10 +12,20 @@ class SongLibrary {
 
   static const String assetFolder = 'assets/songs/';
 
-  /// What the switch in Settings plays until there is a choice to make.
-  static const String firstSongId = 'neon_pursuit';
-
   final AssetBundle _bundle;
+
+  /// Every song that parses, for the runner to choose from.
+  Future<List<Song>> songs() async {
+    final out = <Song>[];
+    for (final path in await _files()) {
+      try {
+        out.add(Song.parse(await _bundle.loadString(path)));
+      } on Object catch (e) {
+        debugPrint('Song $path: $e');
+      }
+    }
+    return out;
+  }
 
   /// The file for [id], checked, or null if there is no such song or it does not
   /// parse. A bad file costs the runner the music, never the run.

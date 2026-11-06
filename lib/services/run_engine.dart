@@ -394,7 +394,7 @@ class RunEngine extends ChangeNotifier {
     phase = RunPhase.running;
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
 
-    await narrator.setAmbientBed(profile.ambientBed);
+    await narrator.setAmbientBed(profile.ambientBedOn);
     await narrator.startMusic();
     notifyListeners();
     if (resumeFrom != null) _announceResume(pendingChase);

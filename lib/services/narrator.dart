@@ -110,9 +110,10 @@ abstract class Narrator {
 /// Production implementation: flutter_tts for speech, just_audio for effects,
 /// audio_session for focus.
 class AudioNarrator implements Narrator {
-  AudioNarrator({MusicResumeGuard? resumeGuard, MusicPlayer? music})
+  AudioNarrator({MusicResumeGuard? resumeGuard, MusicPlayer? music, @visibleForTesting AudioPlayer? bedPlayer})
     : _resume = resumeGuard ?? MusicResumeGuard.platform(),
-      _music = music ?? const SilentMusicPlayer();
+      _music = music ?? const SilentMusicPlayer(),
+      _bedPlayer = bedPlayer ?? AudioPlayer(handleAudioSessionActivation: false);
 
   final FlutterTts _tts = FlutterTts();
 
@@ -122,7 +123,7 @@ class AudioNarrator implements Narrator {
   // type, pause the runner's music, and never give it back. Focus in this
   // class is taken and released in exactly one place.
   final AudioPlayer _sfxPlayer = AudioPlayer(handleAudioSessionActivation: false);
-  final AudioPlayer _bedPlayer = AudioPlayer(handleAudioSessionActivation: false);
+  final AudioPlayer _bedPlayer;
   final StreamController<NarrationEvent> _events = StreamController<NarrationEvent>.broadcast();
 
   final MusicResumeGuard _resume;
@@ -134,6 +135,9 @@ class AudioNarrator implements Narrator {
   bool _musicHoldsFocus = false;
 
   bool _runPaused = false, _interrupted = false, _unplugged = false;
+  bool _bedOn = false;
+
+  bool get _musicHeld => _runPaused || _interrupted || _unplugged;
   bool _speaking = false, _askedToDuck = false;
   final List<StreamSubscription<Object?>> _sessionEvents = [];
 
@@ -302,9 +306,11 @@ class AudioNarrator implements Narrator {
     if (interruptChanged) await _configureSession();
     await _music.setVolume(profile.musicVolume);
     if (_musicHoldsFocus && !profile.generatedMusicOn) await _stopMusic();
-    await _bedPlayer.setVolume(profile.sfxVolume * 0.35);
+    await _bedPlayer.setVolume(_bedVolume);
     await _sfxPlayer.setVolume(profile.sfxVolume);
-    await setAmbientBed(profile.ambientBed);
+    // Only ever turns it off: the bed belongs to a run, which starts it, and a
+    // change in Settings must not start a drone with no run to stop it.
+    if (!profile.ambientBedOn) await setAmbientBed(false);
   }
 
   @override
@@ -488,24 +494,41 @@ class AudioNarrator implements Narrator {
       ? 'assets/sfx/${season.sfxFolder}/$name.wav'
       : 'assets/sfx/$name.wav';
 
+  /// The drone is run music like a song, so it answers to the same slider. It
+  /// sits well under it, being a bed rather than something to listen to.
+  double get _bedVolume => _profile.musicVolume * 0.45;
+
+  double get _bedVolumeUnderSpeech => _profile.musicVolume * 0.1;
+
   @override
   Future<void> setAmbientBed(bool on) async {
     try {
-      // A song replaces the bed; the two would only muddy each other.
-      if (on && !_profile.generatedMusicOn) {
+      if (on) {
+        if (!_bedOn) _runPaused = _interrupted = _unplugged = false;
         // Reloaded when the season has changed since, so the bed follows it.
         final asset = sfxAsset('drone', Season.active);
         if (_bedAsset != asset) {
           await _bedPlayer.setAsset(asset);
           _bedAsset = asset;
         }
-        await _bedPlayer.setVolume(_profile.sfxVolume * 0.35);
-        if (!_bedPlayer.playing) await _bedPlayer.play();
-      } else if (_bedPlayer.playing) {
-        await _bedPlayer.pause();
+        await _bedPlayer.setVolume(_bedVolume);
       }
+      _bedOn = on;
+      await _syncBed();
     } on Object catch (e) {
       debugPrint('Ambient bed failed: $e');
+    }
+  }
+
+  /// Plays the bed only while it is the choice and nothing is holding the music.
+  Future<void> _syncBed() async {
+    final play = _bedOn && !_musicHeld;
+    if (play && !_bedPlayer.playing) {
+      // Not awaited: play() completes when playback ends, and a loop never
+      // does. Awaiting it left every caller hanging for as long as it played.
+      unawaited(_bedPlayer.play().catchError((Object e) => debugPrint('Ambient bed failed: $e')));
+    } else if (!play && _bedPlayer.playing) {
+      await _bedPlayer.pause();
     }
   }
 
@@ -522,7 +545,7 @@ class AudioNarrator implements Narrator {
     try {
       await _session?.setActive(true);
       _focusHeld = true;
-      if (_bedPlayer.playing) await _bedPlayer.setVolume(_profile.sfxVolume * 0.08);
+      if (_bedPlayer.playing) await _bedPlayer.setVolume(_bedVolumeUnderSpeech);
     } on Object catch (e) {
       debugPrint('Audio focus request failed: $e');
     }
@@ -536,7 +559,7 @@ class AudioNarrator implements Narrator {
     }
     _focusHeld = false;
     try {
-      if (_bedPlayer.playing) await _bedPlayer.setVolume(_profile.sfxVolume * 0.35);
+      if (_bedPlayer.playing) await _bedPlayer.setVolume(_bedVolume);
       // Let the last effect's tail finish before abandoning focus. Handing it
       // back while audio is still coming out of us is what makes some players
       // miss the AUDIOFOCUS_GAIN entirely.
@@ -594,8 +617,13 @@ class AudioNarrator implements Narrator {
   }
 
   Future<void> _applyMusicHold() async {
+    try {
+      await _syncBed();
+    } on Object catch (e) {
+      debugPrint('Ambient bed failed: $e');
+    }
     if (!_musicHoldsFocus) return;
-    await _music.setPaused(_runPaused || _interrupted || _unplugged);
+    await _music.setPaused(_musicHeld);
   }
 
   Future<void> _applyDuck() async {
@@ -639,12 +667,14 @@ class AudioNarrator implements Narrator {
   @override
   Future<void> stopAll() async {
     _queue = Future.value();
-    try {
-      await _tts.stop();
-      await _sfxPlayer.stop();
-      await _bedPlayer.stop();
-    } on Object catch (e) {
-      debugPrint('Narrator stop failed: $e');
+    _bedOn = false;
+    // Each on its own: a phone with no speech engine must still lose the drone.
+    for (final stop in [_tts.stop, _sfxPlayer.stop, _bedPlayer.stop]) {
+      try {
+        await stop();
+      } on Object catch (e) {
+        debugPrint('Narrator stop failed: $e');
+      }
     }
     // One or the other. A second release finds nothing held and cancels the
     // guard's nudge, which is what the first has just set going.

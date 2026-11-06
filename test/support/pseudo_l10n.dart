@@ -1170,13 +1170,19 @@ class PseudoL extends L {
   String get settingEffectsVolume => pseudo(_en.settingEffectsVolume);
 
   @override
+  String get settingRunMusic => pseudo(_en.settingRunMusic);
+
+  @override
+  String get musicOff => pseudo(_en.musicOff);
+
+  @override
+  String get musicOffNote => pseudo(_en.musicOffNote);
+
+  @override
   String get settingAmbientBed => pseudo(_en.settingAmbientBed);
 
   @override
   String get settingAmbientBedHint => pseudo(_en.settingAmbientBedHint);
-
-  @override
-  String get settingGeneratedMusic => pseudo(_en.settingGeneratedMusic);
 
   @override
   String get settingGeneratedMusicHint => pseudo(_en.settingGeneratedMusicHint);

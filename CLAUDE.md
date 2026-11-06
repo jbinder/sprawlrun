@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 730 tests
+fvm flutter test                                    # 742 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -212,6 +212,17 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   is pure Dart with no Flutter, so it runs in an isolate and from `dart run`. A
   synth's sound is part of the format: a change that alters existing songs needs
   a new `format` number. Listening is the only real check, and Claude can't.
+- **Never await `play()` on a looping just_audio player.** Its future completes
+  when playback ends, which a loop never does. The ambient bed did this from
+  0.1.0: `RunEngine.start` never returned with the bed on, so the service was
+  never promoted to `location` and the notice and progress saves were never
+  attached.
+- **What the app plays in a run is one choice, `Profile.music`:** `off`,
+  `ambient` or a song id, so the bed and a song cannot both be on. The old
+  `ambientBed` key is still read and written, for old backups and a rollback. A
+  run starts the bed; a settings change can only stop it. Otherwise the bed
+  behaves as a song does: a manual pause, a call or unplugged headphones hold it,
+  and it follows the music volume, not the effects volume.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds

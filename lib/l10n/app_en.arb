@@ -1921,22 +1921,30 @@
   "@settingEffectsVolume": {
     "description": "Setting: volume of sound effects."
   },
+  "settingRunMusic": "Run music",
+  "@settingRunMusic": {
+    "description": "Setting: what the app itself plays during a run. One choice of: off, the ambient bed, or a generated song by name."
+  },
+  "musicOff": "Off",
+  "@musicOff": {
+    "description": "Run music choice: the app plays no music of its own."
+  },
+  "musicOffNote": "The app plays no music of its own. Yours carries on.",
+  "@musicOffNote": {
+    "description": "Shown under the run music setting when it is off."
+  },
   "settingAmbientBed": "Ambient bed",
   "@settingAmbientBed": {
-    "description": "A quiet background drone played during runs."
+    "description": "Run music choice: a quiet background drone played during runs."
   },
   "settingAmbientBedHint": "Low synth drone under the run, for when you bring no music",
-  "settingGeneratedMusic": "Generated music",
-  "@settingGeneratedMusic": {
-    "description": "Switch: the phone composes and plays a soundtrack during runs, with no audio files or network."
-  },
   "settingGeneratedMusicHint": "Played live by your phone during a run. Pauses your own music until the run ends",
   "@settingGeneratedMusicHint": {
-    "description": "Explains the generated music switch, including that the runner's own music app is paused for the run."
+    "description": "Shown under the run music setting when a song is chosen. The phone plays it live, with no audio files or network, and the runner's own music app is paused for the run."
   },
   "settingMusicVolume": "Music volume",
   "@settingMusicVolume": {
-    "description": "Slider: how loud the generated music plays."
+    "description": "Slider: how loud the run music plays, whether the ambient bed or a generated song."
   },
   "sectionRun": "RUN",
   "@sectionRun": {

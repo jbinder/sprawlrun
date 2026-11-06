@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../data/song_library.dart';
 import '../models/profile.dart';
 import '../models/stride.dart';
 import '../services/app_version.dart';
@@ -230,14 +229,25 @@ class SettingsScreen extends StatelessWidget {
                             onChanged: (v) => update(profile.copyWith(sfxVolume: v)),
                           ),
                           const _Rule(),
-                          _SwitchRow(
-                            label: l.settingGeneratedMusic,
-                            subtitle: l.settingGeneratedMusicHint,
-                            value: profile.generatedMusicOn,
-                            onChanged: (v) =>
-                                update(profile.copyWith(music: v ? SongLibrary.firstSongId : Profile.noMusic)),
+                          _PickerRow<String>(
+                            label: l.settingRunMusic,
+                            value: profile.music,
+                            options: {
+                              Profile.noMusic: l.musicOff,
+                              Profile.ambientMusic: l.settingAmbientBed,
+                              for (final song in state.songs) song.id: song.nameIn(state.locale.languageCode),
+                            },
+                            onChanged: (v) => update(profile.copyWith(music: v)),
                           ),
-                          if (profile.generatedMusicOn) ...[
+                          const _Rule(),
+                          _Note(
+                            profile.generatedMusicOn
+                                ? l.settingGeneratedMusicHint
+                                : profile.ambientBedOn
+                                ? l.settingAmbientBedHint
+                                : l.musicOffNote,
+                          ),
+                          if (profile.music != Profile.noMusic) ...[
                             const _Rule(),
                             _SliderRow(
                               label: l.settingMusicVolume,
@@ -246,14 +256,6 @@ class SettingsScreen extends StatelessWidget {
                               max: 1,
                               display: '${(profile.musicVolume * 100).round()}%',
                               onChanged: (v) => update(profile.copyWith(musicVolume: v)),
-                            ),
-                          ] else ...[
-                            const _Rule(),
-                            _SwitchRow(
-                              label: l.settingAmbientBed,
-                              subtitle: l.settingAmbientBedHint,
-                              value: profile.ambientBed,
-                              onChanged: (v) => update(profile.copyWith(ambientBed: v)),
                             ),
                           ],
                         ],

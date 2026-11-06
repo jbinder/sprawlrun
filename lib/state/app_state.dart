@@ -4,6 +4,7 @@ import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
 
+import '../audio/song.dart';
 import '../data/backup.dart';
 import '../data/migrations.dart';
 import '../data/active_run_store.dart';
@@ -11,6 +12,7 @@ import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
 import '../data/signal_log_repository.dart';
+import '../data/song_library.dart';
 import '../data/theme_repository.dart';
 import '../models/achievement.dart';
 import '../models/goal.dart';
@@ -53,6 +55,7 @@ class AppState extends ChangeNotifier {
     SignalScheduler? signals,
     SignalLogRepository? signalLog,
     ThemeRepository? themeRepository,
+    SongLibrary? songLibrary,
     ActiveRunStore? activeRun,
     BackupFolder? backupFolder,
     StepSetup? stepSetup,
@@ -67,6 +70,7 @@ class AppState extends ChangeNotifier {
        // Next to the profile by default, so every caller — tests included —
        // gets a working log without having to name a directory for it.
        signalLog = signalLog ?? SignalLogRepository(profiles.root),
+       songLibrary = songLibrary ?? SongLibrary(),
        themeRepository = themeRepository ?? ThemeRepository(importDir: Directory('${profiles.root.path}/themes'));
 
   final ProfileRepository profiles;
@@ -83,6 +87,7 @@ class AppState extends ChangeNotifier {
   final RunRepository runs;
   final MissionRepository missions;
   final ThemeRepository themeRepository;
+  final SongLibrary songLibrary;
   final Narrator narrator;
 
   /// Delivers the between-run messages. Defaults to doing nothing, so tests
@@ -274,6 +279,7 @@ class AppState extends ChangeNotifier {
     runLog = await runs.loadAll();
     _sourcePacks = await missions.loadPacks();
     themes = await themeRepository.loadThemes();
+    songs = await songLibrary.songs();
     interruptedRun = await activeRun.load();
     // Finished and recorded, but the app died before the copy was cleared:
     // nothing was lost, and offering it back would record it twice.
@@ -342,6 +348,9 @@ class AppState extends ChangeNotifier {
 
   /// Every colour theme on offer, NEON first. See [ThemeRepository].
   List<ColourTheme> themes = const [ColourTheme.neon];
+
+  /// The songs Settings offers.
+  List<Song> songs = const [];
 
   /// The theme the runner picked, or NEON when it is not loaded.
   ColourTheme get theme => themes.firstWhere((t) => t.id == profile.theme, orElse: () => ColourTheme.neon);

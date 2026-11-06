@@ -25,7 +25,7 @@ The last two numbers are the first bar and how many to render.
 | Field | Meaning |
 |---|---|
 | `format` | `1`. A newer number than the app knows is refused. |
-| `id` | `a-z`, `0-9`, `_`, `-`. A shipped song's file is named after it. |
+| `id` | `a-z`, `0-9`, `_`, `-`. A shipped song's file is named after it. `off`, `ambient`, `shuffle`, `best` and `folder` are taken by the music setting. |
 | `name`, `names` | The name, and optionally the name per language code. |
 | `author` | Who wrote it. Optional for your own use, required to contribute one. |
 | `licence` | Optional. |

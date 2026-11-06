@@ -8,7 +8,7 @@
   "moods": ["uplifting"],
   "energy": 0.9,
   "seed": 7,
-  "bars": 80,
+  "bars": 432,
   "loopFrom": 8,
   "sections": [
     { "name": "intro", "from": 0 },
@@ -17,7 +17,33 @@
     { "name": "breakdown", "from": 40 },
     { "name": "build", "from": 48 },
     { "name": "finale", "from": 56 },
-    { "name": "outro", "from": 72 }
+    { "name": "outro", "from": 72 },
+    { "name": "drive, rolling", "from": 80 },
+    { "name": "second theme", "from": 96 },
+    { "name": "second theme, doubled", "from": 112 },
+    { "name": "groove", "from": 128 },
+    { "name": "hook with strings", "from": 136 },
+    { "name": "strings", "from": 152 },
+    { "name": "second build", "from": 168 },
+    { "name": "lift: hook", "from": 176 },
+    { "name": "lift: second theme", "from": 192 },
+    { "name": "lift: hook with strings", "from": 208 },
+    { "name": "afterglow", "from": 224 },
+    { "name": "drive, back home", "from": 240 },
+    { "name": "second theme, back home", "from": 256 },
+    { "name": "last breakdown", "from": 272 },
+    { "name": "last build", "from": 280 },
+    { "name": "last lift: hook", "from": 288 },
+    { "name": "last lift: second theme", "from": 304 },
+    { "name": "last lift: hook with strings", "from": 320 },
+    { "name": "way back", "from": 336 },
+    { "name": "third theme", "from": 344 },
+    { "name": "third theme, doubled", "from": 360 },
+    { "name": "second groove", "from": 376 },
+    { "name": "third theme on strings", "from": 384 },
+    { "name": "grand build", "from": 400 },
+    { "name": "grand finale", "from": 408 },
+    { "name": "outro", "from": 424 }
   ],
   "buses": [
     { "id": "dry" },
@@ -60,17 +86,47 @@
       { "repeat": 2, "notes": ["c2", "c3", "c2", "c3", "c2", "c3", "c2", "c3"] },
       { "repeat": 2, "notes": ["g1", "g2", "g1", "g2", "g1", "g2", "g1", "g2"] }
     ],
+    "bassRolling": [
+      { "repeat": 2, "notes": ["a1", "a2", "a1", "a1", "a2", "a1", "e2", "g2"] },
+      { "repeat": 2, "notes": ["f1", "f2", "f1", "f1", "f2", "f1", "c2", "e2"] },
+      { "repeat": 2, "notes": ["c2", "c3", "c2", "c2", "c3", "c2", "g2", "b2"] },
+      { "repeat": 2, "notes": ["g1", "g2", "g1", "g1", "g2", "g1", "d2", "f2"] }
+    ],
+    "bassTheme": [
+      { "repeat": 2, "notes": ["f1", "f2", "f1", "f2", "f1", "f2", "f1", "f2"] },
+      { "repeat": 2, "notes": ["c2", "c3", "c2", "c3", "c2", "c3", "c2", "c3"] },
+      { "repeat": 2, "notes": ["g1", "g2", "g1", "g2", "g1", "g2", "g1", "g2"] },
+      { "repeat": 2, "notes": ["a1", "a2", "a1", "a2", "a1", "a2", "a1", "a2"] }
+    ],
     "chords": [
       { "repeat": 2, "chord": ["a3", "c4", "e4"] },
       { "repeat": 2, "chord": ["a3", "c4", "f4"] },
       { "repeat": 2, "chord": ["g3", "c4", "e4"] },
       { "repeat": 2, "chord": ["g3", "b3", "d4"] }
     ],
+    "chordsTheme": [
+      { "repeat": 2, "chord": ["a3", "c4", "f4"] },
+      { "repeat": 2, "chord": ["g3", "c4", "e4"] },
+      { "repeat": 2, "chord": ["g3", "b3", "d4"] },
+      { "repeat": 2, "chord": ["a3", "c4", "e4"] }
+    ],
     "arp": [
       { "repeat": 2, "notes": ["a4", "c5", "e5", "a5", "e5", "c5", "a4", "e4"] },
       { "repeat": 2, "notes": ["f4", "a4", "c5", "f5", "c5", "a4", "f4", "c4"] },
       { "repeat": 2, "notes": ["c5", "e5", "g5", "c6", "g5", "e5", "c5", "g4"] },
       { "repeat": 2, "notes": ["g4", "b4", "d5", "g5", "d5", "b4", "g4", "d4"] }
+    ],
+    "arpRolling": [
+      { "repeat": 2, "notes": ["a4", "e5", "c5", "a5", "e5", "c6", "a5", "e5"] },
+      { "repeat": 2, "notes": ["f4", "c5", "a4", "f5", "c5", "a5", "f5", "c5"] },
+      { "repeat": 2, "notes": ["c5", "g5", "e5", "c6", "g5", "e6", "c6", "g5"] },
+      { "repeat": 2, "notes": ["g4", "d5", "b4", "g5", "d5", "b5", "g5", "d5"] }
+    ],
+    "arpTheme": [
+      { "repeat": 2, "notes": ["f4", "a4", "c5", "f5", "c5", "a4", "f4", "c4"] },
+      { "repeat": 2, "notes": ["c5", "e5", "g5", "c6", "g5", "e5", "c5", "g4"] },
+      { "repeat": 2, "notes": ["g4", "b4", "d5", "g5", "d5", "b4", "g4", "d4"] },
+      { "repeat": 2, "notes": ["a4", "c5", "e5", "a5", "e5", "c5", "a4", "e4"] }
     ],
     "hook": [
       { "phrase": [["e5", 1.5], ["d5", 0.5], ["c5", 1], ["a4", 1]] },
@@ -82,6 +138,54 @@
       { "phrase": [["d5", 1.5], ["b4", 0.5], ["g4", 1], ["d5", 1]] },
       { "phrase": [["e5", 2], ["d5", 1], ["b4", 1]] }
     ],
+    "theme": [
+      { "phrase": [["a4", 1], ["c5", 0.5], ["f5", 1.5], ["e5", 1]] },
+      { "phrase": [["f5", 0.5], ["e5", 0.5], ["c5", 1], ["a4", 2]] },
+      { "phrase": [["g4", 1], ["c5", 0.5], ["e5", 1.5], ["d5", 1]] },
+      { "phrase": [["e5", 0.5], ["d5", 0.5], ["c5", 1], ["g4", 2]] },
+      { "phrase": [["g4", 1], ["b4", 0.5], ["d5", 1.5], ["e5", 1]] },
+      { "phrase": [["d5", 1], ["b4", 1], ["g4", 2]] },
+      { "phrase": [["a4", 1], ["c5", 0.5], ["e5", 1.5], ["g5", 1]] },
+      { "phrase": [["a5", 3], ["e5", 1]] }
+    ],
+    "descant": [
+      { "phrase": [["c6", 2], ["b5", 1], ["a5", 1]] },
+      { "phrase": [["e6", 4]] },
+      { "phrase": [["c6", 2], ["a5", 2]] },
+      { "phrase": [["a5", 4]] },
+      { "phrase": [["e6", 2], ["d6", 1], ["c6", 1]] },
+      { "phrase": [["g5", 4]] },
+      { "phrase": [["d6", 2], ["b5", 2]] },
+      { "phrase": [["e6", 2], ["d6", 2]] }
+    ],
+    "third": [
+      { "phrase": [["a5", 0.5], ["g5", 0.5], ["e5", 1], ["c5", 0.5], ["d5", 0.5], ["e5", 1]] },
+      { "phrase": [["e5", 1.5], ["c5", 0.5], ["a4", 2]] },
+      { "phrase": [["g5", 0.5], ["e5", 0.5], ["g5", 1], ["c6", 0.5], ["b5", 0.5], ["g5", 1]] },
+      { "phrase": [["g5", 1.5], ["e5", 0.5], ["c5", 2]] },
+      { "phrase": [["g5", 0.5], ["d5", 0.5], ["g5", 1], ["b5", 0.5], ["a5", 0.5], ["g5", 1]] },
+      { "phrase": [["d5", 1.5], ["b4", 0.5], ["g4", 2]] },
+      { "phrase": [["a5", 0.5], ["f5", 0.5], ["a5", 1], ["c6", 0.5], ["a5", 0.5], ["f5", 1]] },
+      { "phrase": [["e5", 1], ["f5", 1], ["g5", 2]] }
+    ],
+    "bassThird": [
+      { "repeat": 2, "notes": ["a1", "a2", "a1", "a2", "a1", "a2", "a1", "a2"] },
+      { "repeat": 2, "notes": ["c2", "c3", "c2", "c3", "c2", "c3", "c2", "c3"] },
+      { "repeat": 2, "notes": ["g1", "g2", "g1", "g2", "g1", "g2", "g1", "g2"] },
+      { "repeat": 2, "notes": ["f1", "f2", "f1", "f2", "f1", "f2", "f1", "f2"] }
+    ],
+    "chordsThird": [
+      { "repeat": 2, "chord": ["a3", "c4", "e4"] },
+      { "repeat": 2, "chord": ["g3", "c4", "e4"] },
+      { "repeat": 2, "chord": ["g3", "b3", "d4"] },
+      { "repeat": 2, "chord": ["a3", "c4", "f4"] }
+    ],
+    "arpThird": [
+      { "repeat": 2, "notes": ["a4", "c5", "e5", "a5", "e5", "c5", "a4", "e4"] },
+      { "repeat": 2, "notes": ["c5", "e5", "g5", "c6", "g5", "e5", "c5", "g4"] },
+      { "repeat": 2, "notes": ["g4", "b4", "d5", "g5", "d5", "b4", "g4", "d4"] },
+      { "repeat": 2, "notes": ["f4", "a4", "c5", "f5", "c5", "a4", "f4", "c4"] }
+    ],
     "swell": [{ "phrase": [["c4", 1]] }]
   },
   "tracks": [
@@ -92,14 +196,29 @@
       "clips": [
         { "from": 8, "to": 9, "pattern": "strike" },
         { "from": 24, "to": 25, "pattern": "strike" },
-        { "from": 56, "to": 57, "pattern": "strike" }
+        { "from": 56, "to": 57, "pattern": "strike" },
+        { "from": 80, "to": 81, "pattern": "strike" },
+        { "from": 96, "to": 97, "pattern": "strike" },
+        { "from": 136, "to": 137, "pattern": "strike" },
+        { "from": 176, "to": 177, "pattern": "strike" },
+        { "from": 240, "to": 241, "pattern": "strike" },
+        { "from": 288, "to": 289, "pattern": "strike" },
+        { "from": 336, "to": 337, "pattern": "strike" },
+        { "from": 344, "to": 345, "pattern": "strike" },
+        { "from": 408, "to": 409, "pattern": "strike" },
+        { "from": 424, "to": 425, "pattern": "strike" }
       ]
     },
     {
       "id": "boom",
       "bus": "dry",
       "voice": { "type": "drum", "drum": "boom", "amp": 0.7 },
-      "clips": [{ "from": 56, "to": 57, "pattern": "strike" }]
+      "clips": [
+        { "from": 56, "to": 57, "pattern": "strike" },
+        { "from": 176, "to": 177, "pattern": "strike" },
+        { "from": 288, "to": 289, "pattern": "strike" },
+        { "from": 408, "to": 409, "pattern": "strike" }
+      ]
     },
     {
       "id": "kick",
@@ -108,7 +227,15 @@
       "clips": [
         { "from": 4, "to": 8, "pattern": "kick", "amp": 0.8 },
         { "from": 8, "to": 40, "pattern": "kick" },
-        { "from": 48, "to": 80, "pattern": "kick" }
+        { "from": 48, "to": 152, "pattern": "kick" },
+        { "from": 164, "to": 168, "pattern": "kick", "amp": 0.6 },
+        { "from": 168, "to": 224, "pattern": "kick" },
+        { "from": 232, "to": 240, "pattern": "kick", "amp": 0.8 },
+        { "from": 240, "to": 272, "pattern": "kick" },
+        { "from": 280, "to": 344, "pattern": "kick" },
+        { "from": 344, "to": 384, "pattern": "kick" },
+        { "from": 384, "to": 400, "pattern": "kick", "amp": 0.6 },
+        { "from": 400, "to": 432, "pattern": "kick" }
       ]
     },
     {
@@ -119,7 +246,24 @@
         { "from": 8, "to": 40, "pattern": "hats8" },
         { "from": 40, "to": 48, "pattern": "backbeat" },
         { "from": 56, "to": 72, "pattern": "hats16" },
-        { "from": 72, "to": 80, "pattern": "hats8" }
+        { "from": 72, "to": 112, "pattern": "hats8" },
+        { "from": 112, "to": 128, "pattern": "hats16" },
+        { "from": 128, "to": 136, "pattern": "hats8" },
+        { "from": 136, "to": 152, "pattern": "hats16" },
+        { "from": 160, "to": 168, "pattern": "backbeat" },
+        { "from": 176, "to": 224, "pattern": "hats16" },
+        { "from": 232, "to": 240, "pattern": "hats8" },
+        { "from": 240, "to": 256, "pattern": "hats16" },
+        { "from": 256, "to": 272, "pattern": "hats8" },
+        { "from": 272, "to": 280, "pattern": "backbeat" },
+        { "from": 288, "to": 336, "pattern": "hats16" },
+        { "from": 336, "to": 344, "pattern": "hats8" },
+        { "from": 344, "to": 360, "pattern": "hats8" },
+        { "from": 360, "to": 376, "pattern": "hats16" },
+        { "from": 376, "to": 384, "pattern": "hats8" },
+        { "from": 384, "to": 400, "pattern": "backbeat" },
+        { "from": 408, "to": 424, "pattern": "hats16" },
+        { "from": 424, "to": 432, "pattern": "hats8" }
       ]
     },
     {
@@ -129,7 +273,15 @@
       "clips": [
         { "from": 8, "to": 40, "pattern": "backbeat" },
         { "from": 48, "to": 56, "pattern": "roll" },
-        { "from": 56, "to": 80, "pattern": "backbeat" }
+        { "from": 56, "to": 152, "pattern": "backbeat" },
+        { "from": 168, "to": 176, "pattern": "roll" },
+        { "from": 176, "to": 224, "pattern": "backbeat" },
+        { "from": 240, "to": 272, "pattern": "backbeat" },
+        { "from": 280, "to": 288, "pattern": "roll" },
+        { "from": 288, "to": 344, "pattern": "backbeat" },
+        { "from": 344, "to": 384, "pattern": "backbeat" },
+        { "from": 400, "to": 408, "pattern": "roll" },
+        { "from": 408, "to": 432, "pattern": "backbeat" }
       ]
     },
     {
@@ -138,7 +290,12 @@
       "voice": { "type": "drum", "drum": "dubSnare", "amp": 0.5 },
       "clips": [
         { "from": 8, "to": 40, "pattern": "backbeat" },
-        { "from": 56, "to": 80, "pattern": "backbeat" }
+        { "from": 56, "to": 152, "pattern": "backbeat" },
+        { "from": 176, "to": 224, "pattern": "backbeat" },
+        { "from": 240, "to": 272, "pattern": "backbeat" },
+        { "from": 288, "to": 344, "pattern": "backbeat" },
+        { "from": 344, "to": 384, "pattern": "backbeat" },
+        { "from": 408, "to": 432, "pattern": "backbeat" }
       ]
     },
     {
@@ -149,7 +306,27 @@
         { "from": 8, "to": 40, "pattern": "bass", "cutoff": 88 },
         { "from": 48, "to": 56, "pattern": "bass", "cutoff": { "from": 70, "to": 110 } },
         { "from": 56, "to": 72, "pattern": "bass", "cutoff": 100 },
-        { "from": 72, "to": 80, "pattern": "bass", "cutoff": 88 }
+        { "from": 72, "to": 80, "pattern": "bass", "cutoff": 88 },
+        { "from": 80, "to": 96, "pattern": "bassRolling", "cutoff": 88 },
+        { "from": 96, "to": 128, "pattern": "bassTheme", "cutoff": 92 },
+        { "from": 128, "to": 136, "pattern": "bassRolling", "cutoff": { "from": 70, "to": 100 } },
+        { "from": 136, "to": 152, "pattern": "bass", "cutoff": 100 },
+        { "from": 168, "to": 176, "pattern": "bass", "cutoff": { "from": 70, "to": 110 } },
+        { "from": 176, "to": 192, "pattern": "bass", "cutoff": 100, "transpose": 2 },
+        { "from": 192, "to": 208, "pattern": "bassTheme", "cutoff": 100, "transpose": 2 },
+        { "from": 208, "to": 224, "pattern": "bass", "cutoff": 105, "transpose": 2 },
+        { "from": 240, "to": 256, "pattern": "bassRolling", "cutoff": 95 },
+        { "from": 256, "to": 272, "pattern": "bassTheme", "cutoff": 95 },
+        { "from": 280, "to": 288, "pattern": "bass", "cutoff": { "from": 70, "to": 110 } },
+        { "from": 288, "to": 304, "pattern": "bass", "cutoff": 100, "transpose": 3 },
+        { "from": 304, "to": 320, "pattern": "bassTheme", "cutoff": 100, "transpose": 3 },
+        { "from": 320, "to": 336, "pattern": "bass", "cutoff": 105, "transpose": 3 },
+        { "from": 336, "to": 344, "pattern": "bass", "cutoff": 88 },
+        { "from": 344, "to": 376, "pattern": "bassThird", "cutoff": 92 },
+        { "from": 376, "to": 384, "pattern": "bassRolling", "cutoff": { "from": 70, "to": 100 } },
+        { "from": 400, "to": 408, "pattern": "bass", "cutoff": { "from": 70, "to": 110 } },
+        { "from": 408, "to": 424, "pattern": "bass", "cutoff": 100 },
+        { "from": 424, "to": 432, "pattern": "bass", "cutoff": 88 }
       ]
     },
     {
@@ -159,7 +336,24 @@
       "clips": [
         { "from": 0, "to": 8, "pattern": "chords", "cutoff": { "from": 70, "to": 100 } },
         { "from": 8, "to": 40, "pattern": "chords", "cutoff": 100 },
-        { "from": 48, "to": 80, "pattern": "chords", "cutoff": 100 }
+        { "from": 48, "to": 96, "pattern": "chords", "cutoff": 100 },
+        { "from": 96, "to": 128, "pattern": "chordsTheme", "cutoff": 100 },
+        { "from": 136, "to": 152, "pattern": "chords", "cutoff": 100 },
+        { "from": 168, "to": 176, "pattern": "chords", "cutoff": 100 },
+        { "from": 176, "to": 192, "pattern": "chords", "cutoff": 100, "transpose": 2 },
+        { "from": 192, "to": 208, "pattern": "chordsTheme", "cutoff": 100, "transpose": 2 },
+        { "from": 208, "to": 224, "pattern": "chords", "cutoff": 100, "transpose": 2 },
+        { "from": 224, "to": 232, "pattern": "chords", "cutoff": { "from": 95, "to": 80 } },
+        { "from": 232, "to": 240, "pattern": "chords", "cutoff": { "from": 80, "to": 100 } },
+        { "from": 240, "to": 256, "pattern": "chords", "cutoff": 100 },
+        { "from": 256, "to": 272, "pattern": "chordsTheme", "cutoff": 100 },
+        { "from": 280, "to": 288, "pattern": "chords", "cutoff": 100 },
+        { "from": 288, "to": 304, "pattern": "chords", "cutoff": 100, "transpose": 3 },
+        { "from": 304, "to": 320, "pattern": "chordsTheme", "cutoff": 100, "transpose": 3 },
+        { "from": 320, "to": 336, "pattern": "chords", "cutoff": 100, "transpose": 3 },
+        { "from": 336, "to": 344, "pattern": "chords", "cutoff": 100 },
+        { "from": 344, "to": 376, "pattern": "chordsThird", "cutoff": 100 },
+        { "from": 400, "to": 432, "pattern": "chords", "cutoff": 100 }
       ]
     },
     {
@@ -170,7 +364,28 @@
         { "from": 0, "to": 8, "pattern": "arp", "cutoff": { "from": 60, "to": 105 } },
         { "from": 8, "to": 40, "pattern": "arp", "cutoff": 105 },
         { "from": 48, "to": 56, "pattern": "arp", "cutoff": { "from": 85, "to": 125 } },
-        { "from": 56, "to": 80, "pattern": "arp", "cutoff": 105 }
+        { "from": 56, "to": 80, "pattern": "arp", "cutoff": 105 },
+        { "from": 80, "to": 96, "pattern": "arpRolling", "cutoff": 105 },
+        { "from": 96, "to": 128, "pattern": "arpTheme", "cutoff": 105 },
+        { "from": 136, "to": 152, "pattern": "arp", "cutoff": 110 },
+        { "from": 160, "to": 168, "pattern": "arpTheme", "cutoff": { "from": 60, "to": 95 } },
+        { "from": 168, "to": 176, "pattern": "arp", "cutoff": { "from": 85, "to": 125 } },
+        { "from": 176, "to": 192, "pattern": "arp", "cutoff": 105, "transpose": 2 },
+        { "from": 192, "to": 208, "pattern": "arpTheme", "cutoff": 105, "transpose": 2 },
+        { "from": 208, "to": 224, "pattern": "arp", "cutoff": 110, "transpose": 2 },
+        { "from": 224, "to": 232, "pattern": "arp", "cutoff": { "from": 100, "to": 70 } },
+        { "from": 232, "to": 240, "pattern": "arp", "cutoff": { "from": 70, "to": 100 } },
+        { "from": 240, "to": 256, "pattern": "arpRolling", "cutoff": 105 },
+        { "from": 256, "to": 272, "pattern": "arpTheme", "cutoff": 105 },
+        { "from": 280, "to": 288, "pattern": "arp", "cutoff": { "from": 85, "to": 125 } },
+        { "from": 288, "to": 304, "pattern": "arp", "cutoff": 105, "transpose": 3 },
+        { "from": 304, "to": 320, "pattern": "arpTheme", "cutoff": 105, "transpose": 3 },
+        { "from": 320, "to": 336, "pattern": "arp", "cutoff": 110, "transpose": 3 },
+        { "from": 336, "to": 344, "pattern": "arp", "cutoff": 105 },
+        { "from": 344, "to": 376, "pattern": "arpThird", "cutoff": 105 },
+        { "from": 392, "to": 400, "pattern": "arpThird", "cutoff": { "from": 60, "to": 95 } },
+        { "from": 400, "to": 408, "pattern": "arp", "cutoff": { "from": 85, "to": 125 } },
+        { "from": 408, "to": 432, "pattern": "arp", "cutoff": 105 }
       ]
     },
     {
@@ -187,7 +402,18 @@
       },
       "clips": [
         { "from": 24, "to": 40, "pattern": "hook" },
-        { "from": 56, "to": 72, "pattern": "hook", "transpose": 12 }
+        { "from": 56, "to": 72, "pattern": "hook", "transpose": 12 },
+        { "from": 96, "to": 128, "pattern": "theme" },
+        { "from": 136, "to": 152, "pattern": "hook" },
+        { "from": 176, "to": 192, "pattern": "hook", "transpose": 14 },
+        { "from": 192, "to": 208, "pattern": "theme", "transpose": 14 },
+        { "from": 208, "to": 224, "pattern": "hook", "transpose": 14 },
+        { "from": 256, "to": 272, "pattern": "theme" },
+        { "from": 288, "to": 304, "pattern": "hook", "transpose": 15 },
+        { "from": 304, "to": 320, "pattern": "theme", "transpose": 15 },
+        { "from": 320, "to": 336, "pattern": "hook", "transpose": 15 },
+        { "from": 344, "to": 376, "pattern": "third" },
+        { "from": 408, "to": 424, "pattern": "hook", "transpose": 12 }
       ]
     },
     {
@@ -203,7 +429,18 @@
       },
       "clips": [
         { "from": 32, "to": 40, "pattern": "hook", "transpose": 12 },
-        { "from": 56, "to": 72, "pattern": "hook", "transpose": 24 }
+        { "from": 56, "to": 72, "pattern": "hook", "transpose": 24 },
+        { "from": 112, "to": 128, "pattern": "theme", "transpose": 12 },
+        { "from": 136, "to": 152, "pattern": "hook", "transpose": 12 },
+        { "from": 176, "to": 192, "pattern": "hook", "transpose": 2 },
+        { "from": 192, "to": 208, "pattern": "theme", "transpose": 2 },
+        { "from": 208, "to": 224, "pattern": "hook", "transpose": 2 },
+        { "from": 264, "to": 272, "pattern": "theme", "transpose": 12 },
+        { "from": 288, "to": 304, "pattern": "hook", "transpose": 3 },
+        { "from": 304, "to": 320, "pattern": "theme", "transpose": 3 },
+        { "from": 320, "to": 336, "pattern": "hook", "transpose": 3 },
+        { "from": 360, "to": 376, "pattern": "third", "transpose": 12 },
+        { "from": 408, "to": 424, "pattern": "hook", "transpose": 24 }
       ]
     },
     {
@@ -218,7 +455,13 @@
         "vibratoDepth": 0.12,
         "amp": 0.7
       },
-      "clips": [{ "from": 40, "to": 48, "pattern": "hook" }]
+      "clips": [
+        { "from": 40, "to": 48, "pattern": "hook" },
+        { "from": 152, "to": 168, "pattern": "theme" },
+        { "from": 224, "to": 240, "pattern": "hook" },
+        { "from": 272, "to": 280, "pattern": "hook" },
+        { "from": 384, "to": 400, "pattern": "third" }
+      ]
     },
     {
       "id": "stringsChord",
@@ -232,7 +475,31 @@
         "vibratoDepth": 0.15,
         "amp": 0.35
       },
-      "clips": [{ "from": 40, "to": 48, "pattern": "chords" }]
+      "clips": [
+        { "from": 40, "to": 48, "pattern": "chords" },
+        { "from": 152, "to": 168, "pattern": "chordsTheme" },
+        { "from": 272, "to": 280, "pattern": "chords" },
+        { "from": 384, "to": 400, "pattern": "chordsThird" }
+      ]
+    },
+    {
+      "id": "descant",
+      "bus": "strings",
+      "voice": {
+        "type": "blade",
+        "attackOfNote": 0.25,
+        "sustainOfNote": 0.5,
+        "releaseOfNote": 0.5,
+        "vibratoRate": 5,
+        "vibratoDepth": 0.1,
+        "amp": 0.3
+      },
+      "clips": [
+        { "from": 136, "to": 152, "pattern": "descant" },
+        { "from": 208, "to": 224, "pattern": "descant", "transpose": 2 },
+        { "from": 320, "to": 336, "pattern": "descant", "transpose": 3 },
+        { "from": 408, "to": 424, "pattern": "descant" }
+      ]
     },
     {
       "id": "riser",
@@ -247,7 +514,12 @@
         "slide": 32,
         "amp": 0.36
       },
-      "clips": [{ "from": 48, "to": 49, "pattern": "swell" }]
+      "clips": [
+        { "from": 48, "to": 49, "pattern": "swell" },
+        { "from": 168, "to": 169, "pattern": "swell" },
+        { "from": 280, "to": 281, "pattern": "swell" },
+        { "from": 400, "to": 401, "pattern": "swell" }
+      ]
     }
   ]
 }

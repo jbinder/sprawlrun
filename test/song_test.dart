@@ -87,10 +87,10 @@ void main() {
     final song = Song.parse(shipped('neon_pursuit'));
 
     test('loops into the drive and not the intro', () {
-      expect(song.songBar(79), 79);
-      expect(song.songBar(80), 8);
-      expect(song.songBar(151), 79);
-      expect(song.songBar(152), 8);
+      expect(song.songBar(song.bars - 1), song.bars - 1);
+      expect(song.songBar(song.bars), 8);
+      expect(song.songBar(song.bars * 2 - 9), song.bars - 1);
+      expect(song.songBar(song.bars * 2 - 8), 8);
     });
 
     test('hits the bar length its tempo implies', () {
@@ -106,7 +106,7 @@ void main() {
     });
 
     test('keeps going past the end of its first pass', () {
-      final stream = SongStream(song, fromBar: 78);
+      final stream = SongStream(song, fromBar: song.bars - 2);
       for (var n = 0; n < 4; n++) {
         expect(stream.nextBar().left, isNotEmpty);
       }

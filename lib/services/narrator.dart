@@ -8,6 +8,7 @@ import 'package:just_audio/just_audio.dart';
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../theme/season.dart';
+import 'music_player.dart';
 import 'music_resume.dart';
 
 /// Voice colouring per character. Real device voices vary wildly between
@@ -91,6 +92,13 @@ abstract class Narrator {
 
   Future<void> setAmbientBed(bool on);
 
+  /// Starts the song the profile asks for, if any. Takes the run's audio from
+  /// the runner's own player, and [stopAll] gives it back.
+  Future<void> startMusic();
+
+  /// Holds or lets go of the music for a paused run. It keeps its place.
+  Future<void> setMusicPaused(bool paused);
+
   /// Cuts everything immediately — used when the runner ends a mission.
   Future<void> stopAll();
 
@@ -102,8 +110,9 @@ abstract class Narrator {
 /// Production implementation: flutter_tts for speech, just_audio for effects,
 /// audio_session for focus.
 class AudioNarrator implements Narrator {
-  AudioNarrator({MusicResumeGuard? resumeGuard})
-    : _resume = resumeGuard ?? MusicResumeGuard.platform();
+  AudioNarrator({MusicResumeGuard? resumeGuard, MusicPlayer? music})
+    : _resume = resumeGuard ?? MusicResumeGuard.platform(),
+      _music = music ?? const SilentMusicPlayer();
 
   final FlutterTts _tts = FlutterTts();
 
@@ -117,6 +126,16 @@ class AudioNarrator implements Narrator {
   final StreamController<NarrationEvent> _events = StreamController<NarrationEvent>.broadcast();
 
   final MusicResumeGuard _resume;
+  final MusicPlayer _music;
+
+  /// True for a whole run with generated music. Focus is then taken once, at
+  /// the start, and story lines only lower the music: giving focus back after
+  /// each would start the runner's own player underneath the song.
+  bool _musicHoldsFocus = false;
+
+  bool _runPaused = false, _interrupted = false, _unplugged = false;
+  bool _speaking = false, _askedToDuck = false;
+  final List<StreamSubscription<Object?>> _sessionEvents = [];
 
   AudioSession? _session;
   Profile _profile = const Profile();
@@ -171,6 +190,7 @@ class AudioNarrator implements Narrator {
     try {
       _session = await AudioSession.instance;
       await _configureSession();
+      _watchSession();
 
       await _tts.awaitSpeakCompletion(true);
       // flutter_tts completes `speak` only from onDone. An utterance the engine
@@ -200,7 +220,9 @@ class AudioNarrator implements Narrator {
   Future<void> _configureSession() async {
     final session = _session;
     if (session == null) return;
-    final duck = _profile.audioInterrupt == AudioInterrupt.duck;
+    // Music for a whole run can't sit on top of the runner's own, so it always
+    // asks their player to pause, whatever the setting says for a story line.
+    final duck = _profile.audioInterrupt == AudioInterrupt.duck && !_musicHoldsFocus;
     await session.configure(
       AudioSessionConfiguration(
         avAudioSessionCategory: AVAudioSessionCategory.playback,
@@ -278,6 +300,8 @@ class AudioNarrator implements Narrator {
     final interruptChanged = profile.audioInterrupt != _profile.audioInterrupt;
     _profile = profile;
     if (interruptChanged) await _configureSession();
+    await _music.setVolume(profile.musicVolume);
+    if (_musicHoldsFocus && !profile.generatedMusicOn) await _stopMusic();
     await _bedPlayer.setVolume(profile.sfxVolume * 0.35);
     await _sfxPlayer.setVolume(profile.sfxVolume);
     await setAmbientBed(profile.ambientBed);
@@ -296,6 +320,8 @@ class AudioNarrator implements Narrator {
 
   Future<void> _speakBeatNow(List<StoryLine> lines) async {
     await _takeFocus();
+    _speaking = true;
+    await _applyDuck();
     try {
       await _playSfx('comm_open');
       for (final line in lines) {
@@ -310,6 +336,8 @@ class AudioNarrator implements Narrator {
       await _playSfx('comm_close');
     } finally {
       _events.add(const NarrationEvent(null));
+      _speaking = false;
+      await _applyDuck();
       await _releaseFocus();
     }
   }
@@ -463,7 +491,8 @@ class AudioNarrator implements Narrator {
   @override
   Future<void> setAmbientBed(bool on) async {
     try {
-      if (on) {
+      // A song replaces the bed; the two would only muddy each other.
+      if (on && !_profile.generatedMusicOn) {
         // Reloaded when the season has changed since, so the bed follows it.
         final asset = sfxAsset('drone', Season.active);
         if (_bedAsset != asset) {
@@ -500,6 +529,7 @@ class AudioNarrator implements Narrator {
   }
 
   Future<void> _releaseFocus() async {
+    if (_musicHoldsFocus) return;
     if (!_focusHeld) {
       _resume.cancel();
       return;
@@ -526,6 +556,87 @@ class AudioNarrator implements Narrator {
   }
 
   @override
+  Future<void> startMusic() async {
+    if (!_profile.generatedMusicOn || _musicHoldsFocus) return;
+    _runPaused = _interrupted = _unplugged = _askedToDuck = false;
+    _musicHoldsFocus = true;
+    await _music.setVolume(_profile.musicVolume);
+    try {
+      await _configureSession();
+      // Before the song starts, so the guard records the runner's player and
+      // not our own.
+      await _takeFocus();
+      if (await _music.start(_profile.music)) return;
+    } on Object catch (e) {
+      debugPrint('Music failed to start: $e');
+    }
+    await _stopMusic();
+  }
+
+  /// Our own track is released first, so that whatever the guard then sees
+  /// playing is the runner's player coming back.
+  Future<void> _stopMusic() async {
+    if (!_musicHoldsFocus) return;
+    await _music.stop();
+    _musicHoldsFocus = false;
+    await _releaseFocus();
+    try {
+      await _configureSession();
+    } on Object catch (e) {
+      debugPrint('Audio session reset failed: $e');
+    }
+  }
+
+  @override
+  Future<void> setMusicPaused(bool paused) async {
+    _runPaused = paused;
+    await _applyMusicHold();
+  }
+
+  Future<void> _applyMusicHold() async {
+    if (!_musicHoldsFocus) return;
+    await _music.setPaused(_runPaused || _interrupted || _unplugged);
+  }
+
+  Future<void> _applyDuck() async {
+    if (_musicHoldsFocus) await _music.setDucked(_speaking || _askedToDuck);
+  }
+
+  /// A phone call, another app taking over, and headphones coming out: Android
+  /// tells us, and playing on would be wrong in each case.
+  void _watchSession() {
+    final session = _session;
+    if (session == null) return;
+    _sessionEvents
+      ..add(
+        session.interruptionEventStream.listen((event) {
+          if (event.type == AudioInterruptionType.duck) {
+            _askedToDuck = event.begin;
+            unawaited(_applyDuck());
+          } else {
+            _interrupted = event.begin;
+            unawaited(_applyMusicHold());
+          }
+        }),
+      )
+      ..add(
+        session.becomingNoisyEventStream.listen((_) {
+          _unplugged = true;
+          unawaited(_applyMusicHold());
+        }),
+      )
+      ..add(
+        session.devicesChangedEventStream.listen((event) {
+          // The speaker is always there, so anything added is what came back.
+          if (_unplugged && event.devicesAdded.any((d) => d.isOutput)) {
+            _unplugged = false;
+            unawaited(_applyMusicHold());
+          }
+        }),
+      );
+  }
+
+  @override
   Future<void> stopAll() async {
     _queue = Future.value();
     try {
@@ -535,12 +646,21 @@ class AudioNarrator implements Narrator {
     } on Object catch (e) {
       debugPrint('Narrator stop failed: $e');
     }
-    await _releaseFocus();
+    // One or the other. A second release finds nothing held and cancels the
+    // guard's nudge, which is what the first has just set going.
+    if (_musicHoldsFocus) {
+      await _stopMusic();
+    } else {
+      await _releaseFocus();
+    }
   }
 
   @override
   Future<void> dispose() async {
     await stopAll();
+    for (final sub in _sessionEvents) {
+      await sub.cancel();
+    }
     await _sfxPlayer.dispose();
     await _bedPlayer.dispose();
     await _events.close();

@@ -216,6 +216,8 @@ class Profile {
     this.speechRate = 0.52,
     this.sfxVolume = 0.9,
     this.ambientBed = false,
+    this.music = noMusic,
+    this.musicVolume = 0.7,
     this.seasonalEvents = true,
     this.theme = 'neon',
     this.packColours = true,
@@ -297,6 +299,16 @@ class Profile {
 
   /// Low ambient drone under the HUD for runners with no music of their own.
   final bool ambientBed;
+
+  /// What plays during a run: [noMusic], or the id of a song. One field because
+  /// the ways of choosing will grow, and each is a value here.
+  final String music;
+
+  static const String noMusic = 'off';
+
+  bool get generatedMusicOn => music != noMusic;
+
+  final double musicVolume;
 
   /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
   /// and whatever follows: palette, backdrop, sounds, the event pack and its
@@ -397,6 +409,8 @@ class Profile {
     double? speechRate,
     double? sfxVolume,
     bool? ambientBed,
+    String? music,
+    double? musicVolume,
     bool? seasonalEvents,
     String? theme,
     bool? packColours,
@@ -432,6 +446,8 @@ class Profile {
     speechRate: speechRate ?? this.speechRate,
     sfxVolume: sfxVolume ?? this.sfxVolume,
     ambientBed: ambientBed ?? this.ambientBed,
+    music: music ?? this.music,
+    musicVolume: musicVolume ?? this.musicVolume,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     theme: theme ?? this.theme,
     packColours: packColours ?? this.packColours,
@@ -469,6 +485,8 @@ class Profile {
     'speechRate': speechRate,
     'sfxVolume': sfxVolume,
     'ambientBed': ambientBed,
+    'music': music,
+    'musicVolume': musicVolume,
     'seasonalEvents': seasonalEvents,
     'theme': theme,
     'packColours': packColours,
@@ -513,6 +531,8 @@ class Profile {
     speechRate: (json['speechRate'] as num?)?.toDouble() ?? 0.52,
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,
     ambientBed: json['ambientBed'] as bool? ?? false,
+    music: json['music'] as String? ?? noMusic,
+    musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.7,
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',
     packColours: json['packColours'] as bool? ?? true,

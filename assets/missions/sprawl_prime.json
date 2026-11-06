@@ -2,6 +2,7 @@
   "id": "sprawl_prime",
   "title": "SPRAWL PRIME",
   "tagline": "Ten runs through the BAMA corridor. Bring your own legs.",
+  "author": "SPRAWL//RUN",
   "signals": {
     "reminder": [
       { "from": "KESTREL", "text": "Work is on the board if you want it. Same terms as always: you run, I talk, nobody writes anything down." },

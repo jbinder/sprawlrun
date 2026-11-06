@@ -11,10 +11,11 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 691 tests
+fvm flutter test                                    # 730 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
+fvm dart run tool/gen_music.dart assets/songs/<id>.json music/out.wav [fromBar] [bars]  # hear a song
 fvm dart run tool/gen_icons.dart                    # launcher icons + docs/icon.png
 fvm flutter test tool/screenshots/capture_test.dart # docs/ + every language's store shots
 fvm flutter test --dart-define=PSEUDO=true tool/screenshots/capture_test.dart  # build/screenshots-pseudo/
@@ -206,6 +207,21 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   configured gain type, pauses the runner's music and never hands it back. That
   was a real bug — a chase-start sting killed the music for the whole chase.
   Construct any new player the same way.
+- **A song is data, and the engine knows no song.** Everything about one is in
+  its JSON file in `assets/songs/`, in the format in `docs/SONGS.md`. `lib/audio/`
+  is pure Dart with no Flutter, so it runs in an isolate and from `dart run`. A
+  synth's sound is part of the format: a change that alters existing songs needs
+  a new `format` number. Listening is the only real check, and Claude can't.
+- **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
+  just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
+  needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds
+  about four seconds of sound, so anything that must be heard at once (lowering
+  for a line, pausing, stopping) happens there, never in the synth.
+- **With generated music on, focus is taken once, for the whole run.** It goes
+  through `AudioNarrator`, before the song starts, so `MusicResumeGuard` records the
+  runner's player and not ours, and our track is released before focus goes back
+  for the same reason. A story line then only lowers the music. Handing focus back
+  after each line would restart the runner's player under the song.
 - **Every vertical scroller fades the edge that still hides content.** It is
   `CyberScrollBehavior` (`widgets/edge_fade.dart`), set on `MaterialApp` and on
   the screenshot tool's, not a wrapper per screen — so a new screen gets it

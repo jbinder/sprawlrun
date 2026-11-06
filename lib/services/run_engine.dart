@@ -395,6 +395,7 @@ class RunEngine extends ChangeNotifier {
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
 
     await narrator.setAmbientBed(profile.ambientBed);
+    await narrator.startMusic();
     notifyListeners();
     if (resumeFrom != null) _announceResume(pendingChase);
     _tick(); // fire the opening beat immediately rather than a second late
@@ -466,11 +467,15 @@ class RunEngine extends ChangeNotifier {
     if (phase != RunPhase.running) return;
     _closeSegment();
     phase = RunPhase.paused;
+    unawaited(narrator.setMusicPaused(true));
     notifyListeners();
   }
 
   void resume() {
     if (phase != RunPhase.paused && phase != RunPhase.autoPaused) return;
+    // Only a pause the runner asked for stops the song. Standing at a light is
+    // no reason to lose it.
+    if (phase == RunPhase.paused) unawaited(narrator.setMusicPaused(false));
     _segmentStart = _now();
     _stillSince = null;
     phase = RunPhase.running;

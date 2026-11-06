@@ -76,6 +76,7 @@ class MainActivity : FlutterActivity() {
     private val backupChannelName = "io.github.jbinder.sprawlrun/backup"
     private val stepsChannelName = "io.github.jbinder.sprawlrun/steps"
     private val stepSetupChannelName = "io.github.jbinder.sprawlrun/step_setup"
+    private val musicChannelName = "io.github.jbinder.sprawlrun/music"
 
     /**
      * Hard-coded in geolocator's GeolocatorLocationService. Matching it is the
@@ -207,6 +208,41 @@ class MainActivity : FlutterActivity() {
                         result.success(null)
                     }
 
+                    else -> result.notImplemented()
+                }
+            }
+
+        val music = MusicTrack()
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, musicChannelName)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "start" -> {
+                        music.start()
+                        result.success(null)
+                    }
+                    "write" -> {
+                        music.write(call.arguments as ByteArray)
+                        result.success(null)
+                    }
+                    "queuedMs" -> result.success(music.queuedMs())
+                    "underruns" -> result.success(music.underruns())
+                    "pause" -> {
+                        music.pause()
+                        result.success(null)
+                    }
+                    "resume" -> {
+                        music.resume()
+                        result.success(null)
+                    }
+                    "duck" -> {
+                        music.setDucked(call.arguments as Boolean)
+                        result.success(null)
+                    }
+                    "volume" -> {
+                        music.setVolume((call.arguments as Double).toFloat())
+                        result.success(null)
+                    }
+                    "stop" -> music.stop { result.success(null) }
                     else -> result.notImplemented()
                 }
             }

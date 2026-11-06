@@ -403,6 +403,7 @@ class MissionPack {
     required this.title,
     required this.tagline,
     required this.missions,
+    this.author,
     this.signals = const SignalPool(),
     this.season,
     this.translations = const {},
@@ -415,6 +416,9 @@ class MissionPack {
   final String tagline;
   final List<Mission> missions;
 
+  /// Who wrote it, if the file says. A name, so never translated.
+  final String? author;
+
   /// Its text in other languages: language code → key → text, keyed as
   /// `packStrings` offers it. Applied by `localizePack`, never read directly.
   final Map<String, Map<String, String>> translations;
@@ -425,6 +429,7 @@ class MissionPack {
     title: title,
     tagline: tagline,
     missions: missions,
+    author: author,
     signals: signals,
     season: season,
     translations: {...translations, language: strings},
@@ -478,6 +483,10 @@ class MissionPack {
       ownTheme: ownTheme,
       title: json['title'] as String? ?? id,
       tagline: json['tagline'] as String? ?? '',
+      author: switch (json['author']) {
+        final String name when name.trim().isNotEmpty => name.trim(),
+        _ => null,
+      },
       missions: missions,
       signals: _pool(json['signals']),
       season: json['season'] as String?,

@@ -9,9 +9,11 @@ import 'app.dart';
 import 'data/mission_repository.dart';
 import 'data/profile_repository.dart';
 import 'data/run_repository.dart';
+import 'data/song_library.dart';
 import 'services/backup_folder.dart';
 import 'services/battery_optimization.dart';
 import 'services/location_service.dart';
+import 'services/music_player.dart';
 import 'services/narrator.dart';
 import 'services/signal_scheduler.dart';
 import 'services/step_source.dart';
@@ -28,7 +30,7 @@ Future<void> main() async {
   final root = Directory('${documents.path}/sprawlrun');
   await root.create(recursive: true);
 
-  final narrator = AudioNarrator();
+  final narrator = AudioNarrator(music: LiveMusicPlayer(SongLibrary()));
   final appState = AppState(
     profiles: ProfileRepository(root),
     runs: RunRepository(Directory('${root.path}/runs')),

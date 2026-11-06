@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../data/song_library.dart';
 import '../models/profile.dart';
 import '../models/stride.dart';
 import '../services/app_version.dart';
@@ -230,11 +231,31 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           const _Rule(),
                           _SwitchRow(
-                            label: l.settingAmbientBed,
-                            subtitle: l.settingAmbientBedHint,
-                            value: profile.ambientBed,
-                            onChanged: (v) => update(profile.copyWith(ambientBed: v)),
+                            label: l.settingGeneratedMusic,
+                            subtitle: l.settingGeneratedMusicHint,
+                            value: profile.generatedMusicOn,
+                            onChanged: (v) =>
+                                update(profile.copyWith(music: v ? SongLibrary.firstSongId : Profile.noMusic)),
                           ),
+                          if (profile.generatedMusicOn) ...[
+                            const _Rule(),
+                            _SliderRow(
+                              label: l.settingMusicVolume,
+                              value: profile.musicVolume,
+                              min: 0,
+                              max: 1,
+                              display: '${(profile.musicVolume * 100).round()}%',
+                              onChanged: (v) => update(profile.copyWith(musicVolume: v)),
+                            ),
+                          ] else ...[
+                            const _Rule(),
+                            _SwitchRow(
+                              label: l.settingAmbientBed,
+                              subtitle: l.settingAmbientBedHint,
+                              value: profile.ambientBed,
+                              onChanged: (v) => update(profile.copyWith(ambientBed: v)),
+                            ),
+                          ],
                         ],
                       ),
                     ),

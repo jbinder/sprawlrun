@@ -42,6 +42,7 @@ flutter:
     - assets/missions/
     - assets/missions/l10n/
     - assets/themes/
+    - assets/songs/
     - assets/sfx/
     - assets/sfx/samhain/
 

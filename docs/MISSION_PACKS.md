@@ -32,6 +32,7 @@ but later fails to load is skipped, with the error listed in Settings.
   "id": "sprawl_prime",              // stable; used for replacement
   "title": "SPRAWL PRIME",
   "tagline": "Ten runs through the BAMA corridor.",
+  "author": "Your name",             // optional; shown with the pack, never translated
   "season": "samhain",               // optional; see below
   "theme": "glacier",                // optional; see below
   "missions": [ /* Mission */ ]

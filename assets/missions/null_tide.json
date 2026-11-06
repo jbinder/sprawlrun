@@ -2,6 +2,7 @@
   "id": "null_tide",
   "title": "NULL TIDE",
   "tagline": "Ten runs across the Drowned Mile. The water remembers.",
+  "author": "SPRAWL//RUN",
   "signals": {
     "reminder": [
       { "from": "MARROW", "text": "Tide table says you have a window. Tide tables have been wrong for eleven years, so I would not spend it sitting down." },

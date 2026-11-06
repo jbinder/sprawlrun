@@ -1059,6 +1059,9 @@ class PseudoL extends L {
   String settingLookSeason(String season) => pseudo(_en.settingLookSeason(season));
 
   @override
+  String packBy(String author) => pseudo(_en.packBy(author));
+
+  @override
   String themeBy(String theme, String author) => pseudo(_en.themeBy(theme, author));
 
   @override
@@ -1171,6 +1174,15 @@ class PseudoL extends L {
 
   @override
   String get settingAmbientBedHint => pseudo(_en.settingAmbientBedHint);
+
+  @override
+  String get settingGeneratedMusic => pseudo(_en.settingGeneratedMusic);
+
+  @override
+  String get settingGeneratedMusicHint => pseudo(_en.settingGeneratedMusicHint);
+
+  @override
+  String get settingMusicVolume => pseudo(_en.settingMusicVolume);
 
   @override
   String get sectionRun => pseudo(_en.sectionRun);

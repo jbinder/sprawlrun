@@ -48,6 +48,8 @@ class _PackControlsState extends State<PackControls> {
                   children: [
                     Text(pack.title, style: CyType.body(size: 15, weight: FontWeight.w700)),
                     Text(pack.tagline, style: CyType.body(size: 13, color: Cy.ghost)),
+                    if (pack.author != null)
+                      Text(l.packBy(pack.author!), style: CyType.body(size: 12, color: Cy.ghost)),
                   ],
                 ),
               ),

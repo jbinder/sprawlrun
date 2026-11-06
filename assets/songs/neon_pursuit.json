@@ -1,0 +1,253 @@
+{
+  "format": 1,
+  "id": "neon_pursuit",
+  "name": "Neon Pursuit",
+  "author": "SPRAWL//RUN",
+  "bpm": 170,
+  "key": "Am",
+  "moods": ["uplifting"],
+  "energy": 0.9,
+  "seed": 7,
+  "bars": 80,
+  "loopFrom": 8,
+  "sections": [
+    { "name": "intro", "from": 0 },
+    { "name": "drive", "from": 8 },
+    { "name": "hook", "from": 24 },
+    { "name": "breakdown", "from": 40 },
+    { "name": "build", "from": 48 },
+    { "name": "finale", "from": 56 },
+    { "name": "outro", "from": 72 }
+  ],
+  "buses": [
+    { "id": "dry" },
+    {
+      "id": "pad",
+      "effects": [
+        { "type": "slicer", "mix": 0.85, "mixClips": [{ "from": 0, "to": 8, "mix": 0.5 }] }
+      ]
+    },
+    { "id": "arp", "effects": [{ "type": "echo", "phase": 0.75, "decay": 2, "mix": 0.25 }] },
+    { "id": "snare", "effects": [{ "type": "reverb", "room": 0.85, "damp": 0.3, "mix": 0.45 }] },
+    {
+      "id": "lead",
+      "effects": [
+        { "type": "echo", "phase": 0.75, "decay": 3, "mix": 0.2 },
+        { "type": "reverb", "room": 0.7, "damp": 0.5, "mix": 0.35 }
+      ]
+    },
+    { "id": "strings", "effects": [{ "type": "reverb", "room": 0.95, "damp": 0.2, "mix": 0.6 }] }
+  ],
+  "patterns": {
+    "strike": [{ "hits": "x..............." }],
+    "kick": [{ "hits": "x...x...x...x..." }],
+    "backbeat": [{ "hits": "........x......." }],
+    "hats8": [{ "hits": "..x...x...x...x." }],
+    "hats16": [{ "hits": "..x.x.x.x.x.x.xx" }],
+    "roll": [
+      { "hits": "x...x...x...x...", "amp": 0.35, "ampStep": 0.01, "rate": 1.0 },
+      { "hits": "x...x...x...x...", "amp": 0.42, "ampStep": 0.01, "rate": 1.04 },
+      { "hits": "x...x...x...x...", "amp": 0.49, "ampStep": 0.01, "rate": 1.08 },
+      { "hits": "x...x...x...x...", "amp": 0.56, "ampStep": 0.01, "rate": 1.12 },
+      { "hits": "x.x.x.x.x.x.x.x.", "amp": 0.63, "ampStep": 0.01, "rate": 1.16 },
+      { "hits": "x.x.x.x.x.x.x.x.", "amp": 0.70, "ampStep": 0.01, "rate": 1.20 },
+      { "hits": "xxxxxxxxxxxxxxxx", "amp": 0.77, "ampStep": 0.01, "rate": 1.24 },
+      { "hits": "xxxxxxxxxxxxxxxx", "amp": 0.84, "ampStep": 0.01, "rate": 1.28 }
+    ],
+    "bass": [
+      { "repeat": 2, "notes": ["a1", "a2", "a1", "a2", "a1", "a2", "a1", "a2"] },
+      { "repeat": 2, "notes": ["f1", "f2", "f1", "f2", "f1", "f2", "f1", "f2"] },
+      { "repeat": 2, "notes": ["c2", "c3", "c2", "c3", "c2", "c3", "c2", "c3"] },
+      { "repeat": 2, "notes": ["g1", "g2", "g1", "g2", "g1", "g2", "g1", "g2"] }
+    ],
+    "chords": [
+      { "repeat": 2, "chord": ["a3", "c4", "e4"] },
+      { "repeat": 2, "chord": ["a3", "c4", "f4"] },
+      { "repeat": 2, "chord": ["g3", "c4", "e4"] },
+      { "repeat": 2, "chord": ["g3", "b3", "d4"] }
+    ],
+    "arp": [
+      { "repeat": 2, "notes": ["a4", "c5", "e5", "a5", "e5", "c5", "a4", "e4"] },
+      { "repeat": 2, "notes": ["f4", "a4", "c5", "f5", "c5", "a4", "f4", "c4"] },
+      { "repeat": 2, "notes": ["c5", "e5", "g5", "c6", "g5", "e5", "c5", "g4"] },
+      { "repeat": 2, "notes": ["g4", "b4", "d5", "g5", "d5", "b4", "g4", "d4"] }
+    ],
+    "hook": [
+      { "phrase": [["e5", 1.5], ["d5", 0.5], ["c5", 1], ["a4", 1]] },
+      { "phrase": [["e5", 1.5], ["g5", 0.5], ["a5", 2]] },
+      { "phrase": [["a5", 1.5], ["g5", 0.5], ["f5", 1], ["c5", 1]] },
+      { "phrase": [["f5", 1], ["e5", 1], ["c5", 2]] },
+      { "phrase": [["g5", 1.5], ["e5", 0.5], ["c5", 1], ["g4", 1]] },
+      { "phrase": [["c5", 1], ["d5", 1], ["e5", 2]] },
+      { "phrase": [["d5", 1.5], ["b4", 0.5], ["g4", 1], ["d5", 1]] },
+      { "phrase": [["e5", 2], ["d5", 1], ["b4", 1]] }
+    ],
+    "swell": [{ "phrase": [["c4", 1]] }]
+  },
+  "tracks": [
+    {
+      "id": "splash",
+      "bus": "dry",
+      "voice": { "type": "drum", "drum": "splash", "amp": 0.6 },
+      "clips": [
+        { "from": 8, "to": 9, "pattern": "strike" },
+        { "from": 24, "to": 25, "pattern": "strike" },
+        { "from": 56, "to": 57, "pattern": "strike" }
+      ]
+    },
+    {
+      "id": "boom",
+      "bus": "dry",
+      "voice": { "type": "drum", "drum": "boom", "amp": 0.7 },
+      "clips": [{ "from": 56, "to": 57, "pattern": "strike" }]
+    },
+    {
+      "id": "kick",
+      "bus": "dry",
+      "voice": { "type": "drum", "drum": "kick", "cutoff": 110, "amp": 1.3 },
+      "clips": [
+        { "from": 4, "to": 8, "pattern": "kick", "amp": 0.8 },
+        { "from": 8, "to": 40, "pattern": "kick" },
+        { "from": 48, "to": 80, "pattern": "kick" }
+      ]
+    },
+    {
+      "id": "hats",
+      "bus": "dry",
+      "voice": { "type": "drum", "drum": "hat", "amp": 0.45, "rate": 1.3 },
+      "clips": [
+        { "from": 8, "to": 40, "pattern": "hats8" },
+        { "from": 40, "to": 48, "pattern": "backbeat" },
+        { "from": 56, "to": 72, "pattern": "hats16" },
+        { "from": 72, "to": 80, "pattern": "hats8" }
+      ]
+    },
+    {
+      "id": "snare",
+      "bus": "snare",
+      "voice": { "type": "drum", "drum": "snare", "amp": 0.9, "rate": 0.95 },
+      "clips": [
+        { "from": 8, "to": 40, "pattern": "backbeat" },
+        { "from": 48, "to": 56, "pattern": "roll" },
+        { "from": 56, "to": 80, "pattern": "backbeat" }
+      ]
+    },
+    {
+      "id": "dubSnare",
+      "bus": "snare",
+      "voice": { "type": "drum", "drum": "dubSnare", "amp": 0.5 },
+      "clips": [
+        { "from": 8, "to": 40, "pattern": "backbeat" },
+        { "from": 56, "to": 80, "pattern": "backbeat" }
+      ]
+    },
+    {
+      "id": "bass",
+      "bus": "dry",
+      "voice": { "type": "dsaw", "release": 0.22, "detune": 0.12, "amp": 0.75 },
+      "clips": [
+        { "from": 8, "to": 40, "pattern": "bass", "cutoff": 88 },
+        { "from": 48, "to": 56, "pattern": "bass", "cutoff": { "from": 70, "to": 110 } },
+        { "from": 56, "to": 72, "pattern": "bass", "cutoff": 100 },
+        { "from": 72, "to": 80, "pattern": "bass", "cutoff": 88 }
+      ]
+    },
+    {
+      "id": "pad",
+      "bus": "pad",
+      "voice": { "type": "prophet", "attack": 0.05, "sustain": 3.6, "release": 0.3, "amp": 0.45 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "chords", "cutoff": { "from": 70, "to": 100 } },
+        { "from": 8, "to": 40, "pattern": "chords", "cutoff": 100 },
+        { "from": 48, "to": 80, "pattern": "chords", "cutoff": 100 }
+      ]
+    },
+    {
+      "id": "arp",
+      "bus": "arp",
+      "voice": { "type": "saw", "release": 0.12, "amp": 0.28 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "arp", "cutoff": { "from": 60, "to": 105 } },
+        { "from": 8, "to": 40, "pattern": "arp", "cutoff": 105 },
+        { "from": 48, "to": 56, "pattern": "arp", "cutoff": { "from": 85, "to": 125 } },
+        { "from": 56, "to": 80, "pattern": "arp", "cutoff": 105 }
+      ]
+    },
+    {
+      "id": "lead",
+      "bus": "lead",
+      "voice": {
+        "type": "dsaw",
+        "attack": 0.02,
+        "sustainOfNote": 0.7,
+        "releaseOfNote": 0.3,
+        "cutoff": 110,
+        "detune": 0.18,
+        "amp": 0.55
+      },
+      "clips": [
+        { "from": 24, "to": 40, "pattern": "hook" },
+        { "from": 56, "to": 72, "pattern": "hook", "transpose": 12 }
+      ]
+    },
+    {
+      "id": "leadDouble",
+      "bus": "lead",
+      "voice": {
+        "type": "prophet",
+        "attack": 0.02,
+        "sustainOfNote": 0.6,
+        "releaseOfNote": 0.4,
+        "cutoff": 115,
+        "amp": 0.22
+      },
+      "clips": [
+        { "from": 32, "to": 40, "pattern": "hook", "transpose": 12 },
+        { "from": 56, "to": 72, "pattern": "hook", "transpose": 24 }
+      ]
+    },
+    {
+      "id": "strings",
+      "bus": "strings",
+      "voice": {
+        "type": "blade",
+        "attackOfNote": 0.4,
+        "sustainOfNote": 0.4,
+        "releaseOfNote": 0.8,
+        "vibratoRate": 5,
+        "vibratoDepth": 0.12,
+        "amp": 0.7
+      },
+      "clips": [{ "from": 40, "to": 48, "pattern": "hook" }]
+    },
+    {
+      "id": "stringsChord",
+      "bus": "strings",
+      "voice": {
+        "type": "blade",
+        "attack": 1.5,
+        "sustain": 2,
+        "release": 2,
+        "vibratoRate": 6,
+        "vibratoDepth": 0.15,
+        "amp": 0.35
+      },
+      "clips": [{ "from": 40, "to": 48, "pattern": "chords" }]
+    },
+    {
+      "id": "riser",
+      "bus": "dry",
+      "voice": {
+        "type": "riser",
+        "attack": 30,
+        "sustain": 0.2,
+        "release": 1,
+        "cutoff": 60,
+        "cutoffTo": 125,
+        "slide": 32,
+        "amp": 0.36
+      },
+      "clips": [{ "from": 48, "to": 49, "pattern": "swell" }]
+    }
+  ]
+}

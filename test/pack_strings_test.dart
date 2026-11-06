@@ -67,6 +67,7 @@ void main() {
 
   test('a translated line knows its language and its English', () {
     final translated = localizePack(prime, 'es', everything(prime));
+    expect(translated.author, prime.author, reason: 'a name, so it survives translation');
     final line = translated.missions.first.beats.first.lines.first;
     final english = prime.missions.first.beats.first.lines.first;
     expect(line.language, 'es');

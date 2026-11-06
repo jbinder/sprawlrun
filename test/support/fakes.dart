@@ -122,6 +122,14 @@ class FakeNarrator implements Narrator {
   @override
   Future<void> setAmbientBed(bool on) async => ambientBed = on;
 
+  bool musicStarted = false, musicPaused = false;
+
+  @override
+  Future<void> startMusic() async => musicStarted = true;
+
+  @override
+  Future<void> setMusicPaused(bool paused) async => musicPaused = paused;
+
   @override
   Future<void> stopAll() async => stopped = true;
 

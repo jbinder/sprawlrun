@@ -51,6 +51,8 @@ void _checks(String path) {
     }
   });
 
+  test('the pack credits who wrote it', () => expect(pack.author, isNotNull));
+
   test('mission ids are unique', () {
     final ids = pack.missions.map((m) => m.id).toList();
     expect(ids.toSet(), hasLength(ids.length));

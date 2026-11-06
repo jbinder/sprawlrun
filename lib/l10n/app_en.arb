@@ -1716,6 +1716,15 @@
       }
     }
   },
+  "packBy": "by {author}",
+  "@packBy": {
+    "description": "Under a mission pack in the list: who wrote it. The author is a name; keep it as it is.",
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
   "themeBy": "{theme} by {author}",
   "@themeBy": {
     "description": "Under the colour swatches: the picked theme and who made it. Both are names; keep them as they are.",
@@ -1917,6 +1926,18 @@
     "description": "A quiet background drone played during runs."
   },
   "settingAmbientBedHint": "Low synth drone under the run, for when you bring no music",
+  "settingGeneratedMusic": "Generated music",
+  "@settingGeneratedMusic": {
+    "description": "Switch: the phone composes and plays a soundtrack during runs, with no audio files or network."
+  },
+  "settingGeneratedMusicHint": "Played live by your phone during a run. Pauses your own music until the run ends",
+  "@settingGeneratedMusicHint": {
+    "description": "Explains the generated music switch, including that the runner's own music app is paused for the run."
+  },
+  "settingMusicVolume": "Music volume",
+  "@settingMusicVolume": {
+    "description": "Slider: how loud the generated music plays."
+  },
   "sectionRun": "RUN",
   "@sectionRun": {
     "description": "Settings section: options for runs."

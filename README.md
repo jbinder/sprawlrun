@@ -237,6 +237,7 @@ next October if you do not finish. One switch in Settings turns it all off.
 
 **Audio**
 - Your music ducks for a transmission and is forced back if the player sulks
+- Optional generated music, played live by the phone during a run with no audio files, written as data ([docs/SONGS.md](docs/SONGS.md))
 - Optional ambient synth bed for when you bring no music of your own
 - Adjustable speech rate and effects volume; story voice can be silenced
 

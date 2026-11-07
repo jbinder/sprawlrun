@@ -27,7 +27,7 @@ The last two numbers are the first bar and how many to render.
 | `format` | `1`. A newer number than the app knows is refused. |
 | `id` | `a-z`, `0-9`, `_`, `-`. A shipped song's file is named after it. `off`, `ambient`, `shuffle`, `best` and `folder` are taken by the music setting. |
 | `name`, `names` | The name, and optionally the name per language code. |
-| `author` | Who wrote it. Optional for your own use, required to contribute one. |
+| `author` | Who wrote it. Optional for your own use, required to contribute one. Shown in the song library. |
 | `licence` | Optional. |
 | `bpm` | 60 to 200. Bars are always four beats. |
 | `lowTempo`, `highTempo` | Optional, by default 1. The share of its tempo the song plays at at level `low` (0.88 to 1) and `high` (1 to 1.15), gliding there and back at 2% a bar. Pitch stays where it is, and echoes stay on the beat. |

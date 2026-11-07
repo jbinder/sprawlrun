@@ -80,6 +80,9 @@ class _RecordingPlayer implements MusicPlayer {
   @override
   Stream<String?> get nowPlaying => const Stream.empty();
 
+  @override
+  Stream<double?> get progress => const Stream.empty();
+
   final calls = <String>[];
 
   @override
@@ -218,6 +221,28 @@ void main() {
       });
     });
 
+    testWidgets('takes the queue off how far the song has been made', (tester) async {
+      await tester.runAsync(() async {
+        final seen = <double?>[];
+        final sub = player.progress.listen(seen.add);
+        // Half made, with two bars of a hundred still queued ahead of the ear.
+        player.reportProgress(2000, madeTo: 0.5, barShare: 0.01, barMs: 1000);
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.single, closeTo(0.48, 0.0001));
+
+        // Too small a move to be worth a redraw.
+        player.reportProgress(2000, madeTo: 0.5005, barShare: 0.01, barMs: 1000);
+        await Future<void>.delayed(Duration.zero);
+        expect(seen, hasLength(1));
+
+        // More queued than made so far, as at the start of a song.
+        player.reportProgress(9000, madeTo: 0.01, barShare: 0.01, barMs: 1000);
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.last, 0);
+        await sub.cancel();
+      });
+    });
+
     testWidgets('a phone falling behind loses layers before it loses the music', (tester) async {
       await tester.runAsync(() async {
         expect(await player.start('neon_pursuit'), isTrue);
@@ -307,6 +332,12 @@ void main() {
       expect(const Profile(music: Profile.shuffleMusic).generatedMusicOn, isTrue);
       expect(const Profile(music: Profile.bestMatchMusic).generatedMusicOn, isTrue);
       expect(reservedSongIds, containsAll([Profile.noMusic, Profile.ambientMusic, Profile.shuffleMusic, Profile.bestMatchMusic]));
+    });
+
+    test('songs left out survive a round trip, and start empty', () {
+      expect(Profile.fromJson(const {}).songsLeftOut, isEmpty);
+      final saved = const Profile(songsLeftOut: ['undercity']).toJson();
+      expect(Profile.fromJson(saved).songsLeftOut, ['undercity']);
     });
 
     test('following effort is on unless the runner turned it off', () {

@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 860 tests
+fvm flutter test                                    # 874 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -247,6 +247,12 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   files play through `FolderMusicPlayer`, just_audio on `content://`, which needs no
   loopback server and so no INTERNET; `RunMusicPlayer` picks by address. Recordings
   have no levels. Like the backup folder, check it on a device.
+- **The songs are a library, not entries in the run music picker.** The picker has
+  one Song library choice, and `SongLibraryScreen` sets how it plays, writing
+  `shuffle`, `best` or a song id to `Profile.music`. `Profile.songsLeftOut` lists
+  what is left out, so a song added later is in without asking. The run screen's
+  title scrolls only when it does not fit, and the line under it has its own
+  `ValueNotifier` so it does not redraw the screen.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds

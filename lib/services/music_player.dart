@@ -33,6 +33,9 @@ abstract class MusicPlayer {
   /// when the sound does, not when it was made, which is seconds earlier.
   Stream<String?> get nowPlaying;
 
+  /// How far through what is being heard, from 0 to 1, and null once nothing is.
+  Stream<double?> get progress;
+
   /// Fades out and lets go of everything.
   Future<void> stop();
 }
@@ -58,6 +61,9 @@ class SilentMusicPlayer implements MusicPlayer {
 
   @override
   Stream<String?> get nowPlaying => const Stream.empty();
+
+  @override
+  Stream<double?> get progress => const Stream.empty();
 
   @override
   Future<void> stop() async {}
@@ -114,6 +120,15 @@ class LiveMusicPlayer implements MusicPlayer {
   @override
   Stream<String?> get nowPlaying => _nowPlaying.stream;
 
+  final StreamController<double?> _progress = StreamController<double?>.broadcast();
+
+  @override
+  Stream<double?> get progress => _progress.stream;
+
+  // Where the song has been made up to, what one bar of it is worth, and how long
+  // a bar lasts: enough to take the queue off and say where it is being heard.
+  double _madeTo = 0, _barShare = 0, _barMs = 1, _lastProgress = -1;
+
   bool _waiting = false, _pumping = false;
   final RenderBudget _budget = RenderBudget();
 
@@ -169,8 +184,18 @@ class LiveMusicPlayer implements MusicPlayer {
       _sendLevel(atOnce: true);
       return;
     }
-    if (message case (final TransferableTypedData data, final double renderMs, final double barMs, final int songAt)) {
+    if (message case (
+      final TransferableTypedData data,
+      final double renderMs,
+      final double barMs,
+      final int songAt,
+      final double madeTo,
+      final double barShare,
+    )) {
       _waiting = false;
+      _madeTo = madeTo;
+      _barShare = barShare;
+      _barMs = barMs;
       if (songAt != _songAt) unawaited(_announce(songAt));
       _bars++;
       if (renderMs > _worstBar) _worstBar = renderMs;
@@ -202,6 +227,24 @@ class LiveMusicPlayer implements MusicPlayer {
 
   void _sendLevel({required bool atOnce}) => _requests?.send((level.index, atOnce));
 
+  /// A new figure only when the line would visibly move, which keeps this from
+  /// redrawing anything four times a second for nothing.
+  @visibleForTesting
+  void reportProgress(int queuedMs, {required double madeTo, required double barShare, required double barMs}) {
+    _madeTo = madeTo;
+    _barShare = barShare;
+    _barMs = barMs;
+    _reportProgress(queuedMs);
+  }
+
+  void _reportProgress(int queuedMs) {
+    if (_barShare <= 0) return;
+    final heard = (_madeTo - queuedMs / _barMs * _barShare).clamp(0.0, 1.0);
+    if ((heard - _lastProgress).abs() < 0.002) return;
+    _lastProgress = heard;
+    _progress.add(heard);
+  }
+
   /// What was just made is heard once the queue ahead of it has played.
   Future<void> _announce(int songAt) async {
     final first = _songAt < 0;
@@ -223,6 +266,7 @@ class LiveMusicPlayer implements MusicPlayer {
     await _guarded(() async {
       final queued = await _channel.invokeMethod<int>('queuedMs') ?? 0;
       if (_bars > 3 && queued < _minQueue) _minQueue = queued;
+      _reportProgress(queued);
       if (queued < targetQueueMs && !_waiting) {
         _waiting = true;
         _requests?.send(null);
@@ -286,8 +330,13 @@ class LiveMusicPlayer implements MusicPlayer {
     _report?.cancel();
     _announcing?.cancel();
     _pump = _report = _announcing = null;
-    if (_songAt >= 0) _nowPlaying.add(null);
+    if (_songAt >= 0) {
+      _nowPlaying.add(null);
+      _progress.add(null);
+    }
     _songAt = -1;
+    _barShare = 0;
+    _lastProgress = -1;
     _isolate?.kill(priority: Isolate.immediate);
     _isolate = null;
     _port?.close();
@@ -331,6 +380,21 @@ class FolderMusicPlayer implements MusicPlayer {
   @override
   Stream<String?> get nowPlaying => _nowPlaying.stream;
 
+  final StreamController<double?> _progress = StreamController<double?>.broadcast();
+  double _lastProgress = -1;
+
+  @override
+  Stream<double?> get progress => _progress.stream;
+
+  void _position(Duration position) {
+    final total = _player.duration;
+    if (total == null || total.inMilliseconds <= 0) return;
+    final share = (position.inMilliseconds / total.inMilliseconds).clamp(0.0, 1.0);
+    if ((share - _lastProgress).abs() < 0.002) return;
+    _lastProgress = share;
+    _progress.add(share);
+  }
+
   double get _gain => _volume * (_ducked ? _duckGain : 1);
 
   @override
@@ -345,6 +409,7 @@ class FolderMusicPlayer implements MusicPlayer {
       await player.setVolume(_gain);
       _subs
         ..add(player.currentIndexStream.listen(_heard))
+        ..add(player.positionStream.listen(_position))
         ..add(player.playbackEventStream.listen(_played, onError: (Object e, StackTrace _) => _failed(e)));
       await player.setAudioSources(
         [for (final uri in _uris) ja.AudioSource.uri(Uri.parse(uri))],
@@ -360,7 +425,10 @@ class FolderMusicPlayer implements MusicPlayer {
   }
 
   void _heard(int? index) {
-    if (index != null && index < _uris.length) _nowPlaying.add(_uris[index]);
+    if (index != null && index < _uris.length) {
+      _nowPlaying.add(_uris[index]);
+      _lastProgress = -1;
+    }
   }
 
   void _played(ja.PlaybackEvent event) {
@@ -432,6 +500,8 @@ class FolderMusicPlayer implements MusicPlayer {
       debugPrint('Folder music failed to stop: $e');
     }
     _nowPlaying.add(null);
+    _progress.add(null);
+    _lastProgress = -1;
   }
 }
 
@@ -441,14 +511,20 @@ class RunMusicPlayer implements MusicPlayer {
   RunMusicPlayer({required this.songs, required this.files}) {
     songs.nowPlaying.listen(_nowPlaying.add);
     files.nowPlaying.listen(_nowPlaying.add);
+    songs.progress.listen(_progress.add);
+    files.progress.listen(_progress.add);
   }
 
   final MusicPlayer songs, files;
   late MusicPlayer _active = songs;
   final StreamController<String?> _nowPlaying = StreamController<String?>.broadcast();
+  final StreamController<double?> _progress = StreamController<double?>.broadcast();
 
   @override
   Stream<String?> get nowPlaying => _nowPlaying.stream;
+
+  @override
+  Stream<double?> get progress => _progress.stream;
 
   @override
   Future<bool> start(String songId, {List<String> then = const []}) async {
@@ -500,6 +576,8 @@ void _generate((SendPort, List<String>) start) {
       clock.elapsedMicroseconds / 1000,
       bar.seconds * 1000,
       stream.currentIndex,
+      stream.position,
+      stream.barShare,
     ));
   });
 }

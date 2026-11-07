@@ -151,36 +151,110 @@ void main() {
       }
     }
 
-    testWidgets('one choice among off, the bed and the songs', (tester) async {
+    testWidgets('one choice among off, the bed, the library and a folder', (tester) async {
       final state = await pumpSettings(tester);
       expect(find.text('The app plays no music of its own. Yours carries on.'), findsOneWidget);
+
+      await tester.tap(find.text('Run music'));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('Song library'), findsOneWidget);
+      expect(find.text('From a folder'), findsOneWidget);
+      expect(find.text('Neon Pursuit'), findsNothing, reason: 'songs are in the library, not here');
+      await tester.tap(find.text('Off').last);
+      await tester.pump(const Duration(milliseconds: 300));
 
       await pick(tester, 'Ambient bed');
       expect(state.profile.music, Profile.ambientMusic);
       expect(state.profile.ambientBedOn, isTrue);
-      expect(state.profile.generatedMusicOn, isFalse);
       expect(find.text('Music volume'), findsOneWidget);
+      expect(find.text('Music follows your effort'), findsNothing);
 
-      await pick(tester, 'Shuffle');
-      expect(state.profile.music, Profile.shuffleMusic);
-      expect(find.text('Music follows your effort'), findsOneWidget);
-
-      await pick(tester, 'Best match');
+      await pick(tester, 'Song library');
       expect(state.profile.music, Profile.bestMatchMusic);
-      expect(find.textContaining('suits the run'), findsOneWidget);
-
-      await pick(tester, 'Neon Pursuit');
-      expect(state.profile.music, 'neon_pursuit');
-      expect(state.profile.ambientBedOn, isFalse);
       expect(state.profile.generatedMusicOn, isTrue);
       expect(find.text('Music volume'), findsOneWidget);
-
       expect(find.text('Music follows your effort'), findsOneWidget);
+      expect(find.text('Best match, 6 of 6 songs'), findsOneWidget);
 
       await pick(tester, 'Off');
-      expect(find.text('Music follows your effort'), findsNothing);
       expect(state.profile.music, Profile.noMusic);
       expect(find.text('Music volume'), findsNothing);
+      expect(find.text('Music follows your effort'), findsNothing);
+    });
+
+    testWidgets('a folder is not chosen until there is one to play', (tester) async {
+      final state = await pumpSettings(tester);
+      await pick(tester, 'From a folder');
+      expect(state.musicFolderName, isNull);
+      expect(state.profile.music, Profile.noMusic, reason: 'backing out of the picker changes nothing');
+    });
+  });
+
+  group('song library', () {
+    Future<void> settle(WidgetTester tester) async {
+      for (var i = 0; i < 6; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+    }
+
+    Future<AppState> library(WidgetTester tester, {Profile profile = const Profile(music: Profile.bestMatchMusic)}) async {
+      final state = await pumpSettings(tester, profile: profile);
+      await tester.tap(find.text('Song library').last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      return state;
+    }
+
+    testWidgets('lists every song, by whom and how long', (tester) async {
+      final state = await library(tester);
+      for (final song in state.songs) {
+        expect(find.text(song.name), findsOneWidget);
+      }
+      expect(find.textContaining('by SPRAWL//RUN'), findsNWidgets(state.songs.length));
+      expect(find.byType(Switch), findsNWidgets(state.songs.length));
+    });
+
+    testWidgets('a song switched off is left out of what a run picks', (tester) async {
+      final state = await library(tester);
+      final row = find.ancestor(of: find.text('Undercity'), matching: find.byType(Row)).first;
+      await tester.tap(find.descendant(of: row, matching: find.byType(Switch)));
+      await settle(tester);
+      expect(state.profile.songsLeftOut, ['undercity']);
+      const goal = RunGoal(GoalType.time, 1800);
+      expect(state.musicQueue(goal: goal, activity: Activity.run), isNot(contains('undercity')));
+    });
+
+    testWidgets('the last song in cannot be switched off', (tester) async {
+      final state = await pumpSettings(
+        tester,
+        profile: const Profile(music: Profile.shuffleMusic, songsLeftOut: ['black_ice', 'cold_boot', 'neon_pursuit', 'skyline_breach', 'sodium_rain']),
+      );
+      await tester.tap(find.text('Song library').last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      final row = find.ancestor(of: find.text('Undercity'), matching: find.byType(Row)).first;
+      final last = tester.widget<Switch>(find.descendant(of: row, matching: find.byType(Switch)));
+      expect(last.onChanged, isNull);
+      expect(state.profile.songsLeftOut, hasLength(5));
+    });
+
+    testWidgets('modes write the same setting the run reads', (tester) async {
+      final state = await library(tester);
+      await tester.tap(find.text('SHUFFLE'));
+      await settle(tester);
+      expect(state.profile.music, Profile.shuffleMusic);
+
+      await tester.tap(find.text('ONE SONG'));
+      await settle(tester);
+      expect(state.profile.generatedMusicOn, isTrue);
+      expect(find.byType(Switch), findsNothing, reason: 'a switch means nothing with one song');
+
+      await tester.tap(find.text('Undercity'));
+      await settle(tester);
+      expect(state.profile.music, 'undercity');
+      const goal = RunGoal(GoalType.time, 1800);
+      expect(state.musicQueue(goal: goal, activity: Activity.run), ['undercity']);
     });
   });
 

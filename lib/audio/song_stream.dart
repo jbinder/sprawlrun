@@ -79,6 +79,12 @@ class SongStream {
   /// The song's own bar for the [played]th bar this stream has produced.
   int _songBarAt(int played) => song.songBar(fromBar + played);
 
+  /// How far through its bars the song has been made, from 0 to 1.
+  double get position {
+    if (_bar == 0) return song.songBar(fromBar) / song.bars;
+    return (song.songBar(fromBar + _bar - 1) + 1) / song.bars;
+  }
+
   /// Whether the song has played through to where it would go back and repeat.
   bool get firstPassDone => fromBar + _bar >= song.bars;
 
@@ -244,6 +250,11 @@ class SongSequence {
   Song get current => songs[_index];
 
   int get currentIndex => _index;
+
+  /// How far through the current song, from 0 to 1. One bar is a [barShare] of it.
+  double get position => _rungOut ? 1 : _stream.position;
+
+  double get barShare => 1 / current.bars;
 
   void setLevel(MusicLevel level, {bool atOnce = false}) {
     _level = level;

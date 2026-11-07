@@ -102,6 +102,13 @@ class FakeNarrator implements Narrator {
 
   void hearSong(String? id) => _songs.add(id);
 
+  final _progress = StreamController<double?>.broadcast();
+
+  @override
+  Stream<double?> get songProgress => _progress.stream;
+
+  void hearProgress(double? share) => _progress.add(share);
+
   @override
   Future<void> init(Profile profile) async {}
 

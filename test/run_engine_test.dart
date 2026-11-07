@@ -620,6 +620,21 @@ void main() {
       });
     });
 
+    test('the engine follows how far through the song it is', () {
+      fakeAsync((fake) {
+        final narrator = FakeNarrator();
+        final engine = RunEngine(narrator: narrator, location: FakeLocation());
+        engine.start(goal: const RunGoal(GoalType.time, 600), profile: const Profile(music: 'undercity'));
+        fake.flushMicrotasks();
+        narrator.hearProgress(0.4);
+        fake.flushMicrotasks();
+        expect(engine.songProgress.value, 0.4);
+        engine.abort();
+        fake.flushMicrotasks();
+        expect(engine.songProgress.value, isNull);
+      });
+    });
+
     test('with no song, nothing is asked of the player', () {
       fakeAsync((fake) {
         final h = Harness(fake, goal: const RunGoal(GoalType.time, 60));

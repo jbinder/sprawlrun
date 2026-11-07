@@ -199,10 +199,20 @@ class AppState extends ChangeNotifier {
     }
     if (!profile.generatedMusicOn || songs.isEmpty) return const [];
     final recent = SongPicker.recentSongs(runLog);
-    if (profile.music == Profile.shuffleMusic) return SongPicker.shuffle(songs, recent: recent, random: dice);
-    if (profile.music != Profile.bestMatchMusic && songs.any((s) => s.id == profile.music)) return [profile.music];
+    if (profile.music != Profile.shuffleMusic &&
+        profile.music != Profile.bestMatchMusic &&
+        songs.any((s) => s.id == profile.music)) {
+      return [profile.music];
+    }
+    // Everything left out would mean no music, which nobody asked for.
+    final kept = [
+      for (final song in songs)
+        if (!profile.songsLeftOut.contains(song.id)) song,
+    ];
+    final pool = kept.isEmpty ? songs : kept;
+    if (profile.music == Profile.shuffleMusic) return SongPicker.shuffle(pool, recent: recent, random: dice);
     return SongPicker.bestMatch(
-      songs,
+      pool,
       setting: RunSetting.of(mission: mission, goal: goal, activity: activity),
       recent: recent,
       random: dice,

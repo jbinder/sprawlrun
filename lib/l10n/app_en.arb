@@ -1937,17 +1937,9 @@
   "@musicShuffle": {
     "description": "Run music choice: every song in turn, in a different order each run."
   },
-  "musicShuffleNote": "Every song in turn, in a different order each run. Pauses your own music until the run ends",
-  "@musicShuffleNote": {
-    "description": "Shown under the run music setting when Shuffle is chosen. The runner's own music app is paused for the run."
-  },
   "musicBestMatch": "Best match",
   "@musicBestMatch": {
     "description": "Run music choice: the app picks the song that suits this run."
-  },
-  "musicBestMatchNote": "Picks the song that suits the run: a walk, a chase-heavy mission or a long haul. Pauses your own music until the run ends",
-  "@musicBestMatchNote": {
-    "description": "Shown under the run music setting when Best match is chosen. The choice is made from whether it is a walk, how many chases the mission has, and how long the run is. The runner's own music app is paused for the run."
   },
   "musicFolder": "From a folder",
   "@musicFolder": {
@@ -1973,15 +1965,64 @@
   "@musicFolderEmpty": {
     "description": "Warning, in Settings and on the briefing: the chosen folder is empty or has gone. The run still works, with no music."
   },
+  "musicSongLibrary": "Song library",
+  "@musicSongLibrary": {
+    "description": "Run music choice, and the name of the screen listing the songs the phone can play live."
+  },
+  "musicOneSong": "One song",
+  "@musicOneSong": {
+    "description": "How the song library plays: the one song the runner picks, repeating."
+  },
+  "musicLibraryAuto": "{mode}, {songs}",
+  "@musicLibraryAuto": {
+    "description": "Summary of the song library in Settings, such as: Best match, 5 of 6 songs.",
+    "placeholders": {
+      "mode": {
+        "type": "String"
+      },
+      "songs": {
+        "type": "String"
+      }
+    }
+  },
+  "musicSongsIn": "{kept} of {total} songs",
+  "@musicSongsIn": {
+    "description": "How many of the songs are in the running for Shuffle and Best match.",
+    "placeholders": {
+      "kept": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "musicLibraryNote": "Played live by your phone. Pauses your own music until the run ends",
+  "@musicLibraryNote": {
+    "description": "At the top of the song library. The phone plays the songs live, with no audio files or network, and the runner's own music app is paused for the run."
+  },
+  "musicOneSongNote": "Pick the song to play. It repeats until the run ends.",
+  "@musicOneSongNote": {
+    "description": "Song library, in One song mode."
+  },
+  "musicLeaveOutNote": "Switch a song off to leave it out of Shuffle and Best match.",
+  "@musicLeaveOutNote": {
+    "description": "Song library, in Shuffle or Best match mode. Each song has a switch."
+  },
+  "songBy": "by {author}",
+  "@songBy": {
+    "description": "Under a song in the library: who wrote it. The author is a name.",
+    "placeholders": {
+      "author": {
+        "type": "String"
+      }
+    }
+  },
   "settingAmbientBed": "Ambient bed",
   "@settingAmbientBed": {
     "description": "Run music choice: a quiet background drone played during runs."
   },
   "settingAmbientBedHint": "Low synth drone under the run, for when you bring no music",
-  "settingGeneratedMusicHint": "Played live by your phone during a run. Pauses your own music until the run ends",
-  "@settingGeneratedMusicHint": {
-    "description": "Shown under the run music setting when a song is chosen. The phone plays it live, with no audio files or network, and the runner's own music app is paused for the run."
-  },
   "settingMusicVolume": "Music volume",
   "@settingMusicVolume": {
     "description": "Slider: how loud the run music plays, whether the ambient bed or a generated song."

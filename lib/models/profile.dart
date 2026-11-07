@@ -219,6 +219,7 @@ class Profile {
     this.musicVolume = 0.7,
     this.musicFollowsEffort = true,
     this.folderRandom = false,
+    this.songsLeftOut = const [],
     this.seasonalEvents = true,
     this.theme = 'neon',
     this.packColours = true,
@@ -337,6 +338,10 @@ class Profile {
   /// Whether a folder plays in random order, rather than by file name.
   final bool folderRandom;
 
+  /// Songs Shuffle and Best match pass over. A list of what is left out rather
+  /// than what is in, so that a song added later is in without asking.
+  final List<String> songsLeftOut;
+
   /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
   /// and whatever follows: palette, backdrop, sounds, the event pack and its
   /// handler traffic. See `theme/season.dart`.
@@ -439,6 +444,7 @@ class Profile {
     double? musicVolume,
     bool? musicFollowsEffort,
     bool? folderRandom,
+    List<String>? songsLeftOut,
     bool? seasonalEvents,
     String? theme,
     bool? packColours,
@@ -477,6 +483,7 @@ class Profile {
     musicVolume: musicVolume ?? this.musicVolume,
     musicFollowsEffort: musicFollowsEffort ?? this.musicFollowsEffort,
     folderRandom: folderRandom ?? this.folderRandom,
+    songsLeftOut: songsLeftOut ?? this.songsLeftOut,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     theme: theme ?? this.theme,
     packColours: packColours ?? this.packColours,
@@ -519,6 +526,7 @@ class Profile {
     'musicVolume': musicVolume,
     'musicFollowsEffort': musicFollowsEffort,
     'folderRandom': folderRandom,
+    if (songsLeftOut.isNotEmpty) 'songsLeftOut': songsLeftOut,
     'seasonalEvents': seasonalEvents,
     'theme': theme,
     'packColours': packColours,
@@ -574,6 +582,7 @@ class Profile {
     musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.7,
     musicFollowsEffort: json['musicFollowsEffort'] as bool? ?? true,
     folderRandom: json['folderRandom'] as bool? ?? false,
+    songsLeftOut: [for (final id in json['songsLeftOut'] as List? ?? const []) '$id'],
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',
     packColours: json['packColours'] as bool? ?? true,

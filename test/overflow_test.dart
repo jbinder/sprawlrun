@@ -25,7 +25,9 @@ import 'package:sprawl_run/theme/theme_draft.dart';
 import 'package:sprawl_run/theme/colour_theme.dart';
 import 'package:sprawl_run/widgets/colour_picker.dart';
 import 'package:sprawl_run/widgets/panels.dart';
+import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
+import 'package:sprawl_run/screens/song_library_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
 import 'package:sprawl_run/services/battery_optimization.dart';
 import 'package:sprawl_run/services/run_engine.dart';
@@ -291,7 +293,17 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     narrator.hearSong(song.id);
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(song.name), findsOneWidget);
+    narrator.hearProgress(0.4);
+    await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(minutes: 2));
+  });
+
+  testWidgets('song library, in both its modes', (tester) async {
+    final state = await seed(tester, logicalSize: narrow);
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(music: Profile.bestMatchMusic)));
+    await pumpShowcase(tester, const SongLibraryScreen(), state, delegates: delegates);
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(music: state.songs.first.id)));
+    await tester.pump(const Duration(milliseconds: 300));
   });
 
   testWidgets('run summary and its reveal', (tester) async {

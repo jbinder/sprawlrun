@@ -1182,13 +1182,7 @@ class PseudoL extends L {
   String get musicShuffle => pseudo(_en.musicShuffle);
 
   @override
-  String get musicShuffleNote => pseudo(_en.musicShuffleNote);
-
-  @override
   String get musicBestMatch => pseudo(_en.musicBestMatch);
-
-  @override
-  String get musicBestMatchNote => pseudo(_en.musicBestMatchNote);
 
   @override
   String get musicFolder => pseudo(_en.musicFolder);
@@ -1209,13 +1203,34 @@ class PseudoL extends L {
   String get musicFolderEmpty => pseudo(_en.musicFolderEmpty);
 
   @override
+  String get musicSongLibrary => pseudo(_en.musicSongLibrary);
+
+  @override
+  String get musicOneSong => pseudo(_en.musicOneSong);
+
+  @override
+  String musicLibraryAuto(String mode, String songs) => pseudo(_en.musicLibraryAuto(mode, songs));
+
+  @override
+  String musicSongsIn(int kept, int total) => pseudo(_en.musicSongsIn(kept, total));
+
+  @override
+  String get musicLibraryNote => pseudo(_en.musicLibraryNote);
+
+  @override
+  String get musicOneSongNote => pseudo(_en.musicOneSongNote);
+
+  @override
+  String get musicLeaveOutNote => pseudo(_en.musicLeaveOutNote);
+
+  @override
+  String songBy(String author) => pseudo(_en.songBy(author));
+
+  @override
   String get settingAmbientBed => pseudo(_en.settingAmbientBed);
 
   @override
   String get settingAmbientBedHint => pseudo(_en.settingAmbientBedHint);
-
-  @override
-  String get settingGeneratedMusicHint => pseudo(_en.settingGeneratedMusicHint);
 
   @override
   String get settingMusicVolume => pseudo(_en.settingMusicVolume);

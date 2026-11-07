@@ -217,6 +217,10 @@ class RunEngine extends ChangeNotifier {
   /// The song being heard, for the run screen.
   String? currentSong;
 
+  /// How far through it, on its own notifier, so that the line under the title
+  /// moving does not redraw the rest of the run screen with it.
+  final ValueNotifier<double?> songProgress = ValueNotifier(null);
+
   int chasesTotal = 0;
   int chasesEvaded = 0;
   int beatsHeard = 0;
@@ -288,6 +292,7 @@ class RunEngine extends ChangeNotifier {
   StreamSubscription<int>? _stepSub;
   StreamSubscription<NarrationEvent>? _narrationSub;
   StreamSubscription<String?>? _songSub;
+  StreamSubscription<double?>? _progressSub;
 
   // -- derived --------------------------------------------------------------
 
@@ -407,6 +412,7 @@ class RunEngine extends ChangeNotifier {
       currentSong = id;
       notifyListeners();
     });
+    _progressSub = narrator.songProgress.listen((share) => songProgress.value = share);
     _song = !profile.generatedMusicOn ? null : (musicQueue.isNotEmpty ? musicQueue.first : profile.music);
     await narrator.startMusic(queue: musicQueue);
     _musicDirector = profile.generatedMusicOn && profile.musicFollowsEffort ? MusicDirector(usualSpeed: usualSpeed) : null;
@@ -588,6 +594,7 @@ class RunEngine extends ChangeNotifier {
     currentBeat = null;
     currentLine = null;
     currentSong = null;
+    songProgress.value = null;
     chasesTotal = 0;
     chasesEvaded = 0;
     beatsHeard = 0;
@@ -629,6 +636,8 @@ class RunEngine extends ChangeNotifier {
   void _detachStreams() {
     unawaited(_songSub?.cancel());
     _songSub = null;
+    unawaited(_progressSub?.cancel());
+    _progressSub = null;
     unawaited(_fixSub?.cancel() ?? Future<void>.value());
     _fixSub = null;
     unawaited(_stepSub?.cancel() ?? Future<void>.value());
@@ -642,6 +651,7 @@ class RunEngine extends ChangeNotifier {
     _ticker?.cancel();
     _detachStreams();
     _events.close();
+    songProgress.dispose();
     super.dispose();
   }
 

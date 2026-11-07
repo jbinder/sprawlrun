@@ -17,6 +17,7 @@ import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/format.dart';
+import '../widgets/scrolling_text.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/glitch_text.dart';
 import '../widgets/panels.dart';
@@ -369,6 +370,26 @@ class _RunScreenState extends State<RunScreen> {
   }
 }
 
+/// A hairline under the song's name: how far through it is.
+class _SongProgress extends StatelessWidget {
+  const _SongProgress({required this.share});
+
+  final double? share;
+
+  @override
+  Widget build(BuildContext context) => SizedBox(
+    height: 2,
+    child: DecoratedBox(
+      decoration: BoxDecoration(color: Cy.inkDim.withValues(alpha: 0.18)),
+      child: FractionallySizedBox(
+        alignment: Alignment.centerLeft,
+        widthFactor: (share ?? 0).clamp(0.0, 1.0),
+        child: ColoredBox(color: Cy.cyan.withValues(alpha: 0.7)),
+      ),
+    ),
+  );
+}
+
 class _RunHeader extends StatelessWidget {
   const _RunHeader({required this.engine, required this.mission, required this.activity, this.song});
 
@@ -424,12 +445,17 @@ class _RunHeader extends StatelessWidget {
                     children: [
                       Icon(Icons.music_note, size: 12, color: Cy.inkDim),
                       const SizedBox(width: 3),
-                      Flexible(
-                        child: Text(
-                          song!,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: CyType.body(size: 12, color: Cy.inkDim),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            ScrollingText(song!, style: CyType.body(size: 12, color: Cy.inkDim)),
+                            const SizedBox(height: 2),
+                            ValueListenableBuilder<double?>(
+                              valueListenable: engine.songProgress,
+                              builder: (context, share, _) => _SongProgress(share: share),
+                            ),
+                          ],
                         ),
                       ),
                     ],

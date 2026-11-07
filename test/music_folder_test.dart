@@ -34,6 +34,14 @@ class _Player extends AudioPlayer {
   @override
   Stream<int?> get currentIndexStream => index.stream;
 
+  final moved = StreamController<Duration>.broadcast();
+
+  @override
+  Stream<Duration> get positionStream => moved.stream;
+
+  @override
+  Duration? get duration => const Duration(seconds: 100);
+
   /// The real player listens to this itself while being built, without handling
   /// errors, so only what comes after that gets the stream a test writes to.
   bool _built = false;
@@ -83,6 +91,9 @@ class _Plain implements MusicPlayer {
 
   @override
   Stream<String?> get nowPlaying => const Stream.empty();
+
+  @override
+  Stream<double?> get progress => const Stream.empty();
 
   @override
   Future<bool> start(String songId, {List<String> then = const []}) async {
@@ -257,6 +268,22 @@ void main() {
         await Future<void>.delayed(Duration.zero);
         expect(heard.last, isNull);
         expect(raw.calls.last, 'stop');
+      });
+    });
+
+    testWidgets('says how far through a file it is', (tester) async {
+      await tester.runAsync(() async {
+        final raw = _Player();
+        final player = FolderMusicPlayer(player: raw);
+        final seen = <double?>[];
+        player.progress.listen(seen.add);
+        await player.start('content://a');
+        raw.moved.add(const Duration(seconds: 25));
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.last, closeTo(0.25, 0.001));
+        await player.stop();
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.last, isNull);
       });
     });
 

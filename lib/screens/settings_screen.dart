@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../audio/song.dart';
 import '../models/profile.dart';
 import '../models/stride.dart';
 import '../services/app_version.dart';
 import '../services/stats_service.dart';
 import '../state/app_state.dart';
+import 'song_library_screen.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/clock.dart';
@@ -17,8 +19,12 @@ import '../widgets/backup_controls.dart';
 import '../widgets/contribute_controls.dart';
 import '../widgets/pack_controls.dart';
 import '../widgets/panels.dart';
+import '../widgets/setting_rows.dart';
 import '../widgets/theme_controls.dart';
 import '../l10n/l10n.dart';
+
+/// What the run music picker calls every way of playing the songs. Never stored.
+const String _songLibrary = 'library';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -97,7 +103,7 @@ class SettingsScreen extends StatelessWidget {
                             onChanged: (code) => update(profile.copyWith(language: code)),
                           ),
                           const _Rule(),
-                          _SegmentRow<UnitSystem>(
+                          SegmentRow<UnitSystem>(
                             label: l.settingUnits,
                             value: profile.units,
                             options: {UnitSystem.metric: l.unitsKm, UnitSystem.imperial: l.unitsMiles},
@@ -106,7 +112,7 @@ class SettingsScreen extends StatelessWidget {
                           const _Rule(),
                           ThemeControls(label: l.settingLook),
                           const _Rule(),
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingPackColours,
                             subtitle: l.settingPackColoursHint,
                             value: profile.packColours,
@@ -121,7 +127,7 @@ class SettingsScreen extends StatelessWidget {
                     NeonPanel(
                       child: Column(
                         children: [
-                          _SegmentRow<StreakMetric>(
+                          SegmentRow<StreakMetric>(
                             label: l.settingMeasuredIn,
                             value: profile.streakGoal.metric,
                             options: {
@@ -179,14 +185,14 @@ class SettingsScreen extends StatelessWidget {
                     NeonPanel(
                       child: Column(
                         children: [
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingStoryVoice,
                             subtitle: l.settingStoryVoiceHint,
                             value: profile.voiceEnabled,
                             onChanged: (v) => update(profile.copyWith(voiceEnabled: v)),
                           ),
                           const _Rule(),
-                          _SegmentRow<AudioInterrupt>(
+                          SegmentRow<AudioInterrupt>(
                             label: l.settingYourMusic,
                             value: profile.audioInterrupt,
                             options: {
@@ -203,7 +209,7 @@ class SettingsScreen extends StatelessWidget {
                           ),
                           if (profile.audioInterrupt == AudioInterrupt.pause) ...[
                             const _Rule(),
-                            _SwitchRow(
+                            SwitchRow(
                               label: l.settingForceMusic,
                               subtitle: l.settingForceMusicHint,
                               value: profile.resumeMusic,
@@ -231,16 +237,18 @@ class SettingsScreen extends StatelessWidget {
                           const _Rule(),
                           _PickerRow<String>(
                             label: l.settingRunMusic,
-                            value: profile.music,
+                            // Every way of playing the songs is one choice here,
+                            // and the library says which.
+                            value: profile.generatedMusicOn ? _songLibrary : profile.music,
                             options: {
                               Profile.noMusic: l.musicOff,
                               Profile.ambientMusic: l.settingAmbientBed,
-                              Profile.shuffleMusic: l.musicShuffle,
-                              Profile.bestMatchMusic: l.musicBestMatch,
+                              _songLibrary: l.musicSongLibrary,
                               Profile.folderMusic: l.musicFolder,
-                              for (final song in state.songs) song.id: song.nameIn(state.locale.languageCode),
                             },
-                            onChanged: (v) async {
+                            onChanged: (picked) async {
+                              if (picked == _songLibrary && profile.generatedMusicOn) return;
+                              final v = picked == _songLibrary ? Profile.bestMatchMusic : picked;
                               // Nothing is chosen until there is a folder to play.
                               if (v == Profile.folderMusic &&
                                   state.musicFolderName == null &&
@@ -251,14 +259,14 @@ class SettingsScreen extends StatelessWidget {
                             },
                           ),
                           const _Rule(),
-                          _Note(switch (profile.music) {
-                            Profile.folderMusic => l.musicFolderNote,
-                            Profile.noMusic => l.musicOffNote,
-                            Profile.ambientMusic => l.settingAmbientBedHint,
-                            Profile.shuffleMusic => l.musicShuffleNote,
-                            Profile.bestMatchMusic => l.musicBestMatchNote,
-                            _ => l.settingGeneratedMusicHint,
-                          }),
+                          if (profile.generatedMusicOn)
+                            _LibraryRow(profile: profile, songs: state.songs)
+                          else
+                            _Note(switch (profile.music) {
+                              Profile.folderMusic => l.musicFolderNote,
+                              Profile.ambientMusic => l.settingAmbientBedHint,
+                              _ => l.musicOffNote,
+                            }),
                           if (profile.folderMusicOn) ...[
                             const _Rule(),
                             InkWell(
@@ -289,7 +297,7 @@ class SettingsScreen extends StatelessWidget {
                             ),
                             if (state.folderTracks.isEmpty) ...[const _Rule(), _Note(l.musicFolderEmpty)],
                             const _Rule(),
-                            _SwitchRow(
+                            SwitchRow(
                               label: l.musicFolderRandom,
                               value: profile.folderRandom,
                               onChanged: (v) => update(profile.copyWith(folderRandom: v)),
@@ -308,7 +316,7 @@ class SettingsScreen extends StatelessWidget {
                           ],
                           if (profile.generatedMusicOn) ...[
                             const _Rule(),
-                            _SwitchRow(
+                            SwitchRow(
                               label: l.settingMusicFollowsEffort,
                               subtitle: l.settingMusicFollowsEffortHint,
                               value: profile.musicFollowsEffort,
@@ -324,28 +332,28 @@ class SettingsScreen extends StatelessWidget {
                     NeonPanel(
                       child: Column(
                         children: [
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.infoPursuits,
                             subtitle: l.settingPursuitsHint,
                             value: profile.chasesEnabled,
                             onChanged: (v) => update(profile.copyWith(chasesEnabled: v)),
                           ),
                           const _Rule(),
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingAutoPause,
                             subtitle: l.settingAutoPauseHint,
                             value: profile.autoPause,
                             onChanged: (v) => update(profile.copyWith(autoPause: v)),
                           ),
                           const _Rule(),
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingKeepScreenOn,
                             subtitle: l.settingKeepScreenOnHint,
                             value: profile.keepScreenOn,
                             onChanged: (v) => update(profile.copyWith(keepScreenOn: v)),
                           ),
                           const _Rule(),
-                          _SwitchRow(
+                          SwitchRow(
                             label: profile.isMetric ? l.settingSplitsKm : l.settingSplitsMile,
                             subtitle: profile.isMetric ? l.settingSplitsKmHint : l.settingSplitsMileHint,
                             value: profile.splitsEnabled,
@@ -356,7 +364,7 @@ class SettingsScreen extends StatelessWidget {
                           // permission prompt for it.
                           if (state.stepCounterAvailable) ...[
                             const _Rule(),
-                            _SwitchRow(
+                            SwitchRow(
                               label: l.settingCountSteps,
                               subtitle: l.settingCountStepsHint,
                               value: profile.countSteps,
@@ -375,7 +383,7 @@ class SettingsScreen extends StatelessWidget {
                           const _Rule(),
                           const _BatteryRow(),
                           const _Rule(),
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingSeasonalEvents,
                             subtitle: l.settingSeasonalEventsHint,
                             value: profile.seasonalEvents,
@@ -390,7 +398,7 @@ class SettingsScreen extends StatelessWidget {
                     NeonPanel(
                       child: Column(
                         children: [
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingReminders,
                             subtitle: l.settingRemindersHint,
                             value: profile.signals.remindersEnabled,
@@ -438,7 +446,7 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ),
                           const _Rule(),
-                          _SwitchRow(
+                          SwitchRow(
                             label: l.settingWeeklyDebrief,
                             subtitle: l.settingWeeklyDebriefHint,
                             value: profile.signals.debriefEnabled,
@@ -544,6 +552,47 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
     if (confirmed == true) await state.resetProgress();
+  }
+}
+
+/// Where the songs live: how they play now, and the way in.
+class _LibraryRow extends StatelessWidget {
+  const _LibraryRow({required this.profile, required this.songs});
+
+  final Profile profile;
+  final List<Song> songs;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L.of(context);
+    final state = context.read<AppState>();
+    final kept = songs.where((s) => !profile.songsLeftOut.contains(s.id)).length;
+    final summary = switch (profile.music) {
+      Profile.bestMatchMusic => l.musicLibraryAuto(l.musicBestMatch, l.musicSongsIn(kept, songs.length)),
+      Profile.shuffleMusic => l.musicLibraryAuto(l.musicShuffle, l.musicSongsIn(kept, songs.length)),
+      _ => state.songName(profile.music) ?? l.musicBestMatch,
+    };
+    return InkWell(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SongLibraryScreen())),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l.musicSongLibrary, style: CyType.body(size: 15, weight: FontWeight.w600)),
+                  const SizedBox(height: 2),
+                  Text(summary, style: CyType.body(size: 12, color: Cy.cyan, height: 1.3)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 20, color: Cy.inkDim),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -734,82 +783,6 @@ class _BatteryRowState extends State<_BatteryRow> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Icon(Icons.check, size: 18, color: Cy.green),
-          ),
-      ],
-    );
-  }
-}
-
-class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-    this.subtitle,
-  });
-
-  final String label;
-  final String? subtitle;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: CyType.body(size: 15, weight: FontWeight.w600)),
-              if (subtitle != null) ...[
-                const SizedBox(height: 2),
-                Text(subtitle!, style: CyType.body(size: 12, color: Cy.ghost, height: 1.3)),
-              ],
-            ],
-          ),
-        ),
-        Switch(value: value, onChanged: onChanged),
-      ],
-    );
-  }
-}
-
-class _SegmentRow<T> extends StatelessWidget {
-  const _SegmentRow({
-    required this.label,
-    required this.value,
-    required this.options,
-    required this.onChanged,
-  });
-
-  final String label;
-  final T value;
-  final Map<T, String> options;
-  final ValueChanged<T> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
-        for (final entry in options.entries)
-          Padding(
-            padding: const EdgeInsets.only(left: 6),
-            child: InkWell(
-              onTap: () => onChanged(entry.key),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: entry.key == value ? Cy.cyan : Colors.transparent,
-                  border: Border.all(color: entry.key == value ? Cy.cyan : Cy.rule),
-                ),
-                child: Text(
-                  entry.value,
-                  style: CyType.mono(size: 10, color: entry.key == value ? Cy.v0id : Cy.inkDim),
-                ),
-              ),
-            ),
           ),
       ],
     );

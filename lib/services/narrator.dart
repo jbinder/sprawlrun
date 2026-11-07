@@ -319,7 +319,7 @@ class AudioNarrator implements Narrator {
     _profile = profile;
     if (interruptChanged) await _configureSession();
     await _music.setVolume(profile.musicVolume);
-    if (_musicHoldsFocus && !profile.generatedMusicOn) await _stopMusic();
+    if (_musicHoldsFocus && !profile.runMusicOn) await _stopMusic();
     await _bedPlayer.setVolume(_bedVolume);
     await _sfxPlayer.setVolume(profile.sfxVolume);
     // Only ever turns it off: the bed belongs to a run, which starts it, and a
@@ -594,7 +594,10 @@ class AudioNarrator implements Narrator {
 
   @override
   Future<void> startMusic({List<String> queue = const []}) async {
-    if (!_profile.generatedMusicOn || _musicHoldsFocus) return;
+    if (!_profile.runMusicOn || _musicHoldsFocus) return;
+    // Shuffle or a folder with nothing in it. Taking focus now would pause the
+    // runner's own player for a run with nothing to play instead.
+    if (queue.isEmpty && reservedSongIds.contains(_profile.music)) return;
     _runPaused = _interrupted = _unplugged = _askedToDuck = false;
     _musicHoldsFocus = true;
     await _music.setVolume(_profile.musicVolume);

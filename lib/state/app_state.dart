@@ -28,6 +28,7 @@ import '../models/stride.dart';
 import '../services/battery_optimization.dart';
 import '../services/achievement_engine.dart';
 import '../services/music_director.dart';
+import '../services/music_folder.dart';
 import '../services/song_picker.dart';
 import '../services/backup_folder.dart';
 import '../services/backup_nudge.dart';
@@ -59,6 +60,7 @@ class AppState extends ChangeNotifier {
     SignalLogRepository? signalLog,
     ThemeRepository? themeRepository,
     SongLibrary? songLibrary,
+    MusicFolder? musicFolder,
     ActiveRunStore? activeRun,
     BackupFolder? backupFolder,
     StepSetup? stepSetup,
@@ -74,6 +76,7 @@ class AppState extends ChangeNotifier {
        // gets a working log without having to name a directory for it.
        signalLog = signalLog ?? SignalLogRepository(profiles.root),
        songLibrary = songLibrary ?? SongLibrary(),
+       _musicFolder = musicFolder ?? MusicFolder.none(),
        themeRepository = themeRepository ?? ThemeRepository(importDir: Directory('${profiles.root.path}/themes'));
 
   final ProfileRepository profiles;
@@ -91,6 +94,35 @@ class AppState extends ChangeNotifier {
   final MissionRepository missions;
   final ThemeRepository themeRepository;
   final SongLibrary songLibrary;
+  final MusicFolder _musicFolder;
+
+  /// The music folder's name, or null when none is chosen, and what is in it.
+  String? musicFolderName;
+  List<FolderTrack> folderTracks = const [];
+
+  /// Looks at the folder again, since the runner can change it at any time.
+  Future<void> refreshMusicFolder() async {
+    try {
+      musicFolderName = await _musicFolder.current();
+      folderTracks = await _musicFolder.list();
+    } on Object catch (e) {
+      debugPrint('Music folder: $e');
+      folderTracks = const [];
+    }
+    notifyListeners();
+  }
+
+  /// Opens the system picker. Whether a folder is chosen now, which backing out
+  /// leaves as it was.
+  Future<bool> chooseMusicFolder() async {
+    try {
+      await _musicFolder.choose();
+    } on Object catch (e) {
+      debugPrint('Music folder: $e');
+    }
+    await refreshMusicFolder();
+    return musicFolderName != null;
+  }
   final Narrator narrator;
 
   /// Delivers the between-run messages. Defaults to doing nothing, so tests
@@ -160,8 +192,12 @@ class AppState extends ChangeNotifier {
   /// The songs a run should play, in order. Empty when it plays no song. A chosen
   /// song that has gone falls back to the best match rather than to silence.
   List<String> musicQueue({Mission? mission, required RunGoal goal, required Activity activity, Random? random}) {
-    if (!profile.generatedMusicOn || songs.isEmpty) return const [];
     final dice = random ?? Random();
+    if (profile.folderMusicOn) {
+      final uris = [for (final track in folderTracks) track.uri];
+      return profile.folderRandom ? (uris..shuffle(dice)) : uris;
+    }
+    if (!profile.generatedMusicOn || songs.isEmpty) return const [];
     final recent = SongPicker.recentSongs(runLog);
     if (profile.music == Profile.shuffleMusic) return SongPicker.shuffle(songs, recent: recent, random: dice);
     if (profile.music != Profile.bestMatchMusic && songs.any((s) => s.id == profile.music)) return [profile.music];
@@ -175,6 +211,9 @@ class AppState extends ChangeNotifier {
 
   /// A song's name in the interface language, or null if there is no such song.
   String? songName(String? id) {
+    for (final track in folderTracks) {
+      if (track.uri == id) return track.title;
+    }
     for (final song in songs) {
       if (song.id == id) return song.nameIn(locale.languageCode);
     }
@@ -310,6 +349,7 @@ class AppState extends ChangeNotifier {
     _sourcePacks = await missions.loadPacks();
     themes = await themeRepository.loadThemes();
     songs = await songLibrary.songs();
+    await refreshMusicFolder();
     interruptedRun = await activeRun.load();
     // Finished and recorded, but the app died before the copy was cleared:
     // nothing was lost, and offering it back would record it twice.

@@ -23,7 +23,7 @@ import java.util.concurrent.Executors
  * No storage permission is involved, and the app can see nothing in the folder
  * but what it wrote: the system picker grants this one tree and nothing else.
  */
-class BackupFolder(private val context: Context) {
+class BackupFolder(private val context: Context, private val music: MusicFolder) : ChosenFolder {
     private val resolver get() = context.contentResolver
 
     /** Disk and provider calls stay off the main thread; results go back to it. */
@@ -35,8 +35,12 @@ class BackupFolder(private val context: Context) {
         .firstOrNull { it.isWritePermission && DocumentsContract.isTreeUri(it.uri) }
         ?.uri
 
+    override val grantFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION or
+        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+        Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+
     /** The folder's own name, as the runner saw it in the picker. */
-    fun name(tree: Uri): String? = try {
+    override fun name(tree: Uri): String? = try {
         resolver.query(root(tree), arrayOf(DocumentsContract.Document.COLUMN_DISPLAY_NAME), null, null, null)
             ?.use { if (it.moveToFirst()) it.getString(0) else null }
     } catch (e: Exception) {
@@ -45,25 +49,32 @@ class BackupFolder(private val context: Context) {
     }
 
     /** Keeps [tree] across restarts and lets go of any folder chosen before. */
-    fun keep(tree: Uri) {
+    override fun keep(tree: Uri) {
         val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
         resolver.takePersistableUriPermission(tree, flags)
         for (held in resolver.persistedUriPermissions) {
-            if (held.uri != tree && DocumentsContract.isTreeUri(held.uri)) release(held.uri)
+            if (held.uri != tree && held.isWritePermission && DocumentsContract.isTreeUri(held.uri)) release(held.uri)
         }
     }
 
     fun forget() {
         for (held in resolver.persistedUriPermissions) {
-            if (DocumentsContract.isTreeUri(held.uri)) release(held.uri)
+            if (held.isWritePermission && DocumentsContract.isTreeUri(held.uri)) release(held.uri)
         }
     }
 
+    /**
+     * Gives up only what is ours. The music folder holds a permission of its own,
+     * read only, and may even be this same tree: releasing every tree here would
+     * silently cost the runner their music.
+     */
     private fun release(uri: Uri) {
-        resolver.releasePersistableUriPermission(
-            uri,
+        val flags = if (uri == music.current()) {
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        } else {
             Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        )
+        }
+        resolver.releasePersistableUriPermission(uri, flags)
     }
 
     /**

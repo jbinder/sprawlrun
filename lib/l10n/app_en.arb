@@ -1949,6 +1949,30 @@
   "@musicBestMatchNote": {
     "description": "Shown under the run music setting when Best match is chosen. The choice is made from whether it is a walk, how many chases the mission has, and how long the run is. The runner's own music app is paused for the run."
   },
+  "musicFolder": "From a folder",
+  "@musicFolder": {
+    "description": "Run music choice: play the runner's own audio files from a folder on the phone."
+  },
+  "musicFolderNote": "Your own files. Recordings can't follow your effort or a chase. Pauses your music app until the run ends",
+  "@musicFolderNote": {
+    "description": "Shown under the run music setting when a folder is chosen. Unlike the generated songs, recordings do not change with the run. The runner's music app is paused for the run."
+  },
+  "musicFolderRow": "Music folder",
+  "@musicFolderRow": {
+    "description": "Setting: which folder on the phone music is played from. Tapping it opens the system folder picker."
+  },
+  "musicFolderChoose": "Choose",
+  "@musicFolderChoose": {
+    "description": "Shown as the music folder when none is chosen yet."
+  },
+  "musicFolderRandom": "Random order",
+  "@musicFolderRandom": {
+    "description": "Switch: play the folder's files in random order, rather than by file name."
+  },
+  "musicFolderEmpty": "No music found in your music folder, so runs will go ahead without it.",
+  "@musicFolderEmpty": {
+    "description": "Warning, in Settings and on the briefing: the chosen folder is empty or has gone. The run still works, with no music."
+  },
   "settingAmbientBed": "Ambient bed",
   "@settingAmbientBed": {
     "description": "Run music choice: a quiet background drone played during runs."

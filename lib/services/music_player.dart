@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:just_audio/just_audio.dart' as ja;
 
 import '../audio/song.dart';
 import '../audio/song_stream.dart';
@@ -302,6 +303,177 @@ class LiveMusicPlayer implements MusicPlayer {
     _minQueue = 1 << 30;
     await _quietly('stop');
   }
+}
+
+/// Plays the runner's own files from `content://` addresses.
+///
+/// Through just_audio, which reads those directly, with no loopback server and so
+/// no INTERNET. Built without session activation, like every player here: focus
+/// is `AudioNarrator`'s. A recording can't change with the run, so levels do
+/// nothing here. A file that will not play is skipped.
+class FolderMusicPlayer implements MusicPlayer {
+  FolderMusicPlayer({@visibleForTesting ja.AudioPlayer? player}) : _given = player;
+
+  static const double _duckGain = 0.2;
+
+  final ja.AudioPlayer? _given;
+  ja.AudioPlayer? _built;
+  ja.AudioPlayer get _player =>
+      _given ?? (_built ??= ja.AudioPlayer(handleAudioSessionActivation: false, androidApplyAudioAttributes: false));
+
+  final StreamController<String?> _nowPlaying = StreamController<String?>.broadcast();
+  final List<StreamSubscription<Object?>> _subs = [];
+  List<String> _uris = const [];
+  double _volume = 1;
+  bool _ducked = false;
+  int _failures = 0;
+
+  @override
+  Stream<String?> get nowPlaying => _nowPlaying.stream;
+
+  double get _gain => _volume * (_ducked ? _duckGain : 1);
+
+  @override
+  Future<bool> start(String songId, {List<String> then = const []}) async {
+    await stop();
+    _uris = [songId, ...then];
+    _failures = 0;
+    _ducked = false;
+    final player = _player;
+    try {
+      await player.setLoopMode(ja.LoopMode.all);
+      await player.setVolume(_gain);
+      _subs
+        ..add(player.currentIndexStream.listen(_heard))
+        ..add(player.playbackEventStream.listen(_played, onError: (Object e, StackTrace _) => _failed(e)));
+      await player.setAudioSources(
+        [for (final uri in _uris) ja.AudioSource.uri(Uri.parse(uri))],
+        preload: false,
+      );
+      _resume();
+      return true;
+    } on Object catch (e) {
+      debugPrint('Folder music failed to start: $e');
+      await stop();
+      return false;
+    }
+  }
+
+  void _heard(int? index) {
+    if (index != null && index < _uris.length) _nowPlaying.add(_uris[index]);
+  }
+
+  void _played(ja.PlaybackEvent event) {
+    if (event.processingState == ja.ProcessingState.ready) _failures = 0;
+  }
+
+  void _failed(Object error) {
+    debugPrint('Folder music: skipping a file: $error');
+    _failures++;
+    if (_failures >= _uris.length) {
+      debugPrint('Folder music: nothing in the folder plays');
+      unawaited(stop());
+      return;
+    }
+    unawaited(_skip());
+  }
+
+  Future<void> _skip() async {
+    try {
+      await _player.seekToNext();
+      _resume();
+    } on Object catch (e) {
+      debugPrint('Folder music: $e');
+    }
+  }
+
+  /// Not awaited: play() completes when playback ends, which a loop never does.
+  void _resume() {
+    unawaited(_player.play().catchError((Object e) => _failed(e)));
+  }
+
+  @override
+  Future<void> setPaused(bool paused) async {
+    if (_uris.isEmpty) return;
+    if (paused) {
+      await _player.pause();
+    } else {
+      _resume();
+    }
+  }
+
+  @override
+  Future<void> setDucked(bool ducked) async {
+    _ducked = ducked;
+    if (_uris.isNotEmpty) await _player.setVolume(_gain);
+  }
+
+  @override
+  Future<void> setVolume(double volume) async {
+    _volume = volume;
+    if (_uris.isNotEmpty) await _player.setVolume(_gain);
+  }
+
+  @override
+  Future<void> setLevel(MusicLevel level, {bool atOnce = false}) async {}
+
+  @override
+  Future<void> stop() async {
+    final had = _uris.isNotEmpty;
+    _uris = const [];
+    for (final sub in _subs) {
+      unawaited(sub.cancel());
+    }
+    _subs.clear();
+    if (!had) return;
+    try {
+      await _player.stop();
+    } on Object catch (e) {
+      debugPrint('Folder music failed to stop: $e');
+    }
+    _nowPlaying.add(null);
+  }
+}
+
+/// Sends a run's music to whichever player can play it: a `content://` address
+/// is a file, anything else a song.
+class RunMusicPlayer implements MusicPlayer {
+  RunMusicPlayer({required this.songs, required this.files}) {
+    songs.nowPlaying.listen(_nowPlaying.add);
+    files.nowPlaying.listen(_nowPlaying.add);
+  }
+
+  final MusicPlayer songs, files;
+  late MusicPlayer _active = songs;
+  final StreamController<String?> _nowPlaying = StreamController<String?>.broadcast();
+
+  @override
+  Stream<String?> get nowPlaying => _nowPlaying.stream;
+
+  @override
+  Future<bool> start(String songId, {List<String> then = const []}) async {
+    await _active.stop();
+    _active = songId.startsWith('content:') ? files : songs;
+    return _active.start(songId, then: then);
+  }
+
+  @override
+  Future<void> setPaused(bool paused) => _active.setPaused(paused);
+
+  @override
+  Future<void> setDucked(bool ducked) => _active.setDucked(ducked);
+
+  @override
+  Future<void> setVolume(double volume) async {
+    await songs.setVolume(volume);
+    await files.setVolume(volume);
+  }
+
+  @override
+  Future<void> setLevel(MusicLevel level, {bool atOnce = false}) => _active.setLevel(level, atOnce: atOnce);
+
+  @override
+  Future<void> stop() => _active.stop();
 }
 
 /// The isolate: makes the next bar each time it is asked.

@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 846 tests
+fvm flutter test                                    # 860 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -240,6 +240,13 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   rings it out and starts the next, only ever one at a time. "Played lately" comes
   from `RunRecord.song`, so it is derived from the log and rides in backups. A song
   chosen by name repeats by itself, and one that has gone falls back to Best match.
+- **The music folder is Android's permission too, and read only.** `MusicFolder.kt`
+  takes a read grant and `BackupFolder` releases only write grants: it used to
+  release every tree, which would silently have cost the runner their music. The
+  same tree can be both, sharing one grant, so each gives up only its own half. Its
+  files play through `FolderMusicPlayer`, just_audio on `content://`, which needs no
+  loopback server and so no INTERNET; `RunMusicPlayer` picks by address. Recordings
+  have no levels. Like the backup folder, check it on a device.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds

@@ -102,6 +102,12 @@ class _RunScreenState extends State<RunScreen> {
     await NotificationPermission.platform().request();
     if (!mounted) return;
 
+    // Read now and not earlier, since the runner may have changed the folder.
+    if (app.profile.folderMusicOn) {
+      await app.refreshMusicFolder();
+      if (!mounted) return;
+    }
+
     _events = engine.events.listen(_onEvent);
     final readiness = await engine.start(
       mission: widget.mission,

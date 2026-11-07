@@ -169,6 +169,22 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           ],
                         ),
                       ],
+                      if (state.profile.folderMusicOn && state.folderTracks.isEmpty) ...[
+                        const SizedBox(height: 14),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.music_off_outlined, size: 15, color: Cy.amber),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                L.of(context).musicFolderEmpty,
+                                style: CyType.body(size: 14, color: Cy.inkDim, height: 1.35),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 24),
                     ] else ...[
                       GlitchText(

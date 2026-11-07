@@ -237,18 +237,64 @@ class SettingsScreen extends StatelessWidget {
                               Profile.ambientMusic: l.settingAmbientBed,
                               Profile.shuffleMusic: l.musicShuffle,
                               Profile.bestMatchMusic: l.musicBestMatch,
+                              Profile.folderMusic: l.musicFolder,
                               for (final song in state.songs) song.id: song.nameIn(state.locale.languageCode),
                             },
-                            onChanged: (v) => update(profile.copyWith(music: v)),
+                            onChanged: (v) async {
+                              // Nothing is chosen until there is a folder to play.
+                              if (v == Profile.folderMusic &&
+                                  state.musicFolderName == null &&
+                                  !await state.chooseMusicFolder()) {
+                                return;
+                              }
+                              update(state.profile.copyWith(music: v));
+                            },
                           ),
                           const _Rule(),
                           _Note(switch (profile.music) {
+                            Profile.folderMusic => l.musicFolderNote,
                             Profile.noMusic => l.musicOffNote,
                             Profile.ambientMusic => l.settingAmbientBedHint,
                             Profile.shuffleMusic => l.musicShuffleNote,
                             Profile.bestMatchMusic => l.musicBestMatchNote,
                             _ => l.settingGeneratedMusicHint,
                           }),
+                          if (profile.folderMusicOn) ...[
+                            const _Rule(),
+                            InkWell(
+                              onTap: state.chooseMusicFolder,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        l.musicFolderRow,
+                                        style: CyType.body(size: 15, weight: FontWeight.w600),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Text(
+                                        state.musicFolderName ?? l.musicFolderChoose,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: CyType.mono(size: 12, color: Cy.cyan),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(Icons.folder_open, size: 16, color: Cy.inkDim),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            if (state.folderTracks.isEmpty) ...[const _Rule(), _Note(l.musicFolderEmpty)],
+                            const _Rule(),
+                            _SwitchRow(
+                              label: l.musicFolderRandom,
+                              value: profile.folderRandom,
+                              onChanged: (v) => update(profile.copyWith(folderRandom: v)),
+                            ),
+                          ],
                           if (profile.music != Profile.noMusic) ...[
                             const _Rule(),
                             _SliderRow(

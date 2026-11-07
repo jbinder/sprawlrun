@@ -77,6 +77,7 @@ class MainActivity : FlutterActivity() {
     private val stepsChannelName = "io.github.jbinder.sprawlrun/steps"
     private val stepSetupChannelName = "io.github.jbinder.sprawlrun/step_setup"
     private val musicChannelName = "io.github.jbinder.sprawlrun/music"
+    private val musicFolderChannelName = "io.github.jbinder.sprawlrun/musicFolder"
 
     /**
      * Hard-coded in geolocator's GeolocatorLocationService. Matching it is the
@@ -108,7 +109,7 @@ class MainActivity : FlutterActivity() {
     private var pendingBatteryResult: MethodChannel.Result? = null
 
     private var pendingFolderResult: MethodChannel.Result? = null
-    private var pendingFolder: BackupFolder? = null
+    private var pendingFolder: ChosenFolder? = null
 
     override fun provideFlutterEngine(context: Context): FlutterEngine {
         FlutterEngineCache.getInstance().get(ENGINE_ID)?.let { return it }
@@ -268,7 +269,29 @@ class MainActivity : FlutterActivity() {
                 }
             }
 
-        val folder = BackupFolder(app)
+        val musicFolder = MusicFolder(app)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, musicFolderChannelName)
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "current" -> result.success(musicFolder.current()?.let { musicFolder.name(it) ?: it.lastPathSegment })
+
+                    "choose" -> {
+                        val activity = attached?.get()
+                        if (activity == null) result.success(null) else activity.chooseFolder(musicFolder, result)
+                    }
+
+                    "forget" -> {
+                        musicFolder.forget()
+                        result.success(null)
+                    }
+
+                    "list" -> musicFolder.list(result)
+
+                    else -> result.notImplemented()
+                }
+            }
+
+        val folder = BackupFolder(app, musicFolder)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, backupChannelName)
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -532,7 +555,7 @@ class MainActivity : FlutterActivity() {
         requestPermissions(arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION), stepsRequestCode)
     }
 
-    private fun chooseFolder(folder: BackupFolder, result: MethodChannel.Result) {
+    private fun chooseFolder(folder: ChosenFolder, result: MethodChannel.Result) {
         // As with the permission request: one answer per call, so a second
         // picker while one is open is turned away.
         if (pendingFolderResult != null) {
@@ -541,11 +564,7 @@ class MainActivity : FlutterActivity() {
         }
         pendingFolderResult = result
         pendingFolder = folder
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(
-            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
-                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-        )
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).addFlags(folder.grantFlags)
         startActivityForResult(intent, folderRequestCode)
     }
 

@@ -218,6 +218,7 @@ class Profile {
     this.music = noMusic,
     this.musicVolume = 0.7,
     this.musicFollowsEffort = true,
+    this.folderRandom = false,
     this.seasonalEvents = true,
     this.theme = 'neon',
     this.packColours = true,
@@ -298,7 +299,7 @@ class Profile {
   final double sfxVolume;
 
   /// What the app plays during a run: [noMusic], [ambientMusic], [shuffleMusic],
-  /// [bestMatchMusic], or the id of a song. One field because they exclude each other, and because later choices
+  /// [bestMatchMusic], [folderMusic], or the id of a song. One field because they exclude each other, and because later choices
   /// then need no migration.
   final String music;
 
@@ -315,7 +316,16 @@ class Profile {
   /// Every song in turn, starting with the one that suits the run.
   static const String bestMatchMusic = 'best';
 
-  bool get generatedMusicOn => music != noMusic && music != ambientMusic;
+  /// The runner's own files, from a folder they chose.
+  static const String folderMusic = 'folder';
+
+  bool get folderMusicOn => music == folderMusic;
+
+  bool get generatedMusicOn => music != noMusic && music != ambientMusic && music != folderMusic;
+
+  /// Whether a run plays something that takes the place of the runner's own
+  /// player, generated or not.
+  bool get runMusicOn => generatedMusicOn || folderMusicOn;
 
   /// How loud [music] plays, whichever it is.
   final double musicVolume;
@@ -323,6 +333,9 @@ class Profile {
   /// Whether a song answers to the run: thinning out and slowing when the runner
   /// eases off, lifting for an effort, a chase or the goal. Off, it plays straight.
   final bool musicFollowsEffort;
+
+  /// Whether a folder plays in random order, rather than by file name.
+  final bool folderRandom;
 
   /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
   /// and whatever follows: palette, backdrop, sounds, the event pack and its
@@ -425,6 +438,7 @@ class Profile {
     String? music,
     double? musicVolume,
     bool? musicFollowsEffort,
+    bool? folderRandom,
     bool? seasonalEvents,
     String? theme,
     bool? packColours,
@@ -462,6 +476,7 @@ class Profile {
     music: music ?? this.music,
     musicVolume: musicVolume ?? this.musicVolume,
     musicFollowsEffort: musicFollowsEffort ?? this.musicFollowsEffort,
+    folderRandom: folderRandom ?? this.folderRandom,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     theme: theme ?? this.theme,
     packColours: packColours ?? this.packColours,
@@ -503,6 +518,7 @@ class Profile {
     'music': music,
     'musicVolume': musicVolume,
     'musicFollowsEffort': musicFollowsEffort,
+    'folderRandom': folderRandom,
     'seasonalEvents': seasonalEvents,
     'theme': theme,
     'packColours': packColours,
@@ -557,6 +573,7 @@ class Profile {
     music: _musicFrom(json),
     musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.7,
     musicFollowsEffort: json['musicFollowsEffort'] as bool? ?? true,
+    folderRandom: json['folderRandom'] as bool? ?? false,
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',
     packColours: json['packColours'] as bool? ?? true,

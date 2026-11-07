@@ -22,20 +22,24 @@ class RenderedBar {
 /// produced and the tails running past it. [_window] has to outlast the longest
 /// sound written in one go, and keeps memory flat however long a run lasts.
 class SongStream {
-  SongStream(this.song, {this.fromBar = 0})
-    : _spb = song.secondsPerBeat,
+  SongStream(this.song, {this.fromBar = 0, MusicLevel level = MusicLevel.normal})
+    : _level = level,
+      _nextLevel = level,
+      _tempo = _tempoAt(song, level),
       _voices = Voices(Random(song.seed)),
       _riserNoise = Random(song.seed + 1) {
     for (final bus in song.buses) {
-      _buses[bus.id] = _RunningBus.of(bus, _spb);
+      _buses[bus.id] = _RunningBus.of(bus, song.secondsPerBeat);
     }
   }
 
   static final int _window = (10.5 * sampleRate).round();
 
+  /// A level changes only where a phrase starts, or it would cut across one.
+  static const int phraseBars = 4;
+
   final Song song;
   final int fromBar;
-  final double _spb;
   final Voices _voices;
   final Random _riserNoise;
   final Map<String, _RunningBus> _buses = {};
@@ -44,6 +48,30 @@ class SongStream {
   final Master _masterLeft = Master(), _masterRight = Master();
 
   int _bar = 0;
+  MusicLevel _level, _nextLevel;
+  bool _changeAtOnce = false;
+
+  /// The share of the song's tempo now playing. It glides, a bar at a time, so a
+  /// change of tempo reads as the song easing off and not as a jump.
+  double _tempo;
+  static const double _tempoStepPerBar = 0.02;
+
+  /// Where this bar starts, in samples and in beats, kept apart from the bar
+  /// number because a bar's length depends on the tempo it was played at.
+  double _position = 0, _beats = 0;
+
+  static double _tempoAt(Song song, MusicLevel level) => switch (level) {
+    MusicLevel.low => song.lowTempo,
+    MusicLevel.normal => 1.0,
+    MusicLevel.high => song.highTempo,
+  };
+
+  /// Plays [level] from the next phrase, or from the next bar with [atOnce].
+  /// What has already been made keeps ringing, so a layer leaves on its own tail.
+  void setLevel(MusicLevel level, {bool atOnce = false}) {
+    _nextLevel = level;
+    _changeAtOnce = atOnce;
+  }
 
   /// The sample, since the stream began, that index 0 of every bus stands for.
   int _base = 0;
@@ -54,21 +82,40 @@ class SongStream {
   /// Produces the next bar, and leaves every tail in place for the one after.
   RenderedBar nextBar() {
     final b = _songBarAt(_bar);
-    final beat = _bar * beatsPerBar.toDouble();
-    final end = ((_bar + 1) * beatsPerBar * _spb * sampleRate).round();
+    final changing = _changeAtOnce || b % phraseBars == 0;
+    final snap = _changeAtOnce;
+    if (changing) {
+      _level = _nextLevel;
+      _changeAtOnce = false;
+    }
+    final tempoTarget = _tempoAt(song, _level);
+    // At once means back to the song's own tempo at the next bar; going faster
+    // than that still glides, or the song would lurch just as a chase begins.
+    _tempo = snap
+        ? (tempoTarget > 1 ? max(_tempo, 1.0) : tempoTarget)
+        : _tempo < tempoTarget
+        ? min(tempoTarget, _tempo + _tempoStepPerBar)
+        : max(tempoTarget, _tempo - _tempoStepPerBar);
+    final spb = song.secondsPerBeat / _tempo;
+    final samplesPerBeat = spb * sampleRate;
+    final barStart = _position;
+    _position += beatsPerBar * samplesPerBeat;
+    final end = _position.round();
     final count = end - _base;
 
     for (final track in song.tracks) {
+      if (track.level.index > _level.index) continue;
       final bus = _buses[track.bus]!.samples;
       for (final clip in track.clips) {
-        if (clip.playsAt(b)) _playClip(track.voice, clip, b, beat, bus);
+        if (clip.playsAt(b)) _playClip(track.voice, clip, b, barStart, spb, bus);
       }
     }
     _risers.removeWhere((r) => !r.render(count));
 
     final left = Float32List(count), right = Float32List(count);
     for (final bus in _buses.values) {
-      bus.mixInto(left, right, count, _base, _spb, (bar) => _songBarAt(bar));
+      // A bar starts on a whole sample, up to half of one off where the beat falls.
+      bus.mixInto(left, right, count, samplesPerBeat, _beats + (_base - barStart) / samplesPerBeat, b);
     }
     _masterLeft.process(left, count);
     _masterRight.process(right, count);
@@ -79,15 +126,16 @@ class SongStream {
       samples.fillRange(_window - count, _window, 0);
     }
     _base = end;
+    _beats += beatsPerBar;
     _bar++;
     return RenderedBar(left, right);
   }
 
-  void _playClip(Voice voice, Clip clip, int b, double barBeat, Float32List bus) {
+  void _playClip(Voice voice, Clip clip, int b, double barStart, double spb, Float32List bus) {
     final progress = clip.progress(b);
     final cutoff = clip.cutoff?.at(progress) ?? voice.cutoff;
     for (final e in clip.pattern.at(b)) {
-      final start = ((barBeat + e.beat) * _spb * sampleRate).round() - _base;
+      final start = (barStart + e.beat * spb * sampleRate).round() - _base;
       final amp = (e.amp ?? clip.amp ?? voice.amp) / e.shareOf;
       if (voice.type == VoiceType.drum) {
         _voices.hit(_drum(voice), bus, start, amp: amp, rate: e.rate ?? voice.rate);
@@ -95,9 +143,9 @@ class SongStream {
       }
       final note = (e.note! + clip.transpose).toDouble();
       final env = Envelope(
-        (voice.attack + voice.attackOfNote * e.beats) * _spb,
-        (voice.sustain + voice.sustainOfNote * e.beats) * _spb,
-        (voice.release + voice.releaseOfNote * e.beats) * _spb,
+        (voice.attack + voice.attackOfNote * e.beats) * spb,
+        (voice.sustain + voice.sustainOfNote * e.beats) * spb,
+        (voice.release + voice.releaseOfNote * e.beats) * spb,
       );
       switch (voice.type) {
         case VoiceType.saw:
@@ -112,7 +160,7 @@ class SongStream {
             start,
             note,
             env: env,
-            secondsPerBeat: _spb,
+            secondsPerBeat: spb,
             vibratoRate: voice.vibratoRate,
             vibratoDepth: voice.vibratoDepth,
             amp: amp,
@@ -122,7 +170,7 @@ class SongStream {
             Riser(
               bus: bus,
               env: env,
-              slideSeconds: voice.slide * _spb,
+              slideSeconds: voice.slide * spb,
               fromCutoff: voice.cutoff,
               toCutoff: voice.cutoffTo,
               amp: amp,
@@ -171,9 +219,11 @@ class _RunningBus {
   final Echo? echo;
   final Reverb? reverb;
 
-  void mixInto(Float32List l, Float32List r, int count, int base, double spb, int Function(int) songBar) {
-    if (slicer != null) _slice(slicer!, count, base, spb, songBar);
-    echo?.process(samples, count);
+  void mixInto(Float32List l, Float32List r, int count, double samplesPerBeat, double beats, int songBar) {
+    if (slicer != null) _slice(slicer!, count, samplesPerBeat, beats, songBar);
+    echo
+      ?..setSamplesPerBeat(samplesPerBeat)
+      ..process(samples, count);
     if (reverb != null) {
       reverb!.process(samples, count, l, r);
       return;
@@ -185,21 +235,11 @@ class _RunningBus {
     }
   }
 
-  void _slice(SlicerEffect effect, int count, int base, double spb, int Function(int) songBar) {
-    final perBeat = spb * sampleRate;
-    final barSamples = perBeat * beatsPerBar;
-    var barAt = -1;
-    var cosine = 0.0, sine = 0.0;
+  void _slice(SlicerEffect effect, int count, double samplesPerBeat, double beats, int songBar) {
+    final mix = effect.mixAt(songBar);
+    final cosine = cos(mix * pi / 2), sine = sin(mix * pi / 2);
     for (var k = 0; k < count; k++) {
-      final i = base + k;
-      final bar = i ~/ barSamples;
-      if (bar != barAt) {
-        barAt = bar;
-        final mix = effect.mixAt(songBar(bar));
-        cosine = cos(mix * pi / 2);
-        sine = sin(mix * pi / 2);
-      }
-      final position = i / perBeat;
+      final position = beats + k / samplesPerBeat;
       final slice = 1 - (position - position.floorToDouble());
       final s = samples[k];
       samples[k] = s * cosine + s * slice * sine;

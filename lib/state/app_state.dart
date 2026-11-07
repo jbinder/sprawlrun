@@ -26,6 +26,7 @@ import '../models/stats.dart';
 import '../models/stride.dart';
 import '../services/battery_optimization.dart';
 import '../services/achievement_engine.dart';
+import '../services/music_director.dart';
 import '../services/backup_folder.dart';
 import '../services/backup_nudge.dart';
 import '../services/narrator.dart';
@@ -153,6 +154,9 @@ class AppState extends ChangeNotifier {
   /// The runner's stride, learned from the run log, for a run to turn steps
   /// into distance when the GPS has none. Derived on demand, like the stats.
   Stride get stride => Stride.of(runLog, heightCm: profile.heightCm);
+
+  /// The runner's usual speed, for the music to compare a run with.
+  double? usualSpeed(Activity activity) => MusicDirector.usualSpeedOf(runLog, activity);
 
   /// Where automatic backups go. Defaults to none, so they are off everywhere
   /// a test or platform does not say otherwise.

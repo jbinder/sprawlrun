@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../audio/song.dart';
+
 import '../models/mission.dart';
 import '../models/profile.dart';
 import '../theme/season.dart';
@@ -98,6 +100,9 @@ abstract class Narrator {
 
   /// Holds or lets go of the music for a paused run. It keeps its place.
   Future<void> setMusicPaused(bool paused);
+
+  /// How much of the song plays, from its next phrase or with [atOnce] its next bar.
+  Future<void> setMusicLevel(MusicLevel level, {bool atOnce = false});
 
   /// Cuts everything immediately — used when the runner ends a mission.
   Future<void> stopAll();
@@ -614,6 +619,11 @@ class AudioNarrator implements Narrator {
   Future<void> setMusicPaused(bool paused) async {
     _runPaused = paused;
     await _applyMusicHold();
+  }
+
+  @override
+  Future<void> setMusicLevel(MusicLevel level, {bool atOnce = false}) async {
+    if (_musicHoldsFocus) await _music.setLevel(level, atOnce: atOnce);
   }
 
   Future<void> _applyMusicHold() async {

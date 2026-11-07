@@ -13,21 +13,42 @@ class Echo {
     required double phaseBeats,
     required double decayBeats,
     required double mix,
-  }) : _line = Float64List((phaseBeats * secondsPerBeat * sampleRate).round()),
+  }) : _phaseBeats = phaseBeats,
+       _delay = (phaseBeats * secondsPerBeat * sampleRate).round(),
+       _target = (phaseBeats * secondsPerBeat * sampleRate).round(),
+       _line = Float64List((phaseBeats * secondsPerBeat * sampleRate / slowestTempo).ceil() + 2),
        _feedback = pow(0.001, phaseBeats / decayBeats).toDouble(),
        _dry = cos(mix * pi / 2),
        _wet = sin(mix * pi / 2);
 
+  /// As slow as a song may play, which sets how long the line has to be.
+  static const double slowestTempo = 0.88;
+
+  /// How many samples pass between each single-sample move of the delay, so the
+  /// echo drifts onto a new tempo rather than jumping and clicking.
+  static const int _samplesPerMove = 64;
+
+  final double _phaseBeats;
   final Float64List _line;
   final double _feedback, _dry, _wet;
-  int _at = 0;
+  int _delay, _target;
+  int _at = 0, _untilMove = 0;
+
+  /// Keeps the echo on the beat when the tempo changes.
+  void setSamplesPerBeat(double samplesPerBeat) => _target = (_phaseBeats * samplesPerBeat).round();
 
   /// Replaces the first [count] samples of [bus] with their echoed selves.
   void process(Float32List bus, int count) {
     final line = _line;
     for (var i = 0; i < count; i++) {
+      if (_delay != _target && --_untilMove <= 0) {
+        _delay += _delay < _target ? 1 : -1;
+        _untilMove = _samplesPerMove;
+      }
       final x = bus[i];
-      final delayed = line[_at];
+      var from = _at - _delay;
+      if (from < 0) from += line.length;
+      final delayed = line[from];
       line[_at] = x + delayed * _feedback;
       if (++_at == line.length) _at = 0;
       bus[i] = x * _dry + (x + delayed) * _wet;

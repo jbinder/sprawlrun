@@ -22,6 +22,10 @@ abstract class MusicPlayer {
 
   Future<void> setVolume(double volume);
 
+  /// How much of the song to play, from its next phrase or with [atOnce] its next
+  /// bar. What is already queued plays out first, which is about four seconds.
+  Future<void> setLevel(MusicLevel level, {bool atOnce = false});
+
   /// Fades out and lets go of everything.
   Future<void> stop();
 }
@@ -43,6 +47,9 @@ class SilentMusicPlayer implements MusicPlayer {
   Future<void> setVolume(double volume) async {}
 
   @override
+  Future<void> setLevel(MusicLevel level, {bool atOnce = false}) async {}
+
+  @override
   Future<void> stop() async {}
 }
 
@@ -61,6 +68,9 @@ class RenderBudget {
     _shares.add(renderMs / barMs);
     if (_shares.length > bars) _shares.removeAt(0);
   }
+
+  /// Starts judging afresh, after something has changed what a bar costs.
+  void clear() => _shares.clear();
 
   bool get exceeded =>
       _shares.length == bars && _shares.reduce((a, b) => a + b) / bars > limit;
@@ -89,6 +99,12 @@ class LiveMusicPlayer implements MusicPlayer {
   Timer? _pump, _report;
   bool _waiting = false, _pumping = false;
   final RenderBudget _budget = RenderBudget();
+
+  /// The level asked for, and the most this phone has shown it can keep up with.
+  MusicLevel _wanted = MusicLevel.normal, _ceiling = MusicLevel.high;
+
+  @visibleForTesting
+  MusicLevel get level => _wanted.index < _ceiling.index ? _wanted : _ceiling;
 
   // Figures for logcat, so a report of a gap can be read against them.
   int _bars = 0;
@@ -124,6 +140,7 @@ class LiveMusicPlayer implements MusicPlayer {
   void _fromGenerator(Object? message) {
     if (message is SendPort) {
       _requests = message;
+      _sendLevel(atOnce: true);
       return;
     }
     if (message case (final TransferableTypedData data, final double renderMs, final double barMs)) {
@@ -132,13 +149,31 @@ class LiveMusicPlayer implements MusicPlayer {
       if (renderMs > _worstBar) _worstBar = renderMs;
       _budget.record(renderMs, barMs);
       if (_budget.exceeded) {
-        _fail('this phone cannot keep up with the song');
-        return;
+        if (!stepDown()) {
+          _fail('this phone cannot keep up with the song');
+          return;
+        }
       }
       unawaited(_guarded(() => _channel.invokeMethod<void>('write', data.materialize().asUint8List())));
       _tick();
     }
   }
+
+  /// Fewer layers cost less, so a phone falling behind loses those before the
+  /// music. For the rest of the run: it would only fall behind again. False when
+  /// there is nothing left to take away.
+  @visibleForTesting
+  bool stepDown() {
+    final current = level;
+    if (current == MusicLevel.low) return false;
+    _ceiling = MusicLevel.values[current.index - 1];
+    _budget.clear();
+    debugPrint('Music: falling behind, staying at or below ${_ceiling.name}');
+    _sendLevel(atOnce: true);
+    return true;
+  }
+
+  void _sendLevel({required bool atOnce}) => _requests?.send((level.index, atOnce));
 
   Future<void> _tick() async {
     if (_pumping || _requests == null) return;
@@ -188,6 +223,13 @@ class LiveMusicPlayer implements MusicPlayer {
   @override
   Future<void> setVolume(double volume) => _quietly('volume', volume);
 
+  @override
+  Future<void> setLevel(MusicLevel level, {bool atOnce = false}) async {
+    _wanted = level;
+    debugPrint('Music: level ${this.level.name}${atOnce ? ' at once' : ''}');
+    _sendLevel(atOnce: atOnce);
+  }
+
   Future<void> _quietly(String method, [Object? argument]) async {
     try {
       await _channel.invokeMethod<void>(method, argument);
@@ -208,6 +250,9 @@ class LiveMusicPlayer implements MusicPlayer {
     _port = _errors = null;
     _requests = null;
     _waiting = false;
+    _wanted = MusicLevel.normal;
+    _ceiling = MusicLevel.high;
+    _budget.clear();
     _bars = 0;
     _worstBar = 0;
     _minQueue = 1 << 30;
@@ -222,7 +267,11 @@ void _generate((SendPort, String) start) {
   out.send(requests.sendPort);
   final song = Song.parse(source);
   final stream = SongStream(song);
-  requests.listen((_) {
+  requests.listen((request) {
+    if (request case (final int level, final bool atOnce)) {
+      stream.setLevel(MusicLevel.values[level], atOnce: atOnce);
+      return;
+    }
     final clock = Stopwatch()..start();
     final bar = stream.nextBar();
     final frames = bar.left.length;

@@ -1,6 +1,9 @@
 // Renders part of a song to a WAV, for listening while writing one.
 //
-//     fvm dart run tool/gen_music.dart <song.json> [out.wav] [fromBar] [bars]
+//     fvm dart run tool/gen_music.dart <song.json> [out.wav] [fromBar] [bars] [levels]
+//
+// `levels` is one level (`low`, `normal`, `high`), or a change every so many bars
+// to hear the joins: `low:16,normal:16,high:16` holds each for 16 bars, in turn.
 //
 // By default, the whole first pass. For Neon Pursuit, bars 24 to 67 are the hook,
 // breakdown, build and drop, about 62 seconds. `music/` is gitignored.
@@ -23,8 +26,13 @@ void main(List<String> args) {
   final bars = args.length > 3 ? int.parse(args[3]) : song.bars;
 
   final clock = Stopwatch()..start();
-  final stream = SongStream(song, fromBar: fromBar);
-  final rendered = [for (var n = 0; n < bars; n++) stream.nextBar()];
+  final changes = _levels(args.length > 4 ? args[4] : 'normal');
+  final stream = SongStream(song, fromBar: fromBar, level: changes.values.first);
+  final rendered = <RenderedBar>[];
+  for (var n = 0; n < bars; n++) {
+    if (changes[n] case final level?) stream.setLevel(level);
+    rendered.add(stream.nextBar());
+  }
   clock.stop();
 
   final frames = rendered.fold(0, (sum, bar) => sum + bar.left.length);
@@ -48,6 +56,18 @@ void main(List<String> args) {
     '${seconds.toStringAsFixed(2)} s '
     '(${(length / seconds).toStringAsFixed(0)}x real time)',
   );
+}
+
+/// The bar each level starts at.
+Map<int, MusicLevel> _levels(String text) {
+  final out = <int, MusicLevel>{};
+  var at = 0;
+  for (final part in text.split(',')) {
+    final [name, ...rest] = part.split(':');
+    out[at] = MusicLevel.values.byName(name);
+    if (rest.isNotEmpty) at += int.parse(rest.first);
+  }
+  return out;
 }
 
 /// The render stops mid-song, so it should not stop with a click.

@@ -4,6 +4,8 @@
   "name": "Neon Pursuit",
   "author": "SPRAWL//RUN",
   "bpm": 170,
+  "lowTempo": 0.92,
+  "highTempo": 1.08,
   "key": "Am",
   "moods": ["uplifting"],
   "energy": 0.9,
@@ -186,6 +188,24 @@
       { "repeat": 2, "notes": ["g4", "b4", "d5", "g5", "d5", "b4", "g4", "d4"] },
       { "repeat": 2, "notes": ["f4", "a4", "c5", "f5", "c5", "a4", "f4", "c4"] }
     ],
+    "surge": [
+      { "repeat": 2, "every": 0.25, "notes": ["a2", null, "a2", "a2", "e3", null, "a2", "a2", "a3", null, "a2", "a2", "e3", null, "a2", "a3"] },
+      { "repeat": 2, "every": 0.25, "notes": ["f2", null, "f2", "f2", "c3", null, "f2", "f2", "f3", null, "f2", "f2", "c3", null, "f2", "f3"] },
+      { "repeat": 2, "every": 0.25, "notes": ["c3", null, "c3", "c3", "g3", null, "c3", "c3", "c4", null, "c3", "c3", "g3", null, "c3", "c4"] },
+      { "repeat": 2, "every": 0.25, "notes": ["g2", null, "g2", "g2", "d3", null, "g2", "g2", "g3", null, "g2", "g2", "d3", null, "g2", "g3"] }
+    ],
+    "surgeTheme": [
+      { "repeat": 2, "every": 0.25, "notes": ["f2", null, "f2", "f2", "c3", null, "f2", "f2", "f3", null, "f2", "f2", "c3", null, "f2", "f3"] },
+      { "repeat": 2, "every": 0.25, "notes": ["c3", null, "c3", "c3", "g3", null, "c3", "c3", "c4", null, "c3", "c3", "g3", null, "c3", "c4"] },
+      { "repeat": 2, "every": 0.25, "notes": ["g2", null, "g2", "g2", "d3", null, "g2", "g2", "g3", null, "g2", "g2", "d3", null, "g2", "g3"] },
+      { "repeat": 2, "every": 0.25, "notes": ["a2", null, "a2", "a2", "e3", null, "a2", "a2", "a3", null, "a2", "a2", "e3", null, "a2", "a3"] }
+    ],
+    "surgeThird": [
+      { "repeat": 2, "every": 0.25, "notes": ["a2", null, "a2", "a2", "e3", null, "a2", "a2", "a3", null, "a2", "a2", "e3", null, "a2", "a3"] },
+      { "repeat": 2, "every": 0.25, "notes": ["c3", null, "c3", "c3", "g3", null, "c3", "c3", "c4", null, "c3", "c3", "g3", null, "c3", "c4"] },
+      { "repeat": 2, "every": 0.25, "notes": ["g2", null, "g2", "g2", "d3", null, "g2", "g2", "g3", null, "g2", "g2", "d3", null, "g2", "g3"] },
+      { "repeat": 2, "every": 0.25, "notes": ["f2", null, "f2", "f2", "c3", null, "f2", "f2", "f3", null, "f2", "f2", "c3", null, "f2", "f3"] }
+    ],
     "swell": [{ "phrase": [["c4", 1]] }]
   },
   "tracks": [
@@ -241,6 +261,7 @@
     {
       "id": "hats",
       "bus": "dry",
+      "level": "normal",
       "voice": { "type": "drum", "drum": "hat", "amp": 0.45, "rate": 1.3 },
       "clips": [
         { "from": 8, "to": 40, "pattern": "hats8" },
@@ -359,6 +380,7 @@
     {
       "id": "arp",
       "bus": "arp",
+      "level": "normal",
       "voice": { "type": "saw", "release": 0.12, "amp": 0.28 },
       "clips": [
         { "from": 0, "to": 8, "pattern": "arp", "cutoff": { "from": 60, "to": 105 } },
@@ -391,6 +413,7 @@
     {
       "id": "lead",
       "bus": "lead",
+      "level": "normal",
       "voice": {
         "type": "dsaw",
         "attack": 0.02,
@@ -419,6 +442,7 @@
     {
       "id": "leadDouble",
       "bus": "lead",
+      "level": "normal",
       "voice": {
         "type": "prophet",
         "attack": 0.02,
@@ -446,6 +470,7 @@
     {
       "id": "strings",
       "bus": "strings",
+      "level": "normal",
       "voice": {
         "type": "blade",
         "attackOfNote": 0.4,
@@ -485,6 +510,7 @@
     {
       "id": "descant",
       "bus": "strings",
+      "level": "normal",
       "voice": {
         "type": "blade",
         "attackOfNote": 0.25,
@@ -519,6 +545,38 @@
         { "from": 168, "to": 169, "pattern": "swell" },
         { "from": 280, "to": 281, "pattern": "swell" },
         { "from": 400, "to": 401, "pattern": "swell" }
+      ]
+    },
+    {
+      "id": "surge",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "dsaw", "sustain": 0.2, "release": 0.25, "detune": 0.1, "amp": 0.5 },
+      "clips": [
+        { "from": 8, "to": 40, "pattern": "surge", "cutoff": 98 },
+        { "from": 48, "to": 56, "pattern": "surge", "cutoff": { "from": 78, "to": 118 } },
+        { "from": 56, "to": 72, "pattern": "surge", "cutoff": 110 },
+        { "from": 72, "to": 80, "pattern": "surge", "cutoff": 98 },
+        { "from": 80, "to": 96, "pattern": "surge", "cutoff": 98 },
+        { "from": 96, "to": 128, "pattern": "surgeTheme", "cutoff": 102 },
+        { "from": 128, "to": 136, "pattern": "surge", "cutoff": { "from": 78, "to": 108 } },
+        { "from": 136, "to": 152, "pattern": "surge", "cutoff": 110 },
+        { "from": 168, "to": 176, "pattern": "surge", "cutoff": { "from": 78, "to": 118 } },
+        { "from": 176, "to": 192, "pattern": "surge", "cutoff": 110, "transpose": 2 },
+        { "from": 192, "to": 208, "pattern": "surgeTheme", "cutoff": 110, "transpose": 2 },
+        { "from": 208, "to": 224, "pattern": "surge", "cutoff": 115, "transpose": 2 },
+        { "from": 240, "to": 256, "pattern": "surge", "cutoff": 105 },
+        { "from": 256, "to": 272, "pattern": "surgeTheme", "cutoff": 105 },
+        { "from": 280, "to": 288, "pattern": "surge", "cutoff": { "from": 78, "to": 118 } },
+        { "from": 288, "to": 304, "pattern": "surge", "cutoff": 110, "transpose": 3 },
+        { "from": 304, "to": 320, "pattern": "surgeTheme", "cutoff": 110, "transpose": 3 },
+        { "from": 320, "to": 336, "pattern": "surge", "cutoff": 115, "transpose": 3 },
+        { "from": 336, "to": 344, "pattern": "surge", "cutoff": 98 },
+        { "from": 344, "to": 376, "pattern": "surgeThird", "cutoff": 102 },
+        { "from": 376, "to": 384, "pattern": "surge", "cutoff": { "from": 78, "to": 108 } },
+        { "from": 400, "to": 408, "pattern": "surge", "cutoff": { "from": 78, "to": 118 } },
+        { "from": 408, "to": 424, "pattern": "surge", "cutoff": 110 },
+        { "from": 424, "to": 432, "pattern": "surge", "cutoff": 98 }
       ]
     }
   ]

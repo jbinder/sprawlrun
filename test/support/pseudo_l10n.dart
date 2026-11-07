@@ -1191,6 +1191,12 @@ class PseudoL extends L {
   String get settingMusicVolume => pseudo(_en.settingMusicVolume);
 
   @override
+  String get settingMusicFollowsEffort => pseudo(_en.settingMusicFollowsEffort);
+
+  @override
+  String get settingMusicFollowsEffortHint => pseudo(_en.settingMusicFollowsEffortHint);
+
+  @override
   String get sectionRun => pseudo(_en.sectionRun);
 
   @override

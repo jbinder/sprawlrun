@@ -109,6 +109,7 @@ class _RunScreenState extends State<RunScreen> {
       profile: app.profile,
       activity: widget.activity,
       stride: app.stride,
+      usualSpeed: app.usualSpeed(widget.activity),
       resumeFrom: widget.resumeFrom?.record,
       codexHeard: widget.resumeFrom?.codexHeard ?? const [],
     );

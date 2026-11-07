@@ -1946,6 +1946,14 @@
   "@settingMusicVolume": {
     "description": "Slider: how loud the run music plays, whether the ambient bed or a generated song."
   },
+  "settingMusicFollowsEffort": "Music follows your effort",
+  "@settingMusicFollowsEffort": {
+    "description": "Switch: the generated song reacts to how the runner is moving and to chases."
+  },
+  "settingMusicFollowsEffortHint": "Thins out and slows when you ease off, and lifts when you push or something is chasing you. Off plays the song as written",
+  "@settingMusicFollowsEffortHint": {
+    "description": "Explains the switch: at an easy pace the song loses its melody and slows a little; at a hard pace, during a chase or on reaching the goal it gains a layer."
+  },
   "sectionRun": "RUN",
   "@sectionRun": {
     "description": "Settings section: options for runs."

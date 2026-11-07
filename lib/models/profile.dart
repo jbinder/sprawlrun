@@ -217,6 +217,7 @@ class Profile {
     this.sfxVolume = 0.9,
     this.music = noMusic,
     this.musicVolume = 0.7,
+    this.musicFollowsEffort = true,
     this.seasonalEvents = true,
     this.theme = 'neon',
     this.packColours = true,
@@ -312,6 +313,10 @@ class Profile {
 
   /// How loud [music] plays, whichever it is.
   final double musicVolume;
+
+  /// Whether a song answers to the run: thinning out and slowing when the runner
+  /// eases off, lifting for an effort, a chase or the goal. Off, it plays straight.
+  final bool musicFollowsEffort;
 
   /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
   /// and whatever follows: palette, backdrop, sounds, the event pack and its
@@ -413,6 +418,7 @@ class Profile {
     double? sfxVolume,
     String? music,
     double? musicVolume,
+    bool? musicFollowsEffort,
     bool? seasonalEvents,
     String? theme,
     bool? packColours,
@@ -449,6 +455,7 @@ class Profile {
     sfxVolume: sfxVolume ?? this.sfxVolume,
     music: music ?? this.music,
     musicVolume: musicVolume ?? this.musicVolume,
+    musicFollowsEffort: musicFollowsEffort ?? this.musicFollowsEffort,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     theme: theme ?? this.theme,
     packColours: packColours ?? this.packColours,
@@ -489,6 +496,7 @@ class Profile {
     'ambientBed': ambientBedOn,
     'music': music,
     'musicVolume': musicVolume,
+    'musicFollowsEffort': musicFollowsEffort,
     'seasonalEvents': seasonalEvents,
     'theme': theme,
     'packColours': packColours,
@@ -542,6 +550,7 @@ class Profile {
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,
     music: _musicFrom(json),
     musicVolume: (json['musicVolume'] as num?)?.toDouble() ?? 0.7,
+    musicFollowsEffort: json['musicFollowsEffort'] as bool? ?? true,
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',
     packColours: json['packColours'] as bool? ?? true,

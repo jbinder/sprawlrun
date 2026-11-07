@@ -165,7 +165,10 @@ void main() {
       expect(state.profile.generatedMusicOn, isTrue);
       expect(find.text('Music volume'), findsOneWidget);
 
+      expect(find.text('Music follows your effort'), findsOneWidget);
+
       await pick(tester, 'Off');
+      expect(find.text('Music follows your effort'), findsNothing);
       expect(state.profile.music, Profile.noMusic);
       expect(find.text('Music volume'), findsNothing);
     });

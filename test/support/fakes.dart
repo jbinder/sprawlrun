@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
+import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -129,6 +130,11 @@ class FakeNarrator implements Narrator {
 
   @override
   Future<void> setMusicPaused(bool paused) async => musicPaused = paused;
+
+  final List<(MusicLevel, bool)> musicLevels = [];
+
+  @override
+  Future<void> setMusicLevel(MusicLevel level, {bool atOnce = false}) async => musicLevels.add((level, atOnce));
 
   @override
   Future<void> stopAll() async => stopped = true;

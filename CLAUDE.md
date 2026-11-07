@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 742 tests
+fvm flutter test                                    # 792 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -223,6 +223,14 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   run starts the bed; a settings change can only stop it. Otherwise the bed
   behaves as a song does: a manual pause, a call or unplugged headphones hold it,
   and it follows the music volume, not the effects volume.
+- **`MusicDirector` decides how much of a song plays, and is pure.** It compares
+  speed with the runner's usual pace (from the run log, per activity) and is told
+  about chases and the goal; `RunEngine` passes its cues to the narrator. A level
+  changes where a four-bar phrase starts, and a chase at the next bar, with about
+  four seconds of queue ahead of either. Low must sit well below usual pace, or a
+  climb loses its music. Levels and the two tempos are optional for every song, shipped
+  ones too: without them a song plays straight. A phone falling behind drops a
+  level for the rest of the run before the music stops.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds

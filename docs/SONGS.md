@@ -30,6 +30,7 @@ The last two numbers are the first bar and how many to render.
 | `author` | Who wrote it. Optional for your own use, required to contribute one. |
 | `licence` | Optional. |
 | `bpm` | 60 to 200. Bars are always four beats. |
+| `lowTempo`, `highTempo` | Optional, by default 1. The share of its tempo the song plays at at level `low` (0.88 to 1) and `high` (1 to 1.15), gliding there and back at 2% a bar. Pitch stays where it is, and echoes stay on the beat. |
 | `key`, `moods`, `energy` | Optional, for choosing a song; they change nothing in the sound. `energy` is 0 to 1. |
 | `seed` | Fixes the song's small random movements, so it always renders the same. |
 | `bars`, `loopFrom` | Bars in the first pass, and the bar it goes back to after them. |
@@ -69,6 +70,14 @@ Notes are written as `c4`, `c#4` or `eb4`, and `a4` is 440 Hz.
 
 A track has an `id`, a `bus`, a `voice` and `clips`. It plays whichever of its
 clips covers the current bar.
+
+A track may name a `level`: `low`, `normal` or `high`. It plays at that level and
+above, and without one it always plays. `normal` should be the song as you mean it
+to be heard: `low` is what is left when the runner eases off, so check that every
+section still has something in it, and `high` adds to the song, for pushing hard
+or being chased. A level changes only where a four-bar phrase starts, unless a
+chase calls for it at the next bar. Levels are optional for every song: one that
+names none simply plays through, whatever the runner is doing.
 
 A clip is `{ "from", "to", "pattern" }`, up to but not including bar `to`. It may
 add `amp`, `transpose` in semitones, and `cutoff`, as a number or as
@@ -111,4 +120,5 @@ Each note is computed in full when its bar comes up. On a mid-range phone, Neon
 Pursuit takes about a quarter of one core and costs about 2% of battery an hour,
 in a single comparison sitting still. `prophet` and `blade` cost the most, and
 reverbs run constantly. If a phone can't keep up for several bars in a row, the
-music stops and the run carries on.
+song drops a level for the rest of the run, and below `low` the music stops and the
+run carries on. So a song's `low` should be clearly cheaper than the song.

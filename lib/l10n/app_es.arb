@@ -393,6 +393,8 @@
     "settingAmbientBedHint": "Un zumbido de sintetizador bajo la carrera, para cuando no llevas música",
     "settingGeneratedMusicHint": "Tu teléfono la toca en directo durante la carrera. Pausa tu propia música hasta que termines",
     "settingMusicVolume": "Volumen de la música",
+    "settingMusicFollowsEffort": "La música sigue tu esfuerzo",
+    "settingMusicFollowsEffortHint": "Se aligera y baja el ritmo cuando aflojas, y sube cuando aprietas o algo te persigue. Desactivada, la canción suena tal cual",
     "sectionRun": "CARRERA",
     "settingPursuitsHint": "Persecuciones cronometradas que piden un esfuerzo fuerte, ajustadas a tu propio ritmo",
     "settingAutoPause": "Pausa automática",

@@ -27,6 +27,9 @@ const Set<String> reservedSongIds = {'off', 'ambient', 'shuffle', 'best', 'folde
 /// The longest note, in seconds, that a bus can hold.
 const double maxNoteSeconds = 9;
 
+/// How much of a song plays. A track plays at its own level and above.
+enum MusicLevel { low, normal, high }
+
 enum VoiceType { saw, dsaw, prophet, blade, drum, riser }
 
 /// One note or drum hit in a bar, whichever way the file wrote it.
@@ -120,9 +123,13 @@ class Voice {
 }
 
 class Track {
-  const Track({required this.id, required this.bus, required this.voice, required this.clips});
+  const Track({required this.id, required this.bus, required this.voice, required this.clips, this.level = MusicLevel.low});
 
   final String id, bus;
+
+  /// The lowest level this track plays at. By default it always plays, so a song
+  /// that names no levels sounds the same whatever the runner is doing.
+  final MusicLevel level;
   final Voice voice;
   final List<Clip> clips;
 }
@@ -190,6 +197,8 @@ class Song {
     this.author,
     this.licence,
     required this.bpm,
+    this.lowTempo = 1,
+    this.highTempo = 1,
     this.key,
     this.moods = const [],
     this.energy = 0.5,
@@ -211,6 +220,13 @@ class Song {
   final Map<String, String> names;
   final String? author, licence;
   final double bpm;
+
+  /// How much of its tempo the song keeps at [MusicLevel.low]. Stops at 0.88: a
+  /// note slows with the song, and a bus has to outlast the longest one.
+  final double lowTempo;
+
+  /// How much of its tempo the song plays at at [MusicLevel.high].
+  final double highTempo;
   final String? key;
   final List<String> moods;
 
@@ -278,6 +294,8 @@ class _SongParser {
       id: id,
       name: _string(json, 'name'),
       names: _names(),
+      lowTempo: json.containsKey('lowTempo') ? _double(json, 'lowTempo', 0.88, 1) : 1,
+      highTempo: json.containsKey('highTempo') ? _double(json, 'highTempo', 1, 1.15) : 1,
       author: _optionalString(json, 'author'),
       licence: _optionalString(json, 'licence'),
       bpm: bpm,
@@ -495,9 +513,17 @@ class _SongParser {
           final clips = [
             for (final c in _list(track, 'clips')) _clip(_map(c, 'clips'), patterns, bars, id, voice),
           ];
-          return Track(id: id, bus: bus, voice: voice, clips: clips);
+          return Track(id: id, bus: bus, voice: voice, clips: clips, level: _level(track, id));
         }(),
     ];
+  }
+
+  MusicLevel _level(Map<String, dynamic> track, String id) {
+    if (!track.containsKey('level')) return MusicLevel.low;
+    final name = _string(track, 'level');
+    final level = MusicLevel.values.where((l) => l.name == name).firstOrNull;
+    if (level == null) throw SongFormatException('Track "$id": unknown level "$name"');
+    return level;
   }
 
   Clip _clip(Map<String, dynamic> c, Map<String, SongPattern> patterns, int bars, String track, Voice voice) {

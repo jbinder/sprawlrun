@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/data/song_library.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -92,6 +93,9 @@ class _RecordingPlayer implements MusicPlayer {
   Future<void> setVolume(double volume) async {}
 
   @override
+  Future<void> setLevel(MusicLevel level, {bool atOnce = false}) async => calls.add('level:${level.name}:$atOnce');
+
+  @override
   Future<void> stop() async => calls.add('stop');
 }
 
@@ -123,6 +127,21 @@ void main() {
         expect(harness.calls, contains('start'));
         // A bar of stereo 16-bit at 170 BPM.
         expect(harness.writes.first.length, closeTo(4 * 60 / 170 * 44100 * 4, 8));
+      });
+    });
+
+    testWidgets('a level reaches the generator: low comes out slower', (tester) async {
+      await tester.runAsync(() async {
+        expect(await player.start('neon_pursuit'), isTrue);
+        await harness.wrote.future.timeout(const Duration(seconds: 30));
+        final normal = harness.writes.first.length;
+
+        await player.setLevel(MusicLevel.low, atOnce: true);
+        final seen = harness.writes.length;
+        while (harness.writes.length < seen + 3) {
+          await harness.wrote.future.timeout(const Duration(seconds: 30));
+        }
+        expect(harness.writes.last.length, greaterThan(normal + 8));
       });
     });
 
@@ -163,6 +182,25 @@ void main() {
         );
         expect(await mixed.start('neon_pursuit'), isTrue);
         await mixed.stop();
+      });
+    });
+
+    testWidgets('a phone falling behind loses layers before it loses the music', (tester) async {
+      await tester.runAsync(() async {
+        expect(await player.start('neon_pursuit'), isTrue);
+        await player.setLevel(MusicLevel.high);
+        expect(player.level, MusicLevel.high);
+
+        expect(player.stepDown(), isTrue);
+        expect(player.level, MusicLevel.normal);
+        await player.setLevel(MusicLevel.high);
+        expect(player.level, MusicLevel.normal, reason: 'a chase can not put back what the phone gave up');
+
+        expect(player.stepDown(), isTrue);
+        expect(player.level, MusicLevel.low);
+        expect(player.stepDown(), isFalse, reason: 'nothing left to take away');
+        await player.stop();
+        expect(player.level, MusicLevel.normal, reason: 'the next run starts over');
       });
     });
 
@@ -232,6 +270,12 @@ void main() {
       expect(Profile.fromJson(saved).music, Profile.noMusic);
     });
 
+    test('following effort is on unless the runner turned it off', () {
+      expect(Profile.fromJson(const {}).musicFollowsEffort, isTrue);
+      final off = Profile.fromJson(const Profile(musicFollowsEffort: false).toJson());
+      expect(off.musicFollowsEffort, isFalse);
+    });
+
     test('the choice survives a round trip', () {
       final profile = Profile.fromJson(const Profile(music: 'neon_pursuit', musicVolume: 0.4).toJson());
       expect(profile.music, 'neon_pursuit');
@@ -281,6 +325,20 @@ void main() {
         await subject.stopAll();
         await Future<void>.delayed(const Duration(milliseconds: 50));
         expect(nudges, 0);
+      });
+    });
+
+    testWidgets('a level reaches the player only while a song is playing', (tester) async {
+      await tester.runAsync(() async {
+        final music = _RecordingPlayer();
+        final subject = narrator(music, MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}));
+        await subject.init(const Profile(music: 'neon_pursuit'));
+        await subject.setMusicLevel(MusicLevel.high);
+        expect(music.calls, isEmpty);
+
+        await subject.startMusic();
+        await subject.setMusicLevel(MusicLevel.high, atOnce: true);
+        expect(music.calls, contains('level:high:true'));
       });
     });
 

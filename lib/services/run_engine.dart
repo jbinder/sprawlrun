@@ -13,6 +13,7 @@ import 'geo.dart';
 import 'location_service.dart';
 import 'split_readout.dart';
 import 'step_source.dart';
+import 'music_director.dart';
 import 'narrator.dart';
 import '../l10n/l10n.dart';
 
@@ -341,6 +342,7 @@ class RunEngine extends ChangeNotifier {
     required Profile profile,
     Activity activity = Activity.run,
     Stride? stride,
+    double? usualSpeed,
     RunRecord? resumeFrom,
     List<String> codexHeard = const [],
   }) async {
@@ -396,6 +398,7 @@ class RunEngine extends ChangeNotifier {
 
     await narrator.setAmbientBed(profile.ambientBedOn);
     await narrator.startMusic();
+    _musicDirector = profile.generatedMusicOn && profile.musicFollowsEffort ? MusicDirector(usualSpeed: usualSpeed) : null;
     notifyListeners();
     if (resumeFrom != null) _announceResume(pendingChase);
     _tick(); // fire the opening beat immediately rather than a second late
@@ -804,6 +807,14 @@ class RunEngine extends ChangeNotifier {
 
   // -- per-second update ----------------------------------------------------
 
+  /// Decides how much of the song plays. Null with the music off or playing
+  /// straight, and then nothing here touches it.
+  MusicDirector? _musicDirector;
+
+  void _cueMusic(MusicCue? cue) {
+    if (cue != null) unawaited(narrator.setMusicLevel(cue.level, atOnce: cue.atOnce));
+  }
+
   void _tick() {
     if (phase == RunPhase.running || phase == RunPhase.autoPaused) {
       // A second with no qualifying movement bleeds the speed estimate down,
@@ -814,6 +825,7 @@ class RunEngine extends ChangeNotifier {
       }
       _learnStride();
       _distanceAtLastTick = distanceMeters;
+      _cueMusic(_musicDirector?.tick(_gpsIsLive || _stepping ? smoothedSpeed : null));
     }
 
     if (phase == RunPhase.running) {
@@ -900,6 +912,7 @@ class RunEngine extends ChangeNotifier {
     if (goalReached) return;
     if (!goal.isMet(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters)) return;
     goalReached = true;
+    _cueMusic(_musicDirector?.goalReached());
     _log(StoryEventKind.goal);
     _events.add(const GoalReached());
   }
@@ -1006,6 +1019,7 @@ class RunEngine extends ChangeNotifier {
     chasesTotal++;
     _log(StoryEventKind.chaseStarted, ref: spec.pursuer);
     unawaited(narrator.sfx('chase_start'));
+    _cueMusic(_musicDirector?.setChasing(true));
     _events.add(ChaseStarted(chase));
     notifyListeners();
   }
@@ -1018,6 +1032,7 @@ class RunEngine extends ChangeNotifier {
 
     final escaped = chase.covered >= chase.requiredMeters;
     activeChase = null;
+    _cueMusic(_musicDirector?.setChasing(false));
     if (escaped) chasesEvaded++;
 
     _log(StoryEventKind.chaseEnded, ref: chase.spec.pursuer, escaped: escaped);

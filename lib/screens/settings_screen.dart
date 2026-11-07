@@ -258,6 +258,15 @@ class SettingsScreen extends StatelessWidget {
                               onChanged: (v) => update(profile.copyWith(musicVolume: v)),
                             ),
                           ],
+                          if (profile.generatedMusicOn) ...[
+                            const _Rule(),
+                            _SwitchRow(
+                              label: l.settingMusicFollowsEffort,
+                              subtitle: l.settingMusicFollowsEffortHint,
+                              value: profile.musicFollowsEffort,
+                              onChanged: (v) => update(profile.copyWith(musicFollowsEffort: v)),
+                            ),
+                          ],
                         ],
                       ),
                     ),

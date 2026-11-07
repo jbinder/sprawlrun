@@ -1,5 +1,6 @@
 import 'package:fake_async/fake_async.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/mission.dart';
@@ -411,6 +412,167 @@ void main() {
         fake.flushMicrotasks();
         expect(h.engine.codexUnlocked, ['cdx_unknown']);
         expect(h.narrator.beats.single, hasLength(1), reason: 'nothing to name, nothing to say');
+      });
+    });
+  });
+
+  group('music following the run', () {
+    ChaseSpec spec() => ChaseSpec(
+      duration: const Duration(seconds: 60),
+      paceFactor: 1.2,
+      pursuer: 'ICE',
+    );
+
+    test('a chase lifts the song at once, and its end lets go', () {
+      fakeAsync((fake) {
+        final h = Harness(
+          fake,
+          mission: missionWith([beat('b0', fraction: 0.1, chase: spec())]),
+          goal: const RunGoal(GoalType.time, 600),
+          profile: const Profile(music: 'neon_pursuit'),
+        );
+        h.begin();
+        h.runFor(90, (_) => 3);
+        expect(h.engine.activeChase, isNotNull);
+        expect(h.narrator.musicLevels, [(MusicLevel.high, true)]);
+        h.runFor(90, (_) => 4);
+        expect(h.engine.activeChase, isNull);
+        expect(h.narrator.musicLevels.last, (MusicLevel.normal, false));
+        h.die();
+      });
+    });
+
+    test('the goal gets its lift', () {
+      fakeAsync((fake) {
+        final h = Harness(
+          fake,
+          goal: const RunGoal(GoalType.time, 60),
+          profile: const Profile(music: 'neon_pursuit'),
+        );
+        h.begin();
+        h.runFor(70, (_) => 3);
+        expect(h.narrator.musicLevels.first, (MusicLevel.high, true));
+        h.die();
+      });
+    });
+
+    test('with the switch off the song plays straight, chases included', () {
+      fakeAsync((fake) {
+        final h = Harness(
+          fake,
+          mission: missionWith([beat('b0', fraction: 0.1, chase: spec())]),
+          goal: const RunGoal(GoalType.time, 300),
+          profile: const Profile(music: 'neon_pursuit', musicFollowsEffort: false),
+        );
+        h.begin();
+        h.runFor(320, (_) => 3);
+        expect(h.engine.goalReached, isTrue);
+        expect(h.narrator.musicLevels, isEmpty);
+        h.die();
+      });
+    });
+
+    group('whatever measures the speed', () {
+      const usual = 3.5;
+
+      ({FakeNarrator narrator, FakeLocation gps, FakeSteps steps, DateTime Function() now}) begin(
+        FakeAsync fake, {
+        LocationReadiness readiness = LocationReadiness.ready,
+        bool countSteps = false,
+      }) {
+        final narrator = FakeNarrator();
+        final gps = FakeLocation(readiness: readiness);
+        final steps = FakeSteps();
+        final started = DateTime(2026, 7, 22, 19);
+        DateTime now() => started.add(fake.elapsed);
+        RunEngine(narrator: narrator, location: gps, stepSource: steps, clock: now).start(
+          goal: const RunGoal(GoalType.time, 3600),
+          profile: Profile(music: 'neon_pursuit', autoPause: false, countSteps: countSteps, heightCm: 180),
+          usualSpeed: usual,
+        );
+        fake.flushMicrotasks();
+        steps.take(0);
+        fake.flushMicrotasks();
+        return (narrator: narrator, gps: gps, steps: steps, now: now);
+      }
+
+      test('GPS: easing off thins the song out', () {
+        fakeAsync((fake) {
+          final run = begin(fake);
+          for (var i = 0; i < 60; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.gps.step(run.now(), 1.5);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels.single.$1, MusicLevel.low);
+        });
+      });
+
+      test('GPS: holding the usual pace leaves it alone', () {
+        fakeAsync((fake) {
+          final run = begin(fake);
+          for (var i = 0; i < 120; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.gps.step(run.now(), usual);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels, isEmpty);
+        });
+      });
+
+      test('steps with no GPS: easing off thins the song out', () {
+        fakeAsync((fake) {
+          final run = begin(fake, readiness: LocationReadiness.gpsDisabled, countSteps: true);
+          for (var i = 0; i < 60; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.steps.take(1); // A walking cadence, well under the usual pace.
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels.single.$1, MusicLevel.low);
+        });
+      });
+
+      test('steps with no GPS: a running cadence leaves it alone', () {
+        fakeAsync((fake) {
+          final run = begin(fake, readiness: LocationReadiness.gpsDisabled, countSteps: true);
+          for (var i = 0; i < 120; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.steps.take(3);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels.where((l) => l.$1 == MusicLevel.low), isEmpty);
+        });
+      });
+
+      test('neither: not knowing the speed does not read as standing still', () {
+        fakeAsync((fake) {
+          final run = begin(fake, readiness: LocationReadiness.gpsDisabled);
+          fake.elapse(const Duration(seconds: 300));
+          expect(run.narrator.musicLevels, isEmpty);
+        });
+      });
+
+      test('GPS lost part way holds the level rather than dropping it', () {
+        fakeAsync((fake) {
+          final run = begin(fake);
+          for (var i = 0; i < 60; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.gps.step(run.now(), usual);
+            fake.flushMicrotasks();
+          }
+          fake.elapse(const Duration(seconds: 300));
+          expect(run.narrator.musicLevels, isEmpty);
+        });
+      });
+    });
+
+    test('with no song, nothing is asked of the player', () {
+      fakeAsync((fake) {
+        final h = Harness(fake, goal: const RunGoal(GoalType.time, 60));
+        h.begin();
+        h.runFor(70, (_) => 3);
+        expect(h.narrator.musicLevels, isEmpty);
+        h.die();
       });
     });
   });

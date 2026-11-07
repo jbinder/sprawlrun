@@ -1,11 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/audio/song_stream.dart';
+import 'package:sprawl_run/audio/synth/drums.dart';
+import 'package:sprawl_run/audio/synth/dsp.dart';
 import 'package:sprawl_run/audio/synth/effects.dart';
+import 'package:sprawl_run/audio/synth/voices.dart';
 
 String shipped(String id) => File('assets/songs/$id.json').readAsStringSync();
 
@@ -283,6 +287,101 @@ void main() {
     });
   });
 
+  group('the chip voices', () {
+    Float32List note(void Function(Voices, Float32List) play) {
+      final bus = Float32List(44100);
+      play(Voices(Random(1)), bus);
+      return bus;
+    }
+
+    final env = Envelope(0, 0.5, 0);
+
+    test('a pulse is high for its share of the cycle, and speaks at once', () {
+      final bus = note(
+        (v, b) => v.pulse(b, 0, 57, env: env, duty: 0.25, vibratoRate: 0, vibratoDepth: 0, amp: 1),
+      );
+      expect(bus[1].abs(), greaterThan(0.1), reason: 'no delay before the note');
+      final sounding = bus.sublist(100, 22000);
+      final high = sounding.where((x) => x > 0).length / sounding.length;
+      expect(high, closeTo(0.25, 0.02));
+    });
+
+    test('a detuned pulse beats against itself, and a plain one does not change', () {
+      Float32List play(double detune) => note(
+        (v, b) => v.pulse(b, 0, 57, env: env, duty: 0.5, detune: detune, vibratoRate: 0, vibratoDepth: 0, amp: 1),
+      );
+      expect(play(0).sublist(0, 2000).map((x) => x.abs()).reduce(max), lessThan(0.5));
+      final beating = play(0.3).sublist(0, 22000);
+      expect(beating.map((x) => x.abs()).reduce(max), greaterThan(0.6));
+      expect(beating.where((x) => x.abs() < 0.05).length, greaterThan(500), reason: 'the two waves cancel in turn');
+    });
+
+    test('a triangle moves in sixteen steps', () {
+      final bus = note((v, b) => v.triangle(b, 0, 33, env: env, amp: 1));
+      expect({for (final x in bus.sublist(0, 22000)) x.toStringAsFixed(4)}.length, lessThanOrEqualTo(17));
+    });
+
+    test('a sub is a tone with little above it', () {
+      final bus = note((v, b) => v.sub(b, 0, 36, env: env, amp: 1));
+      expect(bus[1000].abs(), lessThan(1));
+      expect(bus.sublist(0, 22000).map((x) => x.abs()).reduce(max), greaterThan(0.5));
+    });
+
+    test('drive leaves silence alone and limits a loud signal softly', () {
+      final bus = Float32List.fromList([0, 0.05, 0.2, 4, -4]);
+      Drive(amount: 6, mix: 1).process(bus, bus.length);
+      expect(bus[0], 0);
+      expect(bus[1], greaterThan(0.05), reason: 'a quiet signal comes up');
+      expect(bus[3], closeTo(1, 0.01));
+      expect(bus[4], closeTo(-1, 0.01));
+      expect(bus[2], lessThan(1));
+    });
+
+    test('spread holds one side back, and only above the bass', () {
+      final left = Float32List(100)..[0] = 1;
+      final right = Float32List(100)..[0] = 1;
+      Spread(ms: 1).process(left, right, 100);
+      expect(left[0], 1);
+      expect(right[0], lessThan(0.1), reason: 'the click moves');
+      expect(right[44], greaterThan(0.9), reason: 'one millisecond is 44 samples');
+
+      final other = Float32List(100)..[0] = 1;
+      final same = Float32List(100)..[0] = 1;
+      Spread(ms: -1).process(other, same, 100);
+      expect(same[0], 1);
+      expect(other[44], greaterThan(0.9));
+
+      // A low tone stays nearly together, so a mono speaker does not lose it.
+      final lowLeft = Float32List(44100), lowRight = Float32List(44100);
+      for (var i = 0; i < 44100; i++) {
+        lowLeft[i] = lowRight[i] = sin(2 * pi * 50 * i / 44100);
+      }
+      final dry = Float32List.fromList(lowLeft);
+      Spread(ms: 15).process(lowLeft, lowRight, 44100);
+      var apart = 0.0, whole = 0.0;
+      for (var i = 22050; i < 44100; i++) {
+        apart += pow(dry[i] - lowRight[i], 2);
+        whole += dry[i] * dry[i];
+      }
+      expect(apart / whole, lessThan(0.25));
+    });
+
+    test('drive can turn down what it limits', () {
+      final loud = Float32List.fromList([4, -4]);
+      Drive(amount: 6, mix: 1, level: 0.5).process(loud, 2);
+      expect(loud[0], closeTo(0.5, 0.01));
+      expect(loud[1], closeTo(-0.5, 0.01));
+    });
+
+    test('every drum in the kit builds, within range', () {
+      for (final entry in drumBuilders.entries) {
+        final table = entry.value();
+        expect(table, isNotEmpty, reason: entry.key);
+        expect(table.map((x) => x.abs()).reduce(max), inInclusiveRange(0.05, 1.5), reason: entry.key);
+      }
+    });
+  });
+
   group('a song file is checked', () {
     Matcher fails(String message) =>
         throwsA(isA<SongFormatException>().having((e) => e.message, 'message', contains(message)));
@@ -339,6 +438,13 @@ void main() {
       expect(() => parse((j) => j['bars'] = 100000), fails('"bars"'));
     });
 
+    test('a pulse wave\'s width stays within range', () {
+      Song voice(double duty) => parse((j) => (j['tracks'] as List).last['voice'] = {'type': 'pulse', 'duty': duty});
+      expect(voice(0.25).tracks.last.voice.duty, 0.25);
+      expect(() => voice(0), throwsA(isA<SongFormatException>()));
+      expect(() => voice(1), throwsA(isA<SongFormatException>()));
+    });
+
     test('only known voices, drums and effects are accepted', () {
       expect(
         () => parse((j) => (j['tracks'] as List).first['voice'] = {'type': 'script'}),
@@ -361,6 +467,36 @@ void main() {
         ),
         fails('Unknown effect'),
       );
+    });
+
+    test('drive stays within range', () {
+      void withDrive(double amount) => parse(
+        (j) => j['buses'] = [
+          {
+            'id': 'dry',
+            'effects': [
+              {'type': 'drive', 'amount': amount, 'mix': 1},
+            ],
+          },
+        ],
+      );
+      withDrive(5);
+      expect(() => withDrive(50), throwsA(isA<SongFormatException>()));
+    });
+
+    test('spread stays within range', () {
+      void withSpread(double ms) => parse(
+        (j) => j['buses'] = [
+          {
+            'id': 'dry',
+            'effects': [
+              {'type': 'spread', 'ms': ms},
+            ],
+          },
+        ],
+      );
+      withSpread(-12);
+      expect(() => withSpread(100), throwsA(isA<SongFormatException>()));
     });
 
     test('a reverb must come last on its bus', () {

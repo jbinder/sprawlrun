@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 792 tests
+fvm flutter test                                    # 818 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -40,6 +40,10 @@ silently destroys the run log, which lives in `getApplicationDocumentsDirectory(
 `firstInstallTime` in `adb shell dumpsys package io.github.jbinder.sprawlrun` did
 not move — and check the install actually succeeded first; a failed install
 leaves the timestamp untouched too.
+
+A new file in an asset folder can miss the build: the tool's cached asset step
+does not notice it, and the app simply lacks it, with nothing failing. After adding
+a song, theme or pack, `flutter clean`, then check with `unzip -l` that the APK has it.
 
 Two more ways a deploy fails without touching data, both seen:
 

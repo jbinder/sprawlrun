@@ -15,6 +15,11 @@ const Map<String, Float64List Function()> drumBuilders = {
   'hat': _hat,
   'splash': _splash,
   'boom': _boom,
+  'taiko': _taiko,
+  'taikoHigh': _taikoHigh,
+  'chipKick': _chipKick,
+  'chipSnare': _chipSnare,
+  'chipHat': _chipHat,
 };
 
 /// [table], with its own copy run through a low-pass at MIDI note [cutoff], as
@@ -156,3 +161,78 @@ Float64List _boom() {
   }
   return x;
 }
+
+/// The noise channel of an early sound chip: a shift register, held for a number
+/// of samples that sets its pitch, and only ever fully on or off.
+Float64List _chipNoise(double seconds, int holdSamples, double Function(double t) level) {
+  final x = _table(seconds);
+  var register = 0x4001;
+  var bit = 1.0;
+  for (var i = 0; i < x.length; i++) {
+    if (i % holdSamples == 0) {
+      final feedback = (register ^ (register >> 1)) & 1;
+      register = (register >> 1) | (feedback << 14);
+      bit = register & 1 == 1 ? 1.0 : -1.0;
+    }
+    x[i] = bit * level(i / sampleRate);
+  }
+  return x;
+}
+
+/// A stepped triangle diving in pitch, for a kick on a chip with no sampler.
+Float64List _chipKick() {
+  final x = _table(0.16);
+  var phase = 0.25;
+  for (var i = 0; i < x.length; i++) {
+    final t = i / sampleRate;
+    phase += (50 + 190 * exp(-t / 0.018)) / sampleRate;
+    if (phase >= 1) phase -= 1;
+    final smooth = 1 - 4 * (phase - 0.5).abs();
+    final step = (smooth * 7.5).roundToDouble() / 7.5;
+    x[i] = step * min(1.0, (0.16 - t) / 0.02);
+  }
+  return x;
+}
+
+/// Noise over a falling tone.
+Float64List _chipSnare() {
+  final noise = _chipNoise(0.17, 3, (t) => 0.75 * exp(-t / 0.05));
+  var phase = 0.25;
+  for (var i = 0; i < noise.length; i++) {
+    final t = i / sampleRate;
+    phase += (150 + 120 * exp(-t / 0.02)) / sampleRate;
+    if (phase >= 1) phase -= 1;
+    noise[i] += (1 - 4 * (phase - 0.5).abs()) * 0.45 * exp(-t / 0.035);
+  }
+  return noise;
+}
+
+/// A short tick of high noise.
+Float64List _chipHat() => _chipNoise(0.05, 1, (t) => 0.7 * exp(-t / 0.012));
+
+/// A struck drumhead: a pitch that sinks as the skin settles, the inharmonic
+/// modes a membrane has, and a burst of noise for the strike itself.
+Float64List _skin(double seconds, double hz, double decay, double strike, int seed) {
+  final x = _table(seconds);
+  final noise = Random(seed);
+  final dark = Biquad.lpf(hz * 12);
+  var p1 = 0.0, p2 = 0.0, p3 = 0.0;
+  for (var i = 0; i < x.length; i++) {
+    final t = i / sampleRate;
+    final bend = 1 + 0.7 * exp(-t / 0.035);
+    p1 += 2 * pi * hz * bend / sampleRate;
+    p2 += 2 * pi * hz * 1.59 * bend / sampleRate;
+    p3 += 2 * pi * hz * 2.14 * bend / sampleRate;
+    final body = sin(p1) * exp(-t / decay) + 0.45 * sin(p2) * exp(-t / (decay * 0.42)) + 0.28 * sin(p3) * exp(-t / (decay * 0.25));
+    final hit = dark.tick(noise.nextDouble() * 2 - 1) * strike * exp(-t / 0.018);
+    x[i] = 0.78 * (body + hit) * min(1.0, (seconds - t) / 0.05);
+  }
+  return x;
+}
+
+/// A big ensemble drum. Pitched where headphones and phone speakers can still
+/// carry it: lower is measured but not heard.
+Float64List _taiko() => _skin(1.3, 78, 0.38, 0.7, 105);
+
+/// The smaller drum answering it, with more of the stick in it.
+Float64List _taikoHigh() => _skin(0.7, 125, 0.13, 1.3, 106);

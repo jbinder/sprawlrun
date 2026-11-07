@@ -30,7 +30,7 @@ const double maxNoteSeconds = 9;
 /// How much of a song plays. A track plays at its own level and above.
 enum MusicLevel { low, normal, high }
 
-enum VoiceType { saw, dsaw, prophet, blade, drum, riser }
+enum VoiceType { saw, dsaw, prophet, blade, pulse, triangle, sub, drum, riser }
 
 /// One note or drum hit in a bar, whichever way the file wrote it.
 class PatternEvent {
@@ -101,6 +101,7 @@ class Voice {
     this.detune = 0,
     this.vibratoRate = 0,
     this.vibratoDepth = 0,
+    this.duty = 0.5,
     this.drum,
     this.rate = 1,
     this.drumCutoff,
@@ -114,6 +115,9 @@ class Voice {
   /// Envelope, in beats: this much, plus a share of the note's own length.
   final double attack, sustain, release, attackOfNote, sustainOfNote, releaseOfNote;
   final double cutoff, detune, vibratoRate, vibratoDepth;
+
+  /// How much of a `pulse` wave's cycle is high.
+  final double duty;
   final String? drum;
   final double rate;
   final double? drumCutoff;
@@ -165,6 +169,23 @@ class EchoEffect extends Effect {
   const EchoEffect({required this.phase, required this.decay, required this.mix});
 
   final double phase, decay, mix;
+}
+
+/// Overdrive: pushes what goes through into a soft limit, for a harder edge.
+class DriveEffect extends Effect {
+  const DriveEffect({required this.amount, required this.mix, this.level = 1});
+
+  /// [level] is what comes out, since turning down what goes in hardly changes
+  /// the loudness of something already driven into its limit.
+  final double amount, mix, level;
+}
+
+/// Width: one side of the bus heard a few milliseconds after the other.
+class SpreadEffect extends Effect {
+  const SpreadEffect({required this.ms});
+
+  /// Positive delays the right, negative the left.
+  final double ms;
 }
 
 class ReverbEffect extends Effect {
@@ -269,11 +290,23 @@ class _SongParser {
   static final RegExp _idPattern = RegExp(r'^[a-z0-9_-]{1,40}$');
   static final RegExp _notePattern = RegExp(r'^([a-g])(#|b)?(-?\d)$');
   static const Map<String, int> _pitchClass = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11};
-  static const Set<String> _drums = {'kick', 'snare', 'dubSnare', 'hat', 'splash', 'boom'};
+  static const Set<String> _drums = {
+    'kick',
+    'snare',
+    'dubSnare',
+    'hat',
+    'splash',
+    'boom',
+    'taiko',
+    'taikoHigh',
+    'chipKick',
+    'chipSnare',
+    'chipHat',
+  };
 
   static const int _maxBars = 512;
-  static const int _maxTracks = 16;
-  static const int _maxBuses = 8;
+  static const int _maxTracks = 32;
+  static const int _maxBuses = 10;
   static const int _maxEventsPerBar = 64;
 
   Song parse() {
@@ -392,6 +425,12 @@ class _SongParser {
         decay: _double(e, 'decay', 0.1, 16),
         mix: _double(e, 'mix', 0, 1),
       ),
+      'drive' => DriveEffect(
+        amount: _double(e, 'amount', 1, 20),
+        mix: _double(e, 'mix', 0, 1),
+        level: e.containsKey('level') ? _double(e, 'level', 0, 1) : 1,
+      ),
+      'spread' => SpreadEffect(ms: _double(e, 'ms', -40, 40)),
       'reverb' => ReverbEffect(
         room: _double(e, 'room', 0, 1),
         damp: _double(e, 'damp', 0, 1),
@@ -581,6 +620,7 @@ class _SongParser {
       detune: v.containsKey('detune') ? _double(v, 'detune', 0, 2) : 0,
       vibratoRate: v.containsKey('vibratoRate') ? _double(v, 'vibratoRate', 0, 20) : 0,
       vibratoDepth: v.containsKey('vibratoDepth') ? _double(v, 'vibratoDepth', 0, 2) : 0,
+      duty: v.containsKey('duty') ? _double(v, 'duty', 0.05, 0.95) : 0.5,
       drum: drum,
       rate: v.containsKey('rate') ? _double(v, 'rate', 0.25, 4) : 1,
       drumCutoff: type == VoiceType.drum && v.containsKey('cutoff') ? _double(v, 'cutoff', 0, 130) : null,

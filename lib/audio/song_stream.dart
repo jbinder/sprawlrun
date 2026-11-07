@@ -165,6 +165,22 @@ class SongStream {
             vibratoDepth: voice.vibratoDepth,
             amp: amp,
           );
+        case VoiceType.pulse:
+          _voices.pulse(
+            bus,
+            start,
+            note,
+            env: env,
+            duty: voice.duty,
+            detune: voice.detune,
+            vibratoRate: voice.vibratoRate,
+            vibratoDepth: voice.vibratoDepth,
+            amp: amp,
+          );
+        case VoiceType.triangle:
+          _voices.triangle(bus, start, note, env: env, amp: amp);
+        case VoiceType.sub:
+          _voices.sub(bus, start, note, env: env, amp: amp);
         case VoiceType.riser:
           _risers.add(
             Riser(
@@ -195,35 +211,59 @@ class SongStream {
 
 /// A bus and its effects, running for as long as the stream does.
 class _RunningBus {
-  _RunningBus(this.samples, this.slicer, this.echo, this.reverb);
+  _RunningBus(this.samples, this.slicer, this.drive, this.echo, this.reverb, this.spread);
 
   factory _RunningBus.of(Bus bus, double spb) {
     SlicerEffect? slicer;
+    Drive? drive;
     Echo? echo;
     Reverb? reverb;
+    Spread? spread;
     for (final effect in bus.effects) {
       switch (effect) {
         case SlicerEffect():
           slicer = effect;
+        case SpreadEffect():
+          spread = Spread(ms: effect.ms);
+        case DriveEffect():
+          drive = Drive(amount: effect.amount, mix: effect.mix, level: effect.level);
         case EchoEffect():
           echo = Echo(secondsPerBeat: spb, phaseBeats: effect.phase, decayBeats: effect.decay, mix: effect.mix);
         case ReverbEffect():
           reverb = Reverb(room: effect.room, damp: effect.damp, mix: effect.mix);
       }
     }
-    return _RunningBus(Float32List(SongStream._window), slicer, echo, reverb);
+    return _RunningBus(Float32List(SongStream._window), slicer, drive, echo, reverb, spread);
   }
 
   final Float32List samples;
   final SlicerEffect? slicer;
+  final Drive? drive;
   final Echo? echo;
   final Reverb? reverb;
+  final Spread? spread;
 
   void mixInto(Float32List l, Float32List r, int count, double samplesPerBeat, double beats, int songBar) {
     if (slicer != null) _slice(slicer!, count, samplesPerBeat, beats, songBar);
+    drive?.process(samples, count);
     echo
       ?..setSamplesPerBeat(samplesPerBeat)
       ..process(samples, count);
+    final spread = this.spread;
+    if (spread == null) {
+      _mix(l, r, count);
+      return;
+    }
+    final ownLeft = Float32List(count), ownRight = Float32List(count);
+    _mix(ownLeft, ownRight, count);
+    spread.process(ownLeft, ownRight, count);
+    for (var i = 0; i < count; i++) {
+      l[i] += ownLeft[i];
+      r[i] += ownRight[i];
+    }
+  }
+
+  void _mix(Float32List l, Float32List r, int count) {
     if (reverb != null) {
       reverb!.process(samples, count, l, r);
       return;

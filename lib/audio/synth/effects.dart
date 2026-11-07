@@ -6,6 +6,58 @@ import 'dart:typed_data';
 
 import 'dsp.dart';
 
+/// Widens a bus by holding one channel back a few milliseconds, which the ear
+/// hears as width and not as an echo. Two buses spread opposite ways make a wall.
+///
+/// Only what is above [crossoverHz] moves. Bass stays in the centre, or a phone
+/// speaker summing the two sides would cancel part of it.
+class Spread {
+  Spread({required double ms}) : _delayRight = ms > 0, _line = Float32List(max(1, (ms.abs() / 1000 * sampleRate).round()));
+
+  static const double crossoverHz = 180;
+  static final double _smoothing = 1 - exp(-2 * pi * crossoverHz / sampleRate);
+
+  final bool _delayRight;
+  final Float32List _line;
+  int _at = 0;
+  double _low = 0;
+
+  void process(Float32List left, Float32List right, int count) {
+    final held = _delayRight ? right : left;
+    for (var i = 0; i < count; i++) {
+      final x = held[i];
+      _low += (x - _low) * _smoothing;
+      held[i] = _low + _line[_at];
+      _line[_at] = x - _low;
+      if (++_at == _line.length) _at = 0;
+    }
+  }
+}
+
+/// Overdrive, as a soft limit that gets harder with [amount] and leaves a full
+/// signal about where it found it. Keeps no state, so it can't ring on.
+class Drive {
+  Drive({required this.amount, required this.mix, this.level = 1}) : _makeUp = 1 / _limit(amount);
+
+  final double amount, mix, level;
+  final double _makeUp;
+
+  /// A rational stand-in for tanh, close from 0 to 3 and flat beyond.
+  static double _limit(double x) {
+    if (x >= 3) return 1;
+    if (x <= -3) return -1;
+    final square = x * x;
+    return x * (27 + square) / (27 + 9 * square);
+  }
+
+  void process(Float32List bus, int count) {
+    for (var i = 0; i < count; i++) {
+      final x = bus[i];
+      bus[i] = (x * (1 - mix) + _limit(x * amount) * _makeUp * mix) * level;
+    }
+  }
+}
+
 /// `CombN`: delayed output only, the decay given as a 60 dB time.
 class Echo {
   Echo({

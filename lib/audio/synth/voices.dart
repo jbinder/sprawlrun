@@ -87,6 +87,76 @@ class Voices {
     _out(env, count, bus, start, 1.1 * amp * centre);
   }
 
+  /// A square wave of a set width, as an early sound chip made. Unlike the Sonic
+  /// Pi voices it has no normaliser in front of it, so it speaks on the beat, and
+  /// any vibrato waits a moment, the way those tunes played it.
+  void pulse(
+    Float32List bus,
+    int start,
+    double note, {
+    required Envelope env,
+    required double duty,
+    double detune = 0,
+    required double vibratoRate,
+    required double vibratoDepth,
+    required double amp,
+  }) {
+    final count = env.length;
+    final end = min(count, bus.length - start);
+    final gain = 0.6 * amp * centre;
+    final still = midiHz(note) / sampleRate;
+    final swing = 2 * pi * vibratoRate / sampleRate;
+    final delay = (0.18 * sampleRate).round();
+    // A second wave a little off the first, for weight. Costs nothing when unused.
+    final second = detune > 0 ? midiHz(note + detune) / sampleRate : 0.0;
+    var phase = 0.0, phase2 = 0.0;
+    for (var i = 0; i < end; i++) {
+      final dt = vibratoDepth > 0 && i > delay ? midiHz(note + vibratoDepth * sin(swing * (i - delay))) / sampleRate : still;
+      var fall = phase + 1 - duty;
+      if (fall >= 1) fall -= 1;
+      var v = (phase < duty ? 1.0 : -1.0) + blep(phase, dt) - blep(fall, dt);
+      if (second > 0) {
+        var fall2 = phase2 + 1 - duty;
+        if (fall2 >= 1) fall2 -= 1;
+        v += (phase2 < duty ? 1.0 : -1.0) + blep(phase2, second) - blep(fall2, second);
+        phase2 += second;
+        if (phase2 >= 1) phase2 -= 1;
+      }
+      bus[start + i] += v * env.at(i) * gain;
+      phase += dt;
+      if (phase >= 1) phase -= 1;
+    }
+  }
+
+  /// A triangle in sixteen steps, which is where those chips' bass got its grain.
+  void triangle(Float32List bus, int start, double note, {required Envelope env, required double amp}) {
+    final count = env.length;
+    final end = min(count, bus.length - start);
+    final gain = 0.9 * amp * centre;
+    final dt = midiHz(note) / sampleRate;
+    var phase = 0.25;
+    for (var i = 0; i < end; i++) {
+      final smooth = 1 - 4 * (phase - 0.5).abs();
+      final v = (smooth * 7.5).roundToDouble() / 7.5;
+      bus[start + i] += v * env.at(i) * gain;
+      phase += dt;
+      if (phase >= 1) phase -= 1;
+    }
+  }
+
+  /// A sine for the very bottom, with a touch of its octave so that small
+  /// speakers and earphones still show it is there.
+  void sub(Float32List bus, int start, double note, {required Envelope env, required double amp}) {
+    final count = env.length;
+    final end = min(count, bus.length - start);
+    final gain = amp * centre;
+    final step = 2 * pi * midiHz(note) / sampleRate;
+    for (var i = 0; i < end; i++) {
+      final phase = step * i;
+      bus[start + i] += (sin(phase) + 0.15 * sin(2 * phase)) * env.at(i) * gain;
+    }
+  }
+
   void _out(Envelope env, int count, Float32List bus, int start, double gain) {
     final end = min(count, bus.length - start);
     final normal = _normal;

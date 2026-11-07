@@ -40,14 +40,16 @@ The last two numbers are the first bar and how many to render.
 ## Buses
 
 Tracks play into buses, and every bus goes to the master chain. A bus has an `id`
-and optional `effects`, applied in order. A reverb makes a bus stereo, so it has
-to come last.
+and optional `effects`, applied as slicer, drive, echo, reverb, then spread, whatever
+order they are listed in. A reverb makes a bus stereo, so it has to come last.
 
 | Effect | Settings |
 |---|---|
 | `slicer` | `mix`, and optional `mixClips` of `{ "from", "to", "mix" }` where it differs. A falling saw on every beat: what goes through is struck and fades. |
+| `drive` | `amount` from 1 to 20, `mix`, and optional `level` from 0 to 1 for what comes out. Overdrive, for a harder edge. A voice driven into the limit hardly gets quieter when its `amp` drops, so use `level`. |
 | `echo` | `phase` and `decay` in beats, `mix`. |
 | `reverb` | `room`, `damp`, `mix`. |
+| `spread` | `ms`, from -40 to 40. Width: holds the right channel back that long, or the left if negative. Two buses spread opposite ways make a wall. Below about 180 Hz stays in the centre. |
 
 ## Patterns
 
@@ -89,7 +91,10 @@ add `amp`, `transpose` in semitones, and `cutoff`, as a number or as
 | `dsaw` | Two detuned saws. `:dsaw`. | `cutoff`, `detune` |
 | `prophet` | Five moving pulses through a resonant filter. `:prophet`. | `cutoff` |
 | `blade` | A saw through three formants, with delayed vibrato. `:blade`. | `vibratoRate` in hertz, `vibratoDepth` |
-| `drum` | `drum`: `kick`, `snare`, `dubSnare`, `hat`, `splash` or `boom`. | `rate`, `cutoff` |
+| `pulse` | A square wave as an early sound chip made it, with no 20 ms delay. A delayed vibrato. | `duty`, the share of the cycle that is high (0.5 is hollow, 0.125 is thin), `detune` for a second wave beside it, `vibratoRate`, `vibratoDepth` |
+| `triangle` | A triangle in sixteen steps, for chip bass. | |
+| `sub` | A sine with a touch of its octave, for the very bottom. | |
+| `drum` | `drum`: `kick`, `snare`, `dubSnare`, `hat`, `splash`, `boom`, `taiko`, `taikoHigh`, or the chip kit `chipKick`, `chipSnare`, `chipHat`. | `rate`, `cutoff` |
 | `riser` | Noise with a sliding filter, for builds. Started by any note. | `cutoff`, `cutoffTo`, `slide` in beats |
 
 Every voice takes `amp`. All but `drum` take an envelope in beats: `attack`,

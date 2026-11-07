@@ -14,7 +14,8 @@ Everything here is free to download, as far as its page said when it was added. 
 
 <!-- One entry per track or album, in order by style. test/contribute_test.dart checks
      each one: a heading linking to its page and not to a file, a Style, a BPM that is
-     a number, a range or -, a Licence, and who suggested it. The rest is optional. -->
+     a number, a range or -, a Licence, who suggested it, and a vote link to its issue.
+     The rest is optional. -->
 
 ### [In Delta Negative](https://neurotech.bandcamp.com/album/in-delta-negative) by Neurotech
 
@@ -22,7 +23,7 @@ Everything here is free to download, as far as its page said when it was added. 
 
 **Style:** cyber metal, industrial, futurepop · **Mood:** energizing, dark, epic · **BPM:** 143-172 · **Vocals:** yes · **Good for:** intense runs · **Length:** 41:43
 
-**Licence:** all rights reserved, name your price · **Suggested by:** [jbinder](https://github.com/jbinder)
+**Licence:** all rights reserved, name your price · **Suggested by:** [jbinder](https://github.com/jbinder) · [👍 vote](https://github.com/jbinder/sprawlrun/issues/12)
 
 ### [Instinkt](https://neurowulf.bandcamp.com/album/instinkt) by NeuroWulf
 
@@ -30,7 +31,7 @@ Everything here is free to download, as far as its page said when it was added. 
 
 **Style:** futurepop, trance, electro · **Mood:** hypnotic, melancholic, driving · **BPM:** 128-150 · **Vocals:** yes · **Good for:** long runs · **Length:** 41:04
 
-**Licence:** all rights reserved, name your price · **Suggested by:** [jbinder](https://github.com/jbinder)
+**Licence:** all rights reserved, name your price · **Suggested by:** [jbinder](https://github.com/jbinder) · [👍 vote](https://github.com/jbinder/sprawlrun/issues/13)
 
 ## Using a folder
 

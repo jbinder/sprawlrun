@@ -22,7 +22,7 @@ you to slow down.*
 <a href="https://github.com/jbinder/sprawlrun/actions/workflows/build.yml"><img src="https://github.com/jbinder/sprawlrun/actions/workflows/build.yml/badge.svg" alt="Build"></a>
 <a href="https://hosted.weblate.org/engage/sprawlrun/"><img src="https://hosted.weblate.org/widget/sprawlrun/svg-badge.svg" alt="Translation status"></a>
 
-**[Contribute](#contributing)**: translate it, write missions, make a colour theme — none of it needs Flutter.
+**[Contribute](#contributing)**: translate it, write missions, make a colour theme, suggest music to run to — none of it needs Flutter.
 
 <br>
 
@@ -80,6 +80,22 @@ Don't want that? Switch pursuits off. The story still plays.
 <td width="42%"><img src="docs/screenshots/run-hud.png" alt="A pursuit in progress"></td>
 </tr>
 </table>
+
+## Music that runs with you
+
+Six songs of ten minutes each, from a melancholic walk in the rain to a wall of
+distorted power chords. There are no recordings: **your phone plays them live**, from
+small files of notes, so the download barely grew.
+
+Because they are played and not replayed, **they follow the run.** Ease off and the
+song thins out and slows. Push, get chased or reach your goal and it lifts, adds a
+layer and speeds up. The bass stays on your stride, and every story line lowers the
+music and brings it back.
+
+Choose one, shuffle them, or let **Best match** pick for the run: something quiet for
+a walk, something hard for a mission full of pursuits. Or play **your own files** from
+a folder, with [music other runners recommend](docs/FIND_MUSIC.md). Or keep your own
+player, as ever: all of this is off until you choose it.
 
 ## You set the target
 
@@ -238,6 +254,7 @@ next October if you do not finish. One switch in Settings turns it all off.
 **Audio**
 - Your music ducks for a transmission and is forced back if the player sulks
 - Six optional ten-minute songs, played live by the phone during a run with no audio files, written as data ([docs/SONGS.md](docs/SONGS.md)); choose one, shuffle them, let the app match the song to the run, or play your own files from a folder ([where to find music](docs/FIND_MUSIC.md)); it thins out and slows when you ease off, and lifts when you push, get chased or reach your goal
+- A song library with a switch per song, and the song and its progress on the run screen
 - Optional ambient synth bed for when you bring no music of your own
 - Adjustable speech rate and effects volume; story voice can be silenced
 
@@ -275,9 +292,11 @@ next October if you do not finish. One switch in Settings turns it all off.
 
 # Contributing
 
-Translations, mission packs, colour themes, bug reports and code are all
-welcome, and only code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
-Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**.
+Translations, mission packs, colour themes, music to run to, bug reports and code
+are all welcome, and only code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
+Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**. Got a track
+that keeps you running? **[Suggest it](docs/FIND_MUSIC.md#music-runners-suggest)**, and
+your name goes next to it.
 
 ## Translations
 
@@ -303,6 +322,15 @@ shows one at a time; **All packs** lists them all, grouped into active and done,
 and finishing the last mission of a pack offers the next one that's still open.
 A pack can also bring its own colours — a theme it names or carries whole — worn
 while it is the selected pack, unless the runner switches **Pack colours** off.
+
+## Adding music
+
+Got a track or an album that keeps you running? [Suggest it](https://github.com/jbinder/sprawlrun/issues/new?template=music_suggestion.yml)
+for [the list runners build together](docs/FIND_MUSIC.md), and vote on the ones you'd run to.
+
+The app's own songs are JSON files of notes in `assets/songs/`, in the format in
+**[docs/SONGS.md](docs/SONGS.md)**, played by synths written in Dart. Adding a file adds
+a song.
 
 ## Adding colour themes
 
@@ -356,7 +384,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 691 tests
+flutter test                   # 877 tests
 ```
 
 GitHub Actions runs both on every push and pull request (`.github/workflows/tests.yml`),
@@ -389,7 +417,8 @@ this README cannot drift from what the app actually looks like.
 lib/
   models/       Mission, StoryBeat, RunGoal, RunRecord, Profile, Achievement
   data/         JSON repositories (runs, profile, mission packs, themes) + backup + GPX
-  services/     run_engine · narrator · location · stats · energy · achievements
+  services/     run_engine · narrator · location · stats · energy · achievements · music
+  audio/        songs as data, the streaming engine and its synths, pure Dart
   state/        AppState — the single source of truth the UI reads
   screens/      dashboard · brief · run HUD · summary · stats · history · wall · codex · settings
   widgets/      backdrop · panels · glitch text · rings & bars · route trace
@@ -397,6 +426,7 @@ lib/
   l10n/         interface text: app_en.arb is the source, app_<lang>.arb the translations
 assets/missions/l10n/  story text: <pack>_en.arb is generated from the pack, <pack>_<lang>.arb translates it
 assets/themes/  the shipped colour themes, one JSON file each
+assets/songs/   the shipped songs, one JSON file each
 tool/           SFX, icon, screenshot, pseudo-locale and pack-string generators
 ```
 
@@ -438,7 +468,8 @@ Some notes on the shape of it:
   importing reads one back through the system document picker, so the app needs
   no storage permission and never sees a file you did not choose. Automatic
   backups go to a folder chosen in the system folder picker, which grants that
-  one folder; getting them off the phone is left to a sync app of your choice. The merged
+  one folder; getting them off the phone is left to a sync app of your choice. A music
+  folder works the same way, read only. The merged
   manifest carries two things it did not ask for directly — `ACCESS_NETWORK_STATE`,
   pulled in by ExoPlayer via `just_audio`, which reads connectivity status and
   grants no network access; and a self-defined

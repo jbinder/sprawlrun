@@ -64,6 +64,7 @@ void main() {
         expect(entry, contains('**Style:**'), reason: name);
         expect(entry, contains('**Licence:**'), reason: name);
         expect(entry, matches(RegExp(r'\*\*Suggested by:\*\* \S')), reason: name);
+        expect(entry, matches(RegExp(r'\[👍 vote\]\(https://github\.com/jbinder/sprawlrun/issues/\d+\)')), reason: name);
         for (final bpm in RegExp(r'\*\*BPM:\*\* (\S+)').allMatches(entry)) {
           expect(bpm[1], matches(RegExp(r'^(\d{2,3}(-\d{2,3})?|-)$')), reason: name);
         }

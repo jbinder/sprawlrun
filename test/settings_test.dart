@@ -182,11 +182,18 @@ void main() {
       expect(find.text('Music follows your effort'), findsNothing);
     });
 
-    testWidgets('a folder is not chosen until there is one to play', (tester) async {
+    testWidgets('someone with no folder yet still reaches the way to find music', (tester) async {
       final state = await pumpSettings(tester);
       await pick(tester, 'From a folder');
-      expect(state.musicFolderName, isNull);
-      expect(state.profile.music, Profile.noMusic, reason: 'backing out of the picker changes nothing');
+      expect(state.musicFolderName, isNull, reason: 'they backed out of the picker');
+      expect(state.profile.music, Profile.folderMusic);
+      expect(find.text('Choose'), findsOneWidget);
+      expect(find.text('Where to find music'), findsOneWidget);
+      expect(find.text('Suggest music to run to'), findsOneWidget);
+      expect(find.textContaining('No music found'), findsOneWidget);
+
+      await pick(tester, 'Off');
+      expect(find.text('Where to find music'), findsNothing);
     });
   });
 

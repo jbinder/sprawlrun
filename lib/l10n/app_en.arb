@@ -1949,6 +1949,14 @@
   "@musicFolderNote": {
     "description": "Shown under the run music setting when a folder is chosen. Unlike the generated songs, recordings do not change with the run. The runner's music app is paused for the run."
   },
+  "contributeMusic": "Suggest music to run to",
+  "@contributeMusic": {
+    "description": "Button in Settings, Contribute: opens a form in the browser to suggest a free track for the community's list of music."
+  },
+  "musicFindMusic": "Where to find music",
+  "@musicFindMusic": {
+    "description": "Link under the folder settings. Opens a web page in the browser listing sites with free music to download. The app itself downloads nothing."
+  },
   "musicFolderRow": "Music folder",
   "@musicFolderRow": {
     "description": "Setting: which folder on the phone music is played from. Tapping it opens the system folder picker."

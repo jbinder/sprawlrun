@@ -57,6 +57,14 @@ class ContributeControls extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         CyberButton(
+          label: l.contributeMusic,
+          icon: Icons.library_music_outlined,
+          style: CyberButtonStyle.ghost,
+          dense: true,
+          onPressed: () => _go(context, ProjectLinks.suggestMusic),
+        ),
+        const SizedBox(height: 8),
+        CyberButton(
           label: l.contributeHow,
           icon: Icons.groups_outlined,
           style: CyberButtonStyle.ghost,

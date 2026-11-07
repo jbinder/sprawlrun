@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 874 tests
+fvm flutter test                                    # 877 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -246,7 +246,8 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   same tree can be both, sharing one grant, so each gives up only its own half. Its
   files play through `FolderMusicPlayer`, just_audio on `content://`, which needs no
   loopback server and so no INTERNET; `RunMusicPlayer` picks by address. Recordings
-  have no levels. Like the backup folder, check it on a device.
+  have no levels. Like the backup folder, check it on a device. Where to get files
+  is `docs/FIND_MUSIC.md`, reached through `openLink`: the app fetches nothing.
 - **The songs are a library, not entries in the run music picker.** The picker has
   one Song library choice, and `SongLibraryScreen` sets how it plays, writing
   `shuffle`, `best` or a song id to `Profile.music`. `Profile.songsLeftOut` lists

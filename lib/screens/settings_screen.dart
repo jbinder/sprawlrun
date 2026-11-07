@@ -7,6 +7,7 @@ import '../audio/song.dart';
 import '../models/profile.dart';
 import '../models/stride.dart';
 import '../services/app_version.dart';
+import '../services/project_links.dart';
 import '../services/stats_service.dart';
 import '../state/app_state.dart';
 import 'song_library_screen.dart';
@@ -249,13 +250,13 @@ class SettingsScreen extends StatelessWidget {
                             onChanged: (picked) async {
                               if (picked == _songLibrary && profile.generatedMusicOn) return;
                               final v = picked == _songLibrary ? Profile.bestMatchMusic : picked;
-                              // Nothing is chosen until there is a folder to play.
-                              if (v == Profile.folderMusic &&
-                                  state.musicFolderName == null &&
-                                  !await state.chooseMusicFolder()) {
-                                return;
+                              await state.updateProfile(state.profile.copyWith(music: v));
+                              // Backing out of the picker stays here, with the way
+                              // to find music on show: someone with no folder yet
+                              // is who that link is for.
+                              if (v == Profile.folderMusic && state.musicFolderName == null) {
+                                await state.chooseMusicFolder();
                               }
-                              update(state.profile.copyWith(music: v));
                             },
                           ),
                           const _Rule(),
@@ -296,6 +297,10 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                             if (state.folderTracks.isEmpty) ...[const _Rule(), _Note(l.musicFolderEmpty)],
+                            const _Rule(),
+                            _LinkRow(label: l.musicFindMusic, url: ProjectLinks.findMusic),
+                            const _Rule(),
+                            _LinkRow(label: l.contributeMusic, url: ProjectLinks.suggestMusic),
                             const _Rule(),
                             SwitchRow(
                               label: l.musicFolderRandom,
@@ -594,6 +599,36 @@ class _LibraryRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Out to a page in the browser. The app itself fetches nothing.
+class _LinkRow extends StatelessWidget {
+  const _LinkRow({required this.label, required this.url});
+
+  final String label;
+  final Uri url;
+
+  Future<void> _open(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    if (await openInBrowser(url)) return;
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.contributeNoBrowser('$url'), style: CyType.body(size: 14, color: Cy.red))),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => _open(context),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
+          Icon(Icons.open_in_new, size: 16, color: Cy.inkDim),
+        ],
+      ),
+    ),
+  );
 }
 
 class _Rule extends StatelessWidget {

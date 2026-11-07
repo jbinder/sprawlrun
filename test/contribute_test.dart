@@ -31,6 +31,45 @@ void main() {
       expect(ProjectLinks.bug().queryParameters.keys, ['template']);
     });
 
+    test('the music page is where the link says, and every site on it is a real link', () {
+      expect(ProjectLinks.findMusic.path, endsWith('/blob/main/docs/FIND_MUSIC.md'));
+      final page = File('docs/FIND_MUSIC.md').readAsStringSync();
+      expect(RegExp(r'\]\(https://').allMatches(page).length, greaterThan(5));
+      expect(page, contains('Settings → Audio → Run music'));
+    });
+
+    test('the music form asks little, and has what the page needs', () {
+      final source = form(ProjectLinks.suggestMusic.queryParameters['template']!);
+      for (final field in ['track', 'artist', 'link', 'why', 'good_for', 'vocals', 'style', 'mood', 'bpm', 'length', 'licence', 'free']) {
+        expect(source, contains('id: $field'), reason: field);
+      }
+      // Each extra required field is someone who does not bother.
+      expect('required: true'.allMatches(source).length, 4, reason: 'track, artist, link and the permission');
+      final page = File('docs/FIND_MUSIC.md').readAsStringSync();
+      expect(page, contains('template=music_suggestion.yml'));
+      expect(page, contains('label%3Amusic'), reason: 'the way to the votes');
+      expect(File('CONTRIBUTING.md').readAsStringSync(), contains('docs/FIND_MUSIC.md'));
+    });
+
+    test('every entry on the music page is complete', () {
+      final page = File('docs/FIND_MUSIC.md').readAsStringSync();
+      expect(page.indexOf('## Music runners suggest'), lessThan(page.indexOf('## Where to look')), reason: 'the people first');
+      final section = RegExp(r'## Music runners suggest\n(.*?)\n## ', dotAll: true).firstMatch(page)!.group(1)!;
+      final entries = section.split(RegExp(r'^### ', multiLine: true)).skip(1).toList();
+      expect(entries, isNotEmpty, reason: 'or this test checks nothing');
+      for (final entry in entries) {
+        final name = entry.split('\n').first;
+        expect(name, matches(RegExp(r'^\[.+\]\(https://[^)]+\) by .+$')), reason: 'a linked name and an artist: $name');
+        expect(name, isNot(matches(RegExp(r'\.(mp3|ogg|flac|wav|zip|m4a|opus)\)'))), reason: 'the page, not the file: $name');
+        expect(entry, contains('**Style:**'), reason: name);
+        expect(entry, contains('**Licence:**'), reason: name);
+        expect(entry, matches(RegExp(r'\*\*Suggested by:\*\* \S')), reason: name);
+        for (final bpm in RegExp(r'\*\*BPM:\*\* (\S+)').allMatches(entry)) {
+          expect(bpm[1], matches(RegExp(r'^(\d{2,3}(-\d{2,3})?|-)$')), reason: name);
+        }
+      }
+    });
+
     test('CONTRIBUTING is where the link says', () {
       expect(File(ProjectLinks.contributing.pathSegments.last).existsSync(), isTrue);
       expect(ProjectLinks.contributing.path, endsWith('/blob/main/CONTRIBUTING.md'));

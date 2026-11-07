@@ -1,0 +1,97 @@
+name: Music to run to
+description: Got a track or album that keeps you running? Tell us, and your name goes next to it.
+title: "Music: "
+labels: [music]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Suggestions go on [the music page](https://github.com/jbinder/sprawlrun/blob/main/docs/FIND_MUSIC.md), credited to you by your GitHub name. The first three fields are all it takes. Your own music is welcome. Only suggest music its artist offers for free.
+  - type: input
+    id: track
+    attributes:
+      label: Track or album
+    validations:
+      required: true
+  - type: input
+    id: artist
+    attributes:
+      label: Artist
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      description: The page the artist or site offers it on. Not a direct link to the file.
+      placeholder: https://
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why do you love it?
+      description: A line in your own words. It goes on the page with your name.
+      placeholder: Energizing. It gives you power for the run.
+  - type: dropdown
+    id: good_for
+    attributes:
+      label: Good for
+      multiple: true
+      options:
+        - Easy runs
+        - Long runs
+        - Intense runs
+        - Walks
+  - type: dropdown
+    id: vocals
+    attributes:
+      label: Vocals
+      description: Story lines play over your music, so this helps people who follow the story.
+      options:
+        - Instrumental
+        - Vocals
+        - Some of each
+  - type: input
+    id: style
+    attributes:
+      label: Style
+      placeholder: synthwave, darksynth, techno, drum and bass, chiptune, ambient
+  - type: input
+    id: mood
+    attributes:
+      label: Mood
+      description: A word or two.
+      placeholder: energizing, hypnotic, dark, uplifting, melancholic
+  - type: input
+    id: bpm
+    attributes:
+      label: Beats per minute
+      description: If you know it, or a range for an album.
+  - type: input
+    id: length
+    attributes:
+      label: Length
+      placeholder: "4:20"
+  - type: dropdown
+    id: licence
+    attributes:
+      label: Licence
+      description: As its page states it, if you can see one.
+      options:
+        - CC0 or public domain
+        - CC BY
+        - CC BY-SA
+        - CC BY-NC
+        - CC BY-NC-SA
+        - CC BY-ND
+        - CC BY-NC-ND
+        - All rights reserved, name your price
+        - Free download, other terms
+  - type: checkboxes
+    id: free
+    attributes:
+      label: Permission
+      options:
+        - label: As far as I can see, its page offers it as a free download.
+          required: true

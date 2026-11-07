@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 818 tests
+fvm flutter test                                    # 846 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -235,6 +235,11 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   climb loses its music. Levels and the two tempos are optional for every song, shipped
   ones too: without them a song plays straight. A phone falling behind drops a
   level for the rest of the run before the music stops.
+- **`SongPicker` chooses the music, and is pure.** Shuffle and Best match give
+  `RunEngine` a queue before the run; `SongSequence` plays each song through,
+  rings it out and starts the next, only ever one at a time. "Played lately" comes
+  from `RunRecord.song`, so it is derived from the log and rides in backups. A song
+  chosen by name repeats by itself, and one that has gone falls back to Best match.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
@@ -27,6 +28,7 @@ import '../models/stride.dart';
 import '../services/battery_optimization.dart';
 import '../services/achievement_engine.dart';
 import '../services/music_director.dart';
+import '../services/song_picker.dart';
 import '../services/backup_folder.dart';
 import '../services/backup_nudge.dart';
 import '../services/narrator.dart';
@@ -154,6 +156,30 @@ class AppState extends ChangeNotifier {
   /// The runner's stride, learned from the run log, for a run to turn steps
   /// into distance when the GPS has none. Derived on demand, like the stats.
   Stride get stride => Stride.of(runLog, heightCm: profile.heightCm);
+
+  /// The songs a run should play, in order. Empty when it plays no song. A chosen
+  /// song that has gone falls back to the best match rather than to silence.
+  List<String> musicQueue({Mission? mission, required RunGoal goal, required Activity activity, Random? random}) {
+    if (!profile.generatedMusicOn || songs.isEmpty) return const [];
+    final dice = random ?? Random();
+    final recent = SongPicker.recentSongs(runLog);
+    if (profile.music == Profile.shuffleMusic) return SongPicker.shuffle(songs, recent: recent, random: dice);
+    if (profile.music != Profile.bestMatchMusic && songs.any((s) => s.id == profile.music)) return [profile.music];
+    return SongPicker.bestMatch(
+      songs,
+      setting: RunSetting.of(mission: mission, goal: goal, activity: activity),
+      recent: recent,
+      random: dice,
+    );
+  }
+
+  /// A song's name in the interface language, or null if there is no such song.
+  String? songName(String? id) {
+    for (final song in songs) {
+      if (song.id == id) return song.nameIn(locale.languageCode);
+    }
+    return null;
+  }
 
   /// The runner's usual speed, for the music to compare a run with.
   double? usualSpeed(Activity activity) => MusicDirector.usualSpeedOf(runLog, activity);

@@ -287,6 +287,60 @@ void main() {
     });
   });
 
+  group('a sequence of songs', () {
+    Song named(String id, int bars) {
+      final json = minimal()
+        ..['id'] = id
+        ..['bars'] = bars
+        ..['loopFrom'] = 0;
+      return Song.parse(jsonEncode(json));
+    }
+
+    test('one song just repeats, as a stream does', () {
+      final song = named('a', 2);
+      final sequence = SongSequence([song]);
+      final stream = SongStream(song);
+      for (var n = 0; n < 6; n++) {
+        expect(sequence.nextBar().left, stream.nextBar().left);
+      }
+    });
+
+    test('plays each through, rings out, hands over, and goes round', () {
+      final sequence = SongSequence([named('a', 2), named('b', 2)]);
+      final seen = <String>[];
+      for (var n = 0; n < 8; n++) {
+        sequence.nextBar();
+        seen.add(sequence.current.id);
+      }
+      // Two bars of a, its ring-out, two of b, its ring-out, then a again.
+      expect(seen, ['a', 'a', 'a', 'b', 'b', 'b', 'a', 'a']);
+    });
+
+    test('a ring-out fades to nothing and starts nothing new', () {
+      final stream = SongStream(named('a', 2));
+      stream.nextBar();
+      expect(stream.firstPassDone, isFalse);
+      stream.nextBar();
+      expect(stream.firstPassDone, isTrue);
+      final tail = stream.ringOut();
+      expect(tail.left.last.abs(), lessThan(0.01));
+    });
+
+    test('the level carries over to the next song', () {
+      final source = File('assets/songs/neon_pursuit.json').readAsStringSync();
+      final high = Song.parse(source);
+      final short = named('a', 2);
+      final sequence = SongSequence([short, high])..setLevel(MusicLevel.high);
+      for (var n = 0; n < 3; n++) {
+        sequence.nextBar();
+      }
+      // A high song has a shorter first bar here than at its own tempo.
+      final next = sequence.nextBar();
+      expect(sequence.current.id, high.id);
+      expect(next.left.length, lessThan(SongStream(high).nextBar().left.length));
+    });
+  });
+
   group('the chip voices', () {
     Float32List note(void Function(Voices, Float32List) play) {
       final bus = Float32List(44100);

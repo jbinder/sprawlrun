@@ -11,8 +11,10 @@ import '../data/song_library.dart';
 /// Plays a song during a run. Takes no audio focus: that is `AudioNarrator`'s
 /// alone, and this only ever makes sound.
 abstract class MusicPlayer {
-  /// False if the song could not be started. Never throws for a bad song.
-  Future<bool> start(String songId);
+  /// Plays [songId] and then each of [then], going round again after the last.
+  /// With nothing to follow, the song repeats by itself. False if nothing could
+  /// be started. Never throws for a bad song, and one bad song costs only itself.
+  Future<bool> start(String songId, {List<String> then = const []});
 
   /// Holds playback in place, with the song's position and what is queued kept.
   Future<void> setPaused(bool paused);
@@ -26,6 +28,10 @@ abstract class MusicPlayer {
   /// bar. What is already queued plays out first, which is about four seconds.
   Future<void> setLevel(MusicLevel level, {bool atOnce = false});
 
+  /// The song being heard, as each one starts, and null once there is none. Comes
+  /// when the sound does, not when it was made, which is seconds earlier.
+  Stream<String?> get nowPlaying;
+
   /// Fades out and lets go of everything.
   Future<void> stop();
 }
@@ -35,7 +41,7 @@ class SilentMusicPlayer implements MusicPlayer {
   const SilentMusicPlayer();
 
   @override
-  Future<bool> start(String songId) async => false;
+  Future<bool> start(String songId, {List<String> then = const []}) async => false;
 
   @override
   Future<void> setPaused(bool paused) async {}
@@ -48,6 +54,9 @@ class SilentMusicPlayer implements MusicPlayer {
 
   @override
   Future<void> setLevel(MusicLevel level, {bool atOnce = false}) async {}
+
+  @override
+  Stream<String?> get nowPlaying => const Stream.empty();
 
   @override
   Future<void> stop() async {}
@@ -96,7 +105,14 @@ class LiveMusicPlayer implements MusicPlayer {
   Isolate? _isolate;
   ReceivePort? _port, _errors;
   SendPort? _requests;
-  Timer? _pump, _report;
+  Timer? _pump, _report, _announcing;
+  List<String> _ids = const [];
+  int _songAt = -1;
+  final StreamController<String?> _nowPlaying = StreamController<String?>.broadcast();
+
+  @override
+  Stream<String?> get nowPlaying => _nowPlaying.stream;
+
   bool _waiting = false, _pumping = false;
   final RenderBudget _budget = RenderBudget();
 
@@ -112,13 +128,22 @@ class LiveMusicPlayer implements MusicPlayer {
   int _minQueue = 1 << 30;
 
   @override
-  Future<bool> start(String songId) async {
+  Future<bool> start(String songId, {List<String> then = const []}) async {
     await stop();
-    final source = await _library.sourceOf(songId);
-    if (source == null) {
-      debugPrint('Music: no song "$songId"');
-      return false;
+    final sources = <String>[];
+    final ids = <String>[];
+    for (final id in [songId, ...then]) {
+      final source = await _library.sourceOf(id);
+      if (source == null) {
+        debugPrint('Music: no song "$id"');
+      } else {
+        sources.add(source);
+        ids.add(id);
+      }
     }
+    if (sources.isEmpty) return false;
+    _ids = ids;
+    _songAt = -1;
     try {
       await _channel.invokeMethod<void>('start');
       final port = ReceivePort(), errors = ReceivePort();
@@ -126,7 +151,7 @@ class LiveMusicPlayer implements MusicPlayer {
       _errors = errors;
       errors.listen((e) => _fail('generator: $e'));
       port.listen(_fromGenerator);
-      _isolate = await Isolate.spawn(_generate, (port.sendPort, source), onError: errors.sendPort);
+      _isolate = await Isolate.spawn(_generate, (port.sendPort, sources), onError: errors.sendPort);
       _pump = Timer.periodic(pumpEvery, (_) => _tick());
       _report = Timer.periodic(const Duration(minutes: 1), (_) => _logFigures());
       return true;
@@ -143,8 +168,9 @@ class LiveMusicPlayer implements MusicPlayer {
       _sendLevel(atOnce: true);
       return;
     }
-    if (message case (final TransferableTypedData data, final double renderMs, final double barMs)) {
+    if (message case (final TransferableTypedData data, final double renderMs, final double barMs, final int songAt)) {
       _waiting = false;
+      if (songAt != _songAt) unawaited(_announce(songAt));
       _bars++;
       if (renderMs > _worstBar) _worstBar = renderMs;
       _budget.record(renderMs, barMs);
@@ -174,6 +200,21 @@ class LiveMusicPlayer implements MusicPlayer {
   }
 
   void _sendLevel({required bool atOnce}) => _requests?.send((level.index, atOnce));
+
+  /// What was just made is heard once the queue ahead of it has played.
+  Future<void> _announce(int songAt) async {
+    final first = _songAt < 0;
+    _songAt = songAt;
+    final id = _ids[songAt];
+    if (first) {
+      _nowPlaying.add(id);
+      return;
+    }
+    var queued = 0;
+    await _guarded(() async => queued = await _channel.invokeMethod<int>('queuedMs') ?? 0);
+    _announcing?.cancel();
+    _announcing = Timer(Duration(milliseconds: queued), () => _nowPlaying.add(id));
+  }
 
   Future<void> _tick() async {
     if (_pumping || _requests == null) return;
@@ -242,7 +283,10 @@ class LiveMusicPlayer implements MusicPlayer {
   Future<void> stop() async {
     _pump?.cancel();
     _report?.cancel();
-    _pump = _report = null;
+    _announcing?.cancel();
+    _pump = _report = _announcing = null;
+    if (_songAt >= 0) _nowPlaying.add(null);
+    _songAt = -1;
     _isolate?.kill(priority: Isolate.immediate);
     _isolate = null;
     _port?.close();
@@ -261,12 +305,11 @@ class LiveMusicPlayer implements MusicPlayer {
 }
 
 /// The isolate: makes the next bar each time it is asked.
-void _generate((SendPort, String) start) {
-  final (out, source) = start;
+void _generate((SendPort, List<String>) start) {
+  final (out, sources) = start;
   final requests = ReceivePort();
   out.send(requests.sendPort);
-  final song = Song.parse(source);
-  final stream = SongStream(song);
+  final stream = SongSequence([for (final source in sources) Song.parse(source)]);
   requests.listen((request) {
     if (request case (final int level, final bool atOnce)) {
       stream.setLevel(MusicLevel.values[level], atOnce: atOnce);
@@ -284,6 +327,7 @@ void _generate((SendPort, String) start) {
       TransferableTypedData.fromList([bytes.buffer.asUint8List()]),
       clock.elapsedMicroseconds / 1000,
       bar.seconds * 1000,
+      stream.currentIndex,
     ));
   });
 }

@@ -566,6 +566,60 @@ void main() {
       });
     });
 
+    test('a run plays its queue and records the song it opened with', () {
+      fakeAsync((fake) {
+        final narrator = FakeNarrator();
+        final engine = RunEngine(narrator: narrator, location: FakeLocation());
+        engine.start(
+          goal: const RunGoal(GoalType.time, 600),
+          profile: const Profile(music: Profile.shuffleMusic),
+          musicQueue: const ['cold_boot', 'undercity'],
+        );
+        fake.flushMicrotasks();
+        expect(narrator.musicQueue, ['cold_boot', 'undercity']);
+        expect(engine.snapshot().song, 'cold_boot');
+        engine.abort();
+        fake.flushMicrotasks();
+      });
+    });
+
+    test('a run without a song records none, and a chosen song by its name', () {
+      fakeAsync((fake) {
+        final none = RunEngine(narrator: FakeNarrator(), location: FakeLocation());
+        none.start(goal: const RunGoal(GoalType.time, 600), profile: const Profile(music: Profile.ambientMusic));
+        fake.flushMicrotasks();
+        expect(none.snapshot().song, isNull);
+        none.abort();
+
+        final chosen = RunEngine(narrator: FakeNarrator(), location: FakeLocation());
+        chosen.start(goal: const RunGoal(GoalType.time, 600), profile: const Profile(music: 'undercity'));
+        fake.flushMicrotasks();
+        expect(chosen.snapshot().song, 'undercity');
+        chosen.abort();
+        fake.flushMicrotasks();
+      });
+    });
+
+    test('the engine knows what is being heard, and forgets it when the music stops', () {
+      fakeAsync((fake) {
+        final narrator = FakeNarrator();
+        final engine = RunEngine(narrator: narrator, location: FakeLocation());
+        engine.start(goal: const RunGoal(GoalType.time, 600), profile: const Profile(music: Profile.shuffleMusic));
+        fake.flushMicrotasks();
+        narrator.hearSong('cold_boot');
+        fake.flushMicrotasks();
+        expect(engine.currentSong, 'cold_boot');
+        narrator.hearSong('undercity');
+        fake.flushMicrotasks();
+        expect(engine.currentSong, 'undercity');
+        narrator.hearSong(null);
+        fake.flushMicrotasks();
+        expect(engine.currentSong, isNull);
+        engine.abort();
+        fake.flushMicrotasks();
+      });
+    });
+
     test('with no song, nothing is asked of the player', () {
       fakeAsync((fake) {
         final h = Harness(fake, goal: const RunGoal(GoalType.time, 60));

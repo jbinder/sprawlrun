@@ -275,6 +275,25 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     await tester.pump(const Duration(minutes: 2));
   });
 
+  testWidgets('run screen, naming the song', (tester) async {
+    final state = await seed(tester, logicalSize: narrow);
+    final narrator = FakeNarrator();
+    final engine = RunEngine(narrator: narrator, location: FakeLocation());
+    await pumpShowcase(
+      tester,
+      RunScreen(mission: state.currentMission!.mission, goal: const RunGoal(GoalType.time, 1500)),
+      state,
+      engine: engine,
+      delegates: delegates,
+    );
+    expect(find.byIcon(Icons.music_note), findsNothing);
+    final song = state.songs.first;
+    narrator.hearSong(song.id);
+    await tester.pump(const Duration(seconds: 1));
+    expect(find.text(song.name), findsOneWidget);
+    await tester.pump(const Duration(minutes: 2));
+  });
+
   testWidgets('run summary and its reveal', (tester) async {
     final state = await seed(tester, logicalSize: narrow);
     final mission = state.currentMission!.mission;

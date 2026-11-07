@@ -110,6 +110,7 @@ class _RunScreenState extends State<RunScreen> {
       activity: widget.activity,
       stride: app.stride,
       usualSpeed: app.usualSpeed(widget.activity),
+      musicQueue: app.musicQueue(mission: widget.mission, goal: widget.goal, activity: widget.activity),
       resumeFrom: widget.resumeFrom?.record,
       codexHeard: widget.resumeFrom?.codexHeard ?? const [],
     );
@@ -308,7 +309,12 @@ class _RunScreenState extends State<RunScreen> {
           child: SafeArea(
             child: Column(
               children: [
-                _RunHeader(engine: engine, mission: widget.mission, activity: widget.activity),
+                _RunHeader(
+                  engine: engine,
+                  mission: widget.mission,
+                  activity: widget.activity,
+                  song: context.read<AppState>().songName(engine.currentSong),
+                ),
                 if (_locationTrouble != null)
                   _LocationWarning(readiness: _locationTrouble!, countingSteps: engine.steps != null)
                 else if (engine.gpsQuiet)
@@ -358,11 +364,14 @@ class _RunScreenState extends State<RunScreen> {
 }
 
 class _RunHeader extends StatelessWidget {
-  const _RunHeader({required this.engine, required this.mission, required this.activity});
+  const _RunHeader({required this.engine, required this.mission, required this.activity, this.song});
 
   final RunEngine engine;
   final Mission? mission;
   final Activity activity;
+
+  /// The name of the song being heard, if any.
+  final String? song;
 
   @override
   Widget build(BuildContext context) {
@@ -403,6 +412,23 @@ class _RunHeader extends StatelessWidget {
                     ),
                   ],
                 ),
+                if (song != null) ...[
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      Icon(Icons.music_note, size: 12, color: Cy.inkDim),
+                      const SizedBox(width: 3),
+                      Flexible(
+                        child: Text(
+                          song!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: CyType.body(size: 12, color: Cy.inkDim),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

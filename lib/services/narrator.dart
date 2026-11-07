@@ -96,7 +96,10 @@ abstract class Narrator {
 
   /// Starts the song the profile asks for, if any. Takes the run's audio from
   /// the runner's own player, and [stopAll] gives it back.
-  Future<void> startMusic();
+  ///
+  /// [queue] is the songs to play, in order, when the choice is more than one
+  /// song. Empty means the one song the profile names.
+  Future<void> startMusic({List<String> queue = const []});
 
   /// Holds or lets go of the music for a paused run. It keeps its place.
   Future<void> setMusicPaused(bool paused);
@@ -108,6 +111,9 @@ abstract class Narrator {
   Future<void> stopAll();
 
   Stream<NarrationEvent> get events;
+
+  /// The song being heard, as each one starts, and null once there is none.
+  Stream<String?> get songPlaying;
 
   Future<void> dispose();
 }
@@ -192,6 +198,9 @@ class AudioNarrator implements Narrator {
 
   @override
   Stream<NarrationEvent> get events => _events.stream;
+
+  @override
+  Stream<String?> get songPlaying => _music.nowPlaying;
 
   @override
   Future<void> init(Profile profile) async {
@@ -584,7 +593,7 @@ class AudioNarrator implements Narrator {
   }
 
   @override
-  Future<void> startMusic() async {
+  Future<void> startMusic({List<String> queue = const []}) async {
     if (!_profile.generatedMusicOn || _musicHoldsFocus) return;
     _runPaused = _interrupted = _unplugged = _askedToDuck = false;
     _musicHoldsFocus = true;
@@ -594,7 +603,10 @@ class AudioNarrator implements Narrator {
       // Before the song starts, so the guard records the runner's player and
       // not our own.
       await _takeFocus();
-      if (await _music.start(_profile.music)) return;
+      final started = queue.isEmpty
+          ? await _music.start(_profile.music)
+          : await _music.start(queue.first, then: queue.sublist(1));
+      if (started) return;
     } on Object catch (e) {
       debugPrint('Music failed to start: $e');
     }

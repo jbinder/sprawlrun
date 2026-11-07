@@ -297,8 +297,8 @@ class Profile {
   final double speechRate;
   final double sfxVolume;
 
-  /// What the app plays during a run: [noMusic], [ambientMusic], or the id of a
-  /// song. One field because they exclude each other, and because later choices
+  /// What the app plays during a run: [noMusic], [ambientMusic], [shuffleMusic],
+  /// [bestMatchMusic], or the id of a song. One field because they exclude each other, and because later choices
   /// then need no migration.
   final String music;
 
@@ -308,6 +308,12 @@ class Profile {
   static const String ambientMusic = 'ambient';
 
   bool get ambientBedOn => music == ambientMusic;
+
+  /// Every song in turn, in a different order each run.
+  static const String shuffleMusic = 'shuffle';
+
+  /// Every song in turn, starting with the one that suits the run.
+  static const String bestMatchMusic = 'best';
 
   bool get generatedMusicOn => music != noMusic && music != ambientMusic;
 

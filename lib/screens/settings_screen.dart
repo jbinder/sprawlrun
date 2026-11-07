@@ -235,18 +235,20 @@ class SettingsScreen extends StatelessWidget {
                             options: {
                               Profile.noMusic: l.musicOff,
                               Profile.ambientMusic: l.settingAmbientBed,
+                              Profile.shuffleMusic: l.musicShuffle,
+                              Profile.bestMatchMusic: l.musicBestMatch,
                               for (final song in state.songs) song.id: song.nameIn(state.locale.languageCode),
                             },
                             onChanged: (v) => update(profile.copyWith(music: v)),
                           ),
                           const _Rule(),
-                          _Note(
-                            profile.generatedMusicOn
-                                ? l.settingGeneratedMusicHint
-                                : profile.ambientBedOn
-                                ? l.settingAmbientBedHint
-                                : l.musicOffNote,
-                          ),
+                          _Note(switch (profile.music) {
+                            Profile.noMusic => l.musicOffNote,
+                            Profile.ambientMusic => l.settingAmbientBedHint,
+                            Profile.shuffleMusic => l.musicShuffleNote,
+                            Profile.bestMatchMusic => l.musicBestMatchNote,
+                            _ => l.settingGeneratedMusicHint,
+                          }),
                           if (profile.music != Profile.noMusic) ...[
                             const _Rule(),
                             _SliderRow(

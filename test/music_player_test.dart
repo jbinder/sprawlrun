@@ -75,10 +75,16 @@ class _DiskBundle extends CachingAssetBundle {
 }
 
 class _RecordingPlayer implements MusicPlayer {
+  List<String> started = const [];
+
+  @override
+  Stream<String?> get nowPlaying => const Stream.empty();
+
   final calls = <String>[];
 
   @override
-  Future<bool> start(String songId) async {
+  Future<bool> start(String songId, {List<String> then = const []}) async {
+    started = [songId, ...then];
     calls.add('start');
     return true;
   }
@@ -170,6 +176,33 @@ void main() {
       await tester.runAsync(() async {
         expect(await player.start('no_such_song'), isFalse);
         expect(harness.calls, isNot(contains('start')));
+      });
+    });
+
+    testWidgets('a missing song in a queue costs only itself', (tester) async {
+      await tester.runAsync(() async {
+        expect(await player.start('no_such_song', then: const ['neon_pursuit']), isTrue);
+        await harness.wrote.future.timeout(const Duration(seconds: 30));
+      });
+    });
+
+    testWidgets('announces the song it starts, and none once it stops', (tester) async {
+      await tester.runAsync(() async {
+        final heard = <String?>[];
+        final sub = player.nowPlaying.listen(heard.add);
+        expect(await player.start('neon_pursuit'), isTrue);
+        await harness.wrote.future.timeout(const Duration(seconds: 30));
+        expect(heard, ['neon_pursuit']);
+        await player.stop();
+        await Future<void>.delayed(Duration.zero);
+        expect(heard, ['neon_pursuit', null]);
+        await sub.cancel();
+      });
+    });
+
+    testWidgets('a queue of nothing that exists starts nothing', (tester) async {
+      await tester.runAsync(() async {
+        expect(await player.start('no_such_song', then: const ['nor_this']), isFalse);
       });
     });
 
@@ -270,6 +303,12 @@ void main() {
       expect(Profile.fromJson(saved).music, Profile.noMusic);
     });
 
+    test('shuffle and best match count as generated music', () {
+      expect(const Profile(music: Profile.shuffleMusic).generatedMusicOn, isTrue);
+      expect(const Profile(music: Profile.bestMatchMusic).generatedMusicOn, isTrue);
+      expect(reservedSongIds, containsAll([Profile.noMusic, Profile.ambientMusic, Profile.shuffleMusic, Profile.bestMatchMusic]));
+    });
+
     test('following effort is on unless the runner turned it off', () {
       expect(Profile.fromJson(const {}).musicFollowsEffort, isTrue);
       final off = Profile.fromJson(const Profile(musicFollowsEffort: false).toJson());
@@ -339,6 +378,22 @@ void main() {
         await subject.startMusic();
         await subject.setMusicLevel(MusicLevel.high, atOnce: true);
         expect(music.calls, contains('level:high:true'));
+      });
+    });
+
+    testWidgets('a queue reaches the player in order; without one the profile names the song', (tester) async {
+      await tester.runAsync(() async {
+        final music = _RecordingPlayer();
+        final subject = narrator(music, MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}));
+        await subject.init(const Profile(music: Profile.shuffleMusic));
+        await subject.startMusic(queue: const ['b', 'a', 'c']);
+        expect(music.started, ['b', 'a', 'c']);
+
+        final single = _RecordingPlayer();
+        final other = narrator(single, MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}));
+        await other.init(const Profile(music: 'neon_pursuit'));
+        await other.startMusic();
+        expect(single.started, ['neon_pursuit']);
       });
     });
 

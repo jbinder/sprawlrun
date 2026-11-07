@@ -113,6 +113,7 @@ class RunRecord {
     this.steps,
     this.estimatedMeters = 0,
     this.strides,
+    this.song,
     this.story = const [],
     this.trace = const [],
   });
@@ -162,6 +163,10 @@ class RunRecord {
   /// What this run measured about the runner's stride, for [Stride.of]. Null
   /// without steps, or without a second of GPS and steps together.
   final StrideSample? strides;
+
+  /// The song the run opened with, if any. Choosing the next run's music reads
+  /// it, so that "played lately" comes from the log like everything else.
+  final String? song;
 
   /// Enough of the distance came from steps that it is shown as an estimate
   /// (`≈`), and the run's pace is no record. It still counts for totals,
@@ -232,6 +237,7 @@ class RunRecord {
     steps: steps,
     estimatedMeters: estimatedMeters,
     strides: strides,
+    song: song,
     story: story,
     trace: trace ?? this.trace,
   );
@@ -256,6 +262,7 @@ class RunRecord {
     if (steps != null) 'steps': steps,
     if (estimatedMeters > 0) 'estimatedMeters': estimatedMeters,
     if (strides case final s? when !s.isEmpty) 'strides': s.toJson(),
+    if (song != null) 'song': song,
     if (story.isNotEmpty) 'story': story.map((e) => e.toJson()).toList(),
     'trace': trace.map((p) => p.toJson()).toList(),
   };
@@ -279,6 +286,7 @@ class RunRecord {
     beatsHeard: (json['beatsHeard'] as num?)?.toInt() ?? 0,
     steps: (json['steps'] as num?)?.toInt(),
     estimatedMeters: (json['estimatedMeters'] as num?)?.toDouble() ?? 0,
+    song: json['song'] as String?,
     strides: json['strides'] is Map ? StrideSample.fromJson(Map<String, dynamic>.from(json['strides'] as Map)) : null,
     story: (json['story'] as List? ?? [])
         .map((e) => StoryEvent.fromJson(Map<String, dynamic>.from(e as Map)))

@@ -214,6 +214,9 @@ class RunEngine extends ChangeNotifier {
   StoryBeat? currentBeat;
   StoryLine? currentLine;
 
+  /// The song being heard, for the run screen.
+  String? currentSong;
+
   int chasesTotal = 0;
   int chasesEvaded = 0;
   int beatsHeard = 0;
@@ -284,6 +287,7 @@ class RunEngine extends ChangeNotifier {
   StreamSubscription<GeoFix>? _fixSub;
   StreamSubscription<int>? _stepSub;
   StreamSubscription<NarrationEvent>? _narrationSub;
+  StreamSubscription<String?>? _songSub;
 
   // -- derived --------------------------------------------------------------
 
@@ -343,6 +347,7 @@ class RunEngine extends ChangeNotifier {
     Activity activity = Activity.run,
     Stride? stride,
     double? usualSpeed,
+    List<String> musicQueue = const [],
     RunRecord? resumeFrom,
     List<String> codexHeard = const [],
   }) async {
@@ -397,7 +402,13 @@ class RunEngine extends ChangeNotifier {
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
 
     await narrator.setAmbientBed(profile.ambientBedOn);
-    await narrator.startMusic();
+    // Before the music starts, or the first song is announced to nobody.
+    _songSub = narrator.songPlaying.listen((id) {
+      currentSong = id;
+      notifyListeners();
+    });
+    _song = !profile.generatedMusicOn ? null : (musicQueue.isNotEmpty ? musicQueue.first : profile.music);
+    await narrator.startMusic(queue: musicQueue);
     _musicDirector = profile.generatedMusicOn && profile.musicFollowsEffort ? MusicDirector(usualSpeed: usualSpeed) : null;
     notifyListeners();
     if (resumeFrom != null) _announceResume(pendingChase);
@@ -541,6 +552,7 @@ class RunEngine extends ChangeNotifier {
       steps: steps,
       estimatedMeters: estimatedMeters,
       strides: strides.isEmpty ? null : strides,
+      song: _song,
       story: List.unmodifiable(story),
       trace: List.unmodifiable(trace),
     );
@@ -575,6 +587,7 @@ class RunEngine extends ChangeNotifier {
     activeChase = null;
     currentBeat = null;
     currentLine = null;
+    currentSong = null;
     chasesTotal = 0;
     chasesEvaded = 0;
     beatsHeard = 0;
@@ -614,6 +627,8 @@ class RunEngine extends ChangeNotifier {
   /// awaiting it would make ending a run depend on stream teardown for no
   /// benefit.
   void _detachStreams() {
+    unawaited(_songSub?.cancel());
+    _songSub = null;
     unawaited(_fixSub?.cancel() ?? Future<void>.value());
     _fixSub = null;
     unawaited(_stepSub?.cancel() ?? Future<void>.value());
@@ -806,6 +821,9 @@ class RunEngine extends ChangeNotifier {
   }
 
   // -- per-second update ----------------------------------------------------
+
+  /// The song this run opened with, for its record.
+  String? _song;
 
   /// Decides how much of the song plays. Null with the music off or playing
   /// straight, and then nothing here touches it.

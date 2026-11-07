@@ -79,8 +79,24 @@ class SongStream {
   /// The song's own bar for the [played]th bar this stream has produced.
   int _songBarAt(int played) => song.songBar(fromBar + played);
 
+  /// Whether the song has played through to where it would go back and repeat.
+  bool get firstPassDone => fromBar + _bar >= song.bars;
+
+  /// One more bar with nothing new in it, fading away, so that what is still
+  /// ringing ends rather than being cut off when another song takes over.
+  RenderedBar ringOut() {
+    final bar = nextBar(silent: true);
+    final frames = bar.left.length;
+    for (var i = 0; i < frames; i++) {
+      final gain = 1 - i / frames;
+      bar.left[i] *= gain;
+      bar.right[i] *= gain;
+    }
+    return bar;
+  }
+
   /// Produces the next bar, and leaves every tail in place for the one after.
-  RenderedBar nextBar() {
+  RenderedBar nextBar({bool silent = false}) {
     final b = _songBarAt(_bar);
     final changing = _changeAtOnce || b % phraseBars == 0;
     final snap = _changeAtOnce;
@@ -103,7 +119,7 @@ class SongStream {
     final end = _position.round();
     final count = end - _base;
 
-    for (final track in song.tracks) {
+    for (final track in silent ? const <Track>[] : song.tracks) {
       if (track.level.index > _level.index) continue;
       final bus = _buses[track.bus]!.samples;
       for (final clip in track.clips) {
@@ -206,6 +222,45 @@ class SongStream {
       final table = drumBuilders[name]!();
       return cutoff == null ? table : filteredDrum(table, cutoff);
     }();
+  }
+}
+
+/// Songs one after another. Each plays once through, rings out and hands over,
+/// back to the first after the last. Only ever one at a time, so the cost of the
+/// music is the cost of a song. A single song simply repeats as it always has.
+class SongSequence {
+  SongSequence(this.songs, {MusicLevel level = MusicLevel.normal})
+    : assert(songs.isNotEmpty),
+      _level = level,
+      _stream = SongStream(songs.first, level: level);
+
+  final List<Song> songs;
+  SongStream _stream;
+  MusicLevel _level;
+  int _index = 0;
+  bool _rungOut = false;
+
+  /// The song playing now.
+  Song get current => songs[_index];
+
+  int get currentIndex => _index;
+
+  void setLevel(MusicLevel level, {bool atOnce = false}) {
+    _level = level;
+    _stream.setLevel(level, atOnce: atOnce);
+  }
+
+  RenderedBar nextBar() {
+    if (songs.length > 1 && _stream.firstPassDone) {
+      if (!_rungOut) {
+        _rungOut = true;
+        return _stream.ringOut();
+      }
+      _index = (_index + 1) % songs.length;
+      _rungOut = false;
+      _stream = SongStream(songs[_index], level: _level);
+    }
+    return _stream.nextBar();
   }
 }
 

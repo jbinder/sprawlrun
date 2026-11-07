@@ -1933,6 +1933,22 @@
   "@musicOffNote": {
     "description": "Shown under the run music setting when it is off."
   },
+  "musicShuffle": "Shuffle",
+  "@musicShuffle": {
+    "description": "Run music choice: every song in turn, in a different order each run."
+  },
+  "musicShuffleNote": "Every song in turn, in a different order each run. Pauses your own music until the run ends",
+  "@musicShuffleNote": {
+    "description": "Shown under the run music setting when Shuffle is chosen. The runner's own music app is paused for the run."
+  },
+  "musicBestMatch": "Best match",
+  "@musicBestMatch": {
+    "description": "Run music choice: the app picks the song that suits this run."
+  },
+  "musicBestMatchNote": "Picks the song that suits the run: a walk, a chase-heavy mission or a long haul. Pauses your own music until the run ends",
+  "@musicBestMatchNote": {
+    "description": "Shown under the run music setting when Best match is chosen. The choice is made from whether it is a walk, how many chases the mission has, and how long the run is. The runner's own music app is paused for the run."
+  },
   "settingAmbientBed": "Ambient bed",
   "@settingAmbientBed": {
     "description": "Run music choice: a quiet background drone played during runs."

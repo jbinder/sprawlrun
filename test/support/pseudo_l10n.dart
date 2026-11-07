@@ -1179,6 +1179,18 @@ class PseudoL extends L {
   String get musicOffNote => pseudo(_en.musicOffNote);
 
   @override
+  String get musicShuffle => pseudo(_en.musicShuffle);
+
+  @override
+  String get musicShuffleNote => pseudo(_en.musicShuffleNote);
+
+  @override
+  String get musicBestMatch => pseudo(_en.musicBestMatch);
+
+  @override
+  String get musicBestMatchNote => pseudo(_en.musicBestMatchNote);
+
+  @override
   String get settingAmbientBed => pseudo(_en.settingAmbientBed);
 
   @override

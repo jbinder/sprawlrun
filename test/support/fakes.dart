@@ -95,6 +95,13 @@ class FakeNarrator implements Narrator {
   @override
   Stream<NarrationEvent> get events => _events.stream;
 
+  final _songs = StreamController<String?>.broadcast();
+
+  @override
+  Stream<String?> get songPlaying => _songs.stream;
+
+  void hearSong(String? id) => _songs.add(id);
+
   @override
   Future<void> init(Profile profile) async {}
 
@@ -126,7 +133,12 @@ class FakeNarrator implements Narrator {
   bool musicStarted = false, musicPaused = false;
 
   @override
-  Future<void> startMusic() async => musicStarted = true;
+  Future<void> startMusic({List<String> queue = const []}) async {
+    musicStarted = true;
+    musicQueue = queue;
+  }
+
+  List<String> musicQueue = const [];
 
   @override
   Future<void> setMusicPaused(bool paused) async => musicPaused = paused;

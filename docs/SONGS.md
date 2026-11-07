@@ -31,7 +31,7 @@ The last two numbers are the first bar and how many to render.
 | `licence` | Optional. |
 | `bpm` | 60 to 200. Bars are always four beats. |
 | `lowTempo`, `highTempo` | Optional, by default 1. The share of its tempo the song plays at at level `low` (0.88 to 1) and `high` (1 to 1.15), gliding there and back at 2% a bar. Pitch stays where it is, and echoes stay on the beat. |
-| `key`, `moods`, `energy` | Optional, for choosing a song; they change nothing in the sound. `energy` is 0 to 1. |
+| `key`, `moods`, `energy` | Optional, for choosing a song; they change nothing in the sound. `energy` is 0 to 1. Best match reads `moods`: `atmospheric` and `melancholic` suit walks, `aggressive`, `dark` and `tense` suit chase-heavy missions, `bombastic` suits long runs and finales, and `uplifting`, `retro` and `playful` suit an ordinary run. |
 | `seed` | Fixes the song's small random movements, so it always renders the same. |
 | `bars`, `loopFrom` | Bars in the first pass, and the bar it goes back to after them. |
 | `sections` | Optional, in order: `{ "name", "from" }`. |

@@ -8,7 +8,9 @@ import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/l10n/l10n.dart';
+import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:sprawl_run/models/run_record.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
@@ -159,6 +161,14 @@ void main() {
       expect(state.profile.generatedMusicOn, isFalse);
       expect(find.text('Music volume'), findsOneWidget);
 
+      await pick(tester, 'Shuffle');
+      expect(state.profile.music, Profile.shuffleMusic);
+      expect(find.text('Music follows your effort'), findsOneWidget);
+
+      await pick(tester, 'Best match');
+      expect(state.profile.music, Profile.bestMatchMusic);
+      expect(find.textContaining('suits the run'), findsOneWidget);
+
       await pick(tester, 'Neon Pursuit');
       expect(state.profile.music, 'neon_pursuit');
       expect(state.profile.ambientBedOn, isFalse);
@@ -172,6 +182,24 @@ void main() {
       expect(state.profile.music, Profile.noMusic);
       expect(find.text('Music volume'), findsNothing);
     });
+  });
+
+  testWidgets('the queue for a run follows the choice', (tester) async {
+    final state = await pumpSettings(tester);
+    const goal = RunGoal(GoalType.time, 1800);
+    List<String> queue(String music, {Activity activity = Activity.run}) {
+      state.profile = state.profile.copyWith(music: music);
+      return state.musicQueue(goal: goal, activity: activity);
+    }
+
+    expect(queue(Profile.noMusic), isEmpty);
+    expect(queue(Profile.ambientMusic), isEmpty);
+    expect(queue('undercity'), ['undercity'], reason: 'a chosen song repeats by itself');
+    expect(queue(Profile.shuffleMusic).length, state.songs.length);
+    expect(queue(Profile.bestMatchMusic, activity: Activity.walk).first, 'sodium_rain');
+    expect(queue('a_song_since_removed').length, state.songs.length, reason: 'falls back to a match, not silence');
+    expect(state.songName('undercity'), 'Undercity');
+    expect(state.songName('a_song_since_removed'), isNull);
   });
 
   testWidgets('toggling the resume-music repair persists it', (tester) async {

@@ -57,6 +57,8 @@ class SongLibraryScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(l.musicLibraryNote, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
+                          const SizedBox(height: 6),
+                          Text(l.musicBatteryNote, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
                           const SizedBox(height: 12),
                           _ModeRow(
                             value: auto ? profile.music : _one,

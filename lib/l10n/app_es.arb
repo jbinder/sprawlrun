@@ -400,6 +400,7 @@
     "musicFolderRandom": "Orden aleatorio",
     "musicFolderEmpty": "No hay música en tu carpeta, así que las carreras seguirán sin ella.",
     "musicSongLibrary": "Biblioteca de canciones",
+    "musicBatteryNote": "Tocar en directo gasta más batería que reproducir un archivo.",
     "musicOneSong": "Una canción",
     "musicLibraryAuto": "{mode}, {songs}",
     "musicSongsIn": "{kept} de {total} canciones",

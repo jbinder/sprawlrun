@@ -1977,6 +1977,10 @@
   "@musicSongLibrary": {
     "description": "Run music choice, and the name of the screen listing the songs the phone can play live."
   },
+  "musicBatteryNote": "Playing live uses more battery than playing a file.",
+  "@musicBatteryNote": {
+    "description": "At the top of the song library. The phone generates the music as it plays, which costs more battery than playing an audio file from a folder."
+  },
   "musicOneSong": "One song",
   "@musicOneSong": {
     "description": "How the song library plays: the one song the runner picks, repeating."

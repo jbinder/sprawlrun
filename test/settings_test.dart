@@ -219,6 +219,7 @@ void main() {
         expect(find.text(song.name), findsOneWidget);
       }
       expect(find.textContaining('by SPRAWL//RUN'), findsNWidgets(state.songs.length));
+      expect(find.textContaining('more battery'), findsOneWidget);
       expect(find.byType(Switch), findsNWidgets(state.songs.length));
     });
 

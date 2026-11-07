@@ -13,11 +13,12 @@ Seen one you'd run to? [Give its suggestion a 👍](https://github.com/jbinder/s
 Everything here is free to download, as far as its page said when it was added. Check that page for the licence and price as they are now. "All rights reserved" means free to download and listen to if the artist offers it so, but not to share or reuse. "Name your price" means you can enter 0, and may be asked for an email address. If you love it, consider paying. BPM figures are rough, and half-time music can read as double or half.
 
 <!-- One entry per track or album, in order by style. test/contribute_test.dart checks
-     each one: a heading linking to its page and not to a file, a Style, a BPM that is
+     each one: a heading linking to its page and not to a file, its artist, linked to
+     their own page where they have one, a Style, a BPM that is
      a number, a range or -, a Licence, who suggested it, and a vote link to its issue.
      The rest is optional. -->
 
-### [In Delta Negative](https://neurotech.bandcamp.com/album/in-delta-negative) by Neurotech
+### [In Delta Negative](https://neurotech.bandcamp.com/album/in-delta-negative) by [Neurotech](https://neurotech.bandcamp.com/)
 
 > Energizing. It gives you power for the run.
 
@@ -25,7 +26,7 @@ Everything here is free to download, as far as its page said when it was added. 
 
 **Licence:** all rights reserved, name your price · **Suggested by:** [jbinder](https://github.com/jbinder) · [👍 vote](https://github.com/jbinder/sprawlrun/issues/12)
 
-### [Instinkt](https://neurowulf.bandcamp.com/album/instinkt) by NeuroWulf
+### [Instinkt](https://neurowulf.bandcamp.com/album/instinkt) by [NeuroWulf](https://neurowulf.bandcamp.com/)
 
 > Hypnotic. It pulls you into a soundscape that makes you endure.
 

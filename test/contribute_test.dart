@@ -40,7 +40,7 @@ void main() {
 
     test('the music form asks little, and has what the page needs', () {
       final source = form(ProjectLinks.suggestMusic.queryParameters['template']!);
-      for (final field in ['track', 'artist', 'link', 'why', 'good_for', 'vocals', 'style', 'mood', 'bpm', 'length', 'licence', 'free']) {
+      for (final field in ['track', 'artist', 'artist_link', 'link', 'why', 'good_for', 'vocals', 'style', 'mood', 'bpm', 'length', 'licence', 'free']) {
         expect(source, contains('id: $field'), reason: field);
       }
       // Each extra required field is someone who does not bother.
@@ -59,8 +59,8 @@ void main() {
       expect(entries, isNotEmpty, reason: 'or this test checks nothing');
       for (final entry in entries) {
         final name = entry.split('\n').first;
-        expect(name, matches(RegExp(r'^\[.+\]\(https://[^)]+\) by .+$')), reason: 'a linked name and an artist: $name');
-        expect(name, isNot(matches(RegExp(r'\.(mp3|ogg|flac|wav|zip|m4a|opus)\)'))), reason: 'the page, not the file: $name');
+        expect(name, matches(RegExp(r'^\[[^\]]+\]\(https://[^)]+\) by \S')), reason: 'a linked name and an artist: $name');
+        expect(name, isNot(contains(RegExp(r'\.(mp3|ogg|flac|wav|zip|m4a|opus)\)'))), reason: 'the page, not the file: $name');
         expect(entry, contains('**Style:**'), reason: name);
         expect(entry, contains('**Licence:**'), reason: name);
         expect(entry, matches(RegExp(r'\*\*Suggested by:\*\* \S')), reason: name);

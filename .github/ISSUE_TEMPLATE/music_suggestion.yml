@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Suggestions go on [the music page](https://github.com/jbinder/sprawlrun/blob/main/docs/FIND_MUSIC.md), credited to you by your GitHub name. The first three fields are all it takes. Your own music is welcome. Only suggest music its artist offers for free.
+        Suggestions go on [the music page](https://github.com/jbinder/sprawlrun/blob/main/docs/FIND_MUSIC.md), credited to you by your GitHub name. The artist, the track and a link are all it takes. Your own music is welcome. Only suggest music its artist offers for free.
   - type: input
     id: track
     attributes:
@@ -19,6 +19,12 @@ body:
       label: Artist
     validations:
       required: true
+  - type: input
+    id: artist_link
+    attributes:
+      label: Artist's page
+      description: Their own site or profile, so people can find more of their music.
+      placeholder: https://
   - type: input
     id: link
     attributes:

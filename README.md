@@ -295,8 +295,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 Translations, mission packs, colour themes, music to run to, bug reports and code
 are all welcome, and only code needs Flutter installed. **[CONTRIBUTING.md](CONTRIBUTING.md)** says how.
 Translators go straight to **[docs/TRANSLATING.md](docs/TRANSLATING.md)**. Got a track
-that keeps you running? **[Suggest it](docs/FIND_MUSIC.md#music-runners-suggest)**, and
-your name goes next to it.
+that keeps you running? **[Suggest it](https://github.com/jbinder/sprawlrun/issues/new?template=music_suggestion.yml)**,
+and your name goes next to it. [See what others run to](docs/FIND_MUSIC.md).
 
 ## Translations
 

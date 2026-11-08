@@ -198,8 +198,23 @@ void main() {
   });
 
   group('song library', () {
-    Future<void> settle(WidgetTester tester) async {
-      for (var i = 0; i < 6; i++) {
+    // Waits for the change a tap made to land: `updateProfile` saves to disk
+    // before it notifies, and a fixed few milliseconds of real time was not
+    // always enough on a slow CI runner.
+    Future<void> settle(WidgetTester tester, AppState state) async {
+      var notified = false;
+      void heard() => notified = true;
+      state.addListener(heard);
+      try {
+        for (var i = 0; i < 200 && !notified; i++) {
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+      } finally {
+        state.removeListener(heard);
+      }
+      expect(notified, isTrue, reason: 'the change never reached the screen');
+      for (var i = 0; i < 3; i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
         await tester.pump(const Duration(milliseconds: 100));
       }
@@ -227,7 +242,7 @@ void main() {
       final state = await library(tester);
       final row = find.ancestor(of: find.text('Undercity'), matching: find.byType(Row)).first;
       await tester.tap(find.descendant(of: row, matching: find.byType(Switch)));
-      await settle(tester);
+      await settle(tester, state);
       expect(state.profile.songsLeftOut, ['undercity']);
       const goal = RunGoal(GoalType.time, 1800);
       expect(state.musicQueue(goal: goal, activity: Activity.run), isNot(contains('undercity')));
@@ -250,16 +265,16 @@ void main() {
     testWidgets('modes write the same setting the run reads', (tester) async {
       final state = await library(tester);
       await tester.tap(find.text('SHUFFLE'));
-      await settle(tester);
+      await settle(tester, state);
       expect(state.profile.music, Profile.shuffleMusic);
 
       await tester.tap(find.text('ONE SONG'));
-      await settle(tester);
+      await settle(tester, state);
       expect(state.profile.generatedMusicOn, isTrue);
       expect(find.byType(Switch), findsNothing, reason: 'a switch means nothing with one song');
 
       await tester.tap(find.text('Undercity'));
-      await settle(tester);
+      await settle(tester, state);
       expect(state.profile.music, 'undercity');
       const goal = RunGoal(GoalType.time, 1800);
       expect(state.musicQueue(goal: goal, activity: Activity.run), ['undercity']);

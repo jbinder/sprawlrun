@@ -2122,4 +2122,31 @@ class PseudoL extends L {
 
   @override
   String contributeNoBrowser(String url) => pseudo(_en.contributeNoBrowser(url));
+
+  @override
+  String get whatsNewTitle => pseudo(_en.whatsNewTitle);
+
+  @override
+  String whatsNewRelease(String version, String name) => pseudo(_en.whatsNewRelease(version, name));
+
+  @override
+  String get whatsNewFullNotes => pseudo(_en.whatsNewFullNotes);
+
+  @override
+  String get whatsNewClose => pseudo(_en.whatsNewClose);
+
+  @override
+  String get whatsNewHint => pseudo(_en.whatsNewHint);
+
+  @override
+  String get release090Name => pseudo(_en.release090Name);
+
+  @override
+  String get release090Music => pseudo(_en.release090Music);
+
+  @override
+  String get release090Library => pseudo(_en.release090Library);
+
+  @override
+  String get release090Fixes => pseudo(_en.release090Fixes);
 }

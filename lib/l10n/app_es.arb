@@ -703,5 +703,14 @@
     "contributeBug": "Informar de un fallo",
     "contributeIdea": "Sugerir una idea",
     "contributeHow": "Cómo contribuir",
-    "contributeNoBrowser": "Ningún navegador pudo abrir {url}"
+    "contributeNoBrowser": "Ningún navegador pudo abrir {url}",
+    "whatsNewTitle": "NOVEDADES",
+    "whatsNewRelease": "v{version} · {name}",
+    "whatsNewFullNotes": "Notas completas de la versión",
+    "whatsNewClose": "ENTENDIDO",
+    "whatsNewHint": "Novedades",
+    "release090Name": "Banda sonora",
+    "release090Music": "Música que sigue tu carrera: seis canciones que tu teléfono toca en vivo, más ligeras cuando aflojas y más intensas cuando aprietas, te persiguen o alcanzas tu meta.",
+    "release090Library": "Una biblioteca de canciones: elige una, mézclalas, deja que la app elija la que encaja con la carrera o reproduce tus propios archivos desde una carpeta.",
+    "release090Fixes": "Correcciones, entre ellas una carrera que perdía el GPS con la pantalla apagada mientras sonaba el fondo ambiental."
 }

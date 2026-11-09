@@ -25,7 +25,10 @@ import 'package:sprawl_run/theme/theme_draft.dart';
 import 'package:sprawl_run/theme/colour_theme.dart';
 import 'package:sprawl_run/widgets/colour_picker.dart';
 import 'package:sprawl_run/widgets/panels.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/models/profile.dart';
+import 'package:sprawl_run/models/release_notes.dart';
+import 'package:sprawl_run/widgets/release_notes_dialog.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/screens/song_library_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
@@ -413,5 +416,27 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     expect(find.text(l10n.settingBatteryOptimized), findsOneWidget);
     await tester.tap(find.text(l10n.resetProgress.toUpperCase()));
     await tester.pump(const Duration(milliseconds: 300));
+  });
+
+  testWidgets('what\'s new, after skipping versions', (tester) async {
+    final latest = ReleaseNotes.all.first;
+    final skipped = [
+      for (final v in ['0.12.0', '0.11.0', '0.10.0']) ReleaseNote(version: v, name: latest.name, items: latest.items),
+    ];
+    await show(tester, Scaffold(body: ReleaseNotesDialog(notes: skipped)), size: narrow);
+  });
+
+  testWidgets('settings, naming the version', (tester) async {
+    PackageInfo.setMockInitialValues(
+      appName: 'SPRAWL//RUN',
+      packageName: 'io.github.jbinder.sprawlrun',
+      version: ReleaseNotes.all.first.version,
+      buildNumber: '1133',
+      buildSignature: '',
+    );
+    await show(tester, const SettingsScreen(), size: const Size(360, 6000));
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+    expect(find.text(l10n.whatsNewHint), findsOneWidget);
   });
 }

@@ -3460,5 +3460,49 @@
         "type": "String"
       }
     }
+  },
+  "whatsNewTitle": "WHAT'S NEW",
+  "@whatsNewTitle": {
+    "description": "Title of the popup shown once after an update, listing what the new version brings. Also opened by tapping the version in Settings."
+  },
+  "whatsNewRelease": "v{version} · {name}",
+  "@whatsNewRelease": {
+    "description": "Heading for one version in the what's new popup, e.g. \"v0.9.0 · Soundtrack\". Shown in uppercase.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "whatsNewFullNotes": "Full release notes",
+  "@whatsNewFullNotes": {
+    "description": "Button in the what's new popup: opens the release on GitHub in the browser, with every change listed."
+  },
+  "whatsNewClose": "GOT IT",
+  "@whatsNewClose": {
+    "description": "Button that closes the what's new popup."
+  },
+  "whatsNewHint": "What's new",
+  "@whatsNewHint": {
+    "description": "Under the version at the bottom of Settings: tapping the version shows what this version brought."
+  },
+  "release090Name": "Soundtrack",
+  "@release090Name": {
+    "description": "Name of version 0.9.0, shown next to its number in Settings and in the what's new popup."
+  },
+  "release090Music": "Music that follows your run: six songs your phone plays live, thinner when you ease off, lifted when you push, get chased or reach your goal.",
+  "@release090Music": {
+    "description": "Release notes for 0.9.0, item 1. Keep it short."
+  },
+  "release090Library": "A song library: pick one, shuffle them, let the app match the song to the run, or play your own files from a folder.",
+  "@release090Library": {
+    "description": "Release notes for 0.9.0, item 2. Keep it short."
+  },
+  "release090Fixes": "Fixes, among them a run that lost GPS with the screen off while the ambient bed played.",
+  "@release090Fixes": {
+    "description": "Release notes for 0.9.0, the bug fixes in one line. Keep it short."
   }
 }

@@ -241,6 +241,7 @@ class Profile {
     this.lastExportAt,
     this.backupNudgeSnoozedAt,
     this.wireReadAt,
+    this.releaseNotesSeen,
   });
 
   final String callsign;
@@ -425,6 +426,11 @@ class Profile {
   /// at that moment, so years of earlier signals never light up as new.
   final DateTime? wireReadAt;
 
+  /// The version whose release notes the runner last saw. Null on an
+  /// installation from before release notes existed; `AppState.load` sets it
+  /// on a fresh one, which has nothing to catch up on.
+  final String? releaseNotesSeen;
+
   bool get isMetric => units == UnitSystem.metric;
 
   Profile copyWith({
@@ -466,6 +472,7 @@ class Profile {
     DateTime? lastExportAt,
     DateTime? backupNudgeSnoozedAt,
     DateTime? wireReadAt,
+    String? releaseNotesSeen,
   }) => Profile(
     callsign: callsign ?? this.callsign,
     language: language ?? this.language,
@@ -505,6 +512,7 @@ class Profile {
     lastExportAt: lastExportAt ?? this.lastExportAt,
     backupNudgeSnoozedAt: backupNudgeSnoozedAt ?? this.backupNudgeSnoozedAt,
     wireReadAt: wireReadAt ?? this.wireReadAt,
+    releaseNotesSeen: releaseNotesSeen ?? this.releaseNotesSeen,
   );
 
   Map<String, dynamic> toJson() => {
@@ -548,6 +556,7 @@ class Profile {
     if (lastExportAt != null) 'lastExportAt': lastExportAt!.toIso8601String(),
     if (backupNudgeSnoozedAt != null) 'backupNudgeSnoozedAt': backupNudgeSnoozedAt!.toIso8601String(),
     if (wireReadAt != null) 'wireReadAt': wireReadAt!.toIso8601String(),
+    if (releaseNotesSeen != null) 'releaseNotesSeen': releaseNotesSeen,
   };
 
   /// Up to 0.8.0 the drone had a switch of its own, `ambientBed`. Read here and
@@ -614,5 +623,6 @@ class Profile {
     lastExportAt: DateTime.tryParse(json['lastExportAt'] as String? ?? ''),
     backupNudgeSnoozedAt: DateTime.tryParse(json['backupNudgeSnoozedAt'] as String? ?? ''),
     wireReadAt: DateTime.tryParse(json['wireReadAt'] as String? ?? ''),
+    releaseNotesSeen: json['releaseNotesSeen'] as String?,
   );
 }

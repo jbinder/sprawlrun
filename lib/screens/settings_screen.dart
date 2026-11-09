@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../audio/song.dart';
 import '../models/profile.dart';
+import '../models/release_notes.dart';
 import '../models/stride.dart';
 import '../services/app_version.dart';
 import '../services/project_links.dart';
@@ -19,6 +20,7 @@ import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
 import '../widgets/contribute_controls.dart';
 import '../widgets/pack_controls.dart';
+import '../widgets/release_notes_dialog.dart';
 import '../widgets/panels.dart';
 import '../widgets/setting_rows.dart';
 import '../widgets/theme_controls.dart';
@@ -1082,14 +1084,49 @@ class _Colophon extends StatelessWidget {
       future: AppVersion.load(),
       builder: (context, snapshot) {
         final version = snapshot.data;
+        final l = L.of(context);
+        // Tapping the version shows its release notes again, when it has any.
+        final notes = version == null ? null : ReleaseNotes.of(version.version);
+        final versionLine = Text(
+          version == null ? l.offlineBuild : l.versionOffline(version.label).toUpperCase(),
+          textAlign: TextAlign.center,
+          style: CyType.mono(size: 10, color: Cy.ghost, letterSpacing: 1.6),
+        );
         return Column(
           children: [
             Text('SPRAWL//RUN', style: CyType.display(size: 11, color: Cy.inkDim, letterSpacing: 3)),
             const SizedBox(height: 6),
-            Text(
-              version == null ? L.of(context).offlineBuild : L.of(context).versionOffline(version.label).toUpperCase(),
-              style: CyType.mono(size: 10, color: Cy.ghost, letterSpacing: 1.6),
-            ),
+            if (notes == null)
+              versionLine
+            else
+              InkWell(
+                onTap: () => showReleaseNotes(context, [notes]),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  child: Column(
+                    children: [
+                      Text(
+                        notes.name(l).toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: CyType.label(size: 10, color: Cy.cyanDim),
+                      ),
+                      const SizedBox(height: 4),
+                      versionLine,
+                      const SizedBox(height: 4),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.new_releases_outlined, size: 13, color: Cy.cyan),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(l.whatsNewHint, style: CyType.body(size: 12, color: Cy.cyan, weight: FontWeight.w600)),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             const SizedBox(height: 4),
             Text(
               L.of(context).colophonLicense,

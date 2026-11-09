@@ -17,8 +17,13 @@ import 'theme/season.dart';
 import 'widgets/backdrop.dart';
 import 'widgets/edge_fade.dart';
 import 'widgets/glitch_text.dart';
+import 'widgets/release_notes_dialog.dart';
 import 'widgets/signal_watcher.dart';
 import 'l10n/l10n.dart';
+
+/// Tells the home screen when it is on top again, so what waited for it — the
+/// release notes — can show.
+final RouteObserver<ModalRoute<void>> appRouteObserver = RouteObserver<ModalRoute<void>>();
 
 class SprawlRunApp extends StatelessWidget {
   const SprawlRunApp({super.key});
@@ -57,6 +62,7 @@ class SprawlRunApp extends StatelessWidget {
         useLocale(Localizations.localeOf(context));
         return child!;
       },
+      navigatorObservers: [appRouteObserver],
       home: const _Root(),
     );
   }
@@ -121,8 +127,45 @@ class HomeShell extends StatefulWidget {
   State<HomeShell> createState() => _HomeShellState();
 }
 
-class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
+class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver, RouteAware {
   int _index = 0;
+
+  // The release notes pop up over the home screen and nothing else: not over
+  // a run, a dialog, or THE WIRE opened by the notification that launched the
+  // app, and not while a killed run waits to be kept or discarded. Whatever is
+  // in the way, they wait and are offered when the home screen is on top again.
+  bool _notesOpen = false;
+  ModalRoute<void>? _route;
+
+  void _offerReleaseNotes() {
+    if (_notesOpen || !mounted) return;
+    final state = context.read<AppState>();
+    if (!state.launchSettled || state.interruptedRun != null) return;
+    final due = state.releaseNotesDue;
+    if (due.isEmpty) return;
+    if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+    _notesOpen = true;
+    showReleaseNotes(context, due).whenComplete(() {
+      _notesOpen = false;
+      state.markReleaseNotesSeen();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final route = ModalRoute.of(context);
+    if (route != _route) {
+      if (_route != null) appRouteObserver.unsubscribe(this);
+      _route = route;
+      if (route != null) appRouteObserver.subscribe(this, route);
+    }
+  }
+
+  // After the frame: this is called while the navigator is still popping, and
+  // a dialog pushed then trips its lock.
+  @override
+  void didPopNext() => WidgetsBinding.instance.addPostFrameCallback((_) => _offerReleaseNotes());
 
   // The dot on THE WIRE's icon has to appear while the app sits open, but a
   // signal fires without running any Dart. So the shell looks again when the
@@ -158,6 +201,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     _signalTimer?.cancel();
+    appRouteObserver.unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
     _lifecycle.dispose();
     super.dispose();
@@ -173,6 +217,10 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     _armSignalTimer(context.select<AppState, DateTime?>((s) => s.nextSignalAt));
+    final notesWaiting = context.select<AppState, bool>(
+      (s) => s.launchSettled && s.interruptedRun == null && s.releaseNotesDue.isNotEmpty,
+    );
+    if (notesWaiting) WidgetsBinding.instance.addPostFrameCallback((_) => _offerReleaseNotes());
     return Scaffold(
       body: GridBackdrop(
         child: SafeArea(

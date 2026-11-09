@@ -26,6 +26,12 @@ class ProjectLinks {
     'language': ?language,
   });
 
+  /// The GitHub release of one version, with its full notes.
+  static Uri release(String version) => Uri.https('github.com', '$_repo/releases/tag/v$version');
+
+  /// Every release, newest first.
+  static final Uri releases = Uri.https('github.com', '$_repo/releases');
+
   static final Uri idea = Uri.https('github.com', '$_repo/issues/new', {'template': 'feature_request.yml'});
 }
 

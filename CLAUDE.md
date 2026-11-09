@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 877 tests
+fvm flutter test                                    # 895 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -193,6 +193,14 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   how far a device has come, and 0 means "written before migrations existed".
   Add a step and bump `Migrations.current` — a step must survive being run
   twice, since a crash between migrating and saving repeats it.
+- **Every feature release adds its notes to `ReleaseNotes.all`** (`models/release_notes.dart`),
+  newest first, with its name and two or three short lines in the ARB files and
+  every shipped language; fixes get one general line. Keep the older entries: a
+  runner who skipped versions is shown each one they missed. The home screen shows
+  them once per version, only when it is on top, after the launch settles and once
+  a killed run is decided, so they never land on another popup or a tapped
+  notification's screen. `release_notes_test` fails when `pubspec.yaml` moves to a
+  minor version that has none.
 - **Adding an achievement is safe: `AppState.load` dates it.**
   `AchievementEngine.backfill` replays the run log and dates each achievement
   to the run that crossed its threshold — filling in ones whose definition did

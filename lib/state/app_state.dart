@@ -20,6 +20,7 @@ import '../models/goal.dart';
 import '../models/mission.dart';
 import '../models/pack_strings.dart';
 import '../models/profile.dart';
+import '../models/release_notes.dart';
 import '../models/run_record.dart';
 import '../models/signal_log.dart';
 import '../models/run_outcome.dart';
@@ -27,6 +28,7 @@ import '../models/stats.dart';
 import '../models/stride.dart';
 import '../services/battery_optimization.dart';
 import '../services/achievement_engine.dart';
+import '../services/app_version.dart';
 import '../services/music_director.dart';
 import '../services/music_folder.dart';
 import '../services/song_picker.dart';
@@ -66,7 +68,9 @@ class AppState extends ChangeNotifier {
     StepSetup? stepSetup,
     BatteryOptimization? battery,
     List<Locale> Function()? systemLocales,
-  }) : _signals = signals ?? SignalScheduler.noop(),
+    Future<String?> Function()? appVersion,
+  }) : _appVersion = appVersion ?? _installedVersion,
+       _signals = signals ?? SignalScheduler.noop(),
        _battery = battery ?? BatteryOptimization.none,
        _backupFolder = backupFolder ?? BackupFolder.none(),
        _stepSetup = stepSetup ?? StepSetup.none(),
@@ -80,6 +84,32 @@ class AppState extends ChangeNotifier {
        themeRepository = themeRepository ?? ThemeRepository(importDir: Directory('${profiles.root.path}/themes'));
 
   final ProfileRepository profiles;
+
+  final Future<String?> Function() _appVersion;
+  static Future<String?> _installedVersion() async => (await AppVersion.load())?.version;
+
+  /// The installed `versionName`, or null where the platform cannot say.
+  String? appVersion;
+
+  /// True once [load] has finished everything a launch does, a notification
+  /// tap that started the app included. Anything that wants to pop up over
+  /// the home screen waits for it, so it cannot land under that tap's screen.
+  bool launchSettled = false;
+
+  /// The release notes the runner has not seen yet, newest first.
+  List<ReleaseNote> get releaseNotesDue {
+    final current = appVersion;
+    return current == null ? const [] : ReleaseNotes.since(profile.releaseNotesSeen, current);
+  }
+
+  /// Records that the notes for this version have been shown.
+  Future<void> markReleaseNotesSeen() async {
+    final current = appVersion;
+    if (current == null || profile.releaseNotesSeen == current) return;
+    profile = profile.copyWith(releaseNotesSeen: current);
+    await profiles.save(profile);
+    notifyListeners();
+  }
 
   /// The phone's languages, most preferred first.
   final List<Locale> Function() _systemLocales;
@@ -368,6 +398,13 @@ class AppState extends ChangeNotifier {
       interruptedRun = null;
     }
     await _migrateAndDateAchievements();
+    appVersion = await _appVersion();
+    // A fresh installation has nothing to catch up on. One from before release
+    // notes existed has runs, and is told what this version brings.
+    if (profile.releaseNotesSeen == null && runLog.isEmpty && appVersion != null) {
+      profile = profile.copyWith(releaseNotesSeen: appVersion);
+      await profiles.save(profile);
+    }
     autoBackupFolder = await _backupFolder.current();
     stepCounterAvailable = await _stepSetup.available();
     batteryOptimized = await _battery.optimized();
@@ -384,6 +421,8 @@ class AppState extends ChangeNotifier {
     await narrator.init(profile);
     notifyListeners();
     await _rescheduleSignals();
+    launchSettled = true;
+    notifyListeners();
   }
 
   /// Brings stored data up to date, then dates any achievement the runner has

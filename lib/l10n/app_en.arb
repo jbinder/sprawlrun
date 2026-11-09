@@ -3467,7 +3467,7 @@
   },
   "whatsNewRelease": "v{version} · {name}",
   "@whatsNewRelease": {
-    "description": "Heading for one version in the what's new popup, e.g. \"v0.9.0 · Soundtrack\". Shown in uppercase.",
+    "description": "Heading for one version in the what's new popup, e.g. \"v0.9.0 · Pirate Radio\". Shown in uppercase.",
     "placeholders": {
       "version": {
         "type": "String"
@@ -3489,7 +3489,7 @@
   "@whatsNewHint": {
     "description": "Under the version at the bottom of Settings: tapping the version shows what this version brought."
   },
-  "release090Name": "Soundtrack",
+  "release090Name": "Pirate Radio",
   "@release090Name": {
     "description": "Name of version 0.9.0, shown next to its number in Settings and in the what's new popup."
   },

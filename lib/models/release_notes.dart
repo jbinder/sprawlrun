@@ -11,7 +11,7 @@ class ReleaseNote {
   /// `versionName`, e.g. `0.9.0`.
   final String version;
 
-  /// The release's name, e.g. "Soundtrack".
+  /// The release's name, e.g. "Pirate Radio".
   final String Function(L l) name;
 
   /// What is new, one line each, most important first.

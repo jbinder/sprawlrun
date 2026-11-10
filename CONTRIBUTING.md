@@ -38,7 +38,7 @@ The same file, pasted into a mission pack's `theme` field, dresses that pack.
 
 ## Suggest music to run to
 
-[The music page](docs/FIND_MUSIC.md) lists free tracks and albums, recommended by runners, for anyone playing their own files from a folder. Got one that keeps you running? Fill in [the form](https://github.com/jbinder/sprawlrun/issues/new?template=music_suggestion.yml), and your name goes next to it, or add an entry yourself in a pull request. It has to be offered for free by its artist, and your own music is welcome. A 👍 on [a suggestion](https://github.com/jbinder/sprawlrun/issues?q=is%3Aissue+label%3Amusic) helps it along.
+[The music page](docs/FIND_MUSIC.md) lists free tracks and albums, recommended by runners, for anyone playing their own files from a folder. Got one that keeps you running? Fill in [the form](https://github.com/jbinder/sprawlrun/issues/new?template=music_suggestion.yml), or add an entry yourself in a pull request. It has to be offered for free by its artist, and your own music is welcome. A 👍 on [a suggestion](https://github.com/jbinder/sprawlrun/issues?q=is%3Aissue+label%3Amusic) helps it along.
 
 ## Report a bug or suggest something
 

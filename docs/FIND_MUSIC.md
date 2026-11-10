@@ -6,7 +6,7 @@ computer, and point the app at them.
 
 ## Music runners suggest
 
-**Got a track or an album that keeps you running? [Tell us](https://github.com/jbinder/sprawlrun/issues/new?template=music_suggestion.yml), and your name goes next to it.** All it takes is a GitHub account, a link and a line on why you love it.
+**Got a track or an album that keeps you running? [Tell us](https://github.com/jbinder/sprawlrun/issues/new?template=music_suggestion.yml).** All it takes is a GitHub account, a link and a line on why you love it.
 
 Seen one you'd run to? [Give its suggestion a 👍](https://github.com/jbinder/sprawlrun/issues?q=is%3Aissue+label%3Amusic). To narrow the list down, search this page for a word, such as `darksynth` or `long runs`.
 

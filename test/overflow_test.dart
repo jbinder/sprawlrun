@@ -299,7 +299,7 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(song.name), findsOneWidget);
     // Held back, so the warning beside the name has to fit as well.
-    narrator.hearProgress(const SongProgress(0.4, level: MusicLevel.normal, limited: true));
+    narrator.hearProgress(const SongProgress(0.4, level: MusicLevel.low, limited: true));
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(minutes: 2));
   });

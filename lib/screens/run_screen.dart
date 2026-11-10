@@ -404,6 +404,31 @@ class _SongProgress extends StatelessWidget {
   );
 }
 
+/// An arrow after the song's name while it has eased off or lifted, so the
+/// change can be read at a glance and not only by the line's colour. Nothing at
+/// the song's own level, or for a recording, which has no levels.
+class _LevelArrow extends StatelessWidget {
+  const _LevelArrow({required this.level});
+
+  final MusicLevel? level;
+
+  @override
+  Widget build(BuildContext context) {
+    final (icon, colour, why) = switch (level) {
+      MusicLevel.low => (Icons.keyboard_double_arrow_down, Cy.cyan, L.of(context).musicEasingOff),
+      MusicLevel.high => (Icons.keyboard_double_arrow_up, Cy.magenta, L.of(context).musicLifted),
+      MusicLevel.normal || null => (null, null, null),
+    };
+    if (icon == null) return const SizedBox.shrink();
+    return Tooltip(
+      message: why,
+      triggerMode: TooltipTriggerMode.tap,
+      showDuration: const Duration(seconds: 4),
+      child: Icon(icon, size: 14, color: colour, semanticLabel: why),
+    );
+  }
+}
+
 /// The note beside the song's name, or a warning in its place once the phone
 /// has fallen behind and the song is held back for the rest of the run.
 class _SongMark extends StatelessWidget {
@@ -493,6 +518,17 @@ class _RunHeader extends StatelessWidget {
                               builder: (context, progress, _) => _SongProgress(progress: progress),
                             ),
                           ],
+                        ),
+                      ),
+                      // Always there, so the name does not shift when an arrow comes.
+                      SizedBox(
+                        width: 18,
+                        child: ValueListenableBuilder<SongProgress?>(
+                          valueListenable: engine.songProgress,
+                          builder: (context, progress, _) => Align(
+                            alignment: Alignment.centerRight,
+                            child: _LevelArrow(level: progress?.level),
+                          ),
                         ),
                       ),
                     ],

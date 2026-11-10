@@ -186,14 +186,18 @@ void main() {
             as BoxDecoration)
         .color!;
 
-    for (final (level, colour) in [
-      (MusicLevel.low, Cy.cyanDim),
-      (MusicLevel.high, Cy.magenta.withValues(alpha: 0.85)),
-      (MusicLevel.normal, Cy.cyan.withValues(alpha: 0.7)),
+    final l10n = L.of(tester.element(find.byType(RunScreen)));
+    for (final (level, colour, arrow) in [
+      (MusicLevel.low, Cy.cyanDim, l10n.musicEasingOff),
+      (MusicLevel.high, Cy.magenta.withValues(alpha: 0.85), l10n.musicLifted),
+      (MusicLevel.normal, Cy.cyan.withValues(alpha: 0.7), null),
     ]) {
       run.narrator.hearProgress(SongProgress(0.3, level: level));
       await tester.pump();
       expect(fill(), colour, reason: '$level');
+      expect(find.byIcon(Icons.keyboard_double_arrow_down), level == MusicLevel.low ? findsOneWidget : findsNothing);
+      expect(find.byIcon(Icons.keyboard_double_arrow_up), level == MusicLevel.high ? findsOneWidget : findsNothing);
+      if (arrow != null) expect(find.bySemanticsLabel(arrow), findsOneWidget);
     }
     expect(find.byIcon(Icons.music_note), findsOneWidget);
     expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
@@ -201,7 +205,7 @@ void main() {
     run.narrator.hearProgress(const SongProgress(0.31, level: MusicLevel.normal, limited: true));
     await tester.pump();
     expect(find.byIcon(Icons.music_note), findsNothing);
-    expect(find.bySemanticsLabel(L.of(tester.element(find.byType(RunScreen))).musicHeldBack), findsOneWidget);
+    expect(find.bySemanticsLabel(l10n.musicHeldBack), findsOneWidget);
 
     await _stop(tester, run);
   });

@@ -1985,6 +1985,14 @@
   "@musicHeldBack": {
     "description": "Shown from a warning sign beside the song's name on the run screen, when the phone generating the music fell behind and the song was held to fewer layers for the rest of the run."
   },
+  "musicEasingOff": "The music has eased off with you: fewer layers, a slower tempo.",
+  "@musicEasingOff": {
+    "description": "Shown from a small down arrow beside the song's name on the run screen, while the song plays its quieter, slower level because the runner slowed down or stopped."
+  },
+  "musicLifted": "The music has lifted with you: more layers, a faster tempo.",
+  "@musicLifted": {
+    "description": "Shown from a small up arrow beside the song's name on the run screen, while the song plays its fullest, faster level because the runner is pushing, being chased or has reached the goal."
+  },
   "musicOneSong": "One song",
   "@musicOneSong": {
     "description": "How the song library plays: the one song the runner picks, repeating."

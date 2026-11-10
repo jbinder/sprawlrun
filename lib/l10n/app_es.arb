@@ -402,6 +402,8 @@
     "musicSongLibrary": "Biblioteca de canciones",
     "musicBatteryNote": "Tocar en directo gasta más batería que reproducir un archivo.",
     "musicHeldBack": "Este teléfono no da abasto con la canción, así que la música ya no sigue tu esfuerzo en esta carrera.",
+    "musicEasingOff": "La música ha aflojado contigo: menos capas y un ritmo más lento.",
+    "musicLifted": "La música ha subido contigo: más capas y un ritmo más rápido.",
     "musicOneSong": "Una canción",
     "musicLibraryAuto": "{mode}, {songs}",
     "musicSongsIn": "{kept} de {total} canciones",

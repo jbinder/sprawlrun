@@ -61,12 +61,12 @@ Map<String, dynamic> minimal() => {
 /// What each shipped song sounds like, as a fingerprint: eight bars from bar 24,
 /// four at high and four at low, as the 16-bit samples written to the speaker.
 const _sounds = {
-  'black_ice.json': 0x4d3e9902,
-  'cold_boot.json': 0x583ae201,
-  'neon_pursuit.json': 0xc42593a5,
-  'skyline_breach.json': 0x98ac5d3d,
-  'sodium_rain.json': 0x943bdcb7,
-  'undercity.json': 0xa5084b51,
+  'black_ice.json': 0x5f51c5e0,
+  'cold_boot.json': 0xb73c43c1,
+  'neon_pursuit.json': 0x0762f46c,
+  'skyline_breach.json': 0xa9bd7ac6,
+  'sodium_rain.json': 0xd898ca39,
+  'undercity.json': 0xcae55e1e,
 };
 
 void main() {
@@ -187,17 +187,18 @@ void main() {
       group('slowing at low', () {
         int barLength(SongStream stream) => stream.nextBar().left.length;
 
-        test('glides down over four bars, and holds', () {
+        test('glides down 2% a bar, and holds', () {
           final song = Song.parse(source);
           final stream = SongStream(song, fromBar: 24)..setLevel(MusicLevel.low);
           final normal = (song.secondsPerBeat * beatsPerBar * 44100).round();
-          final lengths = [for (var n = 0; n < 6; n++) barLength(stream)];
-          for (var n = 1; n < 4; n++) {
+          final steps = ((1 - song.lowTempo) / 0.02).round();
+          final lengths = [for (var n = 0; n < steps + 2; n++) barLength(stream)];
+          for (var n = 1; n < steps; n++) {
             expect(lengths[n], greaterThan(lengths[n - 1]));
           }
           expect(lengths[0], greaterThan(normal));
-          expect(lengths[3], closeTo(normal / song.lowTempo, 2));
-          expect(lengths[5], closeTo(lengths[3], 1));
+          expect(lengths[steps - 1], closeTo(normal / song.lowTempo, 2));
+          expect(lengths[steps + 1], closeTo(lengths[steps - 1], 1));
         });
 
         test('comes back to the song\'s own tempo', () {

@@ -9,6 +9,33 @@ import '../audio/song.dart';
 import '../audio/song_stream.dart';
 import '../data/song_library.dart';
 
+/// What the line under the song's name shows: how far through the song is being
+/// heard, and how much of it.
+@immutable
+class SongProgress {
+  const SongProgress(this.share, {this.level, this.limited = false});
+
+  /// From 0 to 1.
+  final double share;
+
+  /// The level being heard, for a song that has levels, and null for a recording.
+  final MusicLevel? level;
+
+  /// The phone fell behind, so the song is held below what the run calls for
+  /// until it ends.
+  final bool limited;
+
+  @override
+  bool operator ==(Object other) =>
+      other is SongProgress && other.share == share && other.level == level && other.limited == limited;
+
+  @override
+  int get hashCode => Object.hash(share, level, limited);
+
+  @override
+  String toString() => 'SongProgress($share, $level${limited ? ', limited' : ''})';
+}
+
 /// Plays a song during a run. Takes no audio focus: that is `AudioNarrator`'s
 /// alone, and this only ever makes sound.
 abstract class MusicPlayer {
@@ -33,8 +60,9 @@ abstract class MusicPlayer {
   /// when the sound does, not when it was made, which is seconds earlier.
   Stream<String?> get nowPlaying;
 
-  /// How far through what is being heard, from 0 to 1, and null once nothing is.
-  Stream<double?> get progress;
+  /// How far through what is being heard, and at what level, and null once
+  /// nothing is.
+  Stream<SongProgress?> get progress;
 
   /// Fades out and lets go of everything.
   Future<void> stop();
@@ -63,7 +91,7 @@ class SilentMusicPlayer implements MusicPlayer {
   Stream<String?> get nowPlaying => const Stream.empty();
 
   @override
-  Stream<double?> get progress => const Stream.empty();
+  Stream<SongProgress?> get progress => const Stream.empty();
 
   @override
   Future<void> stop() async {}
@@ -88,8 +116,11 @@ class RenderBudget {
   /// Starts judging afresh, after something has changed what a bar costs.
   void clear() => _shares.clear();
 
-  bool get exceeded =>
-      _shares.length == bars && _shares.reduce((a, b) => a + b) / bars > limit;
+  /// The share of real time the last [bars] took to make, on average, or 0
+  /// before there are that many.
+  double get share => _shares.length < bars ? 0 : _shares.reduce((a, b) => a + b) / bars;
+
+  bool get exceeded => share > limit;
 }
 
 /// Makes a song in an isolate and feeds it to an `AudioTrack` in Kotlin.
@@ -120,14 +151,22 @@ class LiveMusicPlayer implements MusicPlayer {
   @override
   Stream<String?> get nowPlaying => _nowPlaying.stream;
 
-  final StreamController<double?> _progress = StreamController<double?>.broadcast();
+  final StreamController<SongProgress?> _progress = StreamController<SongProgress?>.broadcast();
 
   @override
-  Stream<double?> get progress => _progress.stream;
+  Stream<SongProgress?> get progress => _progress.stream;
 
   // Where the song has been made up to, what one bar of it is worth, and how long
   // a bar lasts: enough to take the queue off and say where it is being heard.
-  double _madeTo = 0, _barShare = 0, _barMs = 1, _lastProgress = -1;
+  double _madeTo = 0, _barShare = 0, _barMs = 1;
+  SongProgress? _shown;
+
+  /// How much music has been made in all, in milliseconds, and where each bar
+  /// still to be heard ends on that count, with its level. The ear is the queue
+  /// behind what was made, so a level shows when it is heard, not when it is asked
+  /// for, and counting across songs keeps the next song's start from confusing it.
+  double _madeMs = 0;
+  final List<(double, MusicLevel)> _ahead = [];
 
   bool _waiting = false, _pumping = false;
   final RenderBudget _budget = RenderBudget();
@@ -138,9 +177,10 @@ class LiveMusicPlayer implements MusicPlayer {
   @visibleForTesting
   MusicLevel get level => _wanted.index < _ceiling.index ? _wanted : _ceiling;
 
-  // Figures for logcat, so a report of a gap can be read against them.
+  // Figures for logcat, so a report of a gap can be read against them. The worst
+  // share is what the step down is judged on, so a report shows how near it came.
   int _bars = 0;
-  double _worstBar = 0;
+  double _worstBar = 0, _worstShare = 0;
   int _minQueue = 1 << 30;
 
   @override
@@ -191,15 +231,19 @@ class LiveMusicPlayer implements MusicPlayer {
       final int songAt,
       final double madeTo,
       final double barShare,
+      final int level,
     )) {
       _waiting = false;
       _madeTo = madeTo;
       _barShare = barShare;
       _barMs = barMs;
+      _madeMs += barMs;
+      _ahead.add((_madeMs, MusicLevel.values[level]));
       if (songAt != _songAt) unawaited(_announce(songAt));
       _bars++;
       if (renderMs > _worstBar) _worstBar = renderMs;
       _budget.record(renderMs, barMs);
+      if (_budget.share > _worstShare) _worstShare = _budget.share;
       if (_budget.exceeded) {
         if (!stepDown()) {
           _fail('this phone cannot keep up with the song');
@@ -227,22 +271,43 @@ class LiveMusicPlayer implements MusicPlayer {
 
   void _sendLevel({required bool atOnce}) => _requests?.send((level.index, atOnce));
 
-  /// A new figure only when the line would visibly move, which keeps this from
-  /// redrawing anything four times a second for nothing.
+  /// What the phone has shown it can keep up with is less than a song can play.
+  bool get limited => _ceiling != MusicLevel.high;
+
+  /// A new figure only when the line would visibly move or the level heard
+  /// changes, which keeps this from redrawing anything four times a second for
+  /// nothing. [level] is the level of a bar just made, for a test.
   @visibleForTesting
-  void reportProgress(int queuedMs, {required double madeTo, required double barShare, required double barMs}) {
+  void reportProgress(
+    int queuedMs, {
+    required double madeTo,
+    required double barShare,
+    required double barMs,
+    MusicLevel? level,
+  }) {
     _madeTo = madeTo;
     _barShare = barShare;
     _barMs = barMs;
+    if (level != null) {
+      _madeMs += barMs;
+      _ahead.add((_madeMs, level));
+    }
     _reportProgress(queuedMs);
   }
 
   void _reportProgress(int queuedMs) {
     if (_barShare <= 0) return;
     final heard = (_madeTo - queuedMs / _barMs * _barShare).clamp(0.0, 1.0);
-    if ((heard - _lastProgress).abs() < 0.002) return;
-    _lastProgress = heard;
-    _progress.add(heard);
+    final heardMs = _madeMs - queuedMs;
+    while (_ahead.length > 1 && _ahead.first.$1 <= heardMs) {
+      _ahead.removeAt(0);
+    }
+    final level = _ahead.isEmpty ? null : _ahead.first.$2;
+    final shown = _shown;
+    if (shown != null && (heard - shown.share).abs() < 0.002 && level == shown.level && limited == shown.limited) {
+      return;
+    }
+    _progress.add(_shown = SongProgress(heard, level: level, limited: limited));
   }
 
   /// What was just made is heard once the queue ahead of it has played.
@@ -279,9 +344,11 @@ class LiveMusicPlayer implements MusicPlayer {
     final underruns = await _channel.invokeMethod<int>('underruns');
     debugPrint(
       'Music: bars=$_bars worstBar=${_worstBar.round()}ms '
+      'worstShare=${(_worstShare * 100).round()}% level=${level.name}${limited ? ' (limited)' : ''} '
       'minQueue=${_minQueue == 1 << 30 ? '-' : _minQueue}ms underruns=$underruns',
     );
     _worstBar = 0;
+    _worstShare = 0;
     _minQueue = 1 << 30;
   });
 
@@ -336,7 +403,9 @@ class LiveMusicPlayer implements MusicPlayer {
     }
     _songAt = -1;
     _barShare = 0;
-    _lastProgress = -1;
+    _shown = null;
+    _madeMs = 0;
+    _ahead.clear();
     _isolate?.kill(priority: Isolate.immediate);
     _isolate = null;
     _port?.close();
@@ -349,6 +418,7 @@ class LiveMusicPlayer implements MusicPlayer {
     _budget.clear();
     _bars = 0;
     _worstBar = 0;
+    _worstShare = 0;
     _minQueue = 1 << 30;
     await _quietly('stop');
   }
@@ -380,11 +450,11 @@ class FolderMusicPlayer implements MusicPlayer {
   @override
   Stream<String?> get nowPlaying => _nowPlaying.stream;
 
-  final StreamController<double?> _progress = StreamController<double?>.broadcast();
+  final StreamController<SongProgress?> _progress = StreamController<SongProgress?>.broadcast();
   double _lastProgress = -1;
 
   @override
-  Stream<double?> get progress => _progress.stream;
+  Stream<SongProgress?> get progress => _progress.stream;
 
   void _position(Duration position) {
     final total = _player.duration;
@@ -392,7 +462,7 @@ class FolderMusicPlayer implements MusicPlayer {
     final share = (position.inMilliseconds / total.inMilliseconds).clamp(0.0, 1.0);
     if ((share - _lastProgress).abs() < 0.002) return;
     _lastProgress = share;
-    _progress.add(share);
+    _progress.add(SongProgress(share));
   }
 
   double get _gain => _volume * (_ducked ? _duckGain : 1);
@@ -518,13 +588,13 @@ class RunMusicPlayer implements MusicPlayer {
   final MusicPlayer songs, files;
   late MusicPlayer _active = songs;
   final StreamController<String?> _nowPlaying = StreamController<String?>.broadcast();
-  final StreamController<double?> _progress = StreamController<double?>.broadcast();
+  final StreamController<SongProgress?> _progress = StreamController<SongProgress?>.broadcast();
 
   @override
   Stream<String?> get nowPlaying => _nowPlaying.stream;
 
   @override
-  Stream<double?> get progress => _progress.stream;
+  Stream<SongProgress?> get progress => _progress.stream;
 
   @override
   Future<bool> start(String songId, {List<String> then = const []}) async {
@@ -578,6 +648,7 @@ void _generate((SendPort, List<String>) start) {
       stream.currentIndex,
       stream.position,
       stream.barShare,
+      stream.level.index,
     ));
   });
 }

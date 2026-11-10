@@ -117,13 +117,17 @@ looking as if it would:
 
 **A synth's sound is part of the format.** A song has to go on sounding as its
 author heard it, so a change that alters existing songs needs a new `format`
-number, with the old behaviour kept for the old one.
+number, with the old behaviour kept for the old one. `test/song_test.dart` pins
+what each shipped song writes to the speaker, so a test fails when one changes.
 
 ## What it costs
 
 Each note is computed in full when its bar comes up. On a mid-range phone, Neon
 Pursuit takes about a quarter of one core and costs about 2% of battery an hour,
-in a single comparison sitting still. `prophet` and `blade` cost the most, and
-reverbs run constantly. If a phone can't keep up for several bars in a row, the
-song drops a level for the rest of the run, and below `low` the music stops and the
-run carries on. So a song's `low` should be clearly cheaper than the song.
+in a single comparison sitting still. Reverbs cost the most, then `prophet` and
+`blade`. A reverb rests while its bus is silent and its tail has died away, so a
+layer a level leaves out costs nothing a few seconds after it stops. If a phone
+can't keep up for several bars in a row, the song drops a level for the rest of
+the run, with a warning by its name on the run screen, and below `low` the music
+stops and the run carries on. So a song's `low` should be clearly cheaper than the
+song.

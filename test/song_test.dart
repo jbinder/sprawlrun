@@ -58,6 +58,17 @@ Map<String, dynamic> minimal() => {
   ],
 };
 
+/// What each shipped song sounds like, as a fingerprint: eight bars from bar 24,
+/// four at high and four at low, as the 16-bit samples written to the speaker.
+const _sounds = {
+  'black_ice.json': 0x4d3e9902,
+  'cold_boot.json': 0x583ae201,
+  'neon_pursuit.json': 0xc42593a5,
+  'skyline_breach.json': 0x98ac5d3d,
+  'sodium_rain.json': 0x943bdcb7,
+  'undercity.json': 0xa5084b51,
+};
+
 void main() {
   group('every shipped song', () {
     final files = Directory('assets/songs').listSync().whereType<File>().where((f) => f.path.endsWith('.json'));
@@ -99,6 +110,26 @@ void main() {
         }
         expect(peak, greaterThan(0.1));
         expect(peak, lessThanOrEqualTo(1.0));
+      });
+
+      // What the phone plays, pinned. A synth's sound is part of the format, so
+      // making the synth faster must leave these alone; a change that moves one
+      // is a change to every runner's song and needs a new format number.
+      test('$name sounds as it always has', () {
+        final stream = SongStream(Song.parse(file.readAsStringSync()), fromBar: 24, level: MusicLevel.high);
+        var hash = 0x811c9dc5;
+        for (var i = 0; i < 8; i++) {
+          if (i == 4) stream.setLevel(MusicLevel.low, atOnce: true);
+          final bar = stream.nextBar();
+          for (final channel in [bar.left, bar.right]) {
+            for (final x in channel) {
+              final v = (x * 32767).round() & 0xffff;
+              hash = ((hash ^ (v & 0xff)) * 0x01000193) & 0xffffffff;
+              hash = ((hash ^ (v >> 8)) * 0x01000193) & 0xffffffff;
+            }
+          }
+        }
+        expect(hash, _sounds[name], reason: 'a new song needs its value added here');
       });
     }
   });

@@ -93,7 +93,7 @@ class _Plain implements MusicPlayer {
   Stream<String?> get nowPlaying => const Stream.empty();
 
   @override
-  Stream<double?> get progress => const Stream.empty();
+  Stream<SongProgress?> get progress => const Stream.empty();
 
   @override
   Future<bool> start(String songId, {List<String> then = const []}) async {
@@ -276,7 +276,7 @@ void main() {
         final raw = _Player();
         final player = FolderMusicPlayer(player: raw);
         final seen = <double?>[];
-        player.progress.listen(seen.add);
+        player.progress.listen((p) => seen.add(p?.share));
         await player.start('content://a');
         raw.moved.add(const Duration(seconds: 25));
         await Future<void>.delayed(Duration.zero);

@@ -255,7 +255,7 @@ next October if you do not finish. One switch in Settings turns it all off.
 **Audio**
 - Your music ducks for a transmission and is forced back if the player sulks
 - Six optional ten-minute songs, played live by the phone during a run with no audio files, written as data ([docs/SONGS.md](docs/SONGS.md)); choose one, shuffle them, let the app match the song to the run, or play your own files from a folder ([where to find music](docs/FIND_MUSIC.md)); it thins out and slows when you ease off, and lifts when you push, get chased or reach your goal
-- A song library with a switch per song, and the song and its progress on the run screen
+- A song library with a switch per song, and the song, its progress and the level being heard on the run screen
 - Optional ambient synth bed for when you bring no music of your own
 - Adjustable speech rate and effects volume; story voice can be silenced
 

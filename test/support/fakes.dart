@@ -10,6 +10,7 @@ import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/models/stride.dart';
 import 'package:sprawl_run/services/geo.dart';
 import 'package:sprawl_run/services/location_service.dart';
+import 'package:sprawl_run/services/music_player.dart';
 import 'package:sprawl_run/services/narrator.dart';
 import 'package:sprawl_run/services/step_source.dart';
 
@@ -102,12 +103,12 @@ class FakeNarrator implements Narrator {
 
   void hearSong(String? id) => _songs.add(id);
 
-  final _progress = StreamController<double?>.broadcast();
+  final _progress = StreamController<SongProgress?>.broadcast();
 
   @override
-  Stream<double?> get songProgress => _progress.stream;
+  Stream<SongProgress?> get songProgress => _progress.stream;
 
-  void hearProgress(double? share) => _progress.add(share);
+  void hearProgress(SongProgress? progress) => _progress.add(progress);
 
   @override
   Future<void> init(Profile profile) async {}

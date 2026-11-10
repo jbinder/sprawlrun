@@ -108,34 +108,79 @@ class Echo {
   }
 }
 
+/// A damped comb: a delay line fed back through a one-pole low-pass.
 class _Comb {
-  _Comb(int size, this.feedback, this.damp) : _line = Float64List(size);
+  _Comb(int size, this.feedback, this.damp) : line = Float64List(size);
 
-  final Float64List _line;
+  final Float64List line;
   final double feedback, damp;
-  int _at = 0;
-  double _state = 0;
+  int at = 0;
+  double state = 0;
+}
 
-  double tick(double x) {
-    final y = _line[_at];
-    _state = y * (1 - damp) + _state * damp;
-    _line[_at] = x + _state * feedback;
-    if (++_at == _line.length) _at = 0;
-    return y;
+/// Adds four combs' output for each of the first [count] of [input] to [out], in
+/// the order given. A bar in one loop, four combs to a pass and their state in
+/// locals, is what makes a reverb affordable on a phone. The sum is taken in the
+/// same order as one comb and one sample at a time, so the sound is unchanged.
+void _addCombs(_Comb a, _Comb b, _Comb c, _Comb d, Float64List input, Float64List out, int count) {
+  final la = a.line, lb = b.line, lc = c.line, ld = d.line;
+  final na = la.length, nb = lb.length, nc = lc.length, nd = ld.length;
+  final fa = a.feedback, fb = b.feedback, fc = c.feedback, fd = d.feedback;
+  final da = a.damp, db = b.damp, dc = c.damp, dd = d.damp;
+  var ia = a.at, ib = b.at, ic = c.at, id = d.at;
+  var sa = a.state, sb = b.state, sc = c.state, sd = d.state;
+  for (var i = 0; i < count; i++) {
+    final x = input[i];
+    final ya = la[ia];
+    sa = ya * (1 - da) + sa * da;
+    la[ia] = x + sa * fa;
+    if (++ia == na) ia = 0;
+    final yb = lb[ib];
+    sb = yb * (1 - db) + sb * db;
+    lb[ib] = x + sb * fb;
+    if (++ib == nb) ib = 0;
+    final yc = lc[ic];
+    sc = yc * (1 - dc) + sc * dc;
+    lc[ic] = x + sc * fc;
+    if (++ic == nc) ic = 0;
+    final yd = ld[id];
+    sd = yd * (1 - dd) + sd * dd;
+    ld[id] = x + sd * fd;
+    if (++id == nd) id = 0;
+    out[i] = out[i] + ya + yb + yc + yd;
   }
+  a
+    ..at = ia
+    ..state = sa;
+  b
+    ..at = ib
+    ..state = sb;
+  c
+    ..at = ic
+    ..state = sc;
+  d
+    ..at = id
+    ..state = sd;
 }
 
 class _Allpass {
-  _Allpass(int size) : _line = Float64List(size);
+  _Allpass(int size) : line = Float64List(size);
 
-  final Float64List _line;
+  final Float64List line;
   int _at = 0;
 
-  double tick(double x) {
-    final y = _line[_at];
-    _line[_at] = x + y * 0.5;
-    if (++_at == _line.length) _at = 0;
-    return y - x;
+  /// Passes the first [count] of [signal] through, in place.
+  void process(Float64List signal, int count) {
+    final line = this.line, size = line.length;
+    var at = _at;
+    for (var i = 0; i < count; i++) {
+      final x = signal[i];
+      final y = line[at];
+      line[at] = x + y * 0.5;
+      if (++at == size) at = 0;
+      signal[i] = y - x;
+    }
+    _at = at;
   }
 }
 
@@ -164,25 +209,92 @@ class Reverb {
   final double mix, _outerDry, _outerWet;
   final List<_Comb> _leftCombs = [], _rightCombs = [];
   final List<_Allpass> _leftPass = [], _rightPass = [];
+  Float64List _input = Float64List(0), _wetL = Float64List(0), _wetR = Float64List(0);
+
+  /// Whether every line is empty, so silence in gives exactly silence out.
+  bool _empty = true;
+
+  /// A tail below this is a hundred decibels under the quietest step a 16-bit
+  /// sample can take, so it is let go rather than worked out to the end.
+  static const double _inaudible = 1e-9;
 
   /// Adds the first [count] samples of [bus], reverberated, to [l] and [r].
+  ///
+  /// A bus is often silent for bars at a time, a layer the level leaves out most
+  /// of all, and a reverb running on nothing was a real share of a song's cost.
   void process(Float32List bus, int count, Float32List l, Float32List r) {
+    if (_silent(bus, count)) {
+      if (_empty) return;
+      if (_tailGone()) {
+        _clear();
+        return;
+      }
+    } else {
+      _empty = false;
+    }
+    if (_input.length < count) {
+      _input = Float64List(count);
+      _wetL = Float64List(count);
+      _wetR = Float64List(count);
+    }
+    final input = _input, wetL = _wetL, wetR = _wetR;
     for (var i = 0; i < count; i++) {
       final x = bus[i];
-      final input = 0.015 * (x + x);
-      var wetL = 0.0, wetR = 0.0;
-      for (var c = 0; c < _combs.length; c++) {
-        wetL += _leftCombs[c].tick(input);
-        wetR += _rightCombs[c].tick(input);
-      }
-      for (var a = 0; a < _allpasses.length; a++) {
-        wetL = _leftPass[a].tick(wetL);
-        wetR = _rightPass[a].tick(wetR);
-      }
-      final direct = (1 - mix) * x;
-      l[i] += x * _outerDry + (direct + mix * wetL) * _outerWet;
-      r[i] += x * _outerDry + (direct + mix * wetR) * _outerWet;
+      input[i] = 0.015 * (x + x);
     }
+    wetL.fillRange(0, count, 0);
+    wetR.fillRange(0, count, 0);
+    final cl = _leftCombs, cr = _rightCombs;
+    _addCombs(cl[0], cl[1], cl[2], cl[3], input, wetL, count);
+    _addCombs(cl[4], cl[5], cl[6], cl[7], input, wetL, count);
+    _addCombs(cr[0], cr[1], cr[2], cr[3], input, wetR, count);
+    _addCombs(cr[4], cr[5], cr[6], cr[7], input, wetR, count);
+    for (var a = 0; a < _allpasses.length; a++) {
+      _leftPass[a].process(wetL, count);
+      _rightPass[a].process(wetR, count);
+    }
+    final mix = this.mix, dry = _outerDry, wet = _outerWet;
+    for (var i = 0; i < count; i++) {
+      final x = bus[i];
+      final direct = (1 - mix) * x;
+      l[i] += x * dry + (direct + mix * wetL[i]) * wet;
+      r[i] += x * dry + (direct + mix * wetR[i]) * wet;
+    }
+  }
+
+  static bool _silent(Float32List bus, int count) {
+    for (var i = 0; i < count; i++) {
+      if (bus[i] != 0) return false;
+    }
+    return true;
+  }
+
+  bool _tailGone() {
+    for (final comb in [..._leftCombs, ..._rightCombs]) {
+      if (comb.state.abs() >= _inaudible || !_quiet(comb.line)) return false;
+    }
+    for (final pass in [..._leftPass, ..._rightPass]) {
+      if (!_quiet(pass.line)) return false;
+    }
+    return true;
+  }
+
+  static bool _quiet(Float64List line) {
+    for (var i = 0; i < line.length; i++) {
+      if (line[i].abs() >= _inaudible) return false;
+    }
+    return true;
+  }
+
+  void _clear() {
+    for (final comb in [..._leftCombs, ..._rightCombs]) {
+      comb.line.fillRange(0, comb.line.length, 0);
+      comb.state = 0;
+    }
+    for (final pass in [..._leftPass, ..._rightPass]) {
+      pass.line.fillRange(0, pass.line.length, 0);
+    }
+    _empty = true;
   }
 }
 

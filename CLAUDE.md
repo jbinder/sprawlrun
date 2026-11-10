@@ -223,7 +223,9 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   its JSON file in `assets/songs/`, in the format in `docs/SONGS.md`. `lib/audio/`
   is pure Dart with no Flutter, so it runs in an isolate and from `dart run`. A
   synth's sound is part of the format: a change that alters existing songs needs
-  a new `format` number. Listening is the only real check, and Claude can't.
+  a new `format` number. `song_test` pins each shipped song's 16-bit output, so
+  a speed-up is checked to the sample. Listening is the only check of how a
+  song sounds, and Claude can't.
 - **Never await `play()` on a looping just_audio player.** Its future completes
   when playback ends, which a loop never does. The ambient bed did this from
   0.1.0: `RunEngine.start` never returned with the bed on, so the service was
@@ -242,7 +244,10 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   four seconds of queue ahead of either. Low must sit well below usual pace, or a
   climb loses its music. Levels and the two tempos are optional for every song, shipped
   ones too: without them a song plays straight. A phone falling behind drops a
-  level for the rest of the run before the music stops.
+  level for the rest of the run before the music stops, and the run screen puts
+  a warning by the song's name. Without it, two test runs of Skyline Breach
+  that seemed stuck at one level had nothing to tell a cap from a bug. logcat's
+  minute line gives the worst eight-bar share it is judged on.
 - **`SongPicker` chooses the music, and is pure.** Shuffle and Best match give
   `RunEngine` a queue before the run; `SongSequence` plays each song through,
   rings it out and starts the next, only ever one at a time. "Played lately" comes

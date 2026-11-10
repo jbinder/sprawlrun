@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
@@ -13,7 +14,9 @@ import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart' show Activity;
 import 'package:sprawl_run/screens/run_screen.dart';
+import 'package:sprawl_run/services/music_player.dart';
 import 'package:sprawl_run/services/run_engine.dart';
+import 'package:sprawl_run/theme/cyber_palette.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
 
@@ -23,10 +26,11 @@ const _notifications = MethodChannel('io.github.jbinder.sprawlrun/notifications'
 
 /// A run screen with a live run behind it, the way the app starts one.
 class _Run {
-  _Run(this.state, this.engine, this._clock, this.noticeCalls);
+  _Run(this.state, this.engine, this._clock, this.noticeCalls, this.narrator);
 
   final AppState state;
   final RunEngine engine;
+  final FakeNarrator narrator;
   final _Clock _clock;
 
   /// Everything the screen told the notification, oldest first.
@@ -97,7 +101,8 @@ Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500, Activity
   final mission = state.currentMission!.mission;
 
   final clock = _Clock();
-  final engine = RunEngine(narrator: FakeNarrator(), location: clock.location, clock: () => clock.now);
+  final narrator = FakeNarrator();
+  final engine = RunEngine(narrator: narrator, location: clock.location, clock: () => clock.now);
 
   await tester.pumpWidget(
     MultiProvider(
@@ -124,7 +129,7 @@ Future<_Run> _startRun(WidgetTester tester, {double goalSeconds = 1500, Activity
     await tester.pump(const Duration(seconds: 1));
   }
   expect(engine.phase, RunPhase.running);
-  return _Run(state, engine, clock, noticeCalls);
+  return _Run(state, engine, clock, noticeCalls, narrator);
 }
 
 /// Ends the run so its ticker stops, and lets the line in flight run out.
@@ -166,6 +171,37 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('TRANSCRIPT'), findsNothing);
+
+    await _stop(tester, run);
+  });
+
+  // The line under the song's name says which level is being heard, so a runner
+  // can tell the music is following them; a phone that fell behind says so.
+  testWidgets('the song line shows the level heard, and a phone that fell behind', (tester) async {
+    final run = await _startRun(tester);
+    run.narrator.hearSong(run.state.songs.first.id);
+    await tester.pump();
+
+    Color fill() => (tester.widget<AnimatedContainer>(find.byKey(const ValueKey('songProgressFill'))).decoration!
+            as BoxDecoration)
+        .color!;
+
+    for (final (level, colour) in [
+      (MusicLevel.low, Cy.cyanDim),
+      (MusicLevel.high, Cy.magenta.withValues(alpha: 0.85)),
+      (MusicLevel.normal, Cy.cyan.withValues(alpha: 0.7)),
+    ]) {
+      run.narrator.hearProgress(SongProgress(0.3, level: level));
+      await tester.pump();
+      expect(fill(), colour, reason: '$level');
+    }
+    expect(find.byIcon(Icons.music_note), findsOneWidget);
+    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+
+    run.narrator.hearProgress(const SongProgress(0.31, level: MusicLevel.normal, limited: true));
+    await tester.pump();
+    expect(find.byIcon(Icons.music_note), findsNothing);
+    expect(find.bySemanticsLabel(L.of(tester.element(find.byType(RunScreen))).musicHeldBack), findsOneWidget);
 
     await _stop(tester, run);
   });

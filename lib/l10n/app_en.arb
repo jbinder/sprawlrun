@@ -1981,6 +1981,10 @@
   "@musicBatteryNote": {
     "description": "At the top of the song library. The phone generates the music as it plays, which costs more battery than playing an audio file from a folder."
   },
+  "musicHeldBack": "This phone can't keep up with the song, so the music no longer follows your effort this run.",
+  "@musicHeldBack": {
+    "description": "Shown from a warning sign beside the song's name on the run screen, when the phone generating the music fell behind and the song was held to fewer layers for the rest of the run."
+  },
   "musicOneSong": "One song",
   "@musicOneSong": {
     "description": "How the song library plays: the one song the runner picks, repeating."

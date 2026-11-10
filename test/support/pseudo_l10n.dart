@@ -1215,6 +1215,9 @@ class PseudoL extends L {
   String get musicBatteryNote => pseudo(_en.musicBatteryNote);
 
   @override
+  String get musicHeldBack => pseudo(_en.musicHeldBack);
+
+  @override
   String get musicOneSong => pseudo(_en.musicOneSong);
 
   @override

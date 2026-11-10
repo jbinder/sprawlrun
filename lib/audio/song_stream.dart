@@ -66,6 +66,9 @@ class SongStream {
     MusicLevel.high => song.highTempo,
   };
 
+  /// The level of the bar made last.
+  MusicLevel get level => _level;
+
   /// Plays [level] from the next phrase, or from the next bar with [atOnce].
   /// What has already been made keeps ringing, so a layer leaves on its own tail.
   void setLevel(MusicLevel level, {bool atOnce = false}) {
@@ -127,7 +130,7 @@ class SongStream {
 
     for (final track in silent ? const <Track>[] : song.tracks) {
       if (track.level.index > _level.index) continue;
-      final bus = _buses[track.bus]!.samples;
+      final bus = _buses[track.bus]!;
       for (final clip in track.clips) {
         if (clip.playsAt(b)) _playClip(track.voice, clip, b, barStart, spb, bus);
       }
@@ -143,9 +146,7 @@ class SongStream {
     _masterRight.process(right, count);
 
     for (final bus in _buses.values) {
-      final samples = bus.samples;
-      samples.setRange(0, _window - count, samples, count);
-      samples.fillRange(_window - count, _window, 0);
+      bus.advance(count);
     }
     _base = end;
     _beats += beatsPerBar;
@@ -153,14 +154,18 @@ class SongStream {
     return RenderedBar(left, right);
   }
 
-  void _playClip(Voice voice, Clip clip, int b, double barStart, double spb, Float32List bus) {
+  void _playClip(Voice voice, Clip clip, int b, double barStart, double spb, _RunningBus running) {
+    final bus = running.samples;
     final progress = clip.progress(b);
     final cutoff = clip.cutoff?.at(progress) ?? voice.cutoff;
     for (final e in clip.pattern.at(b)) {
       final start = (barStart + e.beat * spb * sampleRate).round() - _base;
       final amp = (e.amp ?? clip.amp ?? voice.amp) / e.shareOf;
       if (voice.type == VoiceType.drum) {
-        _voices.hit(_drum(voice), bus, start, amp: amp, rate: e.rate ?? voice.rate);
+        final table = _drum(voice);
+        final rate = e.rate ?? voice.rate;
+        _voices.hit(table, bus, start, amp: amp, rate: rate);
+        running.reach(start + (table.length / rate).ceil() + 1);
         continue;
       }
       final note = (e.note! + clip.transpose).toDouble();
@@ -169,6 +174,7 @@ class SongStream {
         (voice.sustain + voice.sustainOfNote * e.beats) * spb,
         (voice.release + voice.releaseOfNote * e.beats) * spb,
       );
+      running.reach(start + env.length + 1);
       switch (voice.type) {
         case VoiceType.saw:
           _voices.saw(bus, start, note, env: env, cutoff: cutoff, amp: amp);
@@ -256,6 +262,9 @@ class SongSequence {
 
   double get barShare => 1 / current.bars;
 
+  /// The level of the bar made last.
+  MusicLevel get level => _stream.level;
+
   void setLevel(MusicLevel level, {bool atOnce = false}) {
     _level = level;
     _stream.setLevel(level, atOnce: atOnce);
@@ -303,6 +312,27 @@ class _RunningBus {
   }
 
   final Float32List samples;
+
+  /// Everything from here on is silence, so moving on a bar need not touch it.
+  /// Shifting the whole ten-second window every bar was a real share of the cost.
+  int _used = 0;
+
+  /// Notes reach up to [end], not counting a reverb or echo tail, which lives in
+  /// the effect and not here.
+  void reach(int end) {
+    if (end > _used) _used = min(end, samples.length);
+  }
+
+  /// Drops the bar just played and brings what rings past it to the front.
+  void advance(int count) {
+    // An echo writes into the bar itself, so that much is always cleared.
+    final used = max(_used, min(count, samples.length));
+    final keep = used - count;
+    if (keep > 0) samples.setRange(0, keep, samples, count);
+    samples.fillRange(max(keep, 0), used, 0);
+    _used = max(keep, 0);
+  }
+
   final SlicerEffect? slicer;
   final Drive? drive;
   final Echo? echo;

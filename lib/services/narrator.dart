@@ -115,8 +115,8 @@ abstract class Narrator {
   /// The song being heard, as each one starts, and null once there is none.
   Stream<String?> get songPlaying;
 
-  /// How far through it, from 0 to 1, and null once there is none.
-  Stream<double?> get songProgress;
+  /// How far through it and at what level, and null once there is none.
+  Stream<SongProgress?> get songProgress;
 
   Future<void> dispose();
 }
@@ -206,7 +206,7 @@ class AudioNarrator implements Narrator {
   Stream<String?> get songPlaying => _music.nowPlaying;
 
   @override
-  Stream<double?> get songProgress => _music.progress;
+  Stream<SongProgress?> get songProgress => _music.progress;
 
   @override
   Future<void> init(Profile profile) async {

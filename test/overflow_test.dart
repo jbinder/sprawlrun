@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/app.dart';
 import 'package:sprawl_run/data/active_run_store.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
@@ -33,6 +34,7 @@ import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/screens/song_library_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
 import 'package:sprawl_run/services/battery_optimization.dart';
+import 'package:sprawl_run/services/music_player.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/services/location_service.dart';
 import 'package:sprawl_run/state/app_state.dart';
@@ -296,7 +298,8 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     narrator.hearSong(song.id);
     await tester.pump(const Duration(seconds: 1));
     expect(find.text(song.name), findsOneWidget);
-    narrator.hearProgress(0.4);
+    // Held back, so the warning beside the name has to fit as well.
+    narrator.hearProgress(const SongProgress(0.4, level: MusicLevel.normal, limited: true));
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(minutes: 2));
   });

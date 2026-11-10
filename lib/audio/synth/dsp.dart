@@ -92,22 +92,6 @@ double blep(double t, double dt) {
   return 0;
 }
 
-/// A band-limited pulse with its DC removed, as `Pulse.ar` has none.
-class Pulse {
-  double phase = 0;
-
-  double tick(double dt, double width) {
-    final w = width - width.floorToDouble();
-    final up = 2 * phase - 1 - blep(phase, dt);
-    var other = phase + 1 - w;
-    if (other >= 1) other -= 1;
-    final down = 2 * other - 1 - blep(other, dt);
-    phase += dt;
-    if (phase >= 1) phase -= 1;
-    return up - down - (2 * w - 1);
-  }
-}
-
 /// `Normalizer.ar`. Reads [x] and writes [out], each [length] long, 20 ms late.
 void lookahead(List<double> x, List<double> out, int length) {
   const w = normalizerWindow;

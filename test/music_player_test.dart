@@ -81,7 +81,7 @@ class _RecordingPlayer implements MusicPlayer {
   Stream<String?> get nowPlaying => const Stream.empty();
 
   @override
-  Stream<double?> get progress => const Stream.empty();
+  Stream<SongProgress?> get progress => const Stream.empty();
 
   final calls = <String>[];
 
@@ -224,7 +224,7 @@ void main() {
     testWidgets('takes the queue off how far the song has been made', (tester) async {
       await tester.runAsync(() async {
         final seen = <double?>[];
-        final sub = player.progress.listen(seen.add);
+        final sub = player.progress.listen((p) => seen.add(p?.share));
         // Half made, with two bars of a hundred still queued ahead of the ear.
         player.reportProgress(2000, madeTo: 0.5, barShare: 0.01, barMs: 1000);
         await Future<void>.delayed(Duration.zero);
@@ -239,6 +239,34 @@ void main() {
         player.reportProgress(9000, madeTo: 0.01, barShare: 0.01, barMs: 1000);
         await Future<void>.delayed(Duration.zero);
         expect(seen.last, 0);
+        await sub.cancel();
+      });
+    });
+
+    testWidgets('shows a level when it is heard, not when it is made', (tester) async {
+      await tester.runAsync(() async {
+        final seen = <SongProgress?>[];
+        final sub = player.progress.listen(seen.add);
+        // Four bars of a second each made, two at normal and two lifted; three
+        // seconds of them still queued, so the first is being heard.
+        player.reportProgress(1000, madeTo: 0.01, barShare: 0.01, barMs: 1000, level: MusicLevel.normal);
+        player.reportProgress(1500, madeTo: 0.02, barShare: 0.01, barMs: 1000, level: MusicLevel.normal);
+        player.reportProgress(2500, madeTo: 0.03, barShare: 0.01, barMs: 1000, level: MusicLevel.high);
+        player.reportProgress(3000, madeTo: 0.04, barShare: 0.01, barMs: 1000, level: MusicLevel.high);
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.last!.level, MusicLevel.normal, reason: 'the lift is still in the queue');
+
+        // The queue plays down into the third bar.
+        player.reportProgress(1500, madeTo: 0.04, barShare: 0.01, barMs: 1000);
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.last!.level, MusicLevel.high);
+        expect(seen.last!.limited, isFalse);
+
+        // Falling behind holds the song back, and says so.
+        expect(player.stepDown(), isTrue);
+        player.reportProgress(1500, madeTo: 0.04, barShare: 0.01, barMs: 1000);
+        await Future<void>.delayed(Duration.zero);
+        expect(seen.last!.limited, isTrue);
         await sub.cancel();
       });
     });

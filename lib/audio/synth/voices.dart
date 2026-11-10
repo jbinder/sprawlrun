@@ -165,8 +165,9 @@ class Voices {
     }
   }
 
-  /// `:prophet`: five width-modulated pulses, normalised, then the envelope
-  /// twice around a squared signal in a resonant filter.
+  /// `:prophet`: five width-modulated pulses, band-limited and without the DC
+  /// `Pulse.ar` lacks, normalised, then the envelope twice around a squared
+  /// signal in a resonant filter.
   void prophet(
     Float32List bus,
     int start,
@@ -178,31 +179,70 @@ class Voices {
     final count = env.length;
     _scratch(count);
     final raw = _raw;
-    final dt = midiHz(note) / sampleRate;
-    final p1 = Pulse(), p2 = Pulse(), p3 = Pulse(), p4 = Pulse();
-    final low = Pulse();
+    final dt = midiHz(note) / sampleRate, dtLow = dt / 2;
+    // The five pulses of `Pulse`, inline: their widths move only every [control]
+    // samples, so the wrap of each width is worked out once a block, not once a
+    // sample. The same arithmetic, in about half the time of a call per pulse.
+    var ph1 = 0.0, ph2 = 0.0, ph3 = 0.0, ph4 = 0.0, phLow = 0.0;
     var lowLfo = 0.0, wander = 0.0, wanderTo = _noise.nextDouble() * 2 - 1;
     var wanderFrom = 0.0;
     var w1 = 0.0, w2 = 0.0, w3 = 0.0, w4 = 0.0, w5 = 0.0;
+    var d1 = 0.0, d2 = 0.0, d3 = 0.0, d4 = 0.0, d5 = 0.0;
     const control = 32;
-    for (var i = 0; i < count; i++) {
-      if (i % control == 0) {
-        final t = i / sampleRate;
-        final held = t * 0.2;
-        final part = held - held.floorToDouble();
-        if (i > 0 && part < control / sampleRate * 0.2) {
-          wanderFrom = wanderTo;
-          wanderTo = _noise.nextDouble() * 2 - 1;
-        }
-        wander = wanderFrom + (wanderTo - wanderFrom) * part * part * (3 - 2 * part);
-        lowLfo += (2 + wander) * control / sampleRate;
-        w1 = 0.1 / (1.2 + sin(2 * pi * t));
-        w2 = 0.8 * (1.2 + sin(2 * pi * 0.3 * t) + 0.7) / 2;
-        w3 = 0.8 * (1.2 + _tri(0.4 * t)) / 2;
-        w4 = 0.8 * (1.2 + _tri(0.4 * t + 0.19 / 4)) / 2;
-        w5 = 0.8 * (1.2 + _tri(lowLfo)) / 2;
+    for (var block = 0; block < count; block += control) {
+      final t = block / sampleRate;
+      final held = t * 0.2;
+      final part = held - held.floorToDouble();
+      if (block > 0 && part < control / sampleRate * 0.2) {
+        wanderFrom = wanderTo;
+        wanderTo = _noise.nextDouble() * 2 - 1;
       }
-      raw[i] = p1.tick(dt, w1) + p2.tick(dt, w2) + p3.tick(dt, w3) + p4.tick(dt, w4) + 0.5 * low.tick(dt / 2, w5);
+      wander = wanderFrom + (wanderTo - wanderFrom) * part * part * (3 - 2 * part);
+      lowLfo += (2 + wander) * control / sampleRate;
+      w1 = 0.1 / (1.2 + sin(2 * pi * t));
+      w2 = 0.8 * (1.2 + sin(2 * pi * 0.3 * t) + 0.7) / 2;
+      w3 = 0.8 * (1.2 + _tri(0.4 * t)) / 2;
+      w4 = 0.8 * (1.2 + _tri(0.4 * t + 0.19 / 4)) / 2;
+      w5 = 0.8 * (1.2 + _tri(lowLfo)) / 2;
+      w1 -= w1.floorToDouble();
+      w2 -= w2.floorToDouble();
+      w3 -= w3.floorToDouble();
+      w4 -= w4.floorToDouble();
+      w5 -= w5.floorToDouble();
+      d1 = 2 * w1 - 1;
+      d2 = 2 * w2 - 1;
+      d3 = 2 * w3 - 1;
+      d4 = 2 * w4 - 1;
+      d5 = 2 * w5 - 1;
+      final end = min(block + control, count);
+      for (var i = block; i < end; i++) {
+        var other = ph1 + 1 - w1;
+        if (other >= 1) other -= 1;
+        final v1 = 2 * ph1 - 1 - blep(ph1, dt) - (2 * other - 1 - blep(other, dt)) - d1;
+        ph1 += dt;
+        if (ph1 >= 1) ph1 -= 1;
+        other = ph2 + 1 - w2;
+        if (other >= 1) other -= 1;
+        final v2 = 2 * ph2 - 1 - blep(ph2, dt) - (2 * other - 1 - blep(other, dt)) - d2;
+        ph2 += dt;
+        if (ph2 >= 1) ph2 -= 1;
+        other = ph3 + 1 - w3;
+        if (other >= 1) other -= 1;
+        final v3 = 2 * ph3 - 1 - blep(ph3, dt) - (2 * other - 1 - blep(other, dt)) - d3;
+        ph3 += dt;
+        if (ph3 >= 1) ph3 -= 1;
+        other = ph4 + 1 - w4;
+        if (other >= 1) other -= 1;
+        final v4 = 2 * ph4 - 1 - blep(ph4, dt) - (2 * other - 1 - blep(other, dt)) - d4;
+        ph4 += dt;
+        if (ph4 >= 1) ph4 -= 1;
+        other = phLow + 1 - w5;
+        if (other >= 1) other -= 1;
+        final v5 = 2 * phLow - 1 - blep(phLow, dtLow) - (2 * other - 1 - blep(other, dtLow)) - d5;
+        phLow += dtLow;
+        if (phLow >= 1) phLow -= 1;
+        raw[i] = v1 + v2 + v3 + v4 + 0.5 * v5;
+      }
     }
     lookahead(raw, _normal, count);
     final normal = _normal;

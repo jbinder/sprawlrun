@@ -8,6 +8,7 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/services/geo.dart';
 import 'package:sprawl_run/services/location_service.dart';
+import 'package:sprawl_run/services/music_player.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 
 import 'support/fakes.dart';
@@ -626,9 +627,9 @@ void main() {
         final engine = RunEngine(narrator: narrator, location: FakeLocation());
         engine.start(goal: const RunGoal(GoalType.time, 600), profile: const Profile(music: 'undercity'));
         fake.flushMicrotasks();
-        narrator.hearProgress(0.4);
+        narrator.hearProgress(const SongProgress(0.4, level: MusicLevel.low));
         fake.flushMicrotasks();
-        expect(engine.songProgress.value, 0.4);
+        expect(engine.songProgress.value, const SongProgress(0.4, level: MusicLevel.low));
         engine.abort();
         fake.flushMicrotasks();
         expect(engine.songProgress.value, isNull);

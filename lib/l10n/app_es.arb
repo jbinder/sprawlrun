@@ -401,6 +401,7 @@
     "musicFolderEmpty": "No hay música en tu carpeta, así que las carreras seguirán sin ella.",
     "musicSongLibrary": "Biblioteca de canciones",
     "musicBatteryNote": "Tocar en directo gasta más batería que reproducir un archivo.",
+    "musicHeldBack": "Este teléfono no da abasto con la canción, así que la música ya no sigue tu esfuerzo en esta carrera.",
     "musicOneSong": "Una canción",
     "musicLibraryAuto": "{mode}, {songs}",
     "musicSongsIn": "{kept} de {total} canciones",

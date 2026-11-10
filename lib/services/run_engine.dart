@@ -14,6 +14,7 @@ import 'location_service.dart';
 import 'split_readout.dart';
 import 'step_source.dart';
 import 'music_director.dart';
+import 'music_player.dart';
 import 'narrator.dart';
 import '../l10n/l10n.dart';
 
@@ -217,9 +218,9 @@ class RunEngine extends ChangeNotifier {
   /// The song being heard, for the run screen.
   String? currentSong;
 
-  /// How far through it, on its own notifier, so that the line under the title
-  /// moving does not redraw the rest of the run screen with it.
-  final ValueNotifier<double?> songProgress = ValueNotifier(null);
+  /// How far through it and at what level, on its own notifier, so that the line
+  /// under the title moving does not redraw the rest of the run screen with it.
+  final ValueNotifier<SongProgress?> songProgress = ValueNotifier(null);
 
   int chasesTotal = 0;
   int chasesEvaded = 0;
@@ -292,7 +293,7 @@ class RunEngine extends ChangeNotifier {
   StreamSubscription<int>? _stepSub;
   StreamSubscription<NarrationEvent>? _narrationSub;
   StreamSubscription<String?>? _songSub;
-  StreamSubscription<double?>? _progressSub;
+  StreamSubscription<SongProgress?>? _progressSub;
 
   // -- derived --------------------------------------------------------------
 
@@ -412,7 +413,7 @@ class RunEngine extends ChangeNotifier {
       currentSong = id;
       notifyListeners();
     });
-    _progressSub = narrator.songProgress.listen((share) => songProgress.value = share);
+    _progressSub = narrator.songProgress.listen((progress) => songProgress.value = progress);
     _song = !profile.generatedMusicOn ? null : (musicQueue.isNotEmpty ? musicQueue.first : profile.music);
     await narrator.startMusic(queue: musicQueue);
     _musicDirector = profile.generatedMusicOn && profile.musicFollowsEffort ? MusicDirector(usualSpeed: usualSpeed) : null;

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../audio/song.dart' show MusicLevel;
 import '../models/goal.dart';
 import '../models/mission.dart';
 import '../data/active_run_store.dart';
@@ -11,6 +12,7 @@ import '../models/profile.dart';
 import '../models/run_record.dart' show Activity;
 import '../services/location_service.dart';
 import '../services/mission_notice.dart';
+import '../services/music_player.dart' show SongProgress;
 import '../services/notification_permission.dart';
 import '../services/run_engine.dart';
 import '../state/app_state.dart';
@@ -370,11 +372,19 @@ class _RunScreenState extends State<RunScreen> {
   }
 }
 
-/// A hairline under the song's name: how far through it is.
+/// A hairline under the song's name: how far through it is, in the colour of the
+/// level being heard. Dimmer when the song eases off, the theme's second accent
+/// when it lifts, and changing as the sound does.
 class _SongProgress extends StatelessWidget {
-  const _SongProgress({required this.share});
+  const _SongProgress({required this.progress});
 
-  final double? share;
+  final SongProgress? progress;
+
+  static Color colourOf(MusicLevel? level) => switch (level) {
+    MusicLevel.low => Cy.cyanDim,
+    MusicLevel.high => Cy.magenta.withValues(alpha: 0.85),
+    MusicLevel.normal || null => Cy.cyan.withValues(alpha: 0.7),
+  };
 
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -383,11 +393,35 @@ class _SongProgress extends StatelessWidget {
       decoration: BoxDecoration(color: Cy.inkDim.withValues(alpha: 0.18)),
       child: FractionallySizedBox(
         alignment: Alignment.centerLeft,
-        widthFactor: (share ?? 0).clamp(0.0, 1.0),
-        child: ColoredBox(color: Cy.cyan.withValues(alpha: 0.7)),
+        widthFactor: (progress?.share ?? 0).clamp(0.0, 1.0),
+        child: AnimatedContainer(
+          key: const ValueKey('songProgressFill'),
+          duration: const Duration(milliseconds: 600),
+          color: colourOf(progress?.level),
+        ),
       ),
     ),
   );
+}
+
+/// The note beside the song's name, or a warning in its place once the phone
+/// has fallen behind and the song is held back for the rest of the run.
+class _SongMark extends StatelessWidget {
+  const _SongMark({required this.limited});
+
+  final bool limited;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!limited) return Icon(Icons.music_note, size: 12, color: Cy.inkDim);
+    final why = L.of(context).musicHeldBack;
+    return Tooltip(
+      message: why,
+      triggerMode: TooltipTriggerMode.tap,
+      showDuration: const Duration(seconds: 6),
+      child: Icon(Icons.warning_amber_rounded, size: 12, color: Cy.amber, semanticLabel: why),
+    );
+  }
 }
 
 class _RunHeader extends StatelessWidget {
@@ -443,7 +477,10 @@ class _RunHeader extends StatelessWidget {
                   const SizedBox(height: 3),
                   Row(
                     children: [
-                      Icon(Icons.music_note, size: 12, color: Cy.inkDim),
+                      ValueListenableBuilder<SongProgress?>(
+                        valueListenable: engine.songProgress,
+                        builder: (context, progress, _) => _SongMark(limited: progress?.limited ?? false),
+                      ),
                       const SizedBox(width: 3),
                       Expanded(
                         child: Column(
@@ -451,9 +488,9 @@ class _RunHeader extends StatelessWidget {
                           children: [
                             ScrollingText(song!, style: CyType.body(size: 12, color: Cy.inkDim)),
                             const SizedBox(height: 2),
-                            ValueListenableBuilder<double?>(
+                            ValueListenableBuilder<SongProgress?>(
                               valueListenable: engine.songProgress,
-                              builder: (context, share, _) => _SongProgress(share: share),
+                              builder: (context, progress, _) => _SongProgress(progress: progress),
                             ),
                           ],
                         ),

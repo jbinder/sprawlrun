@@ -240,9 +240,10 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
 - **`MusicDirector` decides how much of a song plays, and is pure.** It compares
   speed with the runner's usual pace (from the run log, per activity) and is told
   about chases and the goal; `RunEngine` passes its cues to the narrator. A level
-  changes where a four-bar phrase starts, and a chase at the next bar, with about
-  four seconds of queue ahead of either. Low must sit well below usual pace, or a
-  climb loses its music. Levels and the two tempos are optional for every song, shipped
+  changes where a two-bar phrase starts, and a chase at the next bar, with about
+  four seconds of queue ahead of either. Pace is judged over 12 seconds: at 25,
+  with four-bar phrases, a runner waited 20–30 seconds for the song to answer.
+  Low must sit well below usual pace, or a climb loses its music. Levels and the two tempos are optional for every song, shipped
   ones too: without them a song plays straight. A phone falling behind drops a
   level for the rest of the run before the music stops, and the run screen puts
   a warning by the song's name. Without it, two test runs of Skyline Breach

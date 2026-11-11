@@ -28,8 +28,11 @@ class MusicDirector {
   static const double highAbove = 1.10, highUntil = 1.05;
 
   /// Seconds of movement the judgement looks back over, and needs before making
-  /// one. Long enough that a burst or a GPS jump changes nothing.
-  static const int windowSeconds = 25, minimumSeconds = 20;
+  /// one. It takes their median, so a burst or a GPS jump shorter than half of it
+  /// changes nothing, while a real change of pace is answered once it has lasted
+  /// that long. An average over 25 seconds answered twenty and more seconds late,
+  /// which a runner noticed on an interval run.
+  static const int windowSeconds = 12, minimumSeconds = 10;
 
   /// Slower than this is standing still, as `RunEngine` counts it.
   static const double stillBelowMps = 0.65;
@@ -85,7 +88,8 @@ class MusicDirector {
   void _judgePace() {
     final usual = usualSpeed;
     if (usual == null || usual <= 0 || _speeds.length < minimumSeconds) return;
-    final share = _speeds.reduce((a, b) => a + b) / _speeds.length / usual;
+    final sorted = [..._speeds]..sort();
+    final share = sorted[sorted.length ~/ 2] / usual;
     _paced = switch (_paced) {
       MusicLevel.low => share > highAbove ? MusicLevel.high : (share >= lowUntil ? MusicLevel.normal : MusicLevel.low),
       MusicLevel.normal => share < lowBelow ? MusicLevel.low : (share > highAbove ? MusicLevel.high : MusicLevel.normal),

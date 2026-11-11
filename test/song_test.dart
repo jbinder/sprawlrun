@@ -290,14 +290,16 @@ void main() {
 
       test('a change waits for the next phrase, unless it is asked for at once', () {
         final song = Song.parse(source);
-        final plain = bars(song, 24, 4);
-        // Bar 25 is inside a phrase that started on 24, and 28 starts the next.
-        final late = bars(song, 24, 4, each: (s, n) {
+        final plain = bars(song, 24, 2);
+        // Bar 25 is inside a phrase that started on 24, and 26 starts the next.
+        void lift(SongStream s, int n) {
           if (n == 1) s.setLevel(MusicLevel.high);
-        });
-        expect(late, plain, reason: 'nothing changes before bar 28');
+        }
 
-        final atOnce = bars(song, 24, 4, each: (s, n) {
+        expect(bars(song, 24, 2, each: lift), plain, reason: 'nothing changes before bar 26');
+        expect(bars(song, 24, 3, each: lift), isNot(bars(song, 24, 3)), reason: 'and bar 26 does');
+
+        final atOnce = bars(song, 24, 2, each: (s, n) {
           if (n == 1) s.setLevel(MusicLevel.high, atOnce: true);
         });
         expect(atOnce, isNot(plain));

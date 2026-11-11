@@ -44,6 +44,17 @@ void main() {
       expect(run(d, 60, usual), isEmpty);
     });
 
+    // At 25 seconds of average, a runner on intervals waited twenty and more
+    // seconds for the song to answer each change of pace.
+    test('a real change of pace is answered within seven seconds', () {
+      final d = director();
+      run(d, 60, usual);
+      expect(run(d, 7, usual * 1.3).single.level, MusicLevel.high);
+      run(d, 60, usual * 1.3);
+      expect(run(d, 7, usual).single.level, MusicLevel.normal);
+      expect(run(d, 7, usual * 0.6).single.level, MusicLevel.low);
+    });
+
     test('hovering on a threshold does not flip the song back and forth', () {
       final d = director();
       expect(run(d, 60, usual * 1.2).single.level, MusicLevel.high);

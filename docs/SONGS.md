@@ -77,7 +77,7 @@ A track may name a `level`: `low`, `normal` or `high`. It plays at that level an
 above, and without one it always plays. `normal` should be the song as you mean it
 to be heard: `low` is what is left when the runner eases off, so check that every
 section still has something in it, and `high` adds to the song, for pushing hard
-or being chased. A level changes only where a four-bar phrase starts, unless a
+or being chased. A level changes only where a two-bar phrase starts, unless a
 chase calls for it at the next bar. Levels are optional for every song: one that
 names none simply plays through, whatever the runner is doing.
 

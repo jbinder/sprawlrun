@@ -35,8 +35,9 @@ class SongStream {
 
   static final int _window = (10.5 * sampleRate).round();
 
-  /// A level changes only where a phrase starts, or it would cut across one.
-  static const int phraseBars = 4;
+  /// A level changes only where a phrase starts, or it would cut across one. Two
+  /// bars, three seconds or so: four kept a runner waiting.
+  static const int phraseBars = 2;
 
   final Song song;
   final int fromBar;

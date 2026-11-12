@@ -89,8 +89,8 @@ distorted power chords. There are no recordings: **your phone plays them live**,
 small files of notes, so the download barely grew.
 
 Because they are played and not replayed, **they follow the run.** Ease off and the
-song thins out and slows. Push, get chased or reach your goal and it lifts, adds a
-layer and speeds up. The bass stays on your stride, and every story line lowers the
+song thins out, slows and sounds further away. Sprint, get chased or reach your goal
+and it lifts at once, opens up, adds a layer and speeds up. The bass stays on your stride, and every story line lowers the
 music and brings it back.
 
 Choose one, shuffle them, or let **Best match** pick for the run: something quiet for

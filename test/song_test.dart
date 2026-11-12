@@ -61,12 +61,12 @@ Map<String, dynamic> minimal() => {
 /// What each shipped song sounds like, as a fingerprint: eight bars from bar 24,
 /// four at high and four at low, as the 16-bit samples written to the speaker.
 const _sounds = {
-  'black_ice.json': 0x5f51c5e0,
-  'cold_boot.json': 0xb73c43c1,
-  'neon_pursuit.json': 0x0762f46c,
-  'skyline_breach.json': 0xa9bd7ac6,
-  'sodium_rain.json': 0xd898ca39,
-  'undercity.json': 0xcae55e1e,
+  'black_ice.json': 0xa4976fa4,
+  'cold_boot.json': 0x13c5be5f,
+  'neon_pursuit.json': 0x60130f6e,
+  'skyline_breach.json': 0xf8ab3e76,
+  'sodium_rain.json': 0x98ede22a,
+  'undercity.json': 0x0091c393,
 };
 
 void main() {
@@ -452,6 +452,58 @@ void main() {
         whole += dry[i] * dry[i];
       }
       expect(apart / whole, lessThan(0.25));
+    });
+
+    group('a level\'s tone', () {
+      (Float32List, Float32List) tone(double amount, double hz, {double side = 0}) {
+        final left = Float32List(44100), right = Float32List(44100);
+        for (var i = 0; i < left.length; i++) {
+          final x = 0.3 * sin(2 * pi * hz * i / 44100);
+          left[i] = x - side * x;
+          right[i] = x + side * x;
+        }
+        LevelTone(amount).process(left, right, left.length);
+        return (left, right);
+      }
+
+      double level(Float32List x) => sqrt(x.skip(4410).fold(0.0, (s, v) => s + v * v) / (x.length - 4410));
+
+      test('at the song\'s own level it changes nothing at all', () {
+        final (l, r) = tone(0, 3000, side: 0.2);
+        final (dryL, dryR) = (Float32List(44100), Float32List(44100));
+        for (var i = 0; i < dryL.length; i++) {
+          final x = 0.3 * sin(2 * pi * 3000 * i / 44100);
+          dryL[i] = x - 0.2 * x;
+          dryR[i] = x + 0.2 * x;
+        }
+        expect(l, dryL);
+        expect(r, dryR);
+      });
+
+      test('easing off takes the top away and leaves the bass', () {
+        expect(level(tone(-1, 5000).$1), lessThan(0.3 * sqrt1_2 * 0.15));
+        expect(level(tone(-1, 100).$1), closeTo(0.3 * sqrt1_2, 0.01));
+      });
+
+      test('lifting brightens the top and widens', () {
+        expect(level(tone(1, 8000).$1), greaterThan(0.3 * sqrt1_2 * 1.3));
+        expect(level(tone(1, 100).$1), closeTo(0.3 * sqrt1_2, 0.01));
+        final (l, r) = tone(1, 300, side: 0.2);
+        final width = level(Float32List.fromList([for (var i = 0; i < l.length; i++) r[i] - l[i]]));
+        expect(width, greaterThan(0.3 * sqrt1_2 * 0.4 * 1.3));
+      });
+
+      test('it glides rather than jumps', () {
+        final left = Float32List(44100), right = Float32List(44100);
+        for (var i = 0; i < left.length; i++) {
+          left[i] = right[i] = 0.3 * sin(2 * pi * 5000 * i / 44100);
+        }
+        LevelTone(0)
+          ..target = -1
+          ..process(left, right, left.length);
+        // A tenth of a second in, the top is still mostly there.
+        expect(level(Float32List.sublistView(left, 0, 8820)), greaterThan(0.3 * sqrt1_2 * 0.5));
+      });
     });
 
     test('drive can turn down what it limits', () {

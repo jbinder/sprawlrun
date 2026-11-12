@@ -26,6 +26,7 @@ class SongStream {
     : _level = level,
       _nextLevel = level,
       _tempo = _tempoAt(song, level),
+      _tone = song.hasLevels ? LevelTone(_toneAt(level)) : null,
       _voices = Voices(Random(song.seed)),
       _riserNoise = Random(song.seed + 1) {
     for (final bus in song.buses) {
@@ -60,6 +61,15 @@ class SongStream {
   /// Where this bar starts, in samples and in beats, kept apart from the bar
   /// number because a bar's length depends on the tempo it was played at.
   double _position = 0, _beats = 0;
+
+  /// What a level does to the whole mix, for a song that has levels.
+  final LevelTone? _tone;
+
+  static double _toneAt(MusicLevel level) => switch (level) {
+    MusicLevel.low => -1,
+    MusicLevel.normal => 0,
+    MusicLevel.high => 1,
+  };
 
   static double _tempoAt(Song song, MusicLevel level) => switch (level) {
     MusicLevel.low => song.lowTempo,
@@ -113,6 +123,7 @@ class SongStream {
     if (changing) {
       _level = _nextLevel;
       _changeAtOnce = false;
+      _tone?.target = _toneAt(_level);
     }
     final tempoTarget = _tempoAt(song, _level);
     // At once means back to the song's own tempo at the next bar; going faster
@@ -143,6 +154,7 @@ class SongStream {
       // A bar starts on a whole sample, up to half of one off where the beat falls.
       bus.mixInto(left, right, count, samplesPerBeat, _beats + (_base - barStart) / samplesPerBeat, b);
     }
+    _tone?.process(left, right, count);
     _masterLeft.process(left, count);
     _masterRight.process(right, count);
 

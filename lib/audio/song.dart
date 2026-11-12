@@ -248,6 +248,10 @@ class Song {
 
   /// How much of its tempo the song plays at at [MusicLevel.high].
   final double highTempo;
+
+  /// Whether the song changes with the run at all. One that names no levels and
+  /// no other tempos plays straight, whatever the runner is doing.
+  bool get hasLevels => lowTempo != 1 || highTempo != 1 || tracks.any((t) => t.level != MusicLevel.low);
   final String? key;
   final List<String> moods;
 

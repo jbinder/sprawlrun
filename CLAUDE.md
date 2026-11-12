@@ -243,6 +243,9 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   changes where a two-bar phrase starts, and a chase at the next bar, with about
   four seconds of queue ahead of either. Pace is judged over 12 seconds: at 25,
   with four-bar phrases, a runner waited 20–30 seconds for the song to answer.
+  A rise is judged on the last 8 and lifts at the next bar, as a chase does, so
+  a sprint is not spent waiting; a fall needs both windows to agree. A level
+  also colours the whole mix (`LevelTone`), and `normal` is left untouched.
   Low must sit well below usual pace, or a climb loses its music. Levels and the two tempos are optional for every song, shipped
   ones too: without them a song plays straight. A phone falling behind drops a
   level for the rest of the run before the music stops, and the run screen puts

@@ -332,3 +332,68 @@ class Master {
     }
   }
 }
+
+/// What a level does to the whole mix, so the three can be told apart where no
+/// melody comes or goes: easing off closes a low-pass, so the song sounds further
+/// away, and lifting adds air above [airHz] and a wider stereo image. At 0 it does
+/// nothing at all, so a song at its own level is exactly as written.
+///
+/// [target] runs from -1, fully eased off, through 0 to 1, fully lifted, and the
+/// sound glides there over [glideSeconds] rather than jumping.
+class LevelTone {
+  LevelTone(double amount) : _amount = amount, target = amount;
+
+  /// Where the low-pass ends up when fully eased off.
+  static const double closedHz = 1500;
+
+  /// Where it starts closing from: above anything a song holds.
+  static const double openHz = 20000;
+
+  static const double airHz = 5000, airGain = 0.5, widthGain = 0.35;
+  static const double glideSeconds = 1.5;
+
+  static const int _block = 64;
+  static final double _stepPerBlock = _block / (glideSeconds * sampleRate);
+
+  double target;
+  double _amount;
+  final Biquad _lowLeft = Biquad.lpf(openHz), _lowRight = Biquad.lpf(openHz);
+  final Biquad _airLeft = Biquad.hpf(airHz), _airRight = Biquad.hpf(airHz);
+
+  void process(Float32List left, Float32List right, int count) {
+    if (_amount == 0 && target == 0) return;
+    for (var start = 0; start < count; start += _block) {
+      final end = min(start + _block, count);
+      _amount = _amount < target ? min(target, _amount + _stepPerBlock) : max(target, _amount - _stepPerBlock);
+      if (_amount < 0) {
+        final hz = openHz * pow(closedHz / openHz, -_amount);
+        _airLeft.reset();
+        _airRight.reset();
+        _lowLeft.setLpf(hz);
+        _lowRight.setLpf(hz);
+        for (var i = start; i < end; i++) {
+          left[i] = _lowLeft.tick(left[i]);
+          right[i] = _lowRight.tick(right[i]);
+        }
+      } else if (_amount > 0) {
+        _lowLeft.reset();
+        _lowRight.reset();
+        final air = airGain * _amount, width = 1 + widthGain * _amount;
+        for (var i = start; i < end; i++) {
+          final l = left[i] + air * _airLeft.tick(left[i]);
+          final r = right[i] + air * _airRight.tick(right[i]);
+          final mid = (l + r) / 2, side = (r - l) / 2 * width;
+          left[i] = mid - side;
+          right[i] = mid + side;
+        }
+      }
+      if (_amount == 0 && target == 0) {
+        // Back to the song as written: the filters start clean next time.
+        for (final f in [_lowLeft, _lowRight, _airLeft, _airRight]) {
+          f.reset();
+        }
+        return;
+      }
+    }
+  }
+}

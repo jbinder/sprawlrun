@@ -37,11 +37,36 @@ void main() {
       expect(run(director(), MusicDirector.minimumSeconds - 1, usual * 0.5), isEmpty);
     });
 
-    test('a burst inside a steady run changes nothing', () {
+    test('a few strides of burst, or a GPS jump, change nothing', () {
       final d = director();
       run(d, 60, usual);
-      expect(run(d, 5, usual * 1.5), isEmpty);
+      expect(run(d, 3, usual * 1.5), isEmpty);
       expect(run(d, 60, usual), isEmpty);
+    });
+
+    // A sprint can last a minute, and spent most of it waiting for the song.
+    test('a sprint lifts the song within five seconds, at the next bar', () {
+      final d = director();
+      run(d, 60, usual);
+      final cue = run(d, 5, usual * 1.4).single;
+      expect(cue.level, MusicLevel.high);
+      expect(cue.atOnce, isTrue);
+    });
+
+    test('a breath mid-sprint keeps the song up', () {
+      final d = director();
+      run(d, 60, usual);
+      run(d, 20, usual * 1.4);
+      expect(run(d, 4, usual), isEmpty);
+      expect(run(d, 20, usual * 1.4), isEmpty);
+    });
+
+    test('easing off is not answered at once', () {
+      final d = director();
+      run(d, 60, usual * 1.4);
+      final cue = run(d, 10, usual).single;
+      expect(cue.level, MusicLevel.normal);
+      expect(cue.atOnce, isFalse);
     });
 
     // At 25 seconds of average, a runner on intervals waited twenty and more

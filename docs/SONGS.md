@@ -78,8 +78,15 @@ above, and without one it always plays. `normal` should be the song as you mean 
 to be heard: `low` is what is left when the runner eases off, so check that every
 section still has something in it, and `high` adds to the song, for pushing hard
 or being chased. A level changes only where a two-bar phrase starts, unless a
-chase calls for it at the next bar. Levels are optional for every song: one that
+chase or a sprint calls for it at the next bar. Levels are optional for every song: one that
 names none simply plays through, whatever the runner is doing.
+
+A song with levels also changes colour with them, so the three can be told apart
+in a section where no layer comes or goes: at `low` a low-pass closes over the
+whole mix to 1.5 kHz, and the song sounds further away; at `high` it gains air
+above 5 kHz and a wider stereo image. Both glide in over about a second and a
+half. At `normal` nothing is touched, so mix the song as it should be heard
+there.
 
 A clip is `{ "from", "to", "pattern" }`, up to but not including bar `to`. It may
 add `amp`, `transpose` in semitones, and `cutoff`, as a number or as

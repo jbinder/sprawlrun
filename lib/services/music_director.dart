@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import '../audio/song.dart';
 import '../models/run_record.dart';
 
@@ -34,6 +36,12 @@ class MusicDirector {
   /// which a runner noticed on an interval run.
   static const int windowSeconds = 12, minimumSeconds = 10;
 
+  /// A rise is judged on the last few seconds alone, the median again, so a sprint
+  /// is answered after about half of this and a few strides' burst still is not.
+  /// Falling waits for the longer window as well, or a breath mid-sprint would
+  /// drop the song. A sprint lasting a minute was spent mostly waiting for it.
+  static const int riseSeconds = 8;
+
   /// Slower than this is standing still, as `RunEngine` counts it.
   static const double stillBelowMps = 0.65;
 
@@ -68,7 +76,8 @@ class MusicDirector {
       _stillSeconds = 0;
       _speeds.add(speed);
       if (_speeds.length > windowSeconds) _speeds.removeAt(0);
-      _judgePace();
+      // A sprint is lifted at the next bar, as a chase is, not the next phrase.
+      if (_judgePace()) return _next(atOnce: _paced == MusicLevel.high);
     }
     return _next(atOnce: false);
   }
@@ -85,17 +94,37 @@ class MusicDirector {
     return _next(atOnce: true);
   }
 
-  void _judgePace() {
+  /// Moves [_paced] with the runner. True when it rose.
+  bool _judgePace() {
     final usual = usualSpeed;
-    if (usual == null || usual <= 0 || _speeds.length < minimumSeconds) return;
-    final sorted = [..._speeds]..sort();
-    final share = sorted[sorted.length ~/ 2] / usual;
-    _paced = switch (_paced) {
-      MusicLevel.low => share > highAbove ? MusicLevel.high : (share >= lowUntil ? MusicLevel.normal : MusicLevel.low),
-      MusicLevel.normal => share < lowBelow ? MusicLevel.low : (share > highAbove ? MusicLevel.high : MusicLevel.normal),
-      MusicLevel.high => share < lowBelow ? MusicLevel.low : (share <= highUntil ? MusicLevel.normal : MusicLevel.high),
-    };
+    if (usual == null || usual <= 0 || _speeds.length < riseSeconds) return false;
+    final recent = _speeds.sublist(_speeds.length - riseSeconds);
+    final quick = _levelFor(_median(recent) / usual, _paced);
+    if (quick.index > _paced.index) {
+      _paced = quick;
+      return true;
+    }
+    if (_speeds.length < minimumSeconds) return false;
+    final settled = _levelFor(_median(_speeds) / usual, _paced);
+    // Down only as far as both agree.
+    if (settled.index < _paced.index && quick.index < _paced.index) {
+      _paced = MusicLevel.values[max(settled.index, quick.index)];
+    }
+    return false;
   }
+
+  static double _median(List<double> speeds) {
+    final sorted = [...speeds]..sort();
+    return sorted[sorted.length ~/ 2];
+  }
+
+  /// Where [share] of the usual pace puts a song now at [from], with a gap
+  /// between rising and falling so it does not flip on a threshold.
+  static MusicLevel _levelFor(double share, MusicLevel from) => switch (from) {
+    MusicLevel.low => share > highAbove ? MusicLevel.high : (share >= lowUntil ? MusicLevel.normal : MusicLevel.low),
+    MusicLevel.normal => share < lowBelow ? MusicLevel.low : (share > highAbove ? MusicLevel.high : MusicLevel.normal),
+    MusicLevel.high => share < lowBelow ? MusicLevel.low : (share <= highUntil ? MusicLevel.normal : MusicLevel.high),
+  };
 
   MusicCue? _next({required bool atOnce}) {
     final level = _chasing || _liftLeft > 0 ? MusicLevel.high : _paced;

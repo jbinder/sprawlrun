@@ -20,17 +20,7 @@ double midiHz(double note) => 440 * pow(2, (note - 69) / 12).toDouble();
 class Biquad {
   Biquad(this.a0, this.a1, this.a2, this.b1, this.b2);
 
-  factory Biquad.lpf(double hz) {
-    final c = 1 / tan(pi * hz / sampleRate);
-    final a0 = 1 / (1 + sqrt2 * c + c * c);
-    return Biquad(
-      a0,
-      2 * a0,
-      a0,
-      -2 * a0 * (1 - c * c),
-      -a0 * (1 - sqrt2 * c + c * c),
-    );
-  }
+  factory Biquad.lpf(double hz) => Biquad(0, 0, 0, 0, 0)..setLpf(hz);
 
   factory Biquad.hpf(double hz) {
     final c = tan(pi * hz / sampleRate);
@@ -56,6 +46,21 @@ class Biquad {
 
   double a0, a1, a2, b1, b2;
   double _x1 = 0, _x2 = 0, _y1 = 0, _y2 = 0;
+
+  /// For a low-pass whose cutoff moves, without losing its state.
+  void setLpf(double hz) {
+    final c = 1 / tan(pi * hz / sampleRate);
+    a0 = 1 / (1 + sqrt2 * c + c * c);
+    a1 = 2 * a0;
+    a2 = a0;
+    b1 = -2 * a0 * (1 - c * c);
+    b2 = -a0 * (1 - sqrt2 * c + c * c);
+  }
+
+  /// Forgets what has passed through.
+  void reset() {
+    _x1 = _x2 = _y1 = _y2 = 0;
+  }
 
   /// For a filter whose cutoff moves, without losing its state.
   void setRlpf(double hz, double rq) {

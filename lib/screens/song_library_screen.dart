@@ -58,7 +58,21 @@ class SongLibraryScreen extends StatelessWidget {
                         children: [
                           Text(l.musicLibraryNote, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
                           const SizedBox(height: 6),
-                          Text(l.musicBatteryNote, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2, right: 6),
+                                child: Icon(Icons.warning_amber_rounded, size: 14, color: Cy.amber),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  l.musicBatteryNote,
+                                  style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 12),
                           _ModeRow(
                             value: auto ? profile.music : _one,

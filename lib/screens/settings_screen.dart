@@ -329,6 +329,20 @@ class SettingsScreen extends StatelessWidget {
                               value: profile.musicFollowsEffort,
                               onChanged: (v) => update(profile.copyWith(musicFollowsEffort: v)),
                             ),
+                            const SizedBox(height: 8),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CyberTag(l.tagExperimental, color: Cy.amber),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    l.musicExperimentalNote,
+                                    style: CyType.body(size: 12, color: Cy.ghost, height: 1.4),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ],
                       ),

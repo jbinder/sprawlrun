@@ -1977,9 +1977,17 @@
   "@musicSongLibrary": {
     "description": "Run music choice, and the name of the screen listing the songs the phone can play live."
   },
-  "musicBatteryNote": "Playing live uses more battery than playing a file.",
+  "musicBatteryNote": "Playing in real time uses more battery than playing a file.",
   "@musicBatteryNote": {
     "description": "At the top of the song library. The phone generates the music as it plays, which costs more battery than playing an audio file from a folder."
+  },
+  "tagExperimental": "EXPERIMENTAL",
+  "@tagExperimental": {
+    "description": "Small tag in Settings under the Music follows your effort switch, marking the songs following the runner's effort as a new feature that may still change."
+  },
+  "musicExperimentalNote": "We are still tuning this. Does the music follow you the way it should? Tell us in the Contribute section below.",
+  "@musicExperimentalNote": {
+    "description": "In Settings, under the Music follows your effort switch, beside the EXPERIMENTAL tag. Contribute is the section of Settings with the bug and idea forms."
   },
   "musicHeldBack": "This phone can't keep up with the song, so the music no longer follows your effort this run.",
   "@musicHeldBack": {
@@ -2021,7 +2029,7 @@
       }
     }
   },
-  "musicLibraryNote": "Played live by your phone. Pauses your own music until the run ends",
+  "musicLibraryNote": "These songs are not recordings: your phone plays them in real time, so they can follow your run. Your own music pauses until the run ends",
   "@musicLibraryNote": {
     "description": "At the top of the song library. The phone plays the songs live, with no audio files or network, and the runner's own music app is paused for the run."
   },

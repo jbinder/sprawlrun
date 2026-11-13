@@ -5,7 +5,7 @@
   "author": "SPRAWL//RUN",
   "bpm": 170,
   "lowTempo": 0.88,
-  "highTempo": 1.08,
+  "highTempo": 1.12,
   "key": "Am",
   "moods": ["uplifting"],
   "energy": 0.9,
@@ -67,6 +67,9 @@
     { "id": "strings", "effects": [{ "type": "reverb", "room": 0.95, "damp": 0.2, "mix": 0.6 }] }
   ],
   "patterns": {
+    "hatsDrive": [{ "hits": "xxxxxxxxxxxxxxxx", "amp": 0.7 }],
+    "gallop": [{ "hits": "x.xxx.xxx.xxx.xx" }],
+    "kickFour": [{ "hits": "x...x...x...x..." }],
     "strike": [{ "hits": "x..............." }],
     "kick": [{ "hits": "x...x...x...x..." }],
     "backbeat": [{ "hits": "........x......." }],
@@ -256,6 +259,42 @@
         { "from": 344, "to": 384, "pattern": "kick" },
         { "from": 384, "to": 400, "pattern": "kick", "amp": 0.6 },
         { "from": 400, "to": 432, "pattern": "kick" }
+      ]
+    },
+    {
+      "id": "hatsDriven",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "hat", "amp": 0.34, "rate": 1.6 },
+      "clips": [
+        { "from": 0, "to": 432, "pattern": "hatsDrive" }
+      ]
+    },
+    {
+      "id": "gallop",
+      "bus": "snare",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "taikoHigh", "amp": 0.45, "rate": 1.5 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "gallop" },
+        { "from": 40, "to": 48, "pattern": "gallop" },
+        { "from": 152, "to": 168, "pattern": "gallop" },
+        { "from": 224, "to": 240, "pattern": "gallop" },
+        { "from": 272, "to": 280, "pattern": "gallop" },
+        { "from": 384, "to": 400, "pattern": "gallop" }
+      ]
+    },
+    {
+      "id": "kickDriven",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "kick", "cutoff": 110, "amp": 1.3 },
+      "clips": [
+        { "from": 0, "to": 4, "pattern": "kickFour" },
+        { "from": 40, "to": 48, "pattern": "kickFour" },
+        { "from": 152, "to": 164, "pattern": "kickFour" },
+        { "from": 224, "to": 232, "pattern": "kickFour" },
+        { "from": 272, "to": 280, "pattern": "kickFour" }
       ]
     },
     {

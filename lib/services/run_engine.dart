@@ -179,6 +179,14 @@ class RunEngine extends ChangeNotifier {
   /// from running ones.
   static const Duration cadenceWindow = Duration(seconds: 10);
 
+  /// The least of that span a cadence is worked out from, and the most a cadence
+  /// can be. With the screen off the counter can hold its steps back and report
+  /// many at once, and two such readings close together read as a sprint no one
+  /// could run: the likely reason the song once lifted on a walk without GPS.
+  /// A reading like that says nothing about the gait, so it counts as no cadence.
+  static const Duration cadenceNeeds = Duration(seconds: 5);
+  static const double cadenceAtMost = 240;
+
   // -- state ----------------------------------------------------------------
 
   RunPhase phase = RunPhase.idle;
@@ -235,6 +243,10 @@ class RunEngine extends ChangeNotifier {
   /// Every story moment this run, in order — persisted so the run can be read
   /// back afterwards. References only; see [StoryEvent].
   final List<StoryEvent> story = [];
+
+  /// Every change of music level this run, with what called for it, kept with
+  /// the run so a level that seemed wrong can be traced afterwards.
+  final List<MusicChange> musicChanges = [];
 
   void _log(StoryEventKind kind, {String? ref, bool? escaped}) {
     story.add(StoryEvent(atSeconds: elapsedSeconds, kind: kind, ref: ref, escaped: escaped));
@@ -446,6 +458,7 @@ class RunEngine extends ChangeNotifier {
     if (trace.isNotEmpty) _lastTracePointAt = trace.last.elapsedSeconds;
     codexUnlocked.addAll(codexHeard);
     story.addAll(saved.story);
+    musicChanges.addAll(saved.music);
     for (final e in story) {
       if (e.kind == StoryEventKind.beat && e.ref != null) _firedBeats.add(e.ref!);
     }
@@ -561,6 +574,7 @@ class RunEngine extends ChangeNotifier {
       strides: strides.isEmpty ? null : strides,
       song: _song,
       story: List.unmodifiable(story),
+      music: List.unmodifiable(musicChanges),
       trace: List.unmodifiable(trace),
     );
   }
@@ -604,6 +618,7 @@ class RunEngine extends ChangeNotifier {
     _locationTroubled = false;
     transcript.clear();
     story.clear();
+    musicChanges.clear();
     _accumulated = Duration.zero;
     _segmentStart = null;
     _lastFix = null;
@@ -694,7 +709,9 @@ class RunEngine extends ChangeNotifier {
     final (from, atFrom) = _stepTimes.first;
     final (to, atTo) = _stepTimes.last;
     final seconds = to.difference(from).inMilliseconds / 1000;
-    return seconds < 2 ? 0 : (atTo - atFrom) / seconds * 60;
+    if (seconds * 1000 < cadenceNeeds.inMilliseconds) return 0;
+    final cadence = (atTo - atFrom) / seconds * 60;
+    return cadence > cadenceAtMost ? 0 : cadence;
   }
 
   /// A fix arrived within [estimateAfter]. Never true before the first fix —
@@ -840,8 +857,12 @@ class RunEngine extends ChangeNotifier {
   /// straight, and then nothing here touches it.
   MusicDirector? _musicDirector;
 
-  void _cueMusic(MusicCue? cue) {
-    if (cue != null) unawaited(narrator.setMusicLevel(cue.level, atOnce: cue.atOnce));
+  void _cueMusic(MusicCue? cue, MusicCause cause) {
+    if (cue == null) return;
+    musicChanges.add(
+      MusicChange(atSeconds: elapsedSeconds, level: cue.level, cause: cause, speedMps: smoothedSpeed),
+    );
+    unawaited(narrator.setMusicLevel(cue.level, atOnce: cue.atOnce));
   }
 
   void _tick() {
@@ -854,7 +875,10 @@ class RunEngine extends ChangeNotifier {
       }
       _learnStride();
       _distanceAtLastTick = distanceMeters;
-      _cueMusic(_musicDirector?.tick(_gpsIsLive || _stepping ? smoothedSpeed : null));
+      _cueMusic(
+        _musicDirector?.tick(_gpsIsLive || _stepping ? smoothedSpeed : null),
+        _gpsFresh ? MusicCause.gps : MusicCause.steps,
+      );
     }
 
     if (phase == RunPhase.running) {
@@ -887,8 +911,11 @@ class RunEngine extends ChangeNotifier {
     final taken = now - _stepsAtLastTick;
     _stepsAtLastTick = now;
     if (taken <= 0 || _estimating || !_gpsFresh) return;
+    // Without a cadence yet there is no telling which gait these steps were.
+    final cadence = _cadence;
+    if (cadence <= 0) return;
     final meters = distanceMeters - _distanceAtLastTick;
-    strides = strides.add(running: _cadence >= Stride.runningCadence, steps: taken, meters: meters);
+    strides = strides.add(running: cadence >= Stride.runningCadence, steps: taken, meters: meters);
   }
 
   /// Reads out each kilometre (or mile) as the run passes it.
@@ -941,7 +968,7 @@ class RunEngine extends ChangeNotifier {
     if (goalReached) return;
     if (!goal.isMet(elapsedSeconds: elapsedSeconds, distanceMeters: distanceMeters)) return;
     goalReached = true;
-    _cueMusic(_musicDirector?.goalReached());
+    _cueMusic(_musicDirector?.goalReached(), MusicCause.goal);
     _log(StoryEventKind.goal);
     _events.add(const GoalReached());
   }
@@ -1048,7 +1075,7 @@ class RunEngine extends ChangeNotifier {
     chasesTotal++;
     _log(StoryEventKind.chaseStarted, ref: spec.pursuer);
     unawaited(narrator.sfx('chase_start'));
-    _cueMusic(_musicDirector?.setChasing(true));
+    _cueMusic(_musicDirector?.setChasing(true), MusicCause.chase);
     _events.add(ChaseStarted(chase));
     notifyListeners();
   }
@@ -1061,7 +1088,7 @@ class RunEngine extends ChangeNotifier {
 
     final escaped = chase.covered >= chase.requiredMeters;
     activeChase = null;
-    _cueMusic(_musicDirector?.setChasing(false));
+    _cueMusic(_musicDirector?.setChasing(false), MusicCause.chase);
     if (escaped) chasesEvaded++;
 
     _log(StoryEventKind.chaseEnded, ref: chase.spec.pursuer, escaped: escaped);

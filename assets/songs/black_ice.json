@@ -5,7 +5,7 @@
   "author": "SPRAWL//RUN",
   "bpm": 174,
   "lowTempo": 0.88,
-  "highTempo": 1.06,
+  "highTempo": 1.12,
   "key": "F#m",
   "moods": ["aggressive", "dark"],
   "energy": 1.0,
@@ -59,6 +59,9 @@
     { "id": "alarm", "effects": [{ "type": "drive", "amount": 5, "mix": 0.8 }, { "type": "spread", "ms": -16 }] }
   ],
   "patterns": {
+    "hatsDrive": [{ "hits": "xxxxxxxxxxxxxxxx", "amp": 0.7 }],
+    "gallop": [{ "hits": "x.xxx.xxx.xxx.xx" }],
+    "kickFour": [{ "hits": "x...x...x...x..." }],
     "strike": [{ "hits": "x..............." }],
     "kick": [{ "hits": "x...x...x...x..x" }],
     "kickPlain": [{ "hits": "x...x...x...x..." }],
@@ -359,6 +362,49 @@
         { "from": 200, "to": 208, "pattern": "roll" },
         { "from": 280, "to": 288, "pattern": "roll", "transpose": 2 },
         { "from": 344, "to": 352, "pattern": "roll" }
+      ]
+    },
+    {
+      "id": "hatsBetween",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "hat", "amp": 0.36, "rate": 1.6 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "hatsDrive" },
+        { "from": 56, "to": 72, "pattern": "hatsDrive" },
+        { "from": 192, "to": 208, "pattern": "hatsDrive" },
+        { "from": 272, "to": 288, "pattern": "hatsDrive" },
+        { "from": 336, "to": 352, "pattern": "hatsDrive" }
+      ]
+    },
+    {
+      "id": "gallop",
+      "bus": "drums",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "taikoHigh", "amp": 0.45, "rate": 1.5 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "gallop" },
+        { "from": 56, "to": 64, "pattern": "gallop" },
+        { "from": 64, "to": 72, "pattern": "gallop" },
+        { "from": 192, "to": 200, "pattern": "gallop" },
+        { "from": 200, "to": 208, "pattern": "gallop" },
+        { "from": 272, "to": 280, "pattern": "gallop" },
+        { "from": 280, "to": 288, "pattern": "gallop" },
+        { "from": 336, "to": 344, "pattern": "gallop" },
+        { "from": 344, "to": 352, "pattern": "gallop" }
+      ]
+    },
+    {
+      "id": "kickDriven",
+      "bus": "drums",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "kick", "cutoff": 125, "amp": 1.25 },
+      "clips": [
+        { "from": 0, "to": 4, "pattern": "kickFour" },
+        { "from": 56, "to": 64, "pattern": "kickFour" },
+        { "from": 192, "to": 200, "pattern": "kickFour" },
+        { "from": 272, "to": 280, "pattern": "kickFour" },
+        { "from": 336, "to": 344, "pattern": "kickFour" }
       ]
     },
     {

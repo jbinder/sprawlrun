@@ -245,13 +245,24 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   with four-bar phrases, a runner waited 20–30 seconds for the song to answer.
   A rise is judged on the last 8 and lifts at the next bar, as a chase does, so
   a sprint is not spent waiting; a fall needs both windows to agree. A level
-  also colours the whole mix (`LevelTone`), and `normal` is left untouched.
+  also colours the whole mix (`LevelTone`) and has its own loudness (`LevelGain`).
+  The loudness is applied after the master: the limiter turns anything louder
+  before it straight back down, which left a lift within 1 dB of the song however
+  many layers it added. So `normal` plays about 3 dB under full, on purpose.
   Low must sit well below usual pace, or a climb loses its music. Levels and the two tempos are optional for every song, shipped
   ones too: without them a song plays straight. A phone falling behind drops a
   level for the rest of the run before the music stops, and the run screen puts
   a warning by the song's name. Without it, two test runs of Skyline Breach
   that seemed stuck at one level had nothing to tell a cap from a bug. logcat's
   minute line gives the worst eight-bar share it is judged on.
+- **A cadence is only trusted over five seconds, and never above 240.** With the
+  screen off the step counter can hold steps back and report many at once; two
+  such readings close together read as a sprint. That is the likely reason the
+  song lifted with nobody running on a walk that had lost its GPS; it could not
+  be confirmed afterwards. `RunRecord.music` keeps each change of
+  level with what called for it (`gps`, `steps`, `chase`, `goal`) and the speed
+  held then, because logcat is gone within hours and the trace only has GPS
+  points. Read it from a backup before guessing.
 - **`SongPicker` chooses the music, and is pure.** Shuffle and Best match give
   `RunEngine` a queue before the run; `SongSequence` plays each song through,
   rings it out and starts the next, only ever one at a time. "Played lately" comes

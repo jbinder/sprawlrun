@@ -5,7 +5,7 @@
   "author": "SPRAWL//RUN",
   "bpm": 150,
   "lowTempo": 0.88,
-  "highTempo": 1.06,
+  "highTempo": 1.1,
   "key": "Dm",
   "moods": ["atmospheric", "melancholic"],
   "energy": 0.3,
@@ -53,6 +53,10 @@
     { "id": "strings", "effects": [{ "type": "reverb", "room": 0.97, "damp": 0.2, "mix": 0.65 }] }
   ],
   "patterns": {
+    "hatsDrive": [{ "hits": "xxxxxxxxxxxxxxxx", "amp": 0.7 }],
+    "gallop": [{ "hits": "x..x..x.x..x..x." }],
+    "kickFour": [{ "hits": "x...x...x...x..." }],
+    "kickBetween": [{ "hits": "....x.......x..." }],
     "strike": [{ "hits": "x..............." }],
     "heartbeat": [{ "hits": "x.......x......." }],
     "lonebeat": [{ "hits": "x..............." }],
@@ -250,6 +254,67 @@
         { "from": 336, "to": 352, "pattern": "heartbeat" },
         { "from": 352, "to": 368, "pattern": "heartbeat" },
         { "from": 368, "to": 372, "pattern": "heartbeat" }
+      ]
+    },
+    {
+      "id": "hatsDriven",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "hat", "amp": 0.24, "rate": 1.5 },
+      "clips": [
+        { "from": 0, "to": 384, "pattern": "hatsDrive" }
+      ]
+    },
+    {
+      "id": "gallop",
+      "bus": "snare",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "taikoHigh", "amp": 0.3, "rate": 1.2 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "gallop" },
+        { "from": 48, "to": 56, "pattern": "gallop" },
+        { "from": 96, "to": 104, "pattern": "gallop" },
+        { "from": 128, "to": 144, "pattern": "gallop" },
+        { "from": 192, "to": 200, "pattern": "gallop" },
+        { "from": 256, "to": 264, "pattern": "gallop" },
+        { "from": 320, "to": 328, "pattern": "gallop" },
+        { "from": 368, "to": 384, "pattern": "gallop" }
+      ]
+    },
+    {
+      "id": "kickDriven",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "kick", "cutoff": 85, "amp": 0.45 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "kickFour" },
+        { "from": 48, "to": 56, "pattern": "kickFour" },
+        { "from": 96, "to": 104, "pattern": "kickFour" },
+        { "from": 132, "to": 144, "pattern": "kickFour" },
+        { "from": 192, "to": 200, "pattern": "kickFour" },
+        { "from": 256, "to": 264, "pattern": "kickFour" },
+        { "from": 320, "to": 328, "pattern": "kickFour" },
+        { "from": 372, "to": 384, "pattern": "kickFour" },
+        { "from": 8, "to": 48, "pattern": "kickBetween" },
+        { "from": 56, "to": 64, "pattern": "kickBetween" },
+        { "from": 64, "to": 96, "pattern": "kickBetween" },
+        { "from": 104, "to": 112, "pattern": "kickBetween" },
+        { "from": 112, "to": 132, "pattern": "kickBetween" },
+        { "from": 144, "to": 160, "pattern": "kickBetween" },
+        { "from": 160, "to": 176, "pattern": "kickBetween" },
+        { "from": 176, "to": 192, "pattern": "kickBetween" },
+        { "from": 200, "to": 208, "pattern": "kickBetween" },
+        { "from": 208, "to": 224, "pattern": "kickBetween" },
+        { "from": 224, "to": 240, "pattern": "kickBetween" },
+        { "from": 240, "to": 256, "pattern": "kickBetween" },
+        { "from": 264, "to": 272, "pattern": "kickBetween" },
+        { "from": 272, "to": 288, "pattern": "kickBetween" },
+        { "from": 288, "to": 304, "pattern": "kickBetween" },
+        { "from": 304, "to": 320, "pattern": "kickBetween" },
+        { "from": 328, "to": 336, "pattern": "kickBetween" },
+        { "from": 336, "to": 352, "pattern": "kickBetween" },
+        { "from": 352, "to": 368, "pattern": "kickBetween" },
+        { "from": 368, "to": 372, "pattern": "kickBetween" }
       ]
     },
     {

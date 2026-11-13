@@ -5,7 +5,7 @@
   "author": "SPRAWL//RUN",
   "bpm": 168,
   "lowTempo": 0.88,
-  "highTempo": 1.08,
+  "highTempo": 1.12,
   "key": "Em",
   "moods": ["retro", "playful"],
   "energy": 0.7,
@@ -52,6 +52,9 @@
     { "id": "stage", "effects": [{ "type": "reverb", "room": 0.55, "damp": 0.5, "mix": 0.18 }] }
   ],
   "patterns": {
+    "hatsDrive": [{ "hits": "xxxxxxxxxxxxxxxx", "amp": 0.7 }],
+    "gallop": [{ "hits": "x.xxx.xxx.xxx.xx" }],
+    "kickFour": [{ "hits": "x...x...x...x..." }],
     "kick": [{ "hits": "x...x...x...x..." }],
     "kickIntro": [{ "hits": "x.......x......." }],
     "snare": [{ "hits": "....x.......x..." }],
@@ -198,6 +201,45 @@
         { "from": 384, "to": 400, "pattern": "snareFill", "transpose": 3 },
         { "from": 400, "to": 416, "pattern": "snareFill", "transpose": 3 },
         { "from": 416, "to": 424, "pattern": "snareFill" }
+      ]
+    },
+    {
+      "id": "hatsDriven",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "chipHat", "amp": 0.34, "rate": 1.4 },
+      "clips": [
+        { "from": 0, "to": 424, "pattern": "hatsDrive" }
+      ]
+    },
+    {
+      "id": "gallop",
+      "bus": "stage",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "chipKick", "amp": 0.5, "rate": 1.8 },
+      "clips": [
+        { "from": 0, "to": 8, "pattern": "gallop" },
+        { "from": 40, "to": 48, "pattern": "gallop" },
+        { "from": 152, "to": 160, "pattern": "gallop" },
+        { "from": 208, "to": 216, "pattern": "gallop" },
+        { "from": 264, "to": 272, "pattern": "gallop" },
+        { "from": 320, "to": 328, "pattern": "gallop" },
+        { "from": 376, "to": 384, "pattern": "gallop" }
+      ]
+    },
+    {
+      "id": "kickDriven",
+      "bus": "dry",
+      "level": "high",
+      "voice": { "type": "drum", "drum": "chipKick", "amp": 0.99 },
+      "clips": [
+        { "from": 0, "to": 4, "pattern": "kickFour" },
+        { "from": 40, "to": 44, "pattern": "kickFour" },
+        { "from": 152, "to": 156, "pattern": "kickFour" },
+        { "from": 208, "to": 212, "pattern": "kickFour" },
+        { "from": 264, "to": 268, "pattern": "kickFour" },
+        { "from": 320, "to": 324, "pattern": "kickFour" },
+        { "from": 376, "to": 380, "pattern": "kickFour" }
       ]
     },
     {

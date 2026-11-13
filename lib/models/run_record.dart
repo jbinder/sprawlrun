@@ -1,3 +1,4 @@
+import '../audio/song.dart';
 import 'goal.dart';
 import 'stride.dart';
 
@@ -91,6 +92,53 @@ class StoryEvent {
   );
 }
 
+/// What called for a change of music level.
+///
+/// [gps] and [steps] say where the speed came from that the pace was judged on.
+/// A level that ends when a chase or the goal's lift does is put down to whatever
+/// the speed came from then.
+enum MusicCause { gps, steps, chase, goal }
+
+/// One change of music level in a run: which level, and what called for it.
+///
+/// Nothing reads these but a person asking why the song did what it did, which
+/// neither the trace nor the story could answer for a run that lost its GPS.
+class MusicChange {
+  const MusicChange({required this.atSeconds, required this.level, required this.cause, this.speedMps = 0});
+
+  /// Run time when it was asked for; it is heard a few seconds later.
+  final double atSeconds;
+  final MusicLevel level;
+  final MusicCause cause;
+
+  /// The speed the run held at that moment.
+  final double speedMps;
+
+  List<Object> toJson() => [
+    double.parse(atSeconds.toStringAsFixed(1)),
+    level.name,
+    cause.name,
+    double.parse(speedMps.toStringAsFixed(2)),
+  ];
+
+  /// Null for anything a later version wrote differently, so it is left out
+  /// and the run still loads.
+  static MusicChange? fromJson(Object? json) {
+    if (json is! List || json.length < 3) return null;
+    final [at, level, cause, ...rest] = json;
+    if (at is! num) return null;
+    final levels = MusicLevel.values.where((l) => l.name == level);
+    final causes = MusicCause.values.where((c) => c.name == cause);
+    if (levels.isEmpty || causes.isEmpty) return null;
+    return MusicChange(
+      atSeconds: at.toDouble(),
+      level: levels.first,
+      cause: causes.first,
+      speedMps: rest.isNotEmpty && rest.first is num ? (rest.first as num).toDouble() : 0,
+    );
+  }
+}
+
 /// The permanent record of one completed (or abandoned) run.
 class RunRecord {
   const RunRecord({
@@ -115,6 +163,7 @@ class RunRecord {
     this.strides,
     this.song,
     this.story = const [],
+    this.music = const [],
     this.trace = const [],
   });
 
@@ -183,6 +232,10 @@ class RunRecord {
   /// existed, and for free runs, which have no story.
   final List<StoryEvent> story;
 
+  /// Every change of music level, in order. Empty with no generated music, and
+  /// for runs recorded before this existed.
+  final List<MusicChange> music;
+
   final List<TracePoint> trace;
 
   bool get isMission => missionId != null;
@@ -239,6 +292,7 @@ class RunRecord {
     strides: strides,
     song: song,
     story: story,
+    music: music,
     trace: trace ?? this.trace,
   );
 
@@ -264,6 +318,7 @@ class RunRecord {
     if (strides case final s? when !s.isEmpty) 'strides': s.toJson(),
     if (song != null) 'song': song,
     if (story.isNotEmpty) 'story': story.map((e) => e.toJson()).toList(),
+    if (music.isNotEmpty) 'music': music.map((e) => e.toJson()).toList(),
     'trace': trace.map((p) => p.toJson()).toList(),
   };
 
@@ -291,6 +346,10 @@ class RunRecord {
     story: (json['story'] as List? ?? [])
         .map((e) => StoryEvent.fromJson(Map<String, dynamic>.from(e as Map)))
         .toList(),
+    music: [
+      for (final e in json['music'] is List ? json['music'] as List : const <Object?>[])
+        ?MusicChange.fromJson(e),
+    ],
     trace: (json['trace'] as List? ?? []).map((e) => TracePoint.fromJson(e as List)).toList(),
   );
 }

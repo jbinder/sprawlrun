@@ -61,12 +61,12 @@ Map<String, dynamic> minimal() => {
 /// What each shipped song sounds like, as a fingerprint: eight bars from bar 24,
 /// four at high and four at low, as the 16-bit samples written to the speaker.
 const _sounds = {
-  'black_ice.json': 0xa4976fa4,
-  'cold_boot.json': 0x13c5be5f,
-  'neon_pursuit.json': 0x60130f6e,
-  'skyline_breach.json': 0xf8ab3e76,
-  'sodium_rain.json': 0x98ede22a,
-  'undercity.json': 0x0091c393,
+  'black_ice.json': 0x1d813b58,
+  'cold_boot.json': 0x27aea344,
+  'neon_pursuit.json': 0xd210e1b5,
+  'skyline_breach.json': 0xfdf3cfd0,
+  'sodium_rain.json': 0x7eb0d8a7,
+  'undercity.json': 0xa041e71c,
 };
 
 void main() {
@@ -486,11 +486,11 @@ void main() {
       });
 
       test('lifting brightens the top and widens', () {
-        expect(level(tone(1, 8000).$1), greaterThan(0.3 * sqrt1_2 * 1.3));
+        expect(level(tone(1, 8000).$1), greaterThan(0.3 * sqrt1_2 * 1.8));
         expect(level(tone(1, 100).$1), closeTo(0.3 * sqrt1_2, 0.01));
         final (l, r) = tone(1, 300, side: 0.2);
         final width = level(Float32List.fromList([for (var i = 0; i < l.length; i++) r[i] - l[i]]));
-        expect(width, greaterThan(0.3 * sqrt1_2 * 0.4 * 1.3));
+        expect(width, greaterThan(0.3 * sqrt1_2 * 0.4 * 1.5));
       });
 
       test('it glides rather than jumps', () {
@@ -504,6 +504,24 @@ void main() {
         // A tenth of a second in, the top is still mostly there.
         expect(level(Float32List.sublistView(left, 0, 8820)), greaterThan(0.3 * sqrt1_2 * 0.5));
       });
+    });
+
+    test('a lift is louder than the song as written, and easing off quieter', () {
+      double heard(MusicLevel from, MusicLevel to) {
+        final left = Float32List(88200)..fillRange(0, 88200, 0.5);
+        final right = Float32List(88200)..fillRange(0, 88200, 0.5);
+        LevelGain(from)
+          ..target = LevelGain.of(to)
+          ..process(left, right, left.length);
+        // A tenth of a second in it has hardly moved: it glides.
+        expect(left[4410], closeTo(0.5 * LevelGain.of(from), 0.03));
+        return right.last;
+      }
+
+      expect(heard(MusicLevel.normal, MusicLevel.high), closeTo(0.5, 1e-6));
+      expect(heard(MusicLevel.high, MusicLevel.low), closeTo(0.5 * LevelGain.low, 1e-6));
+      expect(LevelGain.low, lessThan(LevelGain.normal));
+      expect(LevelGain.normal, lessThan(LevelGain.high * 0.8), reason: 'under 2 dB is not heard on a run');
     });
 
     test('drive can turn down what it limits', () {

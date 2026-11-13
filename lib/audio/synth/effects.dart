@@ -4,6 +4,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import '../song.dart';
 import 'dsp.dart';
 
 /// Widens a bus by holding one channel back a few milliseconds, which the ear
@@ -335,8 +336,9 @@ class Master {
 
 /// What a level does to the whole mix, so the three can be told apart where no
 /// melody comes or goes: easing off closes a low-pass, so the song sounds further
-/// away, and lifting adds air above [airHz] and a wider stereo image. At 0 it does
-/// nothing at all, so a song at its own level is exactly as written.
+/// away, and lifting adds presence above [airHz] and a wider stereo image. At 0 it
+/// does nothing at all. How loud a level is belongs to [LevelGain], after the
+/// master: anything louder in here is turned straight back down by the limiter.
 ///
 /// [target] runs from -1, fully eased off, through 0 to 1, fully lifted, and the
 /// sound glides there over [glideSeconds] rather than jumping.
@@ -344,12 +346,12 @@ class LevelTone {
   LevelTone(double amount) : _amount = amount, target = amount;
 
   /// Where the low-pass ends up when fully eased off.
-  static const double closedHz = 1500;
+  static const double closedHz = 900;
 
   /// Where it starts closing from: above anything a song holds.
   static const double openHz = 20000;
 
-  static const double airHz = 5000, airGain = 0.5, widthGain = 0.35;
+  static const double airHz = 3000, airGain = 1.0, widthGain = 0.6;
   static const double glideSeconds = 1.5;
 
   static const int _block = 64;
@@ -393,6 +395,42 @@ class LevelTone {
           f.reset();
         }
         return;
+      }
+    }
+  }
+}
+
+/// How loud a level is, applied after the master so the limiter cannot undo it.
+///
+/// A full section sits against the limiter at every level, so a lift measured
+/// within a decibel of the song as written however many layers it added, and a
+/// runner could not tell the two apart. The song as written therefore plays
+/// below full, which leaves the lift somewhere to go. It glides, as the tone does.
+class LevelGain {
+  LevelGain(MusicLevel level) : _gain = of(level), target = of(level);
+
+  static const double low = 0.55, normal = 0.72, high = 1.0;
+  static const double glideSeconds = 1.5;
+
+  static double of(MusicLevel level) => switch (level) {
+    MusicLevel.low => low,
+    MusicLevel.normal => normal,
+    MusicLevel.high => high,
+  };
+
+  static const int _block = 64;
+  static final double _stepPerBlock = (high - low) * _block / (glideSeconds * sampleRate);
+
+  double target;
+  double _gain;
+
+  void process(Float32List left, Float32List right, int count) {
+    for (var start = 0; start < count; start += _block) {
+      final end = min(start + _block, count);
+      _gain = _gain < target ? min(target, _gain + _stepPerBlock) : max(target, _gain - _stepPerBlock);
+      for (var i = start; i < end; i++) {
+        left[i] *= _gain;
+        right[i] *= _gain;
       }
     }
   }

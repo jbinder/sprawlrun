@@ -9,6 +9,7 @@ import 'package:sprawl_run/models/run_record.dart';
 import 'package:sprawl_run/services/geo.dart';
 import 'package:sprawl_run/services/location_service.dart';
 import 'package:sprawl_run/services/music_player.dart';
+import 'package:sprawl_run/services/music_director.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 
 import 'support/fakes.dart';
@@ -542,6 +543,81 @@ void main() {
             fake.flushMicrotasks();
           }
           expect(run.narrator.musicLevels.where((l) => l.$1 == MusicLevel.low), isEmpty);
+        });
+      });
+
+      test('steps with no GPS: a walk the counter reports in bursts does not lift the song', () {
+        fakeAsync((fake) {
+          final run = begin(fake, readiness: LocationReadiness.gpsDisabled, countSteps: true);
+          // Two steps a second, held back and handed over in two readings close
+          // together, which read as 500 steps a minute between them.
+          for (var i = 0; i < 12; i++) {
+            fake.elapse(const Duration(seconds: 17));
+            run.steps.take(9);
+            fake.flushMicrotasks();
+            fake.elapse(const Duration(seconds: 3));
+            run.steps.take(31);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels.where((l) => l.$1 == MusicLevel.high), isEmpty);
+        });
+      });
+
+      test('steps with no GPS: more steps a minute than anyone takes is no cadence', () {
+        fakeAsync((fake) {
+          final run = begin(fake, readiness: LocationReadiness.gpsDisabled, countSteps: true);
+          for (var i = 0; i < 30; i++) {
+            fake.elapse(const Duration(seconds: 6));
+            run.steps.take(30);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels.where((l) => l.$1 == MusicLevel.high), isEmpty);
+        });
+      });
+
+      test('a change of level is kept with the run, with what called for it', () {
+        fakeAsync((fake) {
+          final narrator = FakeNarrator();
+          final gps = FakeLocation();
+          final started = DateTime(2026, 7, 22, 19);
+          DateTime now() => started.add(fake.elapsed);
+          final engine = RunEngine(narrator: narrator, location: gps, clock: now)
+            ..start(
+              goal: const RunGoal(GoalType.time, 3600),
+              profile: const Profile(music: 'neon_pursuit', autoPause: false),
+              usualSpeed: usual,
+            );
+          fake.flushMicrotasks();
+          for (var i = 0; i < 60; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            gps.step(now(), 1.5);
+            fake.flushMicrotasks();
+          }
+          final change = engine.musicChanges.single;
+          expect(change.level, MusicLevel.low);
+          expect(change.cause, MusicCause.gps);
+          expect(change.speedMps, inExclusiveRange(0.65, usual * MusicDirector.lowBelow));
+          expect(change.atSeconds, inInclusiveRange(8, 20));
+
+          final kept = RunRecord.fromJson(engine.snapshot().toJson()).music.single;
+          expect((kept.level, kept.cause), (MusicLevel.low, MusicCause.gps));
+        });
+      });
+
+      test('a run from before level changes were kept has none, and an unknown one is left out', () {
+        fakeAsync((fake) {
+          final engine = RunEngine(narrator: FakeNarrator(), location: FakeLocation(), clock: () => DateTime(2026, 7, 22))
+            ..start(goal: const RunGoal(GoalType.time, 3600), profile: const Profile());
+          fake.flushMicrotasks();
+          final json = engine.snapshot().toJson();
+          expect(json.containsKey('music'), isFalse);
+          expect(RunRecord.fromJson(json).music, isEmpty);
+          json['music'] = [
+            [12.0, 'high', 'steps', 3.4],
+            [20.0, 'louder', 'gps', 3.0],
+            'nonsense',
+          ];
+          expect(RunRecord.fromJson(json).music.single.cause, MusicCause.steps);
         });
       });
 

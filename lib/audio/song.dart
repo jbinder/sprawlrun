@@ -309,7 +309,7 @@ class _SongParser {
   };
 
   static const int _maxBars = 512;
-  static const int _maxTracks = 32;
+  static const int _maxTracks = 40;
   static const int _maxBuses = 10;
   static const int _maxEventsPerBar = 64;
 

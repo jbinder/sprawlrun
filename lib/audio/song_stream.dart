@@ -27,6 +27,7 @@ class SongStream {
       _nextLevel = level,
       _tempo = _tempoAt(song, level),
       _tone = song.hasLevels ? LevelTone(_toneAt(level)) : null,
+      _gain = song.hasLevels ? LevelGain(level) : null,
       _voices = Voices(Random(song.seed)),
       _riserNoise = Random(song.seed + 1) {
     for (final bus in song.buses) {
@@ -56,7 +57,9 @@ class SongStream {
   /// The share of the song's tempo now playing. It glides, a bar at a time, so a
   /// change of tempo reads as the song easing off and not as a jump.
   double _tempo;
-  static const double _tempoStepPerBar = 0.02;
+  /// Speeding up is quicker than slowing down: a lift that took six bars to
+  /// arrive was over before it was heard.
+  static const double _tempoUpPerBar = 0.03, _tempoDownPerBar = 0.02;
 
   /// Where this bar starts, in samples and in beats, kept apart from the bar
   /// number because a bar's length depends on the tempo it was played at.
@@ -64,6 +67,9 @@ class SongStream {
 
   /// What a level does to the whole mix, for a song that has levels.
   final LevelTone? _tone;
+
+  /// How loud a level is, for a song that has levels.
+  final LevelGain? _gain;
 
   static double _toneAt(MusicLevel level) => switch (level) {
     MusicLevel.low => -1,
@@ -124,6 +130,7 @@ class SongStream {
       _level = _nextLevel;
       _changeAtOnce = false;
       _tone?.target = _toneAt(_level);
+      _gain?.target = LevelGain.of(_level);
     }
     final tempoTarget = _tempoAt(song, _level);
     // At once means back to the song's own tempo at the next bar; going faster
@@ -131,8 +138,8 @@ class SongStream {
     _tempo = snap
         ? (tempoTarget > 1 ? max(_tempo, 1.0) : tempoTarget)
         : _tempo < tempoTarget
-        ? min(tempoTarget, _tempo + _tempoStepPerBar)
-        : max(tempoTarget, _tempo - _tempoStepPerBar);
+        ? min(tempoTarget, _tempo + _tempoUpPerBar)
+        : max(tempoTarget, _tempo - _tempoDownPerBar);
     final spb = song.secondsPerBeat / _tempo;
     final samplesPerBeat = spb * sampleRate;
     final barStart = _position;
@@ -157,6 +164,7 @@ class SongStream {
     _tone?.process(left, right, count);
     _masterLeft.process(left, count);
     _masterRight.process(right, count);
+    _gain?.process(left, right, count);
 
     for (final bus in _buses.values) {
       bus.advance(count);

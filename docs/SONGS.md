@@ -30,7 +30,7 @@ The last two numbers are the first bar and how many to render.
 | `author` | Who wrote it. Optional for your own use, required to contribute one. Shown in the song library. |
 | `licence` | Optional. |
 | `bpm` | 60 to 200. Bars are always four beats. |
-| `lowTempo`, `highTempo` | Optional, by default 1. The share of its tempo the song plays at at level `low` (0.88 to 1) and `high` (1 to 1.15), gliding there and back at 2% a bar. Pitch stays where it is, and echoes stay on the beat. |
+| `lowTempo`, `highTempo` | Optional, by default 1. The share of its tempo the song plays at at level `low` (0.88 to 1) and `high` (1 to 1.15), gliding up at 3% a bar and down at 2%. Pitch stays where it is, and echoes stay on the beat. |
 | `key`, `moods`, `energy` | Optional, for choosing a song; they change nothing in the sound. `energy` is 0 to 1. Best match reads `moods`: `atmospheric` and `melancholic` suit walks, `aggressive`, `dark` and `tense` suit chase-heavy missions, `bombastic` suits long runs and finales, and `uplifting`, `retro` and `playful` suit an ordinary run. |
 | `seed` | Fixes the song's small random movements, so it always renders the same. |
 | `bars`, `loopFrom` | Bars in the first pass, and the bar it goes back to after them. |
@@ -83,9 +83,12 @@ names none simply plays through, whatever the runner is doing.
 
 A song with levels also changes colour with them, so the three can be told apart
 in a section where no layer comes or goes: at `low` a low-pass closes over the
-whole mix to 1.5 kHz, and the song sounds further away; at `high` it gains air
-above 5 kHz and a wider stereo image. Both glide in over about a second and a
-half. At `normal` nothing is touched, so mix the song as it should be heard
+whole mix to 900 Hz, and the song sounds further away; at `high` it gains presence
+above 3 kHz and a wider stereo image. A level also has its own loudness, set after
+the limiter: `high` plays at full, `normal` about 3 dB below it and `low` about 5 dB.
+A full section sits against the limiter whatever is added to it, so without that a
+lift came out no louder than the song. All of it glides in over about a second and
+a half. At `normal` the tone is untouched, so mix the song as it should be heard
 there.
 
 A clip is `{ "from", "to", "pattern" }`, up to but not including bar `to`. It may

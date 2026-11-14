@@ -2,6 +2,7 @@ import 'dart:math';
 
 import '../audio/song.dart';
 import '../models/run_record.dart';
+import 'geo.dart';
 
 /// A change of music level for the player to make.
 class MusicCue {
@@ -136,6 +137,10 @@ class MusicDirector {
   /// The runner's usual speed for [activity]: the median of their recent runs of
   /// it, so one walk home in a run's clothing moves it very little. Null with
   /// fewer than [minimumRuns] to go by. Derived from the log, never stored.
+  ///
+  /// Each run counts at its running pace ([runningPaceOf]), not its average: a
+  /// run with walking breaks averaged its walks in, and its runner's ordinary
+  /// running after a break was then judged a sprint.
   static double? usualSpeedOf(List<RunRecord> log, Activity activity) {
     final recent = [
       for (final run in log)
@@ -146,9 +151,41 @@ class MusicDirector {
           run,
     ]..sort((a, b) => b.startedAt.compareTo(a.startedAt));
     if (recent.length < minimumRuns) return null;
-    final speeds = [for (final run in recent.take(10)) run.distanceMeters / run.movingSeconds]..sort();
+    final speeds = [
+      for (final run in recent.take(10)) runningPaceOf(run) ?? run.distanceMeters / run.movingSeconds,
+    ]..sort();
     return speeds[speeds.length ~/ 2];
   }
 
   static const int minimumRuns = 3;
+
+  /// The share of a run's moving time that is at or below its running pace.
+  /// High enough to pass over walking breaks taking up to about half of it,
+  /// and on a steady run only a little above the average.
+  static const double runningPaceShare = 0.7;
+
+  /// A run's running pace, from its trace: the speed that [runningPaceShare] of
+  /// the time spent moving between trace points was at or below. Null without
+  /// two minutes of moving trace to judge, when the average has to do.
+  static double? runningPaceOf(RunRecord run) {
+    final spans = <(double, double)>[];
+    final trace = run.trace;
+    for (var i = 1; i < trace.length; i++) {
+      final a = trace[i - 1], b = trace[i];
+      final seconds = b.elapsedSeconds - a.elapsedSeconds;
+      // A longer gap is a stop or a lost signal, not a pace.
+      if (seconds <= 0 || seconds > 15) continue;
+      final speed = Geo.distance(a.lat, a.lon, b.lat, b.lon) / seconds;
+      if (speed >= stillBelowMps) spans.add((speed, seconds));
+    }
+    final total = spans.fold(0.0, (sum, s) => sum + s.$2);
+    if (total < 120) return null;
+    spans.sort((a, b) => a.$1.compareTo(b.$1));
+    var covered = 0.0;
+    for (final (speed, seconds) in spans) {
+      covered += seconds;
+      if (covered >= total * runningPaceShare) return speed;
+    }
+    return spans.last.$1;
+  }
 }

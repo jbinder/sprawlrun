@@ -264,6 +264,13 @@ class RunEngine extends ChangeNotifier {
   DateTime? _segmentStart;
   GeoFix? _lastFix;
   DateTime? _lastFixAt;
+
+  /// The speed of the last stretch between two accepted fixes, when that was
+  /// taken, and the step the latest fix had to clear to be accepted: what the
+  /// music judges pace on (see [_musicSpeed]).
+  double _fixSpeed = 0;
+  DateTime? _fixSpeedAt;
+  double _fixFloor = minStepMeters;
   DateTime? _stillSince;
   DateTime? _lastBeatEndedAt;
   bool _beatPlaying = false;
@@ -623,6 +630,7 @@ class RunEngine extends ChangeNotifier {
     _segmentStart = null;
     _lastFix = null;
     _lastFixAt = null;
+    _fixSpeedAt = null;
     _stillSince = null;
     _lastBeatEndedAt = null;
     _beatPlaying = false;
@@ -774,6 +782,7 @@ class RunEngine extends ChangeNotifier {
     if (fix.accuracy > maxAcceptableAccuracy) return;
     _lastFixAt = _now();
     _stepsSinceFix = 0;
+    _fixFloor = max(minStepMeters, fix.accuracy * 0.35);
 
     if (phase != RunPhase.running && phase != RunPhase.autoPaused) {
       _lastFix = fix;
@@ -785,6 +794,7 @@ class RunEngine extends ChangeNotifier {
     if (_estimating) {
       _estimating = false;
       _lastFix = fix;
+      _fixSpeedAt = null;
       _addTracePoint(fix);
       return;
     }
@@ -820,10 +830,12 @@ class RunEngine extends ChangeNotifier {
     // genuinely slow movement accumulates until it clears the floor instead of
     // being thrown away a metre at a time. Jitter around a fixed point never
     // accumulates, because it does not drift in one direction.
-    if (step < max(minStepMeters, fix.accuracy * 0.35)) return;
+    if (step < _fixFloor) return;
 
     _lastFix = fix;
     distanceMeters += step;
+    _fixSpeed = speed;
+    _fixSpeedAt = _now();
     smoothedSpeed = smoothedSpeed == 0 ? speed : smoothedSpeed * 0.6 + speed * 0.4;
 
     if (phase == RunPhase.autoPaused && smoothedSpeed > movingThresholdMps) resume();
@@ -857,10 +869,25 @@ class RunEngine extends ChangeNotifier {
   /// straight, and then nothing here touches it.
   MusicDirector? _musicDirector;
 
+  /// The speed the music judges pace on. [smoothedSpeed] loses speed every
+  /// second no fix moves the run, which is right for a runner who stopped but
+  /// not for one whose fixes are only accepted every few seconds because the
+  /// signal is poor: an outdoor run at its usual pace read 20% slow that way,
+  /// and the song dropped to low for a minute at a time. So with fresh fixes it
+  /// is the speed between the last two accepted ones, held until that would
+  /// have carried the runner past the step a fix has to clear, and only then
+  /// falling as a stop would. Counted in steps, it is the step speed.
+  double get _musicSpeed {
+    final at = _fixSpeedAt;
+    if (at == null || !_gpsFresh) return smoothedSpeed;
+    final since = _now().difference(at).inMilliseconds / 1000;
+    return since <= 1 ? _fixSpeed : min(_fixSpeed, _fixFloor / since);
+  }
+
   void _cueMusic(MusicCue? cue, MusicCause cause) {
     if (cue == null) return;
     musicChanges.add(
-      MusicChange(atSeconds: elapsedSeconds, level: cue.level, cause: cause, speedMps: smoothedSpeed),
+      MusicChange(atSeconds: elapsedSeconds, level: cue.level, cause: cause, speedMps: _musicSpeed),
     );
     unawaited(narrator.setMusicLevel(cue.level, atOnce: cue.atOnce));
   }
@@ -876,7 +903,7 @@ class RunEngine extends ChangeNotifier {
       _learnStride();
       _distanceAtLastTick = distanceMeters;
       _cueMusic(
-        _musicDirector?.tick(_gpsIsLive || _stepping ? smoothedSpeed : null),
+        _musicDirector?.tick(_gpsIsLive || _stepping ? _musicSpeed : null),
         _gpsFresh ? MusicCause.gps : MusicCause.steps,
       );
     }

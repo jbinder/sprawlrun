@@ -174,6 +174,7 @@ void main() {
       double seconds = 1800,
       Activity activity = Activity.run,
       double estimated = 0,
+      List<TracePoint> trace = const [],
     }) => RunRecord(
       id: 'r$n',
       startedAt: day.add(Duration(days: n)),
@@ -186,7 +187,20 @@ void main() {
       outcome: RunOutcome.success,
       activity: activity,
       estimatedMeters: estimated,
+      trace: trace,
     );
+
+    /// A trace due north, a point every [every] seconds, at each of [speeds]
+    /// (metres a second) for that stretch.
+    List<TracePoint> traceAt(List<double> speeds, {int every = 4}) {
+      const metersPerDegree = 111195.0;
+      var lat = 48.2, t = 0.0;
+      return [
+        TracePoint(lat: lat, lon: 16.4, elapsedSeconds: t),
+        for (final speed in speeds)
+          TracePoint(lat: lat += speed * every / metersPerDegree, lon: 16.4, elapsedSeconds: t += every),
+      ];
+    }
 
     test('needs a few runs to go by', () {
       expect(MusicDirector.usualSpeedOf([record(1), record(2)], Activity.run), isNull);
@@ -224,6 +238,30 @@ void main() {
         for (var i = 10; i < 20; i++) record(i, meters: 6000),
       ];
       expect(MusicDirector.usualSpeedOf(log, Activity.run), closeTo(6000 / 1800, 0.001));
+    });
+
+    test('a run with walking breaks counts at its running pace, not its average', () {
+      // Three minutes running at 3.1, two walking at 1.4: averaging 2.4.
+      final intervals = traceAt([
+        for (var i = 0; i < 4; i++) ...[...List.filled(45, 3.1), ...List.filled(30, 1.4)],
+      ]);
+      final log = [for (var i = 0; i < 3; i++) record(i, meters: 4320, trace: intervals)];
+      expect(MusicDirector.usualSpeedOf(log, Activity.run), closeTo(3.1, 0.01));
+    });
+
+    test('a steady run counts at about its average', () {
+      final steady = traceAt([for (var i = 0; i < 100; i++) i.isEven ? 2.9 : 3.1]);
+      expect(MusicDirector.runningPaceOf(record(1, trace: steady)), closeTo(3.1, 0.01));
+    });
+
+    test('stops and lost signal are no pace, and too little trace falls back to the average', () {
+      final stops = [
+        ...traceAt(List.filled(40, 3.0)),
+        // A minute standing at a crossing, then a gap with the signal lost.
+        TracePoint(lat: 48.2 + 480 / 111195.0, lon: 16.4, elapsedSeconds: 220),
+      ];
+      expect(MusicDirector.runningPaceOf(record(1, trace: stops)), closeTo(3.0, 0.01));
+      expect(MusicDirector.runningPaceOf(record(2, trace: traceAt(List.filled(20, 3.0)))), isNull);
     });
   });
 }

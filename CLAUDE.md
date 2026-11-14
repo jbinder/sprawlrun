@@ -249,7 +249,13 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   The loudness is applied after the master: the limiter turns anything louder
   before it straight back down, which left a lift within 1 dB of the song however
   many layers it added. So `normal` plays about 3 dB under full, on purpose.
-  Low must sit well below usual pace, or a climb loses its music. Levels and the two tempos are optional for every song, shipped
+  Low must sit well below usual pace, or a climb loses its music. "Usual" is
+  each past run's *running* pace (70% of its moving trace time at or below
+  it), not its average: walking breaks pulled the average down until ordinary
+  running after a break played as a sprint. And the director is fed
+  `_musicSpeed`, not `smoothedSpeed`, whose per-second decay read a poor
+  signal (a fix accepted every few seconds) as easing off and dropped to low
+  mid-run. Both were seen on one outdoor run's `RunRecord.music` log. Levels and the two tempos are optional for every song, shipped
   ones too: without them a song plays straight. A phone falling behind drops a
   level for the rest of the run before the music stops, and the run screen puts
   a warning by the song's name. Without it, two test runs of Skyline Breach

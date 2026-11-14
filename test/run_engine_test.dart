@@ -522,6 +522,38 @@ void main() {
         });
       });
 
+      test('GPS: a poor signal accepting a fix every few seconds is not easing off', () {
+        fakeAsync((fake) {
+          final run = begin(fake);
+          // A 10.5 m step to clear, so only every fourth fix moves the run.
+          run.gps.accuracy = 30;
+          for (var i = 0; i < 180; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.gps.step(run.now(), usual * 0.94);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels, isEmpty);
+        });
+      });
+
+      test('GPS: with a poor signal, stopping still thins the song out', () {
+        fakeAsync((fake) {
+          final run = begin(fake);
+          run.gps.accuracy = 30;
+          for (var i = 0; i < 60; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.gps.step(run.now(), usual);
+            fake.flushMicrotasks();
+          }
+          for (var i = 0; i < 100; i++) {
+            fake.elapse(const Duration(seconds: 1));
+            run.gps.step(run.now(), 0);
+            fake.flushMicrotasks();
+          }
+          expect(run.narrator.musicLevels.single.$1, MusicLevel.low);
+        });
+      });
+
       test('steps with no GPS: easing off thins the song out', () {
         fakeAsync((fake) {
           final run = begin(fake, readiness: LocationReadiness.gpsDisabled, countSteps: true);

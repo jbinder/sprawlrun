@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:sprawl_run/audio/song.dart';
+import 'package:sprawl_run/data/active_run_store.dart';
 import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
@@ -328,7 +329,16 @@ void main() {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 5)));
     }
 
-    final saved = await tester.runAsync(store.load);
+    // A save is several file operations, each resuming in the fake zone, and
+    // on a slow CI runner the one started at 30 s had not landed by 40 s. Let
+    // it finish without advancing the run: pump() moves no run time.
+    ActiveRunSnapshot? saved;
+    for (var i = 0; i < 100; i++) {
+      saved = await tester.runAsync<ActiveRunSnapshot?>(store.load);
+      if (saved != null && saved.record.distanceMeters > 60) break;
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      await tester.pump();
+    }
     expect(saved, isNotNull, reason: 'saved within its first 15 seconds and kept current');
     expect(saved!.record.distanceMeters, greaterThan(60));
     expect(saved.record.missionId, run.engine.mission!.id);

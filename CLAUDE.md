@@ -11,7 +11,7 @@ This file is only for things that will otherwise waste your time.
 
 ```bash
 fvm flutter analyze                                 # must stay clean
-fvm flutter test                                    # 895 tests
+fvm flutter test                                    # 924 tests
 fvm flutter build apk --release
 adb install -r build/app/outputs/flutter-apk/app-release.apk   # never `flutter install`
 fvm dart run tool/gen_sfx.dart                      # assets/sfx/*.wav
@@ -241,10 +241,15 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   speed with the runner's usual pace (from the run log, per activity) and is told
   about chases and the goal; `RunEngine` passes its cues to the narrator. A level
   changes where a two-bar phrase starts, and a chase at the next bar, with about
-  four seconds of queue ahead of either. Pace is judged over 12 seconds: at 25,
+  four seconds of queue ahead of either. A rise is judged on the mean of the
+  last 12 seconds and lifts at the next bar, as a chase does, so a sprint is
+  not spent waiting; a fall also needs the last 20 to agree. At 25 seconds,
   with four-bar phrases, a runner waited 20–30 seconds for the song to answer.
-  A rise is judged on the last 8 and lifts at the next bar, as a chase does, so
-  a sprint is not spent waiting; a fall needs both windows to agree. A level
+  It is a mean, each second capped at 1.6× usual, not a median: the speed
+  between single fixes swings ±1 m/s on jitter, and a median of it crossed a
+  threshold 10% above usual every half minute — 130 changes in a 42-minute run
+  at the usual pace. Hence fast at 120% (back at 110%), low under 70%, and no
+  judgement at all in the first minute of movement, while fixes settle. A level
   also colours the whole mix (`LevelTone`) and has its own loudness (`LevelGain`).
   The loudness is applied after the master: the limiter turns anything louder
   before it straight back down, which left a lift within 1 dB of the song however

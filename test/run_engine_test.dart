@@ -501,7 +501,7 @@ void main() {
       test('GPS: easing off thins the song out', () {
         fakeAsync((fake) {
           final run = begin(fake);
-          for (var i = 0; i < 60; i++) {
+          for (var i = 0; i < 100; i++) {
             fake.elapse(const Duration(seconds: 1));
             run.gps.step(run.now(), 1.5);
             fake.flushMicrotasks();
@@ -557,7 +557,7 @@ void main() {
       test('steps with no GPS: easing off thins the song out', () {
         fakeAsync((fake) {
           final run = begin(fake, readiness: LocationReadiness.gpsDisabled, countSteps: true);
-          for (var i = 0; i < 60; i++) {
+          for (var i = 0; i < 100; i++) {
             fake.elapse(const Duration(seconds: 1));
             run.steps.take(1); // A walking cadence, well under the usual pace.
             fake.flushMicrotasks();
@@ -620,7 +620,7 @@ void main() {
               usualSpeed: usual,
             );
           fake.flushMicrotasks();
-          for (var i = 0; i < 60; i++) {
+          for (var i = 0; i < 100; i++) {
             fake.elapse(const Duration(seconds: 1));
             gps.step(now(), 1.5);
             fake.flushMicrotasks();
@@ -629,7 +629,8 @@ void main() {
           expect(change.level, MusicLevel.low);
           expect(change.cause, MusicCause.gps);
           expect(change.speedMps, inExclusiveRange(0.65, usual * MusicDirector.lowBelow));
-          expect(change.atSeconds, inInclusiveRange(8, 20));
+          // Past the first minute, when pace starts being judged.
+          expect(change.atSeconds, inInclusiveRange(MusicDirector.warmUpSeconds, MusicDirector.warmUpSeconds + 25));
 
           final kept = RunRecord.fromJson(engine.snapshot().toJson()).music.single;
           expect((kept.level, kept.cause), (MusicLevel.low, MusicCause.gps));

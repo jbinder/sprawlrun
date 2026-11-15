@@ -14,77 +14,103 @@ void main() {
 
   MusicDirector director() => MusicDirector(usualSpeed: usual);
 
+  /// A director past its warm-up, at the usual pace.
+  MusicDirector warm() {
+    final d = director();
+    run(d, MusicDirector.warmUpSeconds + 30, usual);
+    return d;
+  }
+
   group('pace', () {
     test('the usual pace leaves the song as written', () {
       expect(run(director(), 300, usual), isEmpty);
     });
 
     test('easing off well below it thins the song out', () {
-      final cues = run(director(), 60, usual * 0.6);
+      final cues = run(warm(), 60, usual * 0.6);
       expect(cues.single.level, MusicLevel.low);
       expect(cues.single.atOnce, isFalse);
     });
 
     test('a slower stretch is not enough: a climb keeps its music', () {
-      expect(run(director(), 300, usual * 0.8), isEmpty);
+      expect(run(director(), 300, usual * 0.75), isEmpty);
     });
 
-    test('pushing past it lifts the song', () {
-      expect(run(director(), 60, usual * 1.2).single.level, MusicLevel.high);
+    test('pushing well past it lifts the song', () {
+      expect(run(warm(), 60, usual * 1.3).single.level, MusicLevel.high);
     });
 
-    test('nothing is judged on a few seconds', () {
-      expect(run(director(), MusicDirector.minimumSeconds - 1, usual * 0.5), isEmpty);
+    test('a little over the usual pace is still the usual pace', () {
+      expect(run(director(), 300, usual * 1.15), isEmpty);
     });
 
-    test('a few strides of burst, or a GPS jump, change nothing', () {
+    // A run began with fast at ten seconds and low at twenty-seven, on fixes
+    // still settling.
+    test('nothing is judged in the first minute of movement', () {
       final d = director();
-      run(d, 60, usual);
+      expect(run(d, 30, usual * 1.6), isEmpty);
+      expect(run(d, MusicDirector.warmUpSeconds - 30, usual * 0.5), isEmpty);
+      expect(run(d, 1, usual * 0.5).single.level, MusicLevel.low);
+    });
+
+    test('a few strides of burst change nothing', () {
+      final d = warm();
       expect(run(d, 3, usual * 1.5), isEmpty);
       expect(run(d, 60, usual), isEmpty);
     });
 
-    // A sprint can last a minute, and spent most of it waiting for the song.
-    test('a sprint lifts the song within five seconds, at the next bar', () {
+    test('a jump of the position does not read as a sprint', () {
+      final d = warm();
+      expect(run(d, 1, usual * 5), isEmpty);
+      expect(run(d, 60, usual), isEmpty);
+    });
+
+    // Steady running at the usual pace reads as this through GPS jitter, and a
+    // median of it went fast every half minute.
+    test('the speed between fixes swinging either way leaves the song alone', () {
       final d = director();
-      run(d, 60, usual);
-      final cue = run(d, 5, usual * 1.4).single;
+      final swings = [1.0, 1.35, 0.7, 1.3, 1.05, 0.65, 1.4, 0.9, 1.25, 0.8, 1.3, 0.75];
+      expect([for (var i = 0; i < 600; i++) ?d.tick(usual * swings[i % swings.length] * 0.98)], isEmpty);
+    });
+
+    // A sprint can last a minute, and spent most of it waiting for the song.
+    test('a sprint lifts the song within seven seconds, at the next bar', () {
+      final d = warm();
+      final cue = run(d, 7, usual * 1.4).single;
       expect(cue.level, MusicLevel.high);
       expect(cue.atOnce, isTrue);
     });
 
     test('a breath mid-sprint keeps the song up', () {
-      final d = director();
-      run(d, 60, usual);
+      final d = warm();
       run(d, 20, usual * 1.4);
       expect(run(d, 4, usual), isEmpty);
       expect(run(d, 20, usual * 1.4), isEmpty);
     });
 
     test('easing off is not answered at once', () {
-      final d = director();
-      run(d, 60, usual * 1.4);
+      final d = warm();
+      run(d, 30, usual * 1.4);
+      expect(run(d, 10, usual), isEmpty);
       final cue = run(d, 10, usual).single;
       expect(cue.level, MusicLevel.normal);
       expect(cue.atOnce, isFalse);
     });
 
-    // At 25 seconds of average, a runner on intervals waited twenty and more
-    // seconds for the song to answer each change of pace.
-    test('a real change of pace is answered within seven seconds', () {
-      final d = director();
-      run(d, 60, usual);
-      expect(run(d, 7, usual * 1.3).single.level, MusicLevel.high);
+    test('a real change of pace is answered within a few seconds', () {
+      final d = warm();
+      expect(run(d, 9, usual * 1.3).single.level, MusicLevel.high);
       run(d, 60, usual * 1.3);
-      expect(run(d, 7, usual).single.level, MusicLevel.normal);
-      expect(run(d, 7, usual * 0.6).single.level, MusicLevel.low);
+      expect(run(d, 16, usual).single.level, MusicLevel.normal);
+      run(d, 60, usual);
+      expect(run(d, 16, usual * 0.6).single.level, MusicLevel.low);
     });
 
     test('hovering on a threshold does not flip the song back and forth', () {
-      final d = director();
-      expect(run(d, 60, usual * 1.2).single.level, MusicLevel.high);
+      final d = warm();
+      expect(run(d, 60, usual * 1.3).single.level, MusicLevel.high);
       // Below where it rose, above where it falls.
-      expect(run(d, 120, usual * 1.08), isEmpty);
+      expect(run(d, 120, usual * 1.15), isEmpty);
       expect(run(d, 60, usual).single.level, MusicLevel.normal);
     });
 

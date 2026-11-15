@@ -27,21 +27,31 @@ class MusicDirector {
   /// then changes nothing, and a chase or a goal still does.
   final double? usualSpeed;
 
-  static const double lowBelow = 0.75, lowUntil = 0.80;
-  static const double highAbove = 1.10, highUntil = 1.05;
+  /// Fast is set well clear of the usual pace. At 10% above it, the noise in
+  /// the speed between single fixes crossed it every half minute on a run held
+  /// at the usual pace, and the song went up and back 130 times in 42 minutes.
+  static const double lowBelow = 0.70, lowUntil = 0.78;
+  static const double highAbove = 1.20, highUntil = 1.10;
 
-  /// Seconds of movement the judgement looks back over, and needs before making
-  /// one. It takes their median, so a burst or a GPS jump shorter than half of it
-  /// changes nothing, while a real change of pace is answered once it has lasted
-  /// that long. An average over 25 seconds answered twenty and more seconds late,
-  /// which a runner noticed on an interval run.
-  static const int windowSeconds = 12, minimumSeconds = 10;
+  /// Seconds of movement the judgement looks back over before falling. It
+  /// takes their mean, with each second capped at [burstCap] of the usual pace:
+  /// the speed between two fixes swings by a metre a second either way on
+  /// jitter alone, which cancels out over a mean and does not over a median,
+  /// and the cap keeps one jump of the position from reading as a sprint.
+  static const int windowSeconds = 20;
 
-  /// A rise is judged on the last few seconds alone, the median again, so a sprint
-  /// is answered after about half of this and a few strides' burst still is not.
-  /// Falling waits for the longer window as well, or a breath mid-sprint would
-  /// drop the song. A sprint lasting a minute was spent mostly waiting for it.
-  static const int riseSeconds = 8;
+  /// A rise is judged on the last few seconds alone, so a sprint at 1.4 times
+  /// the usual pace is answered after about seven, and a few strides' burst is
+  /// not. Falling waits for the longer window as well, or a breath mid-sprint
+  /// would drop the song.
+  static const int riseSeconds = 12;
+
+  static const double burstCap = 1.6;
+
+  /// Seconds of movement before pace is judged at all. The first fixes of a run
+  /// are still settling and the start is rarely the pace that follows: a run
+  /// began with fast at ten seconds and low at twenty-seven.
+  static const int warmUpSeconds = 60;
 
   /// Slower than this is standing still, as `RunEngine` counts it.
   static const double stillBelowMps = 0.65;
@@ -56,6 +66,7 @@ class MusicDirector {
   MusicLevel _paced = MusicLevel.normal;
   MusicLevel _current = MusicLevel.normal;
   int _stillSeconds = 0;
+  int _movedSeconds = 0;
   int _liftLeft = 0;
   bool _chasing = false;
 
@@ -75,7 +86,9 @@ class MusicDirector {
       }
     } else {
       _stillSeconds = 0;
-      _speeds.add(speed);
+      _movedSeconds++;
+      final usual = usualSpeed;
+      _speeds.add(usual == null ? speed : min(speed, usual * burstCap));
       if (_speeds.length > windowSeconds) _speeds.removeAt(0);
       // A sprint is lifted at the next bar, as a chase is, not the next phrase.
       if (_judgePace()) return _next(atOnce: _paced == MusicLevel.high);
@@ -98,15 +111,16 @@ class MusicDirector {
   /// Moves [_paced] with the runner. True when it rose.
   bool _judgePace() {
     final usual = usualSpeed;
-    if (usual == null || usual <= 0 || _speeds.length < riseSeconds) return false;
-    final recent = _speeds.sublist(_speeds.length - riseSeconds);
-    final quick = _levelFor(_median(recent) / usual, _paced);
+    if (usual == null || usual <= 0 || _movedSeconds <= warmUpSeconds || _speeds.length < riseSeconds) {
+      return false;
+    }
+    final quick = _levelFor(_mean(_speeds.sublist(_speeds.length - riseSeconds)) / usual, _paced);
     if (quick.index > _paced.index) {
       _paced = quick;
       return true;
     }
-    if (_speeds.length < minimumSeconds) return false;
-    final settled = _levelFor(_median(_speeds) / usual, _paced);
+    if (_speeds.length < windowSeconds) return false;
+    final settled = _levelFor(_mean(_speeds) / usual, _paced);
     // Down only as far as both agree.
     if (settled.index < _paced.index && quick.index < _paced.index) {
       _paced = MusicLevel.values[max(settled.index, quick.index)];
@@ -114,10 +128,7 @@ class MusicDirector {
     return false;
   }
 
-  static double _median(List<double> speeds) {
-    final sorted = [...speeds]..sort();
-    return sorted[sorted.length ~/ 2];
-  }
+  static double _mean(List<double> speeds) => speeds.fold(0.0, (sum, s) => sum + s) / speeds.length;
 
   /// Where [share] of the usual pace puts a song now at [from], with a gap
   /// between rising and falling so it does not flip on a threshold.

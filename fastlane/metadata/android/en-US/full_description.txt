@@ -8,6 +8,10 @@ SOMEBODY IS CHASING YOU
 
 A drone tags your gait. Collections kick in a clinic door. A corporate trace walks the cooling loop toward you. To escape you have to beat your own pace from the last three minutes — never an arbitrary number, so a pursuit is a genuine effort whether you run 4:00/km or 7:00/km, and impossible at neither. Switch them off if you would rather just run.
 
+MUSIC THAT RUNS WITH YOU
+
+Six songs of ten minutes each, from a melancholic walk in the rain to a wall of distorted power chords. There are no recordings: your phone plays them live, from small files of notes. Because they are played and not replayed, they follow the run: ease off and the song thins out and slows; push, get chased or reach your goal and it lifts. Choose one, shuffle them, let the app match the song to the run, or play your own files from a folder. Or keep your own player, as ever: all of this is off until you choose it.
+
 YOU SET THE TARGET
 
 Before each mission, choose a time or a distance. Twelve minutes or twenty-one kilometres — the story paces itself to fit. Reach the target and the operation succeeds; stop short and it stays open for another attempt. Overshoot freely, it all counts.
@@ -28,6 +32,8 @@ EVERYTHING IT DOES
 - Pursuits scaled to your own pace from the last three minutes, or switched off
 - Each kilometre or mile read out with its split and your total time — between scenes on a mission
 - Eleven synthesised voices that duck your music and hand it back
+- Six ten-minute songs played live by your phone, with no audio files, that follow your pace, your pursuits and your goal. Choose one, shuffle them, or let the app match the song to the run
+- Or play your own music from a folder you choose, with a community list of free music to run to
 - Pause, resume or stop from the notification, with a reminder if a run sits paused; a run keeps going if you swipe the app away, and one the phone kills can be resumed where it stopped
 - Asks once, before a run, to be left out of battery optimisation, because some phones kill a running app regardless. Never required
 - Handler reminders on your own schedule, plus optional ambient signal noise
@@ -45,7 +51,7 @@ EVERYTHING IT DOES
 - One tap exports the lot as plain JSON — profile, progress, achievements, codex, every run with its trace. Import restores a new phone outright, or merges
 - Optional automatic backup after every run, to a folder you choose — one a sync app such as Syncthing copies elsewhere, if you like
 - A nudge to export once your log holds runs that exist nowhere else
-- Report a bug or suggest an idea from Settings: the form opens in your browser with the app version filled in
+- Report a bug, suggest an idea or suggest music to run to from Settings: the form opens in your browser
 - English and Spanish, story included, following the phone or picked in Settings; place and character names stay as they are
 - No storage permission either way — the share sheet going out, the document picker coming in
 
@@ -61,4 +67,4 @@ NOTE ON VOICES
 
 Spoken dialogue needs a text-to-speech engine installed. Many de-Googled builds ship none; if yours does not, the app falls back to on-screen text at speaking pace with all sound effects intact. Installing RHVoice or eSpeak NG restores the voices. Reminders and signal noise are unaffected either way — they are never spoken.
 
-Free software, MIT licensed. All sound effects and artwork are generated from code in the repository rather than shipped as opaque binaries.
+Free software, MIT licensed. All music, sound effects and artwork are generated from code in the repository rather than shipped as opaque binaries.

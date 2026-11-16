@@ -409,7 +409,7 @@
     "musicOneSong": "Una canción",
     "musicLibraryAuto": "{mode}, {songs}",
     "musicSongsIn": "{kept} de {total} canciones",
-    "musicLibraryNote": "Estas canciones no son grabaciones: tu teléfono las toca en tiempo real, así que pueden seguir tu carrera. Tu propia música se pausa hasta que termines",
+    "musicLibraryNote": "Estas canciones no son grabaciones: tu teléfono las toca en tiempo real, así que pueden seguir tu carrera. Tu propia música se pausa hasta que termines.",
     "musicOneSongNote": "Elige la canción. Se repite hasta que termines.",
     "musicLeaveOutNote": "Apaga una canción para dejarla fuera de Aleatorio y La más adecuada.",
     "songBy": "de {author}",

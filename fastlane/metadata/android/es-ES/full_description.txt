@@ -10,6 +10,10 @@ ALGUIEN TE PERSIGUE
 
 Un dron registra tu forma de correr. Unos cobradores tiran abajo la puerta de una clínica. Un rastreo corporativo avanza por el circuito de refrigeración hacia ti. Para escapar tienes que superar tu propio ritmo de los últimos tres minutos —nunca un número arbitrario—, así que una persecución es un esfuerzo real tanto si corres a 4:00/km como a 7:00/km, e imposible en ninguno de los dos casos. Desactívalas si prefieres simplemente correr.
 
+MÚSICA QUE CORRE CONTIGO
+
+Seis canciones de diez minutos, de un paseo melancólico bajo la lluvia a un muro de acordes distorsionados. No hay grabaciones: tu teléfono las toca en directo, a partir de pequeños archivos de notas. Como se tocan y no se reproducen, siguen la carrera: si aflojas, la canción se aligera y baja el ritmo; si aprietas, te persiguen o llegas a tu meta, sube. Elige una, mézclalas, deja que la app elija según la carrera o pon tus propios archivos de una carpeta. O sigue con tu reproductor de siempre: nada de esto se activa hasta que lo elijas.
+
 TÚ FIJAS EL OBJETIVO
 
 Antes de cada misión eliges un tiempo o una distancia. Doce minutos o veintiún kilómetros: la historia se adapta. Alcanza el objetivo y la operación es un éxito; si te quedas corto, sigue abierta para otro intento. Pasarte no es problema, todo cuenta.
@@ -30,6 +34,8 @@ TODO LO QUE HACE
 - Persecuciones ajustadas a tu propio ritmo de los últimos tres minutos, o desactivadas
 - Cada kilómetro o milla se anuncia con su parcial y tu tiempo total; en una misión, entre escenas
 - Once voces sintetizadas que bajan tu música y te la devuelven
+- Seis canciones de diez minutos que tu teléfono toca en directo, sin archivos de audio, y que siguen tu ritmo, tus persecuciones y tu meta. Elige una, mézclalas o deja que la app elija según la carrera
+- O pon tu propia música de una carpeta que elijas, con una lista de la comunidad con música gratis para correr
 - Pausar, reanudar o parar desde la notificación, con un aviso si una carrera se queda en pausa; la carrera sigue aunque cierres la app, y si el teléfono la mata puedes reanudarla donde se detuvo
 - Pide una vez, antes de correr, quedar fuera de la optimización de batería, porque algunos teléfonos matan las apps en marcha de todos modos. Nunca es obligatorio
 - Recordatorios de tu contacto según tu horario, y ruido de señal ambiental opcional
@@ -47,7 +53,7 @@ TODO LO QUE HACE
 - Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
 - Copia automática opcional después de cada carrera, en la carpeta que elijas; si quieres, una que una app de sincronización como Syncthing copie a otro sitio
 - Un aviso para exportar cuando tu registro tiene carreras que no existen en ningún otro sitio
-- Informa de un fallo o sugiere una idea desde Ajustes: el formulario se abre en tu navegador con la versión de la app ya indicada
+- Informa de un fallo, sugiere una idea o sugiere música para correr desde Ajustes: el formulario se abre en tu navegador
 - En inglés y en español, historia incluida, según el idioma del teléfono o elegido en Ajustes
 - Sin permiso de almacenamiento en ningún sentido: la hoja de compartir para sacar, el selector de documentos para traer
 
@@ -63,4 +69,4 @@ SOBRE LAS VOCES
 
 Los diálogos hablados necesitan un motor de texto a voz instalado. Muchas ROM sin Google no traen ninguno; si la tuya no lo tiene, la app muestra el texto en pantalla al ritmo de la voz y conserva todos los efectos de sonido. Instalar RHVoice o eSpeak NG recupera las voces. Los recordatorios y el ruido de señal no se ven afectados: nunca se leen en voz alta.
 
-Software libre con licencia MIT. Todos los efectos de sonido y gráficos se generan a partir de código del repositorio en lugar de distribuirse como binarios opacos.
+Software libre con licencia MIT. Toda la música, los efectos de sonido y los gráficos se generan a partir de código del repositorio en lugar de distribuirse como binarios opacos.

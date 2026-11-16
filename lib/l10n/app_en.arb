@@ -2029,7 +2029,7 @@
       }
     }
   },
-  "musicLibraryNote": "These songs are not recordings: your phone plays them in real time, so they can follow your run. Your own music pauses until the run ends",
+  "musicLibraryNote": "These songs are not recordings: your phone plays them in real time, so they can follow your run. Your own music pauses until the run ends.",
   "@musicLibraryNote": {
     "description": "At the top of the song library. The phone plays the songs live, with no audio files or network, and the runner's own music app is paused for the run."
   },

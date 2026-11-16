@@ -1,0 +1,3 @@
+¡Música! Seis canciones de diez minutos que tu teléfono toca en directo, sin archivos de audio. Siguen la carrera: más ligeras y lentas cuando aflojas, más intensas cuando aprietas, te persiguen o llegas a tu meta. Elige una, mézclalas, deja que la app elija según la carrera o pon tus propios archivos de una carpeta. Sugiere música para la lista de la comunidad.
+
+Corregido: con el fondo ambiental activo, la carrera nunca terminaba de arrancar y podía perder el GPS con la pantalla apagada.

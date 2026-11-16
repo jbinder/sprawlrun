@@ -1,0 +1,3 @@
+Music! Six ten-minute songs your phone plays live, with no audio files. They follow the run: thinner and slower when you ease off, lifted when you push, get chased or reach your goal. Choose one, shuffle them, let the app match the song to the run, or play your own files from a folder. Suggest music to run to for the community's list.
+
+Fixed: with the ambient bed on, a run never finished starting, so it could lose GPS with the screen off and its notification.

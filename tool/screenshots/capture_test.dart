@@ -27,6 +27,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sprawl_run/audio/song.dart';
 import 'package:sprawl_run/l10n/l10n.dart';
 import 'package:sprawl_run/widgets/glitch_text.dart';
 import 'package:sprawl_run/app.dart';
@@ -38,10 +39,13 @@ import 'package:sprawl_run/screens/history_screen.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/screens/missions_screen.dart';
 import 'package:sprawl_run/screens/run_detail_screen.dart';
+import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/screens/run_screen.dart';
+import 'package:sprawl_run/screens/song_library_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/screens/theme_editor_screen.dart';
 import 'package:sprawl_run/theme/theme_draft.dart';
+import 'package:sprawl_run/services/music_player.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/widgets/unlock_reveal.dart';
@@ -121,6 +125,7 @@ const Map<String, int> _storeOrder = {
   'achievements': 7,
   'codex': 8,
   'theme-editor': 9,
+  'song-library': 10,
 };
 
 void main() {
@@ -157,6 +162,13 @@ void _shots() {
     await _shoot(tester, 'theme-editor');
   });
 
+  testWidgets('song library', (tester) async {
+    final state = await seedShowcase(tester, language: _storyLanguage);
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(music: Profile.bestMatchMusic)));
+    await _pump(tester, const SongLibraryScreen(), state);
+    await _shoot(tester, 'song-library');
+  });
+
   testWidgets('mission brief', (tester) async {
     final state = await seedShowcase(tester, language: _storyLanguage);
     final mission = state.currentMission!.mission;
@@ -182,11 +194,8 @@ void _shots() {
 
     var now = DateTime(2026, 7, 27, 21, 14);
     final location = FakeLocation();
-    final engine = RunEngine(
-      narrator: FakeNarrator(lineDuration: const Duration(seconds: 6)),
-      location: location,
-      clock: () => now,
-    );
+    final narrator = FakeNarrator(lineDuration: const Duration(seconds: 6));
+    final engine = RunEngine(narrator: narrator, location: location, clock: () => now);
 
     await _pump(
       tester,
@@ -194,6 +203,7 @@ void _shots() {
       state,
       engine: engine,
     );
+    narrator.hearSong('neon_pursuit');
 
     // Run at a steady 3.2 m/s until a pursuit opens — that is the shot worth
     // having. This mission's chase sits at 48% of the target, so it takes
@@ -209,6 +219,8 @@ void _shots() {
       location.step(now, 4.1);
       await tester.pump(const Duration(seconds: 1));
     }
+    narrator.hearProgress(const SongProgress(0.42, level: MusicLevel.normal));
+    await tester.pump(const Duration(milliseconds: 100));
     await _shoot(tester, 'run-hud');
 
     // The fake narrator holds a timer for the length of every line it speaks,

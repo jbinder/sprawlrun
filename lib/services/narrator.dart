@@ -199,6 +199,11 @@ class AudioNarrator implements Narrator {
   /// it rather than talking over it.
   Future<void> _queue = Future.value();
 
+  /// Bumped by [stopAll]. A beat checks it between lines, and one queued
+  /// before the bump never starts: stopping the engine only cuts the line in
+  /// progress, and the rest of an aborted run's beat was being spoken anyway.
+  int _beatGeneration = 0;
+
   @override
   Stream<NarrationEvent> get events => _events.stream;
 
@@ -337,34 +342,52 @@ class AudioNarrator implements Narrator {
   Future<void> speakBeat(List<StoryLine> lines) {
     if (lines.isEmpty) return Future.value();
     // Chain onto the queue so overlapping triggers never overlap in the ear.
-    final next = _queue.then((_) => _speakBeatNow(lines)).catchError((Object e, StackTrace s) {
+    final generation = _beatGeneration;
+    final next = _queue
+        .then((_) => generation == _beatGeneration ? _speakBeatNow(lines, generation) : null)
+        .catchError((Object e, StackTrace s) {
       debugPrint('Beat playback failed: $e\n$s');
     });
     _queue = next;
     return next;
   }
 
-  Future<void> _speakBeatNow(List<StoryLine> lines) async {
+  Future<void> _speakBeatNow(List<StoryLine> lines, int generation) async {
+    bool cut() => generation != _beatGeneration;
     await _takeFocus();
+    if (cut()) {
+      // Stopped while focus was being taken: stopAll may have released it
+      // before this caught up, so it is given back here.
+      if (_focusHeld && !_musicHoldsFocus) await _releaseFocus();
+      return;
+    }
     _speaking = true;
     await _applyDuck();
     try {
       await _playSfx('comm_open');
       for (final line in lines) {
+        if (cut()) return;
         _events.add(NarrationEvent(line));
         if (line.sfxBefore != null) await _playSfx(line.sfxBefore!);
-        await _speak(line);
+        if (cut()) return;
+        await _speak(line, cut);
+        if (cut()) return;
         if (line.sfxAfter != null) await _playSfx(line.sfxAfter!);
         if (line.pauseAfterMs > 0) {
           await Future<void>.delayed(Duration(milliseconds: line.pauseAfterMs));
         }
       }
-      await _playSfx('comm_close');
+      if (!cut()) await _playSfx('comm_close');
     } finally {
-      _events.add(const NarrationEvent(null));
-      _speaking = false;
-      await _applyDuck();
-      await _releaseFocus();
+      // A cut beat leaves the rest to stopAll, which has already handed focus
+      // back: a second release here would cancel the guard's nudge, and the
+      // rest could clobber a beat of the next run.
+      if (!cut()) {
+        _events.add(const NarrationEvent(null));
+        _speaking = false;
+        await _applyDuck();
+        await _releaseFocus();
+      }
     }
   }
 
@@ -372,7 +395,7 @@ class AudioNarrator implements Narrator {
   bool hasVoiceFor(String language) =>
       language == 'en' || usableVoices(_allVoices, language: language).isNotEmpty;
 
-  Future<void> _speak(StoryLine line) async {
+  Future<void> _speak(StoryLine line, bool Function() cut) async {
     if (!_ready || !_profile.voiceEnabled) {
       // Muted: still hold the line on screen for about as long as it would
       // have taken to say, so the HUD paces the same way.
@@ -403,7 +426,8 @@ class AudioNarrator implements Narrator {
       await _tts.setPitch(voice.pitch.clamp(0.5, 2.0));
       final rate = (_profile.speechRate * voice.rateScale).clamp(0.1, 1.0);
       await _tts.setSpeechRate(rate);
-      if (await _say(line, rate) || assigned == null) return;
+      // A line cut by stopAll is not a failed voice, and is not said again.
+      if (await _say(line, rate) || assigned == null || cut()) return;
       // The voice failed. Say it again in the engine's default, and keep that
       // for the rest of the session rather than paying for the same failure on
       // every line.
@@ -698,6 +722,11 @@ class AudioNarrator implements Narrator {
   @override
   Future<void> stopAll() async {
     _queue = Future.value();
+    _beatGeneration++;
+    if (_speaking) {
+      _speaking = false;
+      _events.add(const NarrationEvent(null));
+    }
     _bedOn = false;
     // Each on its own: a phone with no speech engine must still lose the drone.
     for (final stop in [_tts.stop, _sfxPlayer.stop, _bedPlayer.stop]) {

@@ -385,7 +385,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 924 tests
+flutter test                   # 927 tests
 ```
 
 GitHub Actions runs both on every push and pull request (`.github/workflows/tests.yml`),

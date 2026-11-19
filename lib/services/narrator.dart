@@ -426,6 +426,10 @@ class AudioNarrator implements Narrator {
       await _tts.setPitch(voice.pitch.clamp(0.5, 2.0));
       final rate = (_profile.speechRate * voice.rateScale).clamp(0.1, 1.0);
       await _tts.setSpeechRate(rate);
+      // Setting up a voice takes a moment (a language switch most of all); a
+      // stop that landed meanwhile found nothing to cut, so the line would
+      // otherwise be said in full after the run had ended.
+      if (cut()) return;
       // A line cut by stopAll is not a failed voice, and is not said again.
       if (await _say(line, rate) || assigned == null || cut()) return;
       // The voice failed. Say it again in the engine's default, and keep that
@@ -441,6 +445,7 @@ class AudioNarrator implements Narrator {
         _fallbackVoice = null;
       }
       await _tts.clearVoice();
+      if (cut()) return;
       await _say(line, rate);
     } on Object catch (e) {
       debugPrint('TTS failed for ${line.speaker}: $e');

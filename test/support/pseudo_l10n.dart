@@ -2013,9 +2013,6 @@ class PseudoL extends L {
   String get themeMakeOwn => pseudo(_en.themeMakeOwn);
 
   @override
-  String get themeEditOwn => pseudo(_en.themeEditOwn);
-
-  @override
   String themeCopyName(String name) => pseudo(_en.themeCopyName(name));
 
   @override

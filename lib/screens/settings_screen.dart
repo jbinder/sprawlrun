@@ -3,15 +3,18 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'song_library_screen.dart';
+
+import '../services/project_links.dart';
+
 import '../audio/song.dart';
+
 import '../models/profile.dart';
 import '../models/release_notes.dart';
 import '../models/stride.dart';
 import '../services/app_version.dart';
-import '../services/project_links.dart';
 import '../services/stats_service.dart';
 import '../state/app_state.dart';
-import 'song_library_screen.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/clock.dart';
@@ -19,7 +22,6 @@ import '../util/format.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/backup_controls.dart';
 import '../widgets/contribute_controls.dart';
-import '../widgets/pack_controls.dart';
 import '../widgets/release_notes_dialog.dart';
 import '../widgets/panels.dart';
 import '../widgets/setting_rows.dart';
@@ -70,7 +72,7 @@ class SettingsScreen extends StatelessWidget {
                               profile.copyWith(callsign: v.trim().isEmpty ? 'RUNNER' : v.trim()),
                             ),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           _StepperRow(
                             label: l.settingBodyMass,
                             // Calorie estimates are mass-dependent; this is the
@@ -84,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
                           // Only for turning steps into distance, so only
                           // asked of a runner who counts them.
                           if (profile.countSteps) ...[
-                            const _Rule(),
+                            const RowRule(),
                             _StepperRow(
                               label: l.settingHeight,
                               value: Fmt.height(profile.heightCm, profile.units),
@@ -92,8 +94,8 @@ class SettingsScreen extends StatelessWidget {
                               onIncrease: () => update(profile.copyWith(heightCm: _nextHeight(profile, 1))),
                             ),
                           ],
-                          const _Rule(),
-                          _PickerRow<String>(
+                          const RowRule(),
+                          PickerRow<String>(
                             label: l.settingLanguage,
                             value: profile.language,
                             options: {
@@ -105,16 +107,16 @@ class SettingsScreen extends StatelessWidget {
                             },
                             onChanged: (code) => update(profile.copyWith(language: code)),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           SegmentRow<UnitSystem>(
                             label: l.settingUnits,
                             value: profile.units,
                             options: {UnitSystem.metric: l.unitsKm, UnitSystem.imperial: l.unitsMiles},
                             onChanged: (v) => update(profile.copyWith(units: v)),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           ThemeControls(label: l.settingLook),
-                          const _Rule(),
+                          const RowRule(),
                           SwitchRow(
                             label: l.settingPackColours,
                             subtitle: l.settingPackColoursHint,
@@ -154,7 +156,7 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           _StepperRow(
                             label: l.settingWeeklyTarget,
                             value: profile.streakGoal.label,
@@ -177,8 +179,8 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const _Rule(),
-                          _Note(l.streakNote),
+                          const RowRule(),
+                          SettingNote(l.streakNote),
                         ],
                       ),
                     ),
@@ -194,24 +196,17 @@ class SettingsScreen extends StatelessWidget {
                             value: profile.voiceEnabled,
                             onChanged: (v) => update(profile.copyWith(voiceEnabled: v)),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           SegmentRow<AudioInterrupt>(
                             label: l.settingYourMusic,
                             value: profile.audioInterrupt,
-                            options: {
-                              AudioInterrupt.pause: l.musicPause,
-                              AudioInterrupt.duck: l.musicDuck,
-                            },
+                            options: {AudioInterrupt.pause: l.musicPause, AudioInterrupt.duck: l.musicDuck},
                             onChanged: (v) => update(profile.copyWith(audioInterrupt: v)),
                           ),
-                          const _Rule(),
-                          _Note(
-                            profile.audioInterrupt == AudioInterrupt.pause
-                                ? l.musicPauseNote
-                                : l.musicDuckNote,
-                          ),
+                          const RowRule(),
+                          SettingNote(profile.audioInterrupt == AudioInterrupt.pause ? l.musicPauseNote : l.musicDuckNote),
                           if (profile.audioInterrupt == AudioInterrupt.pause) ...[
-                            const _Rule(),
+                            const RowRule(),
                             SwitchRow(
                               label: l.settingForceMusic,
                               subtitle: l.settingForceMusicHint,
@@ -219,8 +214,8 @@ class SettingsScreen extends StatelessWidget {
                               onChanged: (v) => update(profile.copyWith(resumeMusic: v)),
                             ),
                           ],
-                          const _Rule(),
-                          _SliderRow(
+                          const RowRule(),
+                          SliderRow(
                             label: l.settingSpeechRate,
                             value: profile.speechRate,
                             min: 0.25,
@@ -228,8 +223,8 @@ class SettingsScreen extends StatelessWidget {
                             display: '${(profile.speechRate * 100).round()}%',
                             onChanged: (v) => update(profile.copyWith(speechRate: v)),
                           ),
-                          const _Rule(),
-                          _SliderRow(
+                          const RowRule(),
+                          SliderRow(
                             label: l.settingEffectsVolume,
                             value: profile.sfxVolume,
                             min: 0,
@@ -237,8 +232,8 @@ class SettingsScreen extends StatelessWidget {
                             display: '${(profile.sfxVolume * 100).round()}%',
                             onChanged: (v) => update(profile.copyWith(sfxVolume: v)),
                           ),
-                          const _Rule(),
-                          _PickerRow<String>(
+                          const RowRule(),
+                          PickerRow<String>(
                             label: l.settingRunMusic,
                             // Every way of playing the songs is one choice here,
                             // and the library says which.
@@ -261,17 +256,17 @@ class SettingsScreen extends StatelessWidget {
                               }
                             },
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           if (profile.generatedMusicOn)
                             _LibraryRow(profile: profile, songs: state.songs)
                           else
-                            _Note(switch (profile.music) {
+                            SettingNote(switch (profile.music) {
                               Profile.folderMusic => l.musicFolderNote,
                               Profile.ambientMusic => l.settingAmbientBedHint,
                               _ => l.musicOffNote,
                             }),
                           if (profile.folderMusicOn) ...[
-                            const _Rule(),
+                            const RowRule(),
                             InkWell(
                               onTap: state.chooseMusicFolder,
                               child: Padding(
@@ -279,10 +274,7 @@ class SettingsScreen extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      child: Text(
-                                        l.musicFolderRow,
-                                        style: CyType.body(size: 15, weight: FontWeight.w600),
-                                      ),
+                                      child: Text(l.musicFolderRow, style: CyType.body(size: 15, weight: FontWeight.w600)),
                                     ),
                                     Flexible(
                                       child: Text(
@@ -298,12 +290,12 @@ class SettingsScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            if (state.folderTracks.isEmpty) ...[const _Rule(), _Note(l.musicFolderEmpty)],
-                            const _Rule(),
-                            _LinkRow(label: l.musicFindMusic, url: ProjectLinks.findMusic),
-                            const _Rule(),
-                            _LinkRow(label: l.contributeMusic, url: ProjectLinks.suggestMusic),
-                            const _Rule(),
+                            if (state.folderTracks.isEmpty) ...[const RowRule(), SettingNote(l.musicFolderEmpty)],
+                            const RowRule(),
+                            LinkRow(label: l.musicFindMusic, url: ProjectLinks.findMusic),
+                            const RowRule(),
+                            LinkRow(label: l.contributeMusic, url: ProjectLinks.suggestMusic),
+                            const RowRule(),
                             SwitchRow(
                               label: l.musicFolderRandom,
                               value: profile.folderRandom,
@@ -311,8 +303,8 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ],
                           if (profile.music != Profile.noMusic) ...[
-                            const _Rule(),
-                            _SliderRow(
+                            const RowRule(),
+                            SliderRow(
                               label: l.settingMusicVolume,
                               value: profile.musicVolume,
                               min: 0,
@@ -322,7 +314,7 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ],
                           if (profile.generatedMusicOn) ...[
-                            const _Rule(),
+                            const RowRule(),
                             SwitchRow(
                               label: l.settingMusicFollowsEffort,
                               subtitle: l.settingMusicFollowsEffortHint,
@@ -336,10 +328,7 @@ class SettingsScreen extends StatelessWidget {
                                 CyberTag(l.tagExperimental, color: Cy.amber),
                                 const SizedBox(width: 8),
                                 Expanded(
-                                  child: Text(
-                                    l.musicExperimentalNote,
-                                    style: CyType.body(size: 12, color: Cy.ghost, height: 1.4),
-                                  ),
+                                  child: Text(l.musicExperimentalNote, style: CyType.body(size: 12, color: Cy.ghost, height: 1.4)),
                                 ),
                               ],
                             ),
@@ -359,21 +348,21 @@ class SettingsScreen extends StatelessWidget {
                             value: profile.chasesEnabled,
                             onChanged: (v) => update(profile.copyWith(chasesEnabled: v)),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           SwitchRow(
                             label: l.settingAutoPause,
                             subtitle: l.settingAutoPauseHint,
                             value: profile.autoPause,
                             onChanged: (v) => update(profile.copyWith(autoPause: v)),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           SwitchRow(
                             label: l.settingKeepScreenOn,
                             subtitle: l.settingKeepScreenOnHint,
                             value: profile.keepScreenOn,
                             onChanged: (v) => update(profile.copyWith(keepScreenOn: v)),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           SwitchRow(
                             label: profile.isMetric ? l.settingSplitsKm : l.settingSplitsMile,
                             subtitle: profile.isMetric ? l.settingSplitsKmHint : l.settingSplitsMileHint,
@@ -384,7 +373,7 @@ class SettingsScreen extends StatelessWidget {
                           // switch that can do nothing would cost the runner a
                           // permission prompt for it.
                           if (state.stepCounterAvailable) ...[
-                            const _Rule(),
+                            const RowRule(),
                             SwitchRow(
                               label: l.settingCountSteps,
                               subtitle: l.settingCountStepsHint,
@@ -401,9 +390,9 @@ class SettingsScreen extends StatelessWidget {
                               },
                             ),
                           ],
-                          const _Rule(),
+                          const RowRule(),
                           const _BatteryRow(),
-                          const _Rule(),
+                          const RowRule(),
                           SwitchRow(
                             label: l.settingSeasonalEvents,
                             subtitle: l.settingSeasonalEventsHint,
@@ -428,7 +417,7 @@ class SettingsScreen extends StatelessWidget {
                             ),
                           ),
                           if (profile.signals.remindersEnabled) ...[
-                            const _Rule(),
+                            const RowRule(),
                             _WeekdayRow(
                               label: l.settingDays,
                               selected: profile.signals.weekdays,
@@ -436,7 +425,7 @@ class SettingsScreen extends StatelessWidget {
                                 profile.copyWith(signals: profile.signals.copyWith(weekdays: days)),
                               ),
                             ),
-                            const _Rule(),
+                            const RowRule(),
                             _TimeRow(
                               label: l.settingTime,
                               minutesFromMidnight: profile.signals.minutesFromMidnight,
@@ -445,7 +434,7 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                           ],
-                          const _Rule(),
+                          const RowRule(),
                           _StepperRow(
                             label: l.settingSignalNoise,
                             value: profile.signals.ambientPerWeek == 0
@@ -466,7 +455,7 @@ class SettingsScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          const _Rule(),
+                          const RowRule(),
                           SwitchRow(
                             label: l.settingWeeklyDebrief,
                             subtitle: l.settingWeeklyDebriefHint,
@@ -478,11 +467,7 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    _Note(l.signalsNote),
-                    const SizedBox(height: 20),
-
-                    SectionHeader(l.sectionMissionPacks),
-                    const NeonPanel(child: PackControls()),
+                    SettingNote(l.signalsNote),
                     const SizedBox(height: 20),
 
                     SectionHeader(l.sectionData, accent: Cy.red),
@@ -491,10 +476,10 @@ class SettingsScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _Note(l.dataNote),
-                          const _Rule(),
+                          SettingNote(l.dataNote),
+                          const RowRule(),
                           const BackupControls(),
-                          const _Rule(),
+                          const RowRule(),
                           CyberButton(
                             label: l.resetProgress,
                             icon: Icons.delete_forever_outlined,
@@ -576,94 +561,6 @@ class SettingsScreen extends StatelessWidget {
   }
 }
 
-/// Where the songs live: how they play now, and the way in.
-class _LibraryRow extends StatelessWidget {
-  const _LibraryRow({required this.profile, required this.songs});
-
-  final Profile profile;
-  final List<Song> songs;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = L.of(context);
-    final state = context.read<AppState>();
-    final kept = songs.where((s) => !profile.songsLeftOut.contains(s.id)).length;
-    final summary = switch (profile.music) {
-      Profile.bestMatchMusic => l.musicLibraryAuto(l.musicBestMatch, l.musicSongsIn(kept, songs.length)),
-      Profile.shuffleMusic => l.musicLibraryAuto(l.musicShuffle, l.musicSongsIn(kept, songs.length)),
-      _ => state.songName(profile.music) ?? l.musicBestMatch,
-    };
-    return InkWell(
-      onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SongLibraryScreen())),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l.musicSongLibrary, style: CyType.body(size: 15, weight: FontWeight.w600)),
-                  const SizedBox(height: 2),
-                  Text(summary, style: CyType.body(size: 12, color: Cy.cyan, height: 1.3)),
-                ],
-              ),
-            ),
-            Icon(Icons.chevron_right, size: 20, color: Cy.inkDim),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Out to a page in the browser. The app itself fetches nothing.
-class _LinkRow extends StatelessWidget {
-  const _LinkRow({required this.label, required this.url});
-
-  final String label;
-  final Uri url;
-
-  Future<void> _open(BuildContext context) async {
-    final messenger = ScaffoldMessenger.of(context);
-    if (await openInBrowser(url)) return;
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10n.contributeNoBrowser('$url'), style: CyType.body(size: 14, color: Cy.red))),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: () => _open(context),
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
-          Icon(Icons.open_in_new, size: 16, color: Cy.inkDim),
-        ],
-      ),
-    ),
-  );
-}
-
-class _Rule extends StatelessWidget {
-  const _Rule();
-
-  @override
-  Widget build(BuildContext context) =>
-      Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Container(height: 1, color: Cy.rule));
-}
-
-class _Note extends StatelessWidget {
-  const _Note(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) =>
-      Text(text, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4));
-}
 
 /// Seven toggles, Monday first. The app has no picker of any kind, so this
 /// borrows the chip look the achievement wall already uses rather than
@@ -840,87 +737,6 @@ class _BatteryRowState extends State<_BatteryRow> {
   }
 }
 
-/// A choice among more options than fit as segments: the current one, and a
-/// dialog listing them all.
-class _PickerRow<T> extends StatelessWidget {
-  const _PickerRow({
-    required this.label,
-    required this.value,
-    required this.options,
-    required this.onChanged,
-  });
-
-  final String label;
-  final T value;
-  final Map<T, String> options;
-  final ValueChanged<T> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => _pick(context),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
-            Flexible(
-              child: Text(
-                options[value] ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: CyType.mono(size: 12, color: Cy.cyan),
-              ),
-            ),
-            const SizedBox(width: 4),
-            Icon(Icons.unfold_more, size: 16, color: Cy.inkDim),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pick(BuildContext context) async {
-    final picked = await showDialog<T>(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: NeonPanel(
-          accent: Cy.cyan,
-          lit: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label.toUpperCase(), style: CyType.display(size: 14, color: Cy.cyan)),
-              const SizedBox(height: 10),
-              for (final entry in options.entries)
-                InkWell(
-                  onTap: () => Navigator.of(context).pop(entry.key),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            entry.value,
-                            style: CyType.body(size: 16, color: entry.key == value ? Cy.cyan : Cy.ink),
-                          ),
-                        ),
-                        if (entry.key == value) Icon(Icons.check, size: 18, color: Cy.cyan),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (picked != null && picked != value) onChanged(picked);
-  }
-}
-
 /// One step of the height stepper: a centimetre, or an inch in imperial
 /// units. Starts from [Stride.defaultHeightCm] when no height is given yet.
 double _nextHeight(Profile profile, int direction) {
@@ -981,40 +797,6 @@ class _SmallButton extends StatelessWidget {
         decoration: BoxDecoration(border: Border.all(color: Cy.rule), color: Cy.panelHi),
         child: Icon(icon, size: 16, color: Cy.cyan),
       ),
-    );
-  }
-}
-
-class _SliderRow extends StatelessWidget {
-  const _SliderRow({
-    required this.label,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.display,
-    required this.onChanged,
-  });
-
-  final String label;
-  final double value;
-  final double min;
-  final double max;
-  final String display;
-  final ValueChanged<double> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
-            Text(display, style: CyType.mono(size: 12, color: Cy.cyan)),
-          ],
-        ),
-        Slider(value: value.clamp(min, max), min: min, max: max, onChanged: onChanged),
-      ],
     );
   }
 }
@@ -1149,6 +931,47 @@ class _Colophon extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+}
+
+/// Where the songs live: how they play now, and the way in.
+class _LibraryRow extends StatelessWidget {
+  const _LibraryRow({required this.profile, required this.songs});
+
+  final Profile profile;
+  final List<Song> songs;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L.of(context);
+    final state = context.read<AppState>();
+    final kept = songs.where((s) => !profile.songsLeftOut.contains(s.id)).length;
+    final summary = switch (profile.music) {
+      Profile.bestMatchMusic => l.musicLibraryAuto(l.musicBestMatch, l.musicSongsIn(kept, songs.length)),
+      Profile.shuffleMusic => l.musicLibraryAuto(l.musicShuffle, l.musicSongsIn(kept, songs.length)),
+      _ => state.songName(profile.music) ?? l.musicBestMatch,
+    };
+    return InkWell(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SongLibraryScreen())),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l.musicSongLibrary, style: CyType.body(size: 15, weight: FontWeight.w600)),
+                  const SizedBox(height: 2),
+                  Text(summary, style: CyType.body(size: 12, color: Cy.cyan, height: 1.3)),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right, size: 20, color: Cy.inkDim),
+          ],
+        ),
+      ),
     );
   }
 }

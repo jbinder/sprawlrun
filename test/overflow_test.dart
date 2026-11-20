@@ -30,8 +30,12 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/release_notes.dart';
 import 'package:sprawl_run/widgets/release_notes_dialog.dart';
+import 'package:sprawl_run/screens/themes_screen.dart';
+import 'package:sprawl_run/screens/rig_screen.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
+import 'package:sprawl_run/screens/packs_screen.dart';
 import 'package:sprawl_run/screens/song_library_screen.dart';
+import 'package:sprawl_run/screens/songs_screen.dart';
 import 'package:sprawl_run/screens/timeline_screen.dart';
 import 'package:sprawl_run/services/battery_optimization.dart';
 import 'package:sprawl_run/services/music_player.dart';
@@ -393,12 +397,43 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     expect(find.byType(ColourPicker), findsOneWidget);
   });
 
-  testWidgets('settings, wearing a theme of the runner\'s own', (tester) async {
+  testWidgets('look, wearing a theme of the runner\'s own', (tester) async {
     final state = await seed(tester, logicalSize: const Size(360, 6000));
     final glacier = state.themes.singleWhere((t) => t.id == 'glacier');
     await tester.runAsync(() => state.saveThemeDraft(ThemeDraft(base: glacier.palette, name: 'MINE')));
+    await pumpShowcase(tester, const ThemesScreen(), state, delegates: delegates);
+    expect(find.byTooltip(l10n.themeEditTooltip('MINE')), findsOneWidget);
+  });
+
+  testWidgets('songs on the rig', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 3000));
+    await pumpShowcase(tester, const SongsScreen(), state, delegates: delegates);
+    expect(find.text(l10n.songExplainer), findsOneWidget);
+  });
+
+  testWidgets('the rig', (tester) async {
+    final state = await seed(tester);
+    await pumpShowcase(tester, const RigScreen(), state, delegates: delegates);
+    expect(find.text(l10n.rigPacksHint), findsOneWidget);
+  });
+
+  testWidgets('settings, playing the song library', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 6000));
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(music: Profile.bestMatchMusic)));
     await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
-    expect(find.text(l10n.themeEditOwn.toUpperCase()), findsOneWidget);
+    expect(find.text(l10n.settingMusicFollowsEffort), findsOneWidget);
+  });
+
+  testWidgets('settings, playing a folder that has no folder yet', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 6000));
+    await tester.runAsync(() => state.updateProfile(state.profile.copyWith(music: Profile.folderMusic)));
+    await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
+    expect(find.text(l10n.musicFolderChoose), findsOneWidget);
+  });
+
+  testWidgets('story', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 3000));
+    await pumpShowcase(tester, const PacksScreen(), state, delegates: delegates);
   });
 
   testWidgets('settings, every row showing', (tester) async {

@@ -81,6 +81,12 @@ class PseudoL extends L {
   String backupMergedThemes(int count) => pseudo(_en.backupMergedThemes(count));
 
   @override
+  String backupMergedSongs(int count) => pseudo(_en.backupMergedSongs(count));
+
+  @override
+  String backupMergedPacks(int count) => pseudo(_en.backupMergedPacks(count));
+
+  @override
   String backupMerged(String items) => pseudo(_en.backupMerged(items));
 
   @override
@@ -1090,6 +1096,9 @@ class PseudoL extends L {
 
   @override
   String themeErrorBuiltInId(String id) => pseudo(_en.themeErrorBuiltInId(id));
+
+  @override
+  String songErrorBuiltInId(String id) => pseudo(_en.songErrorBuiltInId(id));
 
   @override
   String themeErrorBadName(int max) => pseudo(_en.themeErrorBadName(max));
@@ -2164,4 +2173,76 @@ class PseudoL extends L {
 
   @override
   String get release090Fixes => pseudo(_en.release090Fixes);
+
+  @override
+  String get rigTitle => pseudo(_en.rigTitle);
+
+  @override
+  String get rigTooltip => pseudo(_en.rigTooltip);
+
+  @override
+  String get rigThemes => pseudo(_en.rigThemes);
+
+  @override
+  String get rigThemesHint => pseudo(_en.rigThemesHint);
+
+  @override
+  String get rigSongs => pseudo(_en.rigSongs);
+
+  @override
+  String get rigSongsHint => pseudo(_en.rigSongsHint);
+
+  @override
+  String get rigPacks => pseudo(_en.rigPacks);
+
+  @override
+  String get rigPacksHint => pseudo(_en.rigPacksHint);
+
+  @override
+  String get songImport => pseudo(_en.songImport);
+
+  @override
+  String get songFileType => pseudo(_en.songFileType);
+
+  @override
+  String songImported(String name) => pseudo(_en.songImported(name));
+
+  @override
+  String songExportTooltip(String name) => pseudo(_en.songExportTooltip(name));
+
+  @override
+  String songRemoveTooltip(String name) => pseudo(_en.songRemoveTooltip(name));
+
+  @override
+  String songRemoved(String name) => pseudo(_en.songRemoved(name));
+
+  @override
+  String songShareSubject(String name) => pseudo(_en.songShareSubject(name));
+
+  @override
+  String get rigThemesWhere => pseudo(_en.rigThemesWhere);
+
+  @override
+  String get rigSongsWhere => pseudo(_en.rigSongsWhere);
+
+  @override
+  String get rigPacksWhere => pseudo(_en.rigPacksWhere);
+
+  @override
+  String get settingLookRig => pseudo(_en.settingLookRig);
+
+  @override
+  String get musicLibraryRig => pseudo(_en.musicLibraryRig);
+
+  @override
+  String get songExplainer => pseudo(_en.songExplainer);
+
+  @override
+  String themeEditTooltip(String name) => pseudo(_en.themeEditTooltip(name));
+
+  @override
+  String packExportTooltip(String title) => pseudo(_en.packExportTooltip(title));
+
+  @override
+  String packShareSubject(String title) => pseudo(_en.packShareSubject(title));
 }

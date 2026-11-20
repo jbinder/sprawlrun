@@ -9,7 +9,7 @@ import 'app.dart';
 import 'data/mission_repository.dart';
 import 'data/profile_repository.dart';
 import 'data/run_repository.dart';
-import 'data/song_library.dart';
+import 'data/song_repository.dart';
 import 'services/music_folder.dart';
 import 'services/backup_folder.dart';
 import 'services/battery_optimization.dart';
@@ -31,13 +31,17 @@ Future<void> main() async {
   final root = Directory('${documents.path}/sprawlrun');
   await root.create(recursive: true);
 
-  final narrator = AudioNarrator(music: RunMusicPlayer(songs: LiveMusicPlayer(SongLibrary()), files: FolderMusicPlayer()));
+  // One for the player and Settings both, so a song imported a moment ago
+  // plays on the next run.
+  final songs = SongRepository(importDir: Directory('${root.path}/songs'));
+  final narrator = AudioNarrator(music: RunMusicPlayer(songs: LiveMusicPlayer(songs), files: FolderMusicPlayer()));
   final appState = AppState(
     profiles: ProfileRepository(root),
     runs: RunRepository(Directory('${root.path}/runs')),
     // Side-loaded mission packs land here; see docs/MISSION_PACKS.md.
     missions: MissionRepository(externalDir: Directory('${root.path}/mission_packs')),
     narrator: narrator,
+    songRepository: songs,
     musicFolder: MusicFolder.platform(),
     signals: SignalScheduler.platform(),
     backupFolder: BackupFolder.platform(),

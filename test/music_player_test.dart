@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:sprawl_run/audio/song.dart';
-import 'package:sprawl_run/data/song_library.dart';
+import 'package:sprawl_run/data/song_repository.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/services/music_player.dart';
@@ -118,7 +118,7 @@ void main() {
     setUp(() {
       harness = _Harness();
       player = LiveMusicPlayer(
-        SongLibrary(bundle: _DiskBundle()),
+        SongRepository(importDir: Directory('/nonexistent-sprawlrun-songs'), bundle: _DiskBundle()),
         channel: harness.channel,
         pumpEvery: const Duration(milliseconds: 5),
       );
@@ -212,7 +212,7 @@ void main() {
     testWidgets('a broken file in the folder costs only itself', (tester) async {
       await tester.runAsync(() async {
         final mixed = LiveMusicPlayer(
-          SongLibrary(bundle: _DiskBundle(extra: {'assets/songs/aaa_broken.json': '{"format": 1'})),
+          SongRepository(importDir: Directory('/nonexistent-sprawlrun-songs'), bundle: _DiskBundle(extra: {'assets/songs/aaa_broken.json': '{"format": 1'})),
           channel: harness.channel,
           pumpEvery: const Duration(milliseconds: 5),
         );

@@ -3,29 +3,32 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/mission_repository.dart';
+import '../l10n/l10n.dart';
 import '../models/mission.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../util/picked_text.dart';
-import 'panels.dart';
-import '../l10n/l10n.dart';
+import '../widgets/library_list.dart';
+import '../widgets/panels.dart';
 
-/// The MISSION PACKS section of Settings: what is loaded, and how to add more.
+/// MISSION PACKS on the RIG screen: the packs, shipped and imported, to add,
+/// share and remove. Which one is played is chosen on OPS. Settings' Mission
+/// Packs section until 0.10.0.
 ///
 /// Packs come in through the system file picker, the same way a backup does,
-/// and need no storage permission. For a long time this section told the runner
+/// and need no storage permission. For a long time Settings told the runner
 /// to drop files into the app's documents folder — which is private on Android
 /// and cannot be reached without root, so that instruction could never be
 /// followed. Importing is the only route in that works.
-class PackControls extends StatefulWidget {
-  const PackControls({super.key});
+class PacksScreen extends StatefulWidget {
+  const PacksScreen({super.key});
 
   @override
-  State<PackControls> createState() => _PackControlsState();
+  State<PacksScreen> createState() => _PacksScreenState();
 }
 
-class _PackControlsState extends State<PackControls> {
+class _PacksScreenState extends State<PacksScreen> {
   bool _busy = false;
 
   @override
@@ -33,48 +36,29 @@ class _PackControlsState extends State<PackControls> {
     final state = context.watch<AppState>();
     final repo = state.missions;
     final l = L.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        for (final pack in state.packs) ...[
-          Row(
-            children: [
-              Icon(Icons.inventory_2_outlined, size: 15, color: Cy.cyanDim),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(pack.title, style: CyType.body(size: 15, weight: FontWeight.w700)),
-                    Text(pack.tagline, style: CyType.body(size: 13, color: Cy.ghost)),
-                    if (pack.author != null)
-                      Text(l.packBy(pack.author!), style: CyType.body(size: 12, color: Cy.ghost)),
-                  ],
-                ),
-              ),
-              if (repo.importedIds.contains(pack.id)) ...[
-                CyberTag(repo.bundledIds.contains(pack.id) ? l.packReplaced : l.packImported, color: Cy.green),
-                IconButton(
-                  onPressed: _busy ? null : () => _remove(state, pack),
-                  icon: Icon(Icons.delete_outline, size: 18, color: Cy.inkDim),
-                  tooltip: l.packRemoveTooltip(pack.title),
-                ),
-              ] else
-                CyberTag(l.packOpsTag(pack.missions.length), color: Cy.ghost),
-            ],
-          ),
-          Padding(padding: const EdgeInsets.symmetric(vertical: 12), child: Container(height: 1, color: Cy.rule)),
-        ],
-        for (final error in repo.loadErrors) ...[
-          Text(error, style: CyType.mono(size: 11, color: Cy.red)),
-          const SizedBox(height: 6),
-        ],
-        Text(
-          l.packExplainer,
-          style: CyType.body(size: 13, color: Cy.ghost, height: 1.4),
-        ),
-        const SizedBox(height: 12),
+    return LibraryScreen(
+      title: l.rigPacks,
+      where: l.rigPacksWhere,
+      items: [
+        for (final pack in state.packs)
+          if (repo.importedIds.contains(pack.id) case final imported)
+            LibraryItem(
+              leading: Icon(Icons.inventory_2_outlined, size: 20, color: Cy.cyanDim),
+              title: pack.title,
+              lines: [pack.tagline, if (pack.author != null) l.packBy(pack.author!)],
+              tag: imported
+                  ? (repo.bundledIds.contains(pack.id) ? l.packReplaced : l.packImported)
+                  : l.packOpsTag(pack.missions.length),
+              tagColor: imported ? Cy.green : Cy.ghost,
+              onExport: imported && !_busy ? () => _export(state, pack) : null,
+              exportTooltip: l.packExportTooltip(pack.title),
+              onRemove: imported && !_busy ? () => _remove(state, pack) : null,
+              removeTooltip: l.packRemoveTooltip(pack.title),
+            ),
+      ],
+      errors: repo.loadErrors,
+      note: l.packExplainer,
+      actions: [
         CyberButton(
           label: _busy ? l.working : l.packImport,
           icon: Icons.file_download_outlined,
@@ -86,13 +70,12 @@ class _PackControlsState extends State<PackControls> {
     );
   }
 
-  void _say(String message, {bool bad = false}) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: CyType.body(size: 14, color: bad ? Cy.red : Cy.ink)),
-      ),
-    );
+  void _say(String message, {bool bad = false}) => sayOnLibrary(context, message, bad: bad);
+
+  Future<void> _export(AppState state, MissionPack pack) async {
+    final source = await state.missions.importedSource(pack.id);
+    if (source == null || !mounted) return;
+    await shareJson(context, name: pack.id, source: source, subject: l10n.packShareSubject(pack.title));
   }
 
   Future<void> _import(AppState state) async {

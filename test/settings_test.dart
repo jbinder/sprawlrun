@@ -12,7 +12,9 @@ import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/run_record.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:sprawl_run/screens/themes_screen.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
+import 'package:sprawl_run/screens/packs_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
 import 'package:sprawl_run/util/clock.dart';
@@ -23,7 +25,8 @@ import 'support/fakes.dart';
 ///
 /// The tall viewport is the usual trick: the settings list is lazy, and these
 /// tests care about rows near the bottom of it.
-Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
+/// Settings, or one of the RIG screens split off it, which read the same state.
+Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile, Widget home = const SettingsScreen()}) async {
   final root = tempRoot('settings');
   addTearDown(() => root.deleteSync(recursive: true));
 
@@ -60,7 +63,7 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
   await tester.pumpWidget(
     MultiProvider(
       providers: [ChangeNotifierProvider.value(value: state)],
-      child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: const SettingsScreen()),
+      child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: home),
     ),
   );
   await tester.pump(const Duration(milliseconds: 100));
@@ -99,7 +102,7 @@ void main() {
   });
 
   testWidgets('packs are imported, marked as such, and removable — the shipped ones are not', (tester) async {
-    final state = await pumpSettings(tester);
+    final state = await pumpSettings(tester, home: const PacksScreen());
     expect(find.text('IMPORT PACK'), findsOneWidget);
     expect(find.text('RELOAD PACKS'), findsNothing, reason: 'it pointed at a folder nobody can reach');
     expect(find.text('IMPORTED'), findsNothing, reason: 'the shipped packs cannot be removed');
@@ -251,7 +254,7 @@ void main() {
     testWidgets('the last song in cannot be switched off', (tester) async {
       final state = await pumpSettings(
         tester,
-        profile: const Profile(music: Profile.shuffleMusic, songsLeftOut: ['black_ice', 'cold_boot', 'neon_pursuit', 'skyline_breach', 'sodium_rain']),
+                profile: const Profile(music: Profile.shuffleMusic, songsLeftOut: ['black_ice', 'cold_boot', 'neon_pursuit', 'skyline_breach', 'sodium_rain']),
       );
       await tester.tap(find.text('Song library').last);
       await tester.pump();
@@ -316,14 +319,15 @@ void main() {
   group('colours', () {
     tearDown(() => debugNow = null);
 
-    testWidgets('a swatch per theme, and tapping one picks it', (tester) async {
+    testWidgets('a swatch per theme in Settings, and tapping one picks it', (tester) async {
       debugNow = DateTime(2026, 7, 27, 21);
       final state = await pumpSettings(tester);
       expect(state.profile.theme, 'neon', reason: 'the year-round look by default');
       for (final name in ['NEON', 'SYNTHWAVE', 'GLACIER', 'VOLT']) {
         expect(find.text(name), findsOneWidget);
       }
-      expect(find.text('IMPORT THEME'), findsOneWidget);
+      expect(find.text('IMPORT THEME'), findsNothing, reason: 'importing is on RIG');
+      expect(find.text('Make, import and share themes under RIG.'), findsOneWidget);
 
       await tester.tap(find.text('GLACIER'));
       await tester.pump(const Duration(milliseconds: 100));
@@ -336,7 +340,20 @@ void main() {
       debugNow = DateTime(2026, 7, 27, 21);
       await pumpSettings(tester, profile: const Profile(theme: 'glacier'));
       expect(find.text('GLACIER by SPRAWL//RUN'), findsOneWidget);
+    });
+
+    testWidgets('RIG lists every theme to share, and picks none', (tester) async {
+      debugNow = DateTime(2026, 7, 27, 21);
+      final state = await pumpSettings(tester, home: const ThemesScreen());
+      expect(find.text('IMPORT THEME'), findsOneWidget);
+      expect(find.text('MAKE YOUR OWN'), findsOneWidget);
+      expect(find.byTooltip('Export GLACIER'), findsOneWidget, reason: 'a shipped theme is a start for one\'s own');
       expect(find.byTooltip('Remove GLACIER'), findsNothing, reason: 'a shipped theme cannot be removed');
+      expect(find.byTooltip('Edit GLACIER'), findsNothing);
+
+      await tester.tap(find.text('GLACIER'));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(state.profile.theme, 'neon', reason: 'choosing is a setting');
     });
 
     testWidgets('in season, the picker says the season overrides it', (tester) async {

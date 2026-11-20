@@ -7,7 +7,7 @@ import 'package:just_audio/just_audio.dart' as ja;
 
 import '../audio/song.dart';
 import '../audio/song_stream.dart';
-import '../data/song_library.dart';
+import '../data/song_repository.dart';
 
 /// What the line under the song's name shows: how far through the song is being
 /// heard, and how much of it.
@@ -136,7 +136,7 @@ class LiveMusicPlayer implements MusicPlayer {
   /// How much sound to keep ready. A stall shorter than this is never heard.
   static const int targetQueueMs = 4000;
 
-  final SongLibrary _library;
+  final SongRepository _library;
   final MethodChannel _channel;
   final Duration pumpEvery;
 

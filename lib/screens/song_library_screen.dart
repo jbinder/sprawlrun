@@ -10,7 +10,8 @@ import '../theme/cyber_theme.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/panels.dart';
 
-/// The songs the phone can play, and how a run chooses among them.
+/// How a run chooses among the songs: a setting, reached from Settings → Audio.
+/// Importing, sharing and removing songs is on the RIG screen (`SongsScreen`).
 ///
 /// A list and not a picker's options, since songs can be added: a dropdown would
 /// not survive many of them, and has no room to say whose each one is.
@@ -119,6 +120,8 @@ class SongLibraryScreen extends StatelessWidget {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    Text(l.musicLibraryRig, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
                   ],
                 ),
               ),
@@ -198,15 +201,10 @@ class _SongRow extends StatelessWidget {
   final VoidCallback? onChosen;
   final ValueChanged<bool> onKept;
 
-  String get _length {
-    final seconds = (song.bars * beatsPerBar * song.secondsPerBeat).round();
-    return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final l = L.of(context);
-    final by = song.author == null ? _length : '${l.songBy(song.author!)} · $_length';
+    final by = song.author == null ? songLength(song) : '${l.songBy(song.author!)} · ${songLength(song)}';
     return InkWell(
       onTap: onChosen,
       child: Row(
@@ -234,4 +232,10 @@ class _SongRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// How long [song] plays once through, as m:ss.
+String songLength(Song song) {
+  final seconds = (song.bars * beatsPerBar * song.secondsPerBeat).round();
+  return '${seconds ~/ 60}:${(seconds % 60).toString().padLeft(2, '0')}';
 }

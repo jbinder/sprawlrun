@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/codex_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/rig_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/stats_screen.dart';
 import 'screens/timeline_screen.dart';
@@ -228,6 +229,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver, Rout
           child: Column(
             children: [
               _TopBar(
+                onRig: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const RigScreen())),
                 onSettings: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
                 ),
@@ -267,8 +269,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver, Rout
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.onSettings, required this.onTimeline});
+  const _TopBar({required this.onRig, required this.onSettings, required this.onTimeline});
 
+  final VoidCallback onRig;
   final VoidCallback onSettings;
   final VoidCallback onTimeline;
 
@@ -311,6 +314,11 @@ class _TopBar extends StatelessWidget {
               ),
               tooltip: unread ? L.of(context).wireTooltipUnread : L.of(context).wireTooltip,
             ),
+          IconButton(
+            onPressed: onRig,
+            icon: Icon(Icons.memory, color: Cy.inkDim),
+            tooltip: L.of(context).rigTooltip,
+          ),
           IconButton(
             onPressed: onSettings,
             icon: Icon(Icons.settings_outlined, color: Cy.inkDim),

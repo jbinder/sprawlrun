@@ -241,6 +241,74 @@ class MissionRepository {
     }
   }
 
+  /// The imported pack [id] as its file has it, to share; null for a pack
+  /// that was never imported. A file put in place by hand under another name
+  /// is found too, re-encoded.
+  Future<String?> importedSource(String id) async {
+    if (packFileName(id) case final name?) {
+      final file = File('${externalDir.path}/$name');
+      if (await file.exists()) return file.readAsString();
+    }
+    for (final raw in await importedForBackup()) {
+      if (raw['id'] == id) return jsonEncode(raw);
+    }
+    return null;
+  }
+
+  /// The imported packs as their files have them, for a backup: a pack the
+  /// runner side-loaded may exist nowhere else. Only the ones that still load,
+  /// once each — the file [loadPacks] would use when two hold the same pack.
+  Future<List<Map<String, dynamic>>> importedForBackup() async {
+    if (!await externalDir.exists()) return const [];
+    final files = await externalDir
+        .list()
+        .where((e) => e is File && e.path.toLowerCase().endsWith('.json'))
+        .cast<File>()
+        .toList();
+    files.sort((a, b) => a.path.compareTo(b.path));
+    final byId = <String, Map<String, dynamic>>{};
+    for (final file in files) {
+      try {
+        final raw = Map<String, dynamic>.from(jsonDecode(await file.readAsString()) as Map);
+        final pack = MissionPack.fromJson(raw);
+        // Later files win, as they do in loadPacks.
+        byId[pack.id] = raw;
+      } on Object {
+        continue;
+      }
+    }
+    return byId.values.toList();
+  }
+
+  /// Puts back the packs a backup carried, each checked as an import is.
+  /// [replace] makes this device's imported packs exactly the backup's;
+  /// otherwise only the ones it lacks are added, and a pack it already has
+  /// stays as it is here. One that no longer passes is skipped rather than
+  /// failing the restore. Returns how many were added.
+  Future<int> restore(List<Map<String, dynamic>> packs, {required bool replace}) async {
+    if (replace && await externalDir.exists()) {
+      await for (final entry in externalDir.list()) {
+        if (entry is File && entry.path.toLowerCase().endsWith('.json')) await entry.delete();
+      }
+    }
+    invalidate();
+    await loadPacks();
+    final have = {...importedIds};
+    var added = 0;
+    for (final raw in packs) {
+      if (have.contains(raw['id'])) continue;
+      try {
+        final pack = await importPack(jsonEncode(raw));
+        have.add(pack.id);
+        added++;
+      } on PackImportException {
+        continue;
+      }
+    }
+    invalidate();
+    return added;
+  }
+
   /// Deletes an imported pack. A pack that replaced a bundled one leaves the
   /// bundled version in its place. Progress is untouched: completed missions
   /// are recorded by id, so importing the pack again picks up where it was.

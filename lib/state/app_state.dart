@@ -13,7 +13,7 @@ import '../data/mission_repository.dart';
 import '../data/profile_repository.dart';
 import '../data/run_repository.dart';
 import '../data/signal_log_repository.dart';
-import '../data/song_library.dart';
+import '../data/song_repository.dart';
 import '../data/theme_repository.dart';
 import '../models/achievement.dart';
 import '../models/goal.dart';
@@ -61,7 +61,7 @@ class AppState extends ChangeNotifier {
     SignalScheduler? signals,
     SignalLogRepository? signalLog,
     ThemeRepository? themeRepository,
-    SongLibrary? songLibrary,
+    SongRepository? songRepository,
     MusicFolder? musicFolder,
     ActiveRunStore? activeRun,
     BackupFolder? backupFolder,
@@ -79,7 +79,7 @@ class AppState extends ChangeNotifier {
        // Next to the profile by default, so every caller — tests included —
        // gets a working log without having to name a directory for it.
        signalLog = signalLog ?? SignalLogRepository(profiles.root),
-       songLibrary = songLibrary ?? SongLibrary(),
+       songRepository = songRepository ?? SongRepository(importDir: Directory('${profiles.root.path}/songs')),
        _musicFolder = musicFolder ?? MusicFolder.none(),
        themeRepository = themeRepository ?? ThemeRepository(importDir: Directory('${profiles.root.path}/themes'));
 
@@ -123,7 +123,7 @@ class AppState extends ChangeNotifier {
   final RunRepository runs;
   final MissionRepository missions;
   final ThemeRepository themeRepository;
-  final SongLibrary songLibrary;
+  final SongRepository songRepository;
   final MusicFolder _musicFolder;
 
   /// The music folder's name, or null when none is chosen, and what is in it.
@@ -167,6 +167,8 @@ class AppState extends ChangeNotifier {
     runs: runs,
     signalLog: signalLog,
     themes: themeRepository,
+    songs: songRepository,
+    packs: missions,
   );
 
   /// Whether this phone can count steps, and the permission for it.
@@ -388,7 +390,7 @@ class AppState extends ChangeNotifier {
     runLog = await runs.loadAll();
     _sourcePacks = await missions.loadPacks();
     themes = await themeRepository.loadThemes();
-    songs = await songLibrary.songs();
+    songs = await songRepository.songs();
     await refreshMusicFolder();
     interruptedRun = await activeRun.load();
     // Finished and recorded, but the app died before the copy was cleared:
@@ -521,6 +523,34 @@ class AppState extends ChangeNotifier {
     themes = await themeRepository.loadThemes();
     if (profile.theme == id) {
       await updateProfile(profile.copyWith(theme: ColourTheme.neon.id));
+    } else {
+      notifyListeners();
+    }
+  }
+
+  // -- songs ----------------------------------------------------------------
+
+  /// Imports a song from the text of a picked file. Throws
+  /// [SongFormatException] for anything this version cannot play. The song
+  /// joins the library and is in, like any song added later; how the library
+  /// plays is left as it was.
+  Future<Song> importSong(String source) async {
+    final song = await songRepository.importSong(source);
+    songs = await songRepository.songs();
+    notifyListeners();
+    return song;
+  }
+
+  /// Removes an imported song. A library set to play it goes back to Best
+  /// match, which is what a run would fall back to anyway.
+  Future<void> removeSong(String id) async {
+    await songRepository.removeSong(id);
+    songs = await songRepository.songs();
+    final leftOut = [for (final s in profile.songsLeftOut) if (s != id) s];
+    if (profile.music == id || leftOut.length != profile.songsLeftOut.length) {
+      await updateProfile(
+        profile.copyWith(music: profile.music == id ? Profile.bestMatchMusic : profile.music, songsLeftOut: leftOut),
+      );
     } else {
       notifyListeners();
     }
@@ -996,6 +1026,9 @@ class AppState extends ChangeNotifier {
     }
     runLog = await runs.loadAll();
     themes = await themeRepository.loadThemes();
+    songs = await songRepository.songs();
+    missions.invalidate();
+    _sourcePacks = await missions.loadPacks();
     await narrator.applyProfile(profile);
     _recompute();
     notifyListeners();

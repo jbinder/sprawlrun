@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sprawl_run/data/backup.dart';
+import 'package:sprawl_run/data/mission_repository.dart';
 import 'package:sprawl_run/data/profile_repository.dart';
 import 'package:sprawl_run/data/run_repository.dart';
 import 'package:sprawl_run/data/signal_log_repository.dart';
+import 'package:sprawl_run/data/song_repository.dart';
 import 'package:sprawl_run/data/theme_repository.dart';
 import 'package:sprawl_run/models/goal.dart';
 import 'package:sprawl_run/models/profile.dart';
@@ -25,6 +27,8 @@ Future<BackupService> seed(
     runs: RunRepository(Directory('${root.path}/runs')),
     signalLog: SignalLogRepository(root),
     themes: ThemeRepository(importDir: Directory('${root.path}/themes')),
+    songs: SongRepository(importDir: Directory('${root.path}/songs')),
+    packs: MissionRepository(externalDir: Directory('${root.path}/mission_packs')),
   );
   await service.profiles.save(profile);
   for (final record in runs) {
@@ -430,6 +434,120 @@ void main() {
         'runs': const [],
       });
       expect(BackupArchive.parse(legacy).themes, isEmpty);
+    });
+  });
+
+  group('songs and mission packs', () {
+    // Imported like themes, and carried the same way since 0.10.0.
+    String song(String id, {String name = 'Mine'}) {
+      final base = jsonDecode(File('assets/songs/cold_boot.json').readAsStringSync()) as Map<String, dynamic>;
+      return jsonEncode({...base, 'id': id, 'name': name});
+    }
+
+    String pack(String id, {String title = 'GHOST LINE'}) => jsonEncode({
+      'id': id,
+      'title': title,
+      'tagline': 'Test pack',
+      'missions': [
+        {
+          'id': '${id}_01',
+          'order': 1,
+          'codename': 'OP 1',
+          'title': 'Op 1',
+          'suggestedGoal': {'type': 'time', 'value': 900},
+        },
+      ],
+    });
+
+    test('imported ones travel with a backup; shipped ones do not', () async {
+      final from = await seed(tempRoot('src'));
+      await from.songs!.importSong(song('mine'));
+      await from.packs!.importPack(pack('ghost_line'));
+
+      final archive = BackupArchive.parse(await from.exportToJson());
+      expect(archive.songs.map((s) => s['id']), ['mine']);
+      expect(archive.packs.map((p) => p['id']), ['ghost_line']);
+
+      final to = await seed(tempRoot('dst'));
+      final report = await to.import(archive, ImportMode.replace);
+      expect(report.songsAdded, 1);
+      expect(report.packsAdded, 1);
+      expect((await to.songs!.songs()).map((s) => s.id), contains('mine'));
+      expect((await to.packs!.loadPacks()).map((p) => p.id), contains('ghost_line'));
+    });
+
+    test('replacing leaves exactly the backup\'s; merging keeps this device\'s version', () async {
+      final from = await seed(tempRoot('src'));
+      await from.songs!.importSong(song('shared', name: 'From backup'));
+      await from.packs!.importPack(pack('shared_pack', title: 'FROM BACKUP'));
+      final archive = BackupArchive.parse(await from.exportToJson());
+
+      final merged = await seed(tempRoot('merged'));
+      await merged.songs!.importSong(song('shared', name: 'On device'));
+      await merged.packs!.importPack(pack('shared_pack', title: 'ON DEVICE'));
+      await merged.songs!.importSong(song('local'));
+      final report = await merged.import(archive, ImportMode.merge);
+      expect(report.songsAdded, 0);
+      expect(report.packsAdded, 0);
+      expect((await merged.songs!.songs()).firstWhere((s) => s.id == 'shared').name, 'On device');
+      expect((await merged.packs!.loadPacks()).firstWhere((p) => p.id == 'shared_pack').title, 'ON DEVICE');
+      expect(merged.songs!.importedIds, {'shared', 'local'});
+
+      final replaced = await seed(tempRoot('replaced'));
+      await replaced.songs!.importSong(song('local'));
+      await replaced.packs!.importPack(pack('local_pack'));
+      await replaced.import(archive, ImportMode.replace);
+      await replaced.songs!.songs();
+      expect(replaced.songs!.importedIds, {'shared'});
+      replaced.packs!.invalidate();
+      await replaced.packs!.loadPacks();
+      expect(replaced.packs!.importedIds, {'shared_pack'});
+    });
+
+    test('one that no longer passes is skipped, not fatal', () async {
+      final archive = BackupArchive(
+        exportedAt: DateTime(2026, 11, 19),
+        profile: const Profile(),
+        runs: const [],
+        songs: [
+          {'id': 'broken'},
+          jsonDecode(song('cold_boot')) as Map<String, dynamic>,
+          jsonDecode(song('fine')) as Map<String, dynamic>,
+        ],
+        packs: [
+          {'id': 'no_missions'},
+          jsonDecode(pack('fine_pack')) as Map<String, dynamic>,
+        ],
+      );
+      final to = await seed(tempRoot('dst'));
+      final report = await to.import(BackupArchive.parse(jsonEncode(archive.toJson())), ImportMode.replace);
+      expect(report.songsAdded, 1, reason: 'a shipped id and a broken file are both skipped');
+      expect(report.packsAdded, 1);
+    });
+
+    test('a backup from before 0.10.0 restores with none, and keeps what is here', () async {
+      final legacy = jsonEncode({
+        'format': BackupArchive.magic,
+        'version': 1,
+        'exportedAt': DateTime(2026).toIso8601String(),
+        'profile': const Profile().toJson(),
+        'runs': const [],
+      });
+      final archive = BackupArchive.parse(legacy);
+      expect(archive.songs, isEmpty);
+      expect(archive.packs, isEmpty);
+
+      for (final mode in ImportMode.values) {
+        final to = await seed(tempRoot('dst_${mode.name}'));
+        await to.songs!.importSong(song('mine'));
+        await to.packs!.importPack(pack('ghost_line'));
+        await to.import(archive, mode);
+        await to.songs!.songs();
+        expect(to.songs!.importedIds, {'mine'}, reason: mode.name);
+        to.packs!.invalidate();
+        await to.packs!.loadPacks();
+        expect(to.packs!.importedIds, {'ghost_line'}, reason: mode.name);
+      }
     });
   });
 

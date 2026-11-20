@@ -139,6 +139,24 @@
       }
     }
   },
+  "backupMergedSongs": "{count, plural, =1{1 song} other{{count} songs}}",
+  "@backupMergedSongs": {
+    "description": "Part of the list in backupMerged: imported songs (music files in the app's own song format) the backup added.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupMergedPacks": "{count, plural, =1{1 mission pack} other{{count} mission packs}}",
+  "@backupMergedPacks": {
+    "description": "Part of the list in backupMerged: imported mission packs the backup added.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "backupMerged": "Merged {items}.",
   "@backupMerged": {
     "description": "After merging a backup. items is a comma-separated list like \"3 new runs, 1 mission\".",
@@ -1793,6 +1811,15 @@
       }
     }
   },
+  "songErrorBuiltInId": "A built-in song already uses the id \"{id}\". Give yours another.",
+  "@songErrorBuiltInId": {
+    "description": "Error when importing a song file whose id belongs to a song that comes with the app.",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
   "themeErrorBadName": "The theme needs a name of 1 to {max} characters.",
   "@themeErrorBadName": {
     "description": "Error when importing a colour theme.",
@@ -2888,7 +2915,7 @@
   },
   "achWalkFirstDesc": "Finish your first walk.",
   "@achWalkFirstDesc": {
-    "description": "What achievement \"Street Level\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+    "description": "What achievement \"Street Level\" asks for. Counts walks only — a walk is chosen on the briefing instead of a run."
   },
   "achWalk10kTitle": "Pavement Ghost",
   "@achWalk10kTitle": {
@@ -2896,7 +2923,7 @@
   },
   "achWalk10kDesc": "Walk 10 km across all walks.",
   "@achWalk10kDesc": {
-    "description": "What achievement \"Pavement Ghost\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+    "description": "What achievement \"Pavement Ghost\" asks for. Counts walks only — a walk is chosen on the briefing instead of a run."
   },
   "achWalk50kTitle": "The Long Way Round",
   "@achWalk50kTitle": {
@@ -2904,7 +2931,7 @@
   },
   "achWalk50kDesc": "Walk 50 km across all walks.",
   "@achWalk50kDesc": {
-    "description": "What achievement \"The Long Way Round\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+    "description": "What achievement \"The Long Way Round\" asks for. Counts walks only — a walk is chosen on the briefing instead of a run."
   },
   "achWalk100kTitle": "Sprawl Wanderer",
   "@achWalk100kTitle": {
@@ -2912,7 +2939,7 @@
   },
   "achWalk100kDesc": "Walk 100 km across all walks.",
   "@achWalk100kDesc": {
-    "description": "What achievement \"Sprawl Wanderer\" asks for. Counts walks only \u2014 a walk is chosen on the briefing instead of a run."
+    "description": "What achievement \"Sprawl Wanderer\" asks for. Counts walks only — a walk is chosen on the briefing instead of a run."
   },
   "streakGoalMissions": "{count, plural, =1{1 mission} other{{count} missions}}",
   "@streakGoalMissions": {
@@ -3110,7 +3137,7 @@
       }
     }
   },
-  "packErrorTranslations":"The \"translations\" block must map language codes such as \"es\" to strings.",
+  "packErrorTranslations": "The \"translations\" block must map language codes such as \"es\" to strings.",
   "@packErrorTranslations": {
     "description": "Keep \"translations\" and \"es\" as they are: a field name and a language code in the file."
   },
@@ -3256,10 +3283,6 @@
   "themeMakeOwn": "Make your own",
   "@themeMakeOwn": {
     "description": "Button under the colour swatches: opens the theme editor on a copy of the theme being worn."
-  },
-  "themeEditOwn": "Edit colours",
-  "@themeEditOwn": {
-    "description": "Button under the colour swatches when the theme being worn is the runner's own: opens it in the theme editor."
   },
   "themeCopyName": "MY {name}",
   "@themeCopyName": {
@@ -3524,5 +3547,141 @@
   "release090Fixes": "Fixes, among them a run that lost GPS with the screen off while the ambient bed played.",
   "@release090Fixes": {
     "description": "Release notes for 0.9.0, the bug fixes in one line. Keep it short."
+  },
+  "rigTitle": "RIG",
+  "@rigTitle": {
+    "description": "Title of the screen that gathers everything a runner can make their own: colour themes, sound and music, mission packs. Cyberpunk slang for one's kit. Keep it short."
+  },
+  "rigTooltip": "Themes, songs and mission packs",
+  "@rigTooltip": {
+    "description": "Tooltip of the home screen's top-bar icon that opens the RIG screen, where colour themes, songs and mission packs are imported and exported."
+  },
+  "rigThemes": "THEMES",
+  "@rigThemes": {
+    "description": "Entry on the RIG screen leading to the colour themes: shipped, made in the editor and imported. Also that screen's title."
+  },
+  "rigThemesHint": "Colours to wear and share",
+  "@rigThemesHint": {
+    "description": "Line under THEMES on the RIG screen."
+  },
+  "rigSongs": "SONGS",
+  "@rigSongs": {
+    "description": "Entry on the RIG screen leading to the song library: the built-in songs and the ones the runner imported."
+  },
+  "rigSongsHint": "Built-in and imported",
+  "@rigSongsHint": {
+    "description": "Line under SONGS on the RIG screen: the songs that come with the app and the imported ones."
+  },
+  "rigPacks": "MISSION PACKS",
+  "@rigPacks": {
+    "description": "Entry on the RIG screen leading to the mission packs, shipped and imported. Also that screen's title."
+  },
+  "rigPacksHint": "Stories to run",
+  "@rigPacksHint": {
+    "description": "Line under MISSION PACKS on the RIG screen."
+  },
+  "songImport": "Import song",
+  "@songImport": {
+    "description": "Button in the song library: import a song file written in the app's own song format (docs/SONGS.md)."
+  },
+  "songFileType": "Song",
+  "@songFileType": {
+    "description": "File type name shown in the file picker when importing a song."
+  },
+  "songImported": "Imported {name}.",
+  "@songImported": {
+    "description": "Shown after a song file was imported.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "songExportTooltip": "Export {name}",
+  "@songExportTooltip": {
+    "description": "Tooltip of the button that shares an imported song's file.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "songRemoveTooltip": "Remove {name}",
+  "@songRemoveTooltip": {
+    "description": "Tooltip of the button that removes an imported song.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "songRemoved": "Removed {name}.",
+  "@songRemoved": {
+    "description": "Shown after an imported song was removed.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "songShareSubject": "SPRAWL//RUN song: {name}",
+  "@songShareSubject": {
+    "description": "Subject line when sharing an exported song file.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rigThemesWhere": "Choose the one the app wears in Settings → Identity → Colours.",
+  "@rigThemesWhere": {
+    "description": "Line at the top of the RIG screen's theme list, saying where a theme is chosen. Keep the names in step with the Settings section and row."
+  },
+  "rigSongsWhere": "Choose what plays on a run in Settings → Audio → Run music.",
+  "@rigSongsWhere": {
+    "description": "Line at the top of the RIG screen's song list, saying where the run music is chosen. Keep the names in step with the Settings section and row."
+  },
+  "rigPacksWhere": "Choose the pack you play on OPS.",
+  "@rigPacksWhere": {
+    "description": "Line at the top of the RIG screen's mission pack list, saying where a pack is chosen. OPS is the missions tab."
+  },
+  "settingLookRig": "Make, import and share themes under RIG.",
+  "@settingLookRig": {
+    "description": "Note under the colour theme swatches in Settings, pointing to the RIG screen where themes are managed."
+  },
+  "musicLibraryRig": "Import and share songs under RIG.",
+  "@musicLibraryRig": {
+    "description": "Note at the bottom of the song library settings screen, pointing to the RIG screen where songs are managed."
+  },
+  "songExplainer": "Add a song by importing its .json file. Importing a song you already have replaces it. See docs/SONGS.md for the format, or export a song here to start from.",
+  "@songExplainer": {
+    "description": "Explanation under the song list on the RIG screen, above the import button."
+  },
+  "themeEditTooltip": "Edit {name}",
+  "@themeEditTooltip": {
+    "description": "Tooltip of the edit button beside a colour theme of the runner's own on the RIG screen.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "packExportTooltip": "Export {title}",
+  "@packExportTooltip": {
+    "description": "Tooltip of the share button beside an imported mission pack.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "packShareSubject": "SPRAWL//RUN mission pack: {title}",
+  "@packShareSubject": {
+    "description": "Subject line when sharing an exported mission pack file.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
   }
 }

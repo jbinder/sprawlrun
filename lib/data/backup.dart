@@ -5,7 +5,9 @@ import '../models/run_record.dart';
 import '../models/signal_log.dart';
 import 'profile_repository.dart';
 import 'run_repository.dart';
+import 'mission_repository.dart';
 import 'signal_log_repository.dart';
+import 'song_repository.dart';
 import 'theme_repository.dart';
 import '../l10n/l10n.dart';
 
@@ -22,6 +24,8 @@ class BackupArchive {
     required this.runs,
     this.signals = const [],
     this.themes = const [],
+    this.songs = const [],
+    this.packs = const [],
   });
 
   /// Marker in the JSON that identifies the file as ours. Checked on import so
@@ -47,6 +51,14 @@ class BackupArchive {
   /// themes are not carried: every install has those already.
   final List<Map<String, dynamic>> themes;
 
+  /// The songs the runner imported, as their files have them. Shipped songs
+  /// are not carried, for the same reason as themes.
+  final List<Map<String, dynamic>> songs;
+
+  /// The mission packs the runner imported, as their files have them. Absent
+  /// from backups written before 0.10.0, whose packs were left behind.
+  final List<Map<String, dynamic>> packs;
+
   int get traceCount => runs.where((r) => r.trace.isNotEmpty).length;
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +69,8 @@ class BackupArchive {
     'runs': runs.map((r) => r.toJson()).toList(),
     if (signals.isNotEmpty) 'signals': signals.map((e) => e.toJson()).toList(),
     if (themes.isNotEmpty) 'themes': themes,
+    if (songs.isNotEmpty) 'songs': songs,
+    if (packs.isNotEmpty) 'packs': packs,
   };
 
   /// Parses an exported document.
@@ -111,12 +125,15 @@ class BackupArchive {
           .whereType<SignalLogEntry>()
           .toList(),
       // Additive too. Each is checked again when it is restored.
-      themes: [
-        for (final entry in decoded['themes'] as List? ?? const [])
-          if (entry is Map) Map<String, dynamic>.from(entry),
-      ],
+      themes: _files(decoded['themes']),
+      songs: _files(decoded['songs']),
+      packs: _files(decoded['packs']),
     );
   }
+
+  static List<Map<String, dynamic>> _files(Object? raw) => [
+    for (final entry in raw is List ? raw : const []) if (entry is Map) Map<String, dynamic>.from(entry),
+  ];
 }
 
 class BackupFormatException implements Exception {
@@ -149,6 +166,8 @@ class ImportReport {
     required this.achievementsAdded,
     required this.codexAdded,
     this.themesAdded = 0,
+    this.songsAdded = 0,
+    this.packsAdded = 0,
   });
 
   final ImportMode mode;
@@ -158,6 +177,8 @@ class ImportReport {
   final int achievementsAdded;
   final int codexAdded;
   final int themesAdded;
+  final int songsAdded;
+  final int packsAdded;
 }
 
 /// Reads and writes [BackupArchive]s against the real repositories.
@@ -166,7 +187,7 @@ class ImportReport {
 /// decides where an exported string goes. That keeps the whole round trip
 /// testable without a device.
 class BackupService {
-  BackupService({required this.profiles, required this.runs, this.signalLog, this.themes});
+  BackupService({required this.profiles, required this.runs, this.signalLog, this.themes, this.songs, this.packs});
 
   final ProfileRepository profiles;
   final RunRepository runs;
@@ -179,6 +200,12 @@ class BackupService {
   /// The runner's imported colour themes: files of their own, so they are
   /// carried explicitly like [signalLog]. Optional for the same reason.
   final ThemeRepository? themes;
+
+  /// The runner's imported songs, carried like [themes].
+  final SongRepository? songs;
+
+  /// The runner's imported mission packs, carried like [themes].
+  final MissionRepository? packs;
 
   /// A filename that sorts chronologically and survives a share sheet.
   static String suggestedFileName(DateTime at) => '$_manualPrefix${_stamp(at)}.json';
@@ -215,6 +242,8 @@ class BackupService {
       // device restores this, from its own settings.
       signals: await signalLog?.sent(now) ?? const [],
       themes: await themes?.importedForBackup() ?? const [],
+      songs: await songs?.importedForBackup() ?? const [],
+      packs: await packs?.importedForBackup() ?? const [],
     );
   }
 
@@ -230,6 +259,11 @@ class BackupService {
       await profiles.save(archive.profile);
       await signalLog?.replaceAll(archive.signals);
       final themesAdded = await themes?.restore(archive.themes, replace: true) ?? 0;
+      // Only cleared when the backup brings some: one from before 0.10.0
+      // carries none, and restoring it used to leave a side-loaded pack alone.
+      // Neither is progress, so keeping what is here costs nothing.
+      final songsAdded = await songs?.restore(archive.songs, replace: archive.songs.isNotEmpty) ?? 0;
+      final packsAdded = await packs?.restore(archive.packs, replace: archive.packs.isNotEmpty) ?? 0;
       return ImportReport(
         mode: mode,
         runsAdded: archive.runs.length,
@@ -238,6 +272,8 @@ class BackupService {
         achievementsAdded: archive.profile.unlockedAchievements.length,
         codexAdded: archive.profile.unlockedCodex.length,
         themesAdded: themesAdded,
+        songsAdded: songsAdded,
+        packsAdded: packsAdded,
       );
     }
 
@@ -258,6 +294,8 @@ class BackupService {
     await profiles.save(merged);
     await signalLog?.merge(archive.signals);
     final themesAdded = await themes?.restore(archive.themes, replace: false) ?? 0;
+    final songsAdded = await songs?.restore(archive.songs, replace: false) ?? 0;
+    final packsAdded = await packs?.restore(archive.packs, replace: false) ?? 0;
 
     return ImportReport(
       mode: mode,
@@ -267,6 +305,8 @@ class BackupService {
       achievementsAdded: merged.unlockedAchievements.length - local.unlockedAchievements.length,
       codexAdded: merged.unlockedCodex.length - local.unlockedCodex.length,
       themesAdded: themesAdded,
+      songsAdded: songsAdded,
+      packsAdded: packsAdded,
     );
   }
 

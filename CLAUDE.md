@@ -288,11 +288,18 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   have no levels. Like the backup folder, check it on a device. Where to get files
   is `docs/FIND_MUSIC.md`, reached through `openLink`: the app fetches nothing.
 - **The songs are a library, not entries in the run music picker.** The picker has
-  one Song library choice, and `SongLibraryScreen` sets how it plays, writing
+  one Song library choice, and `SongLibraryScreen` (a Settings screen) sets how it plays, writing
   `shuffle`, `best` or a song id to `Profile.music`. `Profile.songsLeftOut` lists
   what is left out, so a song added later is in without asking. The run screen's
   title scrolls only when it does not fit, and the line under it has its own
   `ValueNotifier` so it does not redraw the screen.
+- **RIG holds data, Settings holds choices.** The RIG screen lists what can be
+  imported and exported (themes, songs, mission packs), each kind a
+  `LibraryScreen` (`widgets/library_list.dart`): where it is chosen, the items
+  with edit, export and remove, how to add more. Nothing on it changes what the
+  app does. Picking a theme or the run music is a setting and lives in
+  Settings, a pack is picked on OPS. A new importable kind gets a
+  `LibraryScreen`; a new option goes in Settings.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds
@@ -326,8 +333,10 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   stores so far: `signals/<year>.json`, the archive behind THE WIRE — the only
   thing on it that is stored, since runs, clears, achievements and intel all
   project from the run log and profile — and `themes/`, the runner's imported
-  colour themes, carried as their JSON and re-checked on restore. (Imported
-  mission packs are not carried; that predates this rule.) (`active_run.json` is deliberately
+  colour themes, carried as their JSON and re-checked on restore. Imported songs
+  (`songs/`) and mission packs (`mission_packs/`) ride the same way since 0.10.0;
+  a replace-restore clears them only when the backup brings some, so an older
+  backup does not take a pack it never had. (`active_run.json` is deliberately
   left out: it exists only while a run does.) Exported as *sent* entries only; the
   pending plan is rebuilt by whichever device restores it.
 - **The automatic-backup folder is Android's persisted permission, not a

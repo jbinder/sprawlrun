@@ -3668,7 +3668,7 @@
   },
   "packExportTooltip": "Export {title}",
   "@packExportTooltip": {
-    "description": "Tooltip of the share button beside an imported mission pack.",
+    "description": "Tooltip of the share button beside a mission pack, shipped or imported.",
     "placeholders": {
       "title": {
         "type": "String"

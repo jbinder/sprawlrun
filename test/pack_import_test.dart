@@ -91,6 +91,16 @@ void main() {
       expect(restored.missions, hasLength(10));
     });
 
+    test('a shipped pack exports its own file, and an imported one that replaces it wins', () async {
+      expect(await repo.sourceOf('sprawl_prime'), File('assets/missions/sprawl_prime.json').readAsStringSync());
+      expect(await repo.sourceOf('nobody_has_this'), isNull);
+
+      final patched = pack(id: 'sprawl_prime', title: 'PATCHED');
+      await repo.importPack(patched);
+      await repo.loadPacks();
+      expect(await repo.sourceOf('sprawl_prime'), patched);
+    });
+
     test('a copy put in place by hand under another name is cleared on import', () async {
       // The old instructions let a pack sit there under any file name.
       packsDir.createSync(recursive: true);

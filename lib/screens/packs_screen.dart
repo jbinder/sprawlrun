@@ -50,7 +50,7 @@ class _PacksScreenState extends State<PacksScreen> {
                   ? (repo.bundledIds.contains(pack.id) ? l.packReplaced : l.packImported)
                   : l.packOpsTag(pack.missions.length),
               tagColor: imported ? Cy.green : Cy.ghost,
-              onExport: imported && !_busy ? () => _export(state, pack) : null,
+              onExport: _busy ? null : () => _export(state, pack),
               exportTooltip: l.packExportTooltip(pack.title),
               onRemove: imported && !_busy ? () => _remove(state, pack) : null,
               removeTooltip: l.packRemoveTooltip(pack.title),
@@ -73,7 +73,7 @@ class _PacksScreenState extends State<PacksScreen> {
   void _say(String message, {bool bad = false}) => sayOnLibrary(context, message, bad: bad);
 
   Future<void> _export(AppState state, MissionPack pack) async {
-    final source = await state.missions.importedSource(pack.id);
+    final source = await state.missions.sourceOf(pack.id);
     if (source == null || !mounted) return;
     await shareJson(context, name: pack.id, source: source, subject: l10n.packShareSubject(pack.title));
   }

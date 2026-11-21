@@ -52,6 +52,9 @@ class MissionRepository {
   /// ids replaces the shipped one until it is removed again.
   final Set<String> bundledIds = {};
 
+  /// The asset each shipped pack was read from, by id, for [sourceOf].
+  final Map<String, String> _bundledPaths = {};
+
   /// Largest file an import will read. The shipped packs are under 200 KB;
   /// anything far bigger is not a pack, and is refused before it is parsed.
   static const int maxPackBytes = 4 * 1024 * 1024;
@@ -62,6 +65,7 @@ class MissionRepository {
     loadErrors.clear();
     importedIds.clear();
     bundledIds.clear();
+    _bundledPaths.clear();
 
     final assets = await _assetList();
     for (final path in bundledPacks) {
@@ -75,6 +79,7 @@ class MissionRepository {
         }
         packs.add(pack);
         bundledIds.add(pack.id);
+        _bundledPaths[pack.id] = path;
       } on Object catch (e) {
         loadErrors.add('$path: $e');
       }
@@ -239,6 +244,19 @@ class MissionRepository {
     } on ThemeFormatException catch (e) {
       throw PackImportException(l10n.packErrorTheme(e.message));
     }
+  }
+
+  /// The pack [id] as its file has it, to share: the imported file where
+  /// there is one, since that is the pack in play, otherwise the shipped one —
+  /// as a start for writing one's own. Always the English source, never the
+  /// translated view in [loadPacks]. Null for a pack this phone does not have.
+  Future<String?> sourceOf(String id) async {
+    if (await importedSource(id) case final source?) return source;
+    if (_bundledPaths.isEmpty) await loadPacks();
+    return switch (_bundledPaths[id]) {
+      final path? => _bundle.loadString(path),
+      null => null,
+    };
   }
 
   /// The imported pack [id] as its file has it, to share; null for a pack

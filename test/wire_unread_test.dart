@@ -113,8 +113,16 @@ void main() {
     });
 
     test('knows when the next signal is due, to look again then', () async {
-      final (state, _) = await boot();
-      // The weekly debrief is on by default.
+      // A reminder every day, so something is always pending. The default —
+      // only the weekly debrief — has nothing pending on a Sunday evening,
+      // once that week's has gone out: next week's is planned from Monday,
+      // so it carries next week's figures. This test read the real clock and
+      // failed every Sunday from 19:00 until it said so.
+      final (state, _) = await boot(
+        profile: const Profile(
+          signals: SignalSettings(remindersEnabled: true, weekdays: {1, 2, 3, 4, 5, 6, 7}),
+        ),
+      );
       expect(state.nextSignalAt, isNotNull);
       expect(state.nextSignalAt!.isAfter(DateTime.now()), isTrue);
     });

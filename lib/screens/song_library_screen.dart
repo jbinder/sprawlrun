@@ -8,7 +8,9 @@ import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../widgets/backdrop.dart';
+import '../widgets/library_list.dart';
 import '../widgets/panels.dart';
+import 'songs_screen.dart';
 
 /// How a run chooses among the songs: a setting, reached from Settings → Audio.
 /// Importing, sharing and removing songs is on the RIG screen (`SongsScreen`).
@@ -120,8 +122,8 @@ class SongLibraryScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(l.musicLibraryRig, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
+                    const SizedBox(height: 6),
+                    RigLink(l.musicLibraryRig, open: (_) => const SongsScreen()),
                   ],
                 ),
               ),

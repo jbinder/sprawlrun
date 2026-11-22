@@ -94,7 +94,13 @@ class _SongsScreenState extends State<SongsScreen> {
       if (picked == null) return;
       if (await picked.length() > Song.maxBytes) throw const SongFormatException('The file is too large for a song');
       final song = await state.importSong(await readPickedText(picked));
-      if (mounted) sayOnLibrary(context, l10n.songImported(song.nameIn(state.locale.languageCode)));
+      if (mounted) {
+        sayOnLibrary(
+          context,
+          l10n.songImported(song.nameIn(state.locale.languageCode)),
+          action: openAction(context, l10n.songImportedChoose, (_) => const SongLibraryScreen()),
+        );
+      }
     } on SongFormatException catch (e) {
       if (mounted) sayOnLibrary(context, e.message, bad: true);
     } on Object catch (e) {

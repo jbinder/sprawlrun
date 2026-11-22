@@ -340,6 +340,10 @@
       }
     }
   },
+  "packImportedOpen": "OPEN",
+  "@packImportedOpen": {
+    "description": "RIG → Mission packs: button on the message shown after importing a pack. Opens the OPS pack list at that pack, where the runner picks it. Short; shown in capitals."
+  },
   "packRemoveTitle": "REMOVE {pack}",
   "@packRemoveTitle": {
     "description": "Dialog title. pack is the pack title in uppercase.",
@@ -707,7 +711,7 @@
   "@noPacksTitle": {
     "description": "Shown when no mission pack (campaign) could be loaded."
   },
-  "noPacksBody": "Nothing loaded. Check Settings → Mission packs.",
+  "noPacksBody": "Nothing loaded. Check RIG → Mission packs.",
   "tagDone": "DONE",
   "@tagDone": {
     "description": "Tag/section: a finished mission or campaign."
@@ -3597,6 +3601,10 @@
       }
     }
   },
+  "songImportedChoose": "CHOOSE",
+  "@songImportedChoose": {
+    "description": "RIG → Songs: button on the message shown after importing a song. Opens the song library in Settings, where the runner chooses what plays on runs. Short; shown in capitals."
+  },
   "songExportTooltip": "Export {name}",
   "@songExportTooltip": {
     "description": "Tooltip of the button that shares an imported song's file.",
@@ -3647,11 +3655,15 @@
   },
   "settingLookRig": "Make, import and share themes under RIG.",
   "@settingLookRig": {
-    "description": "Note under the colour theme swatches in Settings, pointing to the RIG screen where themes are managed."
+    "description": "Note under the colour theme swatches in Settings, pointing to the RIG screen where themes are managed. Tapping it opens that screen."
   },
   "musicLibraryRig": "Import and share songs under RIG.",
   "@musicLibraryRig": {
-    "description": "Note at the bottom of the song library settings screen, pointing to the RIG screen where songs are managed."
+    "description": "Note at the bottom of the song library settings screen, pointing to the RIG screen where songs are managed. Tapping it opens that screen."
+  },
+  "missionPacksRig": "Import and share packs under RIG.",
+  "@missionPacksRig": {
+    "description": "Note at the bottom of the OPS pack list, linking to the RIG screen where mission packs are imported and shared. Tapping it opens that screen."
   },
   "songExplainer": "Add a song by importing its .json file. Importing a song you already have replaces it. See docs/SONGS.md for the format, or export a song here to start from.",
   "@songExplainer": {

@@ -106,6 +106,7 @@ void main() {
     expect(find.text('IMPORT PACK'), findsOneWidget);
     expect(find.text('RELOAD PACKS'), findsNothing, reason: 'it pointed at a folder nobody can reach');
     expect(find.text('IMPORTED'), findsNothing, reason: 'the shipped packs cannot be removed');
+    expect(find.byTooltip('Export SPRAWL PRIME'), findsOneWidget, reason: 'a shipped pack is a start for one\'s own');
 
     await tester.runAsync(() => state.importMissionPack(jsonEncode({
       'id': 'ghost_line',
@@ -334,6 +335,16 @@ void main() {
       expect(state.profile.theme, 'glacier');
       expect(state.palette.cyan, state.theme.palette.cyan);
       expect(find.textContaining('wears its own colours'), findsNothing, reason: 'no season in July');
+    });
+
+    testWidgets('the note under the swatches leads to the themes on RIG', (tester) async {
+      debugNow = DateTime(2026, 7, 27, 21);
+      await pumpSettings(tester);
+      await tester.ensureVisible(find.text('Make, import and share themes under RIG.'));
+      await tester.tap(find.text('Make, import and share themes under RIG.'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byType(ThemesScreen), findsOneWidget);
     });
 
     testWidgets('the picked theme credits its author', (tester) async {

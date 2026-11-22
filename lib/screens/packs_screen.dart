@@ -11,6 +11,7 @@ import '../theme/cyber_theme.dart';
 import '../util/picked_text.dart';
 import '../widgets/library_list.dart';
 import '../widgets/panels.dart';
+import 'missions_screen.dart';
 
 /// MISSION PACKS on the RIG screen: the packs, shipped and imported, to add,
 /// share and remove. Which one is played is chosen on OPS. Settings' Mission
@@ -99,11 +100,16 @@ class _PacksScreenState extends State<PacksScreen> {
       final pack = await state.importMissionPack(source);
 
       final ops = pack.missions.length;
-      _say(switch ((before.contains(pack.id), repo.bundledIds.contains(pack.id))) {
-        (true, _) => l10n.packUpdated(pack.title, ops),
-        (false, true) => l10n.packImportedReplacing(pack.title, ops),
-        (false, false) => l10n.packImportedNew(pack.title, ops),
-      });
+      if (!mounted) return;
+      sayOnLibrary(
+        context,
+        switch ((before.contains(pack.id), repo.bundledIds.contains(pack.id))) {
+          (true, _) => l10n.packUpdated(pack.title, ops),
+          (false, true) => l10n.packImportedReplacing(pack.title, ops),
+          (false, false) => l10n.packImportedNew(pack.title, ops),
+        },
+        action: openAction(context, l10n.packImportedOpen, (_) => MissionsScreen(openPack: pack.id)),
+      );
     } on PackImportException catch (e) {
       _say(e.message, bad: true);
     } on Object catch (e) {

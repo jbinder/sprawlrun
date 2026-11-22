@@ -7,7 +7,9 @@ import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../widgets/backdrop.dart';
 import '../widgets/glitch_text.dart';
+import '../widgets/library_list.dart';
 import '../widgets/panels.dart';
+import 'packs_screen.dart';
 import 'mission_brief_screen.dart';
 import 'mission_debrief_screen.dart';
 import '../l10n/l10n.dart';
@@ -19,7 +21,11 @@ import '../l10n/l10n.dart';
 /// Packs that are fully cleared sink to a DONE section so the list stays
 /// about what is next, however many packs accumulate.
 class MissionsScreen extends StatefulWidget {
-  const MissionsScreen({super.key});
+  const MissionsScreen({super.key, this.openPack});
+
+  /// The pack to unfold on arrival instead of the selected one — the one
+  /// just imported, when RIG sends the runner here to pick it.
+  final String? openPack;
 
   @override
   State<MissionsScreen> createState() => _MissionsScreenState();
@@ -33,7 +39,7 @@ class _MissionsScreenState extends State<MissionsScreen> {
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
     final packs = state.packProgress;
-    _open ??= state.activePack?.id;
+    _open ??= widget.openPack ?? state.activePack?.id;
 
     final active = packs.where((p) => !p.isDone).toList();
     final done = packs.where((p) => p.isDone).toList();
@@ -79,6 +85,8 @@ class _MissionsScreenState extends State<MissionsScreen> {
                       SectionHeader(L.of(context).tagDone, accent: Cy.green),
                       for (final p in done) _pack(state, p),
                     ],
+                    const SizedBox(height: 12),
+                    RigLink(L.of(context).missionPacksRig, open: (_) => const PacksScreen()),
                   ],
                 ),
               ),

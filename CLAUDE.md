@@ -293,13 +293,20 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   what is left out, so a song added later is in without asking. The run screen's
   title scrolls only when it does not fit, and the line under it has its own
   `ValueNotifier` so it does not redraw the screen.
-- **RIG holds data, Settings holds choices.** The RIG screen lists what can be
-  imported and exported (themes, songs, mission packs), each kind a
-  `LibraryScreen` (`widgets/library_list.dart`): where it is chosen, the items
-  with edit, export and remove, how to add more. Nothing on it changes what the
-  app does. Picking a theme or the run music is a setting and lives in
-  Settings, a pack is picked on OPS. A new importable kind gets a
-  `LibraryScreen`; a new option goes in Settings.
+- **RIG holds content you can share; Settings holds choices and your own
+  records.** The RIG screen lists what can be imported and exported (themes,
+  songs, mission packs), each kind a `LibraryScreen`
+  (`widgets/library_list.dart`): where it is chosen, the items with edit,
+  export and remove, how to add more. Every item exports, shipped ones too, as
+  a start for writing one's own. Nothing on it changes what the app does —
+  except a theme, which an import puts on. Picking a theme or the run music is
+  a setting and lives in Settings, a pack is picked on OPS; the backup and GPX
+  export stay in Settings → Data, being the runner's records rather than
+  content. The two sides link each other: an import's snackbar opens where the
+  item is chosen (`openAction`), and the note under each choice is a `RigLink`
+  to its RIG screen, since RIG is otherwise only a top-bar icon. A new
+  importable kind gets a `LibraryScreen` and both links; a new option goes in
+  Settings.
 - **Generated music reaches the speaker through `AudioTrack`, not just_audio.**
   just_audio's `StreamAudioSource` serves audio from a loopback HTTP server, which
   needs the `INTERNET` permission the app deliberately lacks. `MusicTrack.kt` holds

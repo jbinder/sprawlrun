@@ -15,7 +15,8 @@ import 'sub_screen.dart';
 /// Every kind is laid out the same way — where it is chosen, the items, what
 /// failed to load, how to add more — so a runner who has learnt one knows them
 /// all, and the next kind gets this screen for free. Nothing here changes what
-/// the app does: choosing is a setting, and settings live in Settings.
+/// the app does: choosing is a setting, and settings live in Settings, which
+/// an import's snackbar opens through [openAction].
 class LibraryScreen extends StatelessWidget {
   const LibraryScreen({
     super.key,
@@ -132,10 +133,50 @@ class LibraryItem extends StatelessWidget {
 }
 
 /// A snackbar in the RIG screens' voice, red when something went wrong.
-void sayOnLibrary(BuildContext context, String message, {bool bad = false}) {
+///
+/// [action] is a way on to where the item is chosen — after an import, the
+/// screen that picks it. It only opens that screen: choosing stays there.
+void sayOnLibrary(BuildContext context, String message, {bool bad = false, SnackBarAction? action}) {
   if (!context.mounted) return;
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text(message, style: CyType.body(size: 14, color: bad ? Cy.red : Cy.ink))),
+    SnackBar(
+      content: Text(message, style: CyType.body(size: 14, color: bad ? Cy.red : Cy.ink)),
+      action: action,
+    ),
+  );
+}
+
+/// A snackbar button that opens the screen [open] builds.
+SnackBarAction openAction(BuildContext context, String label, WidgetBuilder open) => SnackBarAction(
+  label: label,
+  textColor: Cy.cyan,
+  onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: open)),
+);
+
+/// The note under a choice that says where its items are imported and
+/// shared, as a link to that RIG screen: RIG is otherwise only an icon in the
+/// home screen's top bar, and a runner who never notices it never finds out
+/// what can be added.
+class RigLink extends StatelessWidget {
+  const RigLink(this.text, {super.key, required this.open});
+
+  final String text;
+  final WidgetBuilder open;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: open)),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(Icons.memory, size: 16, color: Cy.cyanDim),
+          const SizedBox(width: 8),
+          Expanded(child: Text(text, style: CyType.body(size: 13, color: Cy.cyan, height: 1.4))),
+          Icon(Icons.chevron_right, size: 18, color: Cy.cyanDim),
+        ],
+      ),
+    ),
   );
 }
 

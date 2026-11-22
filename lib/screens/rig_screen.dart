@@ -10,9 +10,10 @@ import 'songs_screen.dart';
 import 'packs_screen.dart';
 
 /// What a runner can import and export, in one place: colour themes, songs
-/// and mission packs. Reached from the home screen's top bar. The rule is
-/// that data lives here and settings stay in Settings — which song plays, how
-/// loud and whether a pack may recolour the app are settings.
+/// and mission packs. Reached from the home screen's top bar and from the note
+/// under each choice. The rule is that content a runner can share lives here,
+/// while choices and the runner's own records stay in Settings — which song
+/// plays, how loud, whether a pack may recolour the app, and the backup.
 ///
 /// Each kind is a screen of its own, so the next thing a runner can import
 /// gets a screen here rather than another section in a long list.

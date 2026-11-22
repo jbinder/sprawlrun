@@ -11,6 +11,7 @@ import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/models/run_outcome.dart';
 import 'package:sprawl_run/screens/missions_screen.dart';
+import 'package:sprawl_run/screens/packs_screen.dart';
 import 'package:sprawl_run/screens/run_summary_screen.dart';
 import 'package:sprawl_run/services/run_engine.dart';
 import 'package:sprawl_run/state/app_state.dart';
@@ -172,7 +173,7 @@ void main() {
   });
 
   group('missions screen', () {
-    Future<AppState> pump(WidgetTester tester, {Profile profile = const Profile()}) async {
+    Future<AppState> pump(WidgetTester tester, {Profile profile = const Profile(), String? openPack}) async {
       tester.view.physicalSize = const Size(1200, 6000);
       tester.view.devicePixelRatio = 3.0;
       addTearDown(tester.view.reset);
@@ -183,7 +184,7 @@ void main() {
             ChangeNotifierProvider.value(value: state!),
             ChangeNotifierProvider(create: (_) => RunEngine(narrator: FakeNarrator(), location: FakeLocation())),
           ],
-          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: const MissionsScreen()),
+          child: MaterialApp(localizationsDelegates: L.localizationsDelegates, theme: buildCyberTheme(), home: MissionsScreen(openPack: openPack)),
         ),
       );
       await tester.pump(const Duration(milliseconds: 200));
@@ -213,6 +214,20 @@ void main() {
       expect(find.text('LOW WATER'), findsOneWidget, reason: 'the first mission is named');
       expect(find.text('NEW'), findsWidgets);
       expect(find.text('LOCKED'), findsWidgets);
+    });
+
+    testWidgets('sent from RIG, it unfolds the pack named but leaves picking it to the runner', (tester) async {
+      final state = await pump(tester, openPack: 'null_tide');
+      expect(find.text('LOW WATER'), findsOneWidget, reason: 'NULL TIDE is unfolded');
+      expect(state.activePack!.id, 'sprawl_prime', reason: 'opening is not choosing');
+    });
+
+    testWidgets('the foot of the list leads to where packs are imported', (tester) async {
+      await pump(tester);
+      await tester.tap(find.text('Import and share packs under RIG.'));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byType(PacksScreen), findsOneWidget);
     });
 
     testWidgets('a playable mission opens its briefing from the list', (tester) async {

@@ -177,6 +177,9 @@ class PseudoL extends L {
   String packImportedNew(String pack, int count) => pseudo(_en.packImportedNew(pack, count));
 
   @override
+  String get packImportedOpen => pseudo(_en.packImportedOpen);
+
+  @override
   String packRemoveTitle(String pack) => pseudo(_en.packRemoveTitle(pack));
 
   @override
@@ -2205,6 +2208,9 @@ class PseudoL extends L {
   String songImported(String name) => pseudo(_en.songImported(name));
 
   @override
+  String get songImportedChoose => pseudo(_en.songImportedChoose);
+
+  @override
   String songExportTooltip(String name) => pseudo(_en.songExportTooltip(name));
 
   @override
@@ -2230,6 +2236,9 @@ class PseudoL extends L {
 
   @override
   String get musicLibraryRig => pseudo(_en.musicLibraryRig);
+
+  @override
+  String get missionPacksRig => pseudo(_en.missionPacksRig);
 
   @override
   String get songExplainer => pseudo(_en.songExplainer);

@@ -5,6 +5,8 @@ import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
 import '../l10n/l10n.dart';
+import '../screens/themes_screen.dart';
+import 'library_list.dart';
 
 /// The Colours row of Settings: a swatch per theme. Making, importing, sharing
 /// and removing them is on the RIG screen, since themes are data and picking
@@ -68,8 +70,8 @@ class ThemeControls extends StatelessWidget {
           const SizedBox(height: 10),
           Text(l.themeBy(current.nameIn(language), current.author!), style: CyType.body(size: 13, color: Cy.inkDim)),
         ],
-        const SizedBox(height: 10),
-        Text(l.settingLookRig, style: CyType.body(size: 13, color: Cy.ghost, height: 1.4)),
+        const SizedBox(height: 4),
+        RigLink(l.settingLookRig, open: (_) => const ThemesScreen()),
       ],
     );
   }

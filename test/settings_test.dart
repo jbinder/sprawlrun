@@ -14,6 +14,7 @@ import 'package:sprawl_run/models/run_record.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:sprawl_run/screens/themes_screen.dart';
 import 'package:sprawl_run/screens/settings_screen.dart';
+import 'package:sprawl_run/screens/missions_screen.dart';
 import 'package:sprawl_run/screens/packs_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
@@ -134,6 +135,21 @@ void main() {
     }
     expect(find.text('IMPORTED'), findsNothing);
     expect(state.packs.map((p) => p.id), isNot(contains('ghost_line')));
+  });
+
+  testWidgets('a shelved pack on RIG leads to OPS, where it is brought back; the others lead nowhere', (tester) async {
+    await pumpSettings(tester, profile: const Profile(packsShelved: ['null_tide']), home: const PacksScreen());
+    expect(find.text('SHELVED'), findsOneWidget);
+
+    await tester.tap(find.text('SPRAWL PRIME'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byType(MissionsScreen), findsNothing, reason: 'nothing to change elsewhere');
+
+    await tester.tap(find.text('NULL TIDE'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byType(MissionsScreen), findsOneWidget);
+    expect(find.text('BACK ON OPS'), findsOneWidget);
   });
 
   testWidgets('the resume-music repair is offered only when pausing', (tester) async {

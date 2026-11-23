@@ -405,6 +405,24 @@ class PseudoL extends L {
   String get tagDone => pseudo(_en.tagDone);
 
   @override
+  String get tagShelved => pseudo(_en.tagShelved);
+
+  @override
+  String get packShelvedTag => pseudo(_en.packShelvedTag);
+
+  @override
+  String get packShelve => pseudo(_en.packShelve);
+
+  @override
+  String get packUnshelve => pseudo(_en.packUnshelve);
+
+  @override
+  String get packKeepOne => pseudo(_en.packKeepOne);
+
+  @override
+  String packShelved(String pack) => pseudo(_en.packShelved(pack));
+
+  @override
   String get tagInProgress => pseudo(_en.tagInProgress);
 
   @override

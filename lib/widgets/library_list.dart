@@ -83,6 +83,7 @@ class LibraryItem extends StatelessWidget {
     this.exportTooltip,
     this.onRemove,
     this.removeTooltip,
+    this.onTap,
   });
 
   final Widget leading;
@@ -97,6 +98,10 @@ class LibraryItem extends StatelessWidget {
   final VoidCallback? onRemove;
   final String? removeTooltip;
 
+  /// Where tapping the entry leads — for a state shown here but changed
+  /// elsewhere, such as a shelved pack. A chevron by the tag says it goes on.
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     Widget action(VoidCallback? onPressed, IconData icon, String? tooltip) => IconButton(
@@ -105,7 +110,7 @@ class LibraryItem extends StatelessWidget {
       tooltip: tooltip,
       visualDensity: VisualDensity.compact,
     );
-    return Row(
+    final row = Row(
       children: [
         leading,
         const SizedBox(width: 12),
@@ -120,7 +125,21 @@ class LibraryItem extends StatelessWidget {
               ],
               // Under the name rather than beside it: a row with three
               // buttons has no width to spare at 360 dp.
-              if (tag != null) ...[const SizedBox(height: 4), CyberTag(tag!, color: tagColor ?? Cy.ghost)],
+              if (tag != null) ...[
+                const SizedBox(height: 4),
+                if (onTap == null)
+                  CyberTag(tag!, color: tagColor ?? Cy.ghost)
+                else
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Flexible, so a long translation still shrinks as it
+                      // does without the chevron.
+                      Flexible(child: CyberTag(tag!, color: tagColor ?? Cy.ghost)),
+                      Icon(Icons.chevron_right, size: 18, color: tagColor ?? Cy.ghost),
+                    ],
+                  ),
+              ],
             ],
           ),
         ),
@@ -129,6 +148,7 @@ class LibraryItem extends StatelessWidget {
         if (onRemove != null) action(onRemove, Icons.delete_outline, removeTooltip),
       ],
     );
+    return onTap == null ? row : InkWell(onTap: onTap, child: row);
   }
 }
 

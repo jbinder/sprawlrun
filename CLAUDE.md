@@ -300,7 +300,8 @@ time — this week, streaks, "ago", the greeting — must read `appNow()`, not
   export and remove, how to add more. Every item exports, shipped ones too, as
   a start for writing one's own. Nothing on it changes what the app does —
   except a theme, which an import puts on. Picking a theme or the run music is
-  a setting and lives in Settings, a pack is picked on OPS; the backup and GPX
+  a setting and lives in Settings, a pack is picked — and shelved
+  (`Profile.packsShelved`, filtered out by `visiblePacks`) — on OPS; the backup and GPX
   export stay in Settings → Data, being the runner's records rather than
   content. The two sides link each other: an import's snackbar opens where the
   item is chosen (`openAction`), and the note under each choice is a `RigLink`

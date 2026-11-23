@@ -47,13 +47,22 @@ class _PacksScreenState extends State<PacksScreen> {
               leading: Icon(Icons.inventory_2_outlined, size: 20, color: Cy.cyanDim),
               title: pack.title,
               lines: [pack.tagline, if (pack.author != null) l.packBy(pack.author!)],
-              tag: imported
+              // Shelving is done on OPS, where packs are picked; here it is
+              // only said, since a shelved pack is easy to forget.
+              tag: state.profile.packsShelved.contains(pack.id)
+                  ? l.packShelvedTag
+                  : imported
                   ? (repo.bundledIds.contains(pack.id) ? l.packReplaced : l.packImported)
                   : l.packOpsTag(pack.missions.length),
-              tagColor: imported ? Cy.green : Cy.ghost,
+              tagColor: state.profile.packsShelved.contains(pack.id) ? Cy.amber : (imported ? Cy.green : Cy.ghost),
               onExport: _busy ? null : () => _export(state, pack),
               exportTooltip: l.packExportTooltip(pack.title),
               onRemove: imported && !_busy ? () => _remove(state, pack) : null,
+              onTap: state.profile.packsShelved.contains(pack.id)
+                  ? () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(builder: (_) => const MissionsScreen(showShelved: true)),
+                    )
+                  : null,
               removeTooltip: l.packRemoveTooltip(pack.title),
             ),
       ],

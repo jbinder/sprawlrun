@@ -716,6 +716,35 @@
   "@tagDone": {
     "description": "Tag/section: a finished mission or campaign."
   },
+  "tagShelved": "SHELVED",
+  "@tagShelved": {
+    "description": "OPS pack list: heading of the section holding the packs the runner took off OPS. Shown in capitals."
+  },
+  "packShelvedTag": "SHELVED",
+  "@packShelvedTag": {
+    "description": "RIG → Mission packs: tag on one pack the runner took off OPS. Singular, unlike the OPS section heading. Shown in capitals."
+  },
+  "packShelve": "Shelve pack",
+  "@packShelve": {
+    "description": "OPS pack list: button on an unfolded pack that takes it off OPS without deleting it. Its progress is kept and it can be brought back."
+  },
+  "packUnshelve": "Back on OPS",
+  "@packUnshelve": {
+    "description": "OPS pack list: button on a shelved pack that puts it back among the packs offered on OPS. OPS is the name of the home tab, not translated."
+  },
+  "packKeepOne": "Keep one pack on OPS.",
+  "@packKeepOne": {
+    "description": "OPS pack list: shown instead of the shelve button when this is the only pack left on OPS, which cannot be shelved."
+  },
+  "packShelved": "{pack} shelved. Its progress is kept.",
+  "@packShelved": {
+    "description": "Message after a pack was taken off OPS. pack is the pack title, e.g. NULL TIDE.",
+    "placeholders": {
+      "pack": {
+        "type": "String"
+      }
+    }
+  },
   "tagInProgress": "IN PROGRESS",
   "@tagInProgress": {
     "description": "Tag: a campaign that has been started."

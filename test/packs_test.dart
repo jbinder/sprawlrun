@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -80,6 +81,63 @@ void main() {
       expect(state.currentMission, isNull, reason: 'Sprawl Prime is done');
       expect(state.chainFor(state.packs[1]).first.state, MissionState.available);
       expect(state.chainFor(state.packs[1]).skip(1).every((m) => m.state == MissionState.locked), isTrue);
+    });
+  });
+
+  group('shelving', () {
+    test('a shelved pack leaves OPS but not the app, hands the selection on, and stays shelved', () async {
+      final state = await load(profile: const Profile(activePackId: 'null_tide', completedMissions: {'nt01'}));
+      await state.shelvePack('null_tide', shelved: true);
+
+      expect(state.visiblePacks.map((p) => p.id), ['sprawl_prime']);
+      expect(state.shelvedPacks.map((p) => p.id), ['null_tide']);
+      expect(state.activePack!.id, 'sprawl_prime', reason: 'the selection falls to what is left');
+      expect(state.packs.map((p) => p.id), contains('null_tide'), reason: 'old runs still look it up');
+
+      final again = await load(profile: state.profile);
+      expect(again.shelvedPacks.map((p) => p.id), ['null_tide']);
+
+      await again.shelvePack('null_tide', shelved: false);
+      expect(again.visiblePacks.map((p) => p.id), ['sprawl_prime', 'null_tide']);
+      expect(again.packProgress.last.completed, 1, reason: 'progress was kept');
+    });
+
+    test('the last pack on OPS stays', () async {
+      final state = await load(profile: const Profile(packsShelved: ['null_tide']));
+      expect(state.canShelve('sprawl_prime'), isFalse);
+      await state.shelvePack('sprawl_prime', shelved: true);
+      expect(state.visiblePacks.map((p) => p.id), ['sprawl_prime']);
+      expect(state.profile.packsShelved, ['null_tide']);
+    });
+
+    test('a shelved event pack is offered back only in its season, and is no event while shelved', () async {
+      debugNow = DateTime(2026, 10, 20, 19);
+      final state = await load(profile: const Profile(packsShelved: ['samhain']));
+      expect(state.seasonalPack, isNull);
+      expect(state.visiblePacks.map((p) => p.id), isNot(contains('samhain')));
+      expect(state.shelvedPacks.map((p) => p.id), ['samhain']);
+
+      debugNow = DateTime(2026, 7, 27, 21, 14);
+      expect(state.shelvedPacks, isEmpty, reason: 'out of season it would not be on OPS anyway');
+    });
+
+    test('importing a shelved pack puts it back on OPS', () async {
+      final state = await load(profile: const Profile(packsShelved: ['ghost_line']));
+      await state.importMissionPack(jsonEncode({
+        'id': 'ghost_line',
+        'title': 'GHOST LINE',
+        'missions': [
+          {'id': 'gl01', 'order': 1, 'codename': 'OP 1', 'title': 'Op 1', 'suggestedGoal': {'type': 'time', 'value': 900}},
+        ],
+      }));
+      expect(state.profile.packsShelved, isEmpty);
+      expect(state.visiblePacks.map((p) => p.id), contains('ghost_line'));
+    });
+
+    test('a profile without the field has nothing shelved, and the list survives a round trip', () {
+      expect(Profile.fromJson(const {}).packsShelved, isEmpty);
+      expect(const Profile().toJson().containsKey('packsShelved'), isFalse);
+      expect(Profile.fromJson(const Profile(packsShelved: ['null_tide']).toJson()).packsShelved, ['null_tide']);
     });
   });
 
@@ -228,6 +286,49 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       expect(find.byType(PacksScreen), findsOneWidget);
+    });
+
+    testWidgets('a pack is shelved from its card and brought back from the SHELVED section', (tester) async {
+      final state = await pump(tester, profile: const Profile(activePackId: 'null_tide'));
+      expect(find.text('SHELVED'), findsNothing, reason: 'no section until something is shelved');
+
+      // Saving the profile is real file I/O, resumed inside the fake zone
+      // (CLAUDE.md, "Test traps"): let real time pass and flush, until it lands.
+      Future<void> settle(bool Function() done) async {
+        for (var i = 0; i < 20 && !done(); i++) {
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+          await tester.pump();
+        }
+        await tester.pump(const Duration(milliseconds: 200));
+      }
+
+      // Lets every write in flight finish: each step resumes inside the fake
+      // zone, so real time and a pump alternate.
+      Future<void> drain() async {
+        for (var i = 0; i < 10; i++) {
+          await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+          await tester.pump();
+        }
+      }
+
+      await tester.tap(find.text('SHELVE PACK'));
+      // The message comes once the re-plan behind the save is done too.
+      await settle(() => find.text('NULL TIDE shelved. Its progress is kept.').evaluate().isNotEmpty);
+      expect(state.profile.packsShelved, ['null_tide']);
+      expect(find.text('SHELVED'), findsOneWidget);
+      expect(find.text('NULL TIDE shelved. Its progress is kept.'), findsOneWidget);
+
+      await tester.tap(find.text('SPRAWL PRIME'));
+      await tester.pump(const Duration(milliseconds: 200));
+      await drain(); // the selection's save
+      expect(find.text('Keep one pack on OPS.'), findsOneWidget, reason: 'the last pack on OPS stays');
+      expect(find.text('SHELVE PACK'), findsNothing);
+
+      await tester.tap(find.text('BACK ON OPS'));
+      await settle(() => find.text('SHELVED').evaluate().isEmpty);
+      expect(state.profile.packsShelved, isEmpty);
+      expect(find.text('SHELVED'), findsNothing);
+      await drain();
     });
 
     testWidgets('a playable mission opens its briefing from the list', (tester) async {

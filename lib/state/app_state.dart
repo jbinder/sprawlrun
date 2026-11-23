@@ -564,22 +564,46 @@ class AppState extends ChangeNotifier {
   Season? get season => loading || !profile.seasonalEvents ? null : Season.at(appNow());
 
   /// The loaded packs the runner can play now: every campaign, plus the event
-  /// pack of the season in force. [packs] keeps the rest, since an old run's
-  /// story and the codex still look things up in them.
-  List<MissionPack> get visiblePacks {
+  /// pack of the season in force, less the ones they shelved. [packs] keeps
+  /// the rest, since an old run's story and the codex still look things up in
+  /// them.
+  List<MissionPack> get visiblePacks => [
+    for (final pack in _inSeason)
+      if (!profile.packsShelved.contains(pack.id)) pack,
+  ];
+
+  /// The packs the runner took off OPS that would otherwise be on it, for
+  /// OPS to offer back. An event pack out of season is not among them.
+  List<MissionPack> get shelvedPacks => [
+    for (final pack in _inSeason)
+      if (profile.packsShelved.contains(pack.id)) pack,
+  ];
+
+  Iterable<MissionPack> get _inSeason {
     final id = season?.id;
-    return [
-      for (final pack in packs)
-        if (pack.season == null || pack.season == id) pack,
-    ];
+    return packs.where((pack) => pack.season == null || pack.season == id);
   }
 
-  /// The event pack of the season in force, if one is loaded.
+  /// Whether [id] may be shelved: OPS keeps at least one pack, so it never
+  /// points at nothing while packs exist.
+  bool canShelve(String id) => visiblePacks.length > 1 && visiblePacks.any((p) => p.id == id);
+
+  /// Takes a pack off OPS, or puts it back. A shelved pack that was selected
+  /// hands the selection on through [activePack]'s fallback; progress is
+  /// untouched either way. Re-plans, since a shelved pack sends no signals.
+  Future<void> shelvePack(String id, {required bool shelved}) async {
+    if (shelved && !canShelve(id)) return;
+    final rest = [for (final s in profile.packsShelved) if (s != id) s];
+    await updateProfile(profile.copyWith(packsShelved: shelved ? [...rest, id] : rest));
+  }
+
+  /// The event pack of the season in force, if one is loaded and the runner
+  /// has not shelved it.
   MissionPack? get seasonalPack {
     final id = season?.id;
     if (id == null) return null;
     for (final pack in packs) {
-      if (pack.season == id) return pack;
+      if (pack.season == id && !profile.packsShelved.contains(pack.id)) return pack;
     }
     return null;
   }
@@ -1049,10 +1073,16 @@ class AppState extends ChangeNotifier {
   ///
   /// Re-plans the signals afterwards: a pack brings handler copy of its own,
   /// and one that replaces the active pack changes what the handlers say.
+  /// Importing a shelved pack puts it back on OPS: bringing it in again
+  /// says the runner wants to play it.
   Future<MissionPack> importMissionPack(String source) async {
     final pack = await missions.importPack(source);
     await reloadMissionPacks();
-    await _rescheduleSignals();
+    if (profile.packsShelved.contains(pack.id)) {
+      await shelvePack(pack.id, shelved: false);
+    } else {
+      await _rescheduleSignals();
+    }
     return pack;
   }
 

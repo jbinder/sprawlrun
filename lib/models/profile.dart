@@ -220,6 +220,7 @@ class Profile {
     this.musicFollowsEffort = true,
     this.folderRandom = false,
     this.songsLeftOut = const [],
+    this.packsShelved = const [],
     this.seasonalEvents = true,
     this.theme = 'neon',
     this.packColours = true,
@@ -343,6 +344,12 @@ class Profile {
   /// than what is in, so that a song added later is in without asking.
   final List<String> songsLeftOut;
 
+  /// Mission packs taken off OPS: not offered, not selected, sending no
+  /// signals. Their missions still resolve, so old runs keep their titles,
+  /// and progress is kept for when one comes back. Ids rather than a flag on
+  /// the pack, since a shipped pack's file is read-only.
+  final List<String> packsShelved;
+
   /// Whether the city dresses for the season — Halloween's SAMHAIN PROTOCOL
   /// and whatever follows: palette, backdrop, sounds, the event pack and its
   /// handler traffic. See `theme/season.dart`.
@@ -451,6 +458,7 @@ class Profile {
     bool? musicFollowsEffort,
     bool? folderRandom,
     List<String>? songsLeftOut,
+    List<String>? packsShelved,
     bool? seasonalEvents,
     String? theme,
     bool? packColours,
@@ -491,6 +499,7 @@ class Profile {
     musicFollowsEffort: musicFollowsEffort ?? this.musicFollowsEffort,
     folderRandom: folderRandom ?? this.folderRandom,
     songsLeftOut: songsLeftOut ?? this.songsLeftOut,
+    packsShelved: packsShelved ?? this.packsShelved,
     seasonalEvents: seasonalEvents ?? this.seasonalEvents,
     theme: theme ?? this.theme,
     packColours: packColours ?? this.packColours,
@@ -535,6 +544,7 @@ class Profile {
     'musicFollowsEffort': musicFollowsEffort,
     'folderRandom': folderRandom,
     if (songsLeftOut.isNotEmpty) 'songsLeftOut': songsLeftOut,
+    if (packsShelved.isNotEmpty) 'packsShelved': packsShelved,
     'seasonalEvents': seasonalEvents,
     'theme': theme,
     'packColours': packColours,
@@ -592,6 +602,7 @@ class Profile {
     musicFollowsEffort: json['musicFollowsEffort'] as bool? ?? true,
     folderRandom: json['folderRandom'] as bool? ?? false,
     songsLeftOut: [for (final id in json['songsLeftOut'] as List? ?? const []) '$id'],
+    packsShelved: [for (final id in json['packsShelved'] as List? ?? const []) '$id'],
     seasonalEvents: json['seasonalEvents'] as bool? ?? true,
     theme: json['theme'] as String? ?? 'neon',
     packColours: json['packColours'] as bool? ?? true,

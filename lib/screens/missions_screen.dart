@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../data/mission_repository.dart';
+import '../models/mission.dart';
 import '../state/app_state.dart';
 import '../theme/cyber_palette.dart';
 import '../theme/cyber_theme.dart';
@@ -21,11 +22,15 @@ import '../l10n/l10n.dart';
 /// Packs that are fully cleared sink to a DONE section so the list stays
 /// about what is next, however many packs accumulate.
 class MissionsScreen extends StatefulWidget {
-  const MissionsScreen({super.key, this.openPack});
+  const MissionsScreen({super.key, this.openPack, this.showShelved = false});
 
   /// The pack to unfold on arrival instead of the selected one — the one
   /// just imported, when RIG sends the runner here to pick it.
   final String? openPack;
+
+  /// Scrolls to the SHELVED section on arrival — RIG sends the runner here
+  /// from a shelved pack, since this is where it is brought back.
+  final bool showShelved;
 
   @override
   State<MissionsScreen> createState() => _MissionsScreenState();
@@ -34,6 +39,19 @@ class MissionsScreen extends StatefulWidget {
 class _MissionsScreenState extends State<MissionsScreen> {
   /// The pack whose missions are unfolded. Starts on the selected one.
   String? _open;
+
+  final _shelvedKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.showShelved) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final target = _shelvedKey.currentContext;
+        if (target != null) Scrollable.ensureVisible(target, duration: const Duration(milliseconds: 300));
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +103,11 @@ class _MissionsScreenState extends State<MissionsScreen> {
                       SectionHeader(L.of(context).tagDone, accent: Cy.green),
                       for (final p in done) _pack(state, p),
                     ],
+                    if (state.shelvedPacks case final shelved when shelved.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      SectionHeader(L.of(context).tagShelved, key: _shelvedKey, accent: Cy.ghost),
+                      for (final pack in shelved) _ShelvedCard(pack: pack, onUnshelve: () => state.shelvePack(pack.id, shelved: false)),
+                    ],
                     const SizedBox(height: 12),
                     RigLink(L.of(context).missionPacksRig, open: (_) => const PacksScreen()),
                   ],
@@ -106,6 +129,46 @@ class _MissionsScreenState extends State<MissionsScreen> {
       );
       state.selectPack(progress.pack.id);
     },
+    onShelve: state.canShelve(progress.pack.id) ? () => _shelve(state, progress.pack) : null,
+  );
+
+  Future<void> _shelve(AppState state, MissionPack pack) async {
+    await state.shelvePack(pack.id, shelved: true);
+    if (mounted) sayOnLibrary(context, l10n.packShelved(pack.title));
+  }
+}
+
+/// A pack the runner took off OPS: named, dimmed, and one tap from coming
+/// back. Folded for good — its missions are not offered while it is shelved.
+class _ShelvedCard extends StatelessWidget {
+  const _ShelvedCard({required this.pack, required this.onUnshelve});
+
+  final MissionPack pack;
+  final VoidCallback onUnshelve;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 10),
+    child: NeonPanel(
+      accent: Cy.rule,
+      cut: 12,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(pack.title, style: CyType.display(size: 16, color: Cy.inkDim)),
+          const SizedBox(height: 4),
+          Text(pack.tagline, style: CyType.body(size: 13, color: Cy.ghost, height: 1.3)),
+          const SizedBox(height: 10),
+          CyberButton(
+            label: L.of(context).packUnshelve,
+            icon: Icons.unarchive_outlined,
+            style: CyberButtonStyle.ghost,
+            dense: true,
+            onPressed: onUnshelve,
+          ),
+        ],
+      ),
+    ),
   );
 }
 
@@ -114,11 +177,15 @@ class _PackCard extends StatelessWidget {
     required this.progress,
     required this.open,
     required this.onTap,
+    this.onShelve,
   });
 
   final PackProgress progress;
   final bool open;
   final VoidCallback onTap;
+
+  /// Takes the pack off OPS; null for the last pack on it, which stays.
+  final VoidCallback? onShelve;
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +281,17 @@ class _PackCard extends StatelessWidget {
             if (open) ...[
               const SizedBox(height: 14),
               for (final m in progress.chain) _MissionLine(progress: m),
+              const SizedBox(height: 8),
+              if (onShelve != null)
+                CyberButton(
+                  label: L.of(context).packShelve,
+                  icon: Icons.archive_outlined,
+                  style: CyberButtonStyle.ghost,
+                  dense: true,
+                  onPressed: onShelve,
+                )
+              else
+                Text(L.of(context).packKeepOne, style: CyType.body(size: 12, color: Cy.ghost, height: 1.3)),
             ],
           ],
         ),

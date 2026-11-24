@@ -1224,6 +1224,9 @@ class PseudoL extends L {
   String get contributeMusic => pseudo(_en.contributeMusic);
 
   @override
+  String get contributeTheme => pseudo(_en.contributeTheme);
+
+  @override
   String get musicFindMusic => pseudo(_en.musicFindMusic);
 
   @override

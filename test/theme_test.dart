@@ -38,7 +38,7 @@ void main() {
     final files = Directory('assets/themes').listSync().whereType<File>().where((f) => f.path.endsWith('.json')).toList();
 
     test('are there', () {
-      expect(files.map((f) => f.uri.pathSegments.last), containsAll(['synth.json', 'glacier.json', 'volt.json']));
+      expect(files.map((f) => f.uri.pathSegments.last), containsAll(['synth.json', 'glacier.json', 'volt.json', 'vanguard-1.json', 'toxic-1.json', 'mint-1.json', 'oxide-1.json']));
     });
 
     // The house rules for a contributed theme, beyond what an import checks.
@@ -109,7 +109,10 @@ void main() {
 
     test('offers NEON first, then the shipped themes by name', () async {
       final names = (await repo.loadThemes()).map((t) => t.name).toList();
-      expect(names.take(4), ['NEON', 'GLACIER', 'SYNTHWAVE', 'VOLT']);
+      expect(names.first, 'NEON');
+      final shipped = names.skip(1).toList();
+      expect(shipped, [...shipped]..sort());
+      expect(shipped, containsAll(['GLACIER', 'VANGUARD']));
     });
 
     test('adds a theme after the shipped ones, replaces it on a re-import and removes it', () async {
@@ -124,6 +127,17 @@ void main() {
       await repo.removeTheme('mine');
       expect((await repo.loadThemes()).map((t) => t.id), isNot(contains('mine')));
       expect(repo.importedIds, isEmpty);
+    });
+
+    test('a theme imported before it shipped gives way to the shipped one', () async {
+      // The community themes kept their ids for this: no duplicate swatch, and a
+      // profile that wore the import wears the shipped version.
+      final dir = Directory('${root.path}/themes')..createSync(recursive: true);
+      File('${dir.path}/vanguard-1.json').writeAsStringSync(themeJson(id: 'vanguard-1', name: 'OLD'));
+      final themes = await repo.loadThemes();
+      expect(themes.where((t) => t.id == 'vanguard-1').single.name, 'VANGUARD');
+      expect(repo.importedIds, isEmpty);
+      expect(repo.loadErrors, isEmpty);
     });
 
     test('will not take a built-in id', () async {

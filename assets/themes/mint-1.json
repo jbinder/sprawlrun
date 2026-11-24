@@ -1,0 +1,21 @@
+{
+  "id": "mint-1",
+  "name": "MINT",
+  "author": "cristian01215",
+  "colours": {
+    "background": "#050B04",
+    "panel": "#0B190A",
+    "panelRaised": "#132610",
+    "rule": "#243D1E",
+    "primary": "#00FF0E",
+    "primaryDim": "#0A9617",
+    "hostile": "#C5FF00",
+    "hostileDim": "#546611",
+    "story": "#37FF2D",
+    "success": "#39FF88",
+    "failure": "#FF3B4E",
+    "locked": "#3E525F",
+    "text": "#D6E8F2",
+    "textDim": "#7C93A3"
+  }
+}

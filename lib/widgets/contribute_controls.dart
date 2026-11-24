@@ -65,6 +65,14 @@ class ContributeControls extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         CyberButton(
+          label: l.contributeTheme,
+          icon: Icons.palette_outlined,
+          style: CyberButtonStyle.ghost,
+          dense: true,
+          onPressed: () => _go(context, ProjectLinks.submitTheme),
+        ),
+        const SizedBox(height: 8),
+        CyberButton(
           label: l.contributeHow,
           icon: Icons.groups_outlined,
           style: CyberButtonStyle.ghost,

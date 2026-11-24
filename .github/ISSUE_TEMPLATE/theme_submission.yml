@@ -1,0 +1,40 @@
+name: Colour theme
+description: Made a colour theme you'd like everyone to have? Send it in.
+title: "Theme: "
+labels: [theme]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Themes that fit can ship with the app, credited to you. The theme file is all it takes: in the app, open RIG → Themes and export yours with the share button. [What every theme must pass](https://github.com/jbinder/sprawlrun/blob/main/docs/THEMES.md#what-every-theme-must-pass) says what is checked; importing the file in the app checks most of it.
+  - type: textarea
+    id: theme
+    attributes:
+      label: The theme
+      description: Open the exported file and paste all of it here.
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: author
+    attributes:
+      label: Credit
+      description: The name to show as the author in the app. Your GitHub name if you leave this empty.
+  - type: input
+    id: names
+    attributes:
+      label: Its name in other languages
+      description: Only if it should be translated. A name that reads as a name everywhere needs none.
+      placeholder: "Spanish: GLACIAR"
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: Screenshots, where the colours come from, a mission pack it belongs to.
+  - type: checkboxes
+    id: licence
+    attributes:
+      label: Permission
+      options:
+        - label: I made this theme, and it may ship with the app under its MIT licence.
+          required: true

@@ -1,0 +1,21 @@
+{
+  "id": "toxic-1",
+  "name": "TOXIC",
+  "author": "cristian01215",
+  "colours": {
+    "background": "#0B0A04",
+    "panel": "#19180A",
+    "panelRaised": "#262310",
+    "rule": "#3D371E",
+    "primary": "#D2FF00",
+    "primaryDim": "#78960A",
+    "hostile": "#F6FF00",
+    "hostileDim": "#646611",
+    "story": "#E8FF2D",
+    "success": "#39FF88",
+    "failure": "#FF3B4E",
+    "locked": "#3E525F",
+    "text": "#D6E8F2",
+    "textDim": "#7C93A3"
+  }
+}

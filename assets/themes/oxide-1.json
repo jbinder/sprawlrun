@@ -1,0 +1,21 @@
+{
+  "id": "oxide-1",
+  "name": "OXIDE",
+  "author": "cristian01215",
+  "colours": {
+    "background": "#120806",
+    "panel": "#1F120C",
+    "panelRaised": "#2D1A12",
+    "rule": "#4A2E22",
+    "primary": "#FF5A3F",
+    "primaryDim": "#8C2F22",
+    "hostile": "#FEFF6B",
+    "hostileDim": "#908D32",
+    "story": "#FFB26F",
+    "success": "#3DFFA2",
+    "failure": "#FF4A3D",
+    "locked": "#4B3D5C",
+    "text": "#F1E0F2",
+    "textDim": "#9E86A6"
+  }
+}

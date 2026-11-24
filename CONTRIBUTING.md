@@ -28,10 +28,11 @@ its `theme` field.
 ## Make a colour theme
 
 A colour theme is one JSON file with a name and fourteen colours, each named
-for its role. The easiest way to make one is in the app: **Settings → Identity
-→ Colours → Make your own**, then export it with the share button beside it.
+for its role. The easiest way to make one is in the app: **RIG → Themes → Make
+your own**, then export it with the share button beside it.
 A file written by hand imports with **Import theme**, with no build needed. To ship it with
-the app, add the file to `assets/themes/` in a pull request.
+the app, send it in with [the form](https://github.com/jbinder/sprawlrun/issues/new?template=theme_submission.yml),
+or add the file to `assets/themes/` in a pull request.
 **[docs/THEMES.md](docs/THEMES.md)** describes the format and the readability
 rules a theme has to pass, and `assets/themes/glacier.json` is a worked example.
 The same file, pasted into a mission pack's `theme` field, dresses that pack.

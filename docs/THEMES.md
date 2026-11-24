@@ -14,27 +14,28 @@ colours. Picking one recolours the whole app at once.
 2. **Shipped.** Every `.json` file in `assets/themes/`. The app finds them
    through the asset manifest, so contributing a theme means adding one file,
    with no code to change. See [Contributing a theme](#contributing-a-theme).
-3. **Imported.** **Settings → Identity → Colours → Import theme** opens the
+3. **Imported.** **RIG → Themes → Import theme** opens the
    system file picker. You don't need a rebuild, an app update or a storage
    permission, and the theme is put on as soon as it imports.
-4. **Made in the app.** **Make your own** opens the theme editor on a copy of
-   the theme you are wearing. It leads with four colours — background,
+4. **Made in the app.** **RIG → Themes → Make your own** opens the theme editor
+   on a copy of the theme you are wearing. It leads with four colours — background,
    primary, hostile and story — and moving one moves the shades that belong
    to it, as far from it as they were in the copied theme. **All colours**
    sets any of the fourteen on its own. A preview shows the result, and the
    editor names any role the rules below refuse, with its contrast; it will
-   not save until the theme passes. While you wear your own theme, the same
-   button reads **Edit colours** and changes it in place, and the share button
-   beside it exports it as a theme file, ready to import elsewhere or to
-   contribute.
+   not save until the theme passes. The edit button beside a theme of your own
+   changes it in place, and the share button beside any theme exports it as a
+   theme file, ready to import elsewhere or to contribute.
 
 A theme made in the app is stored like an imported one, under an id of its
 own (`custom-1`, `custom-2`…), and counts as imported everywhere below.
 
 An imported theme is stored under its `id`, so importing a revised version
 replaces the old one. That is the edit-and-reimport loop while you make one.
-An import may not take the id of a built-in or shipped theme. Removing an
-imported theme (the bin beside it while it is picked) goes back to NEON.
+An import may not take the id of a built-in or shipped theme. If a theme you
+imported ships with the app later, under the same id, you get the shipped one.
+Removing an imported theme (the bin beside it) goes back to NEON if you were
+wearing it.
 
 Imported themes are part of a backup (Settings → Data), so a new phone gets them
 back with everything else. Restoring a backup in full leaves exactly the themes
@@ -127,8 +128,11 @@ app.
 
 ## Contributing a theme
 
-To ship a theme with the app, open a pull request that adds one file,
-`assets/themes/<id>.json`. Before you do:
+To ship a theme with the app, send it in with
+[the form](https://github.com/jbinder/sprawlrun/issues/new?template=theme_submission.yml):
+paste the exported file and say who made it. No git needed. Or open a pull
+request that adds one file, `assets/themes/<id>.json`. Shipped themes are under
+the app's MIT licence, so send in only what you made yourself. Before you do:
 
 1. **Import it and live with it.** Look at the dashboard, a run, the summary,
    the achievement wall and Settings. A colour that looks fine in a swatch can
@@ -136,8 +140,9 @@ To ship a theme with the app, open a pull request that adds one file,
 2. **Keep `success` a green** (hue 80–165°), so a met goal looks met in every
    theme. Keep the roles apart in hue as well as in value: `hostile` must not
    read as `primary`, and `failure` must not read as `hostile`.
-3. **Set `author`.** It is shown under the swatch while the theme is picked.
-4. **Run the tests.** `flutter test test/theme_test.dart` checks the file name
+3. **Set `author`.** It is shown under the swatch while the theme is picked. The
+   form asks for it, so a theme sent in that way can leave it out.
+4. **Run the tests,** for a pull request. `flutter test test/theme_test.dart` checks the file name
    matches the `id`, the id and name are unique, the contrast rules above hold,
    `success` is green, `names` only uses languages the app ships, and `author`
    is there. You need Flutter for this. If you don't have it, importing the
@@ -145,5 +150,6 @@ To ship a theme with the app, open a pull request that adds one file,
    request anyway: GitHub Actions runs the tests on it and shows the result
    on the pull request.
 
-Then add the theme to the list in the README's *Everything it does* section and
-to the store descriptions in `fastlane/metadata/android/*/full_description.txt`.
+In a pull request, also add the theme to the list in the README's *Everything it
+does* section and to the store descriptions in
+`fastlane/metadata/android/*/full_description.txt`.

@@ -198,9 +198,10 @@ next October if you do not finish. One switch in Settings turns it all off.
 - Twenty missions across two campaigns, paced to the target you pick
 - Seasonal events: from 10 October to 2 November the app takes on a Halloween
   look and sound, with a four-mission operation of its own — switchable off
-- Four colour themes to pick from in Settings — neon, synthwave, glacier and
-  volt — or make your own in the app's theme editor, with a colour picker and a
-  live readability check, or import one; a season dresses over them while it lasts
+- Eight colour themes to pick from in Settings — neon, synthwave, glacier and
+  volt, and from the community vanguard, toxic, mint and oxide — or make your own
+  in the app's theme editor, with a colour picker and a live readability check, or
+  import one; a season dresses over them while it lasts
 - Optional reminders from your handler on the days and at the time you choose,
   written in the voice of the campaign you are playing
 - Optional signal noise: the city talking between runs, silent, never overnight,
@@ -337,13 +338,16 @@ a song.
 
 A colour theme is one small JSON file: a name and fourteen colours, each
 named for its role (`primary`, `hostile`, `story`, `success`…) rather than its
-hue. Make your own in the app with **Settings → Identity → Colours → Make your own**
+hue. Make your own in the app with **RIG → Themes → Make your own**
 and export it with the share button, or import a file with **Import theme**,
-with no rebuild needed. To ship one with the app, add it to `assets/themes/` in
-a pull request. The app finds it there by itself, and `test/theme_test.dart`
-checks that it stays readable. A mission pack can bring a theme of its own,
+with no rebuild needed. To ship one with the app,
+[submit it with the form](https://github.com/jbinder/sprawlrun/issues/new?template=theme_submission.yml),
+or add it to `assets/themes/` in a pull request. The app finds it there by itself,
+and `test/theme_test.dart` checks that it stays readable. A mission pack can bring a theme of its own,
 worn while the pack is selected. See **[docs/THEMES.md](docs/THEMES.md)** for the
 format, the rules and `glacier.json` as a worked example.
+
+- **Vanguard, Toxic, Mint and Oxide** — [@cristian01215](https://github.com/cristian01215)
 
 <br>
 
@@ -385,7 +389,7 @@ Android SDK notes, learned the hard way:
 
 ```bash
 flutter analyze                # clean
-flutter test                   # 927 tests
+flutter test                   # 969 tests
 ```
 
 GitHub Actions runs both on every push and pull request (`.github/workflows/tests.yml`),

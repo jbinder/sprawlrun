@@ -28,7 +28,7 @@ EVERYTHING IT DOES
 
 - Twenty missions across two campaigns, paced to whatever target you pick
 - Seasonal events: a Halloween look, sound and four-mission operation from 10 October to 2 November, switchable off
-- Four colour themes to pick from (neon, synthwave, glacier and volt), or make your own with the built-in theme editor and colour picker, or import one
+- Eight colour themes to pick from (neon, synthwave, glacier and volt, and from the community vanguard, toxic, mint and oxide), or make your own with the built-in theme editor and colour picker, or import one
 - Pursuits scaled to your own pace from the last three minutes, or switched off
 - Each kilometre or mile read out with its split and your total time — between scenes on a mission
 - Eleven synthesised voices that duck your music and hand it back

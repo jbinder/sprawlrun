@@ -17,6 +17,9 @@ class ProjectLinks {
   /// The form for suggesting a track or album for [findMusic].
   static final Uri suggestMusic = Uri.https('github.com', '$_repo/issues/new', {'template': 'music_suggestion.yml'});
 
+  /// The form for sending in a colour theme to ship with the app.
+  static final Uri submitTheme = Uri.https('github.com', '$_repo/issues/new', {'template': 'theme_submission.yml'});
+
   /// Where to get music for a folder. The browser goes there; the app does not.
   static final Uri findMusic = Uri.https('github.com', '$_repo/blob/main/docs/FIND_MUSIC.md');
 

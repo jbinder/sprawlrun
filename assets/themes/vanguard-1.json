@@ -1,0 +1,21 @@
+{
+  "id": "vanguard-1",
+  "name": "VANGUARD",
+  "author": "cristian01215",
+  "colours": {
+    "background": "#0B0404",
+    "panel": "#190A0A",
+    "panelRaised": "#261011",
+    "rule": "#3D1E21",
+    "primary": "#FF0000",
+    "primaryDim": "#960F0A",
+    "hostile": "#FFDD00",
+    "hostileDim": "#665A11",
+    "story": "#FF972D",
+    "success": "#39FF88",
+    "failure": "#FF3B4E",
+    "locked": "#3E525F",
+    "text": "#D6E8F2",
+    "textDim": "#7C93A3"
+  }
+}

@@ -51,6 +51,19 @@ void main() {
       expect(File('CONTRIBUTING.md').readAsStringSync(), contains('docs/FIND_MUSIC.md'));
     });
 
+    test('the theme form asks for the file and the permission, and the docs lead to it', () {
+      final source = form(ProjectLinks.submitTheme.queryParameters['template']!);
+      for (final field in ['theme', 'author', 'names', 'more', 'licence']) {
+        expect(source, contains('id: $field'), reason: field);
+      }
+      expect('required: true'.allMatches(source).length, 2, reason: 'the theme and the permission');
+      expect(source, contains('MIT'));
+      for (final page in ['docs/THEMES.md', 'CONTRIBUTING.md', 'README.md']) {
+        expect(File(page).readAsStringSync(), contains('template=theme_submission.yml'), reason: page);
+      }
+      expect(File('docs/THEMES.md').readAsStringSync(), contains('\n## What every theme must pass\n'), reason: 'the form links to it');
+    });
+
     test('every entry on the music page is complete', () {
       final page = File('docs/FIND_MUSIC.md').readAsStringSync();
       expect(page.indexOf('## Music runners suggest'), lessThan(page.indexOf('## Where to look')), reason: 'the people first');
@@ -114,9 +127,10 @@ void main() {
     testWidgets('each opens its own page', (tester) async {
       await pump(tester, browser: true);
       await tester.tap(find.text(l10n.contributeIdea.toUpperCase()));
+      await tester.tap(find.text(l10n.contributeTheme.toUpperCase()));
       await tester.tap(find.text(l10n.contributeHow.toUpperCase()));
       await tester.pump();
-      expect(opened, [ProjectLinks.idea, ProjectLinks.contributing]);
+      expect(opened, [ProjectLinks.idea, ProjectLinks.submitTheme, ProjectLinks.contributing]);
     });
 
     testWidgets('says so when nothing can open it, with the address to copy', (tester) async {

@@ -164,7 +164,19 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.text(option).last);
       // The answer resumes in the fake zone and then writes the profile, so the
-      // real file I/O needs turns outside it before the screen rebuilds.
+      // real file I/O needs turns outside it before the screen rebuilds: until
+      // the row says so, since a fixed few milliseconds of real time was not
+      // always enough on a slow CI runner.
+      final shown = find.descendant(
+        of: find.ancestor(of: find.text('Run music'), matching: find.byType(Row)).first,
+        matching: find.text(option),
+      );
+      for (var i = 0; i < 200 && shown.evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(shown, findsOneWidget, reason: 'the choice never reached the screen');
+      // And the rest of it: the dialog closing, the signals planned anew.
       for (var i = 0; i < 10; i++) {
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
         await tester.pump(const Duration(milliseconds: 100));

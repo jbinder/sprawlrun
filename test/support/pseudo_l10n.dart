@@ -456,6 +456,12 @@ class PseudoL extends L {
   String get storyVoiceMissing => pseudo(_en.storyVoiceMissing);
 
   @override
+  String get storyVoiceOriginal => pseudo(_en.storyVoiceOriginal);
+
+  @override
+  String get packVoiceMissing => pseudo(_en.packVoiceMissing);
+
+  @override
   String get setYourTarget => pseudo(_en.setYourTarget);
 
   @override

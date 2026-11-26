@@ -12,6 +12,7 @@ import 'package:sprawl_run/models/mission.dart';
 import 'package:sprawl_run/models/pack_strings.dart';
 import 'package:sprawl_run/models/profile.dart';
 import 'package:sprawl_run/models/signal_log.dart';
+import 'package:sprawl_run/screens/mission_brief_screen.dart';
 import 'package:sprawl_run/services/signal_library.dart';
 import 'package:sprawl_run/state/app_state.dart';
 
@@ -142,6 +143,26 @@ void main() {
       final line = linesOf(localizePack(pack, 'en', pack.translations['en']!)).first;
       expect((line.text, line.language, line.original, line.originalLanguage), ("It's 22:10.", 'en', 'Son las 22:10.', 'es'));
       expect(localizePack(pack, 'es', const {'r01.title': 'x'}), same(pack), reason: 'shown as written');
+    });
+
+    test('warns in the briefing when the phone cannot speak it as shown', () {
+      final all = {'r01.title': 'T', 'r01.r01_b0.0': 'L', 'r01.r01_b0.escaped.0': 'E', 'r01.r01_b0.caught.0': 'C'};
+      String? warning(MissionPack pack, Set<String> voices) =>
+          briefingVoiceWarning(l10n, pack.missions.single, (l) => l == 'en' || voices.contains(l));
+      final own = spanish();
+      final intoFrench = localizePack(own, 'fr', all);
+      final english = spanish(language: null);
+
+      expect(own.missions.single.writtenIn, 'es');
+      expect(intoFrench.missions.single.writtenIn, 'es');
+      expect(english.missions.single.writtenIn, isNull);
+      expect(warning(own, {'es'}), isNull);
+      expect(warning(own, {}), l10n.packVoiceMissing);
+      expect(warning(intoFrench, {'es', 'fr'}), isNull);
+      expect(warning(intoFrench, {'es'}), l10n.storyVoiceOriginal);
+      expect(warning(intoFrench, {}), l10n.packVoiceMissing);
+      expect(warning(localizePack(english, 'fr', all), {}), l10n.storyVoiceMissing);
+      expect(warning(english, {}), isNull);
     });
   });
 

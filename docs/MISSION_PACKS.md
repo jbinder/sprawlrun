@@ -43,7 +43,8 @@ but later fails to load is skipped, with the error listed in Settings.
 `language` is the language the pack is written in, as a two-letter code:
 `"es"`, `"fr"`. Its lines are spoken by an offline voice of that language
 when the phone has one, each speaker keeping their own pitch and pace, and by
-the speech engine's default voice when it has none. Leave it out for a pack in
+the speech engine's default voice when it has none, which the briefing
+warns about. Leave it out for a pack in
 English. Without it a pack written in another language is read by an English
 voice, which mangles every word. It does not change the app's interface
 language, so the intel notice and split readouts stay in whatever language
@@ -303,8 +304,11 @@ two-letter code, then each string by its key.
 ```
 
 A pack can be translated from any `language` it is written in, and into
-English too; a block in the pack's own language is refused. The examples
-here assume an English pack.
+English too; a block in the pack's own language is refused. A pack written
+in another language does not need an English translation: it plays as
+written wherever there is no translation into the app's language. Adding an
+`en` block lets runners who don't read the pack's language play it too. The
+examples here assume an English pack.
 
 The runner sees the translation when the app's language matches. Anything
 not translated stays in the pack's language, with one exception: **a mission is

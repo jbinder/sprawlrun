@@ -786,6 +786,15 @@
   "@storyVoiceMissing": {
     "description": "On the briefing of a translated mission, when the phone cannot speak the translation. The text on screen is still translated; only the speech is English."
   },
+  "storyVoiceOriginal": "This phone has no offline voice for this language, so the transmissions are spoken in the language the pack is written in. Install one in Android's text-to-speech settings to hear them translated.",
+  "@storyVoiceOriginal": {
+    "description": "On the briefing of a translated mission from a pack written in a language other than English, when the phone cannot speak the translation. The text on screen is still translated; the speech is in the pack's own language."
+  },
+  "packVoiceMissing": "This phone has no offline voice for the language this pack is written in, so its default voice reads the transmissions and may mispronounce them. Install one in Android's text-to-speech settings.",
+  "@packVoiceMissing": {
+    "description": "On the briefing of a mission from a pack written in a language the phone has no offline voice for, such as a community pack in French."
+  },
+
   "setYourTarget": "SET YOUR TARGET",
   "@setYourTarget": {
     "description": "Section header above the goal picker (time or distance)."

@@ -152,8 +152,8 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                           ),
                         ],
                       ),
-                      if (mission.translatedInto case final language?
-                          when state.profile.voiceEnabled && !state.narrator.hasVoiceFor(language)) ...[
+                      if (state.profile.voiceEnabled ? briefingVoiceWarning(L.of(context), mission, state.narrator.hasVoiceFor) : null
+                          case final warning?) ...[
                         const SizedBox(height: 14),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,7 +162,7 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                L.of(context).storyVoiceMissing,
+                                warning,
                                 style: CyType.body(size: 14, color: Cy.inkDim, height: 1.35),
                               ),
                             ),
@@ -287,6 +287,21 @@ class _MissionBriefScreenState extends State<MissionBriefScreen> {
       ),
     );
   }
+}
+
+/// What the briefing says about how [mission] will sound, or null when the
+/// phone can speak it as it is shown. A translation it cannot speak falls
+/// back to the language the pack is written in; a pack in a language it
+/// cannot speak is read by the engine's default voice.
+@visibleForTesting
+String? briefingVoiceWarning(L l, Mission mission, bool Function(String language) hasVoiceFor) {
+  final written = mission.writtenIn ?? 'en';
+  if (mission.translatedInto case final language? when !hasVoiceFor(language)) {
+    if (written == 'en') return l.storyVoiceMissing;
+    return hasVoiceFor(written) ? l.storyVoiceOriginal : l.packVoiceMissing;
+  }
+  if (mission.translatedInto == null && !hasVoiceFor(written)) return l.packVoiceMissing;
+  return null;
 }
 
 /// Run or walk, as a small switch at the end of the SET YOUR TARGET line.

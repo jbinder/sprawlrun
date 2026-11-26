@@ -388,6 +388,14 @@ class Mission {
     for (final b in beats) ...b.lines,
   ].where((l) => l.original != null).firstOrNull?.language;
 
+  /// The language its pack is written in, null for English: what a
+  /// translated line falls back to when the phone cannot speak the
+  /// translation.
+  String? get writtenIn => switch ([for (final b in beats) ...b.lines].firstOrNull) {
+    final line? => line.original != null ? line.originalLanguage : line.language,
+    null => null,
+  };
+
   /// A mission of the pack [packId], its lines written in [language] (null
   /// for English).
   factory Mission.fromJson(Map<String, dynamic> json, {required String packId, String? language}) => Mission(

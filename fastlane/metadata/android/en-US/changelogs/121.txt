@@ -1,0 +1,1 @@
+Mission packs can now say which language they are written in ("language": "es"), so their lines are spoken by a voice of that language instead of being read by an English one. The briefing warns when the phone has no offline voice for it.

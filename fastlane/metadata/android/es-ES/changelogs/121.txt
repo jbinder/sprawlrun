@@ -1,0 +1,1 @@
+Los paquetes de misiones ahora pueden indicar en qué idioma están escritos ("language": "es"), para que sus frases las diga una voz de ese idioma en lugar de leerlas una voz inglesa. El informe avisa si el teléfono no tiene una voz sin conexión para ese idioma.

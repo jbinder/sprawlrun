@@ -48,7 +48,7 @@ TODO LO QUE HACE
 - Caminar en lugar de correr: las mismas misiones a paso de caminata, persecuciones que piden caminar rápido, y logros propios
 - Conteo de pasos opcional: pasos y cadencia de cada carrera, tiempo en movimiento cuando falla el GPS, y distancia a partir de los pasos donde no hay GPS, como en una cinta de correr, con una zancada aprendida de tus propias carreras. Desactivado salvo que lo actives, que es el único momento en que se pide el permiso de actividad física de Android
 - Cuarenta y ocho entradas del códice, cada una se desbloquea solo cuando un personaje la ha mencionado: no se puede leer por adelantado
-- Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio. Un paquete puede traer sus propios colores, y puedes desactivarlos
+- Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio. Un paquete puede estar escrito en cualquier idioma y se oye en ese idioma, y puede traer sus propios colores, que puedes desactivar
 - Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd
 - Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
 - Copia automática opcional después de cada carrera, en la carpeta que elijas; si quieres, una que una app de sincronización como Syncthing copie a otro sitio

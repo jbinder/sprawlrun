@@ -35,9 +35,11 @@ void main() {
     List<String> missionIds = const ['gl01'],
     Object? translations,
     Object? theme,
+    Object? language,
   }) =>
       jsonEncode({
         'id': id,
+        'language': ?language,
         'translations': ?translations,
         'theme': ?theme,
         'title': title,
@@ -150,6 +152,19 @@ void main() {
       expect(await refusal(pack(translations: ['es'])), contains('"translations"'));
       expect(await refusal(pack(translations: {'Spanish': <String, String>{}})), contains('"translations"'));
       expect(await refusal(pack(translations: {'en': <String, String>{}})), contains('"translations"'));
+    });
+
+    test('a language that is not a language code', () async {
+      expect(await refusal(pack(language: 'Spanish')), contains('"language"'));
+      expect(await refusal(pack(language: 7)), contains('"language"'));
+      await repo.importPack(pack(language: 'es-AR'));
+      expect((await repo.loadPacks()).singleWhere((p) => p.id == 'ghost_line').language, 'es');
+    });
+
+    test('a pack in another language translates into English, never into its own', () async {
+      expect(await refusal(pack(language: 'es', translations: {'es': <String, String>{}})), contains('"translations"'));
+      await repo.importPack(pack(language: 'es', translations: {'en': {'gl01.title': 'Op one'}}));
+      expect((await repo.loadPacks()).singleWhere((p) => p.id == 'ghost_line').translations.keys, ['en']);
     });
 
     test('a translated string the pack does not have, named', () async {

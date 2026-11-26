@@ -75,6 +75,76 @@ void main() {
     expect(english.language, isNull);
   });
 
+  group('a pack written in another language', () {
+    MissionPack spanish({Object? language = 'es', Map<String, Object?>? translations}) => MissionPack.fromJson({
+      'id': 'ruido',
+      'title': 'RUIDO',
+      'language': ?language,
+      'translations': ?translations,
+      'missions': [
+        {
+          'id': 'r01',
+          'order': 1,
+          'codename': 'OP 1',
+          'title': 'Ruido de fondo',
+          'suggestedGoal': {'type': 'time', 'value': 1200},
+          'beats': [
+            {
+              'id': 'r01_b0',
+              'at': {'seconds': 0},
+              'lines': [
+                {'speaker': 'KESTREL', 'text': 'Son las 22:10.'},
+              ],
+              'chase': {
+                'pursuer': 'DRON',
+                'escaped': [
+                  {'speaker': 'KESTREL', 'text': 'Lo perdiste.'},
+                ],
+                'caught': [
+                  {'speaker': 'KESTREL', 'text': 'Te tiene.'},
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    List<StoryLine> linesOf(MissionPack pack) {
+      final beat = pack.missions.single.beats.single;
+      return [...beat.lines, ...beat.chase!.escapedLines, ...beat.chase!.caughtLines];
+    }
+
+    test('has every line, chases too, in its language and from the pack', () {
+      expect(linesOf(spanish()).map((l) => (l.language, l.fromPack)), everyElement(('es', true)));
+      expect(spanish(language: 'ES-ar').language, 'es');
+    });
+
+    test('is English when it says nothing, says so, or says something unreadable', () {
+      for (final language in [null, 'en', 'Spanish']) {
+        final pack = spanish(language: language);
+        expect(pack.language, 'en');
+        expect(linesOf(pack).map((l) => l.language), everyElement(isNull), reason: '$language');
+      }
+      final primeLines = [
+        for (final m in prime.missions)
+          for (final b in m.beats) ...[...b.lines, ...?b.chase?.escapedLines, ...?b.chase?.caughtLines],
+      ];
+      expect(primeLines.map((l) => (l.language, l.fromPack)), everyElement((null, true)));
+    });
+
+    test('translates into English, keeping the line it came from and its language', () {
+      final pack = spanish(translations: {
+        'en': {'r01.title': 'Background noise', 'r01.r01_b0.0': "It's 22:10.", 'r01.r01_b0.escaped.0': 'Lost it.', 'r01.r01_b0.caught.0': 'Got you.'},
+        'es': {'r01.title': 'ignorado'},
+      });
+      expect(pack.translations.keys, ['en'], reason: 'a translation into its own language is left out');
+      final line = linesOf(localizePack(pack, 'en', pack.translations['en']!)).first;
+      expect((line.text, line.language, line.original, line.originalLanguage), ("It's 22:10.", 'en', 'Son las 22:10.', 'es'));
+      expect(localizePack(pack, 'es', const {'r01.title': 'x'}), same(pack), reason: 'shown as written');
+    });
+  });
+
   test('a mission is translated whole or not at all', () {
     final strings = everything(prime);
     final first = prime.missions.first;

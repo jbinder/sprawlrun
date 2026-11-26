@@ -17,20 +17,30 @@ class StoryLine {
     this.pauseAfterMs = 260,
     this.language,
     this.original,
+    this.originalLanguage,
+    this.fromPack = false,
   });
 
   final String speaker;
   final String text;
 
-  /// The language [text] is in, when that is not the English a pack is
-  /// written in: a line the app wrote itself — a split readout, an intel
-  /// notice — in the interface language, or a pack line from a translation.
-  /// Null for English. Never read from the JSON.
+  /// The language [text] is in, null for English: a line the app wrote
+  /// itself — a split readout, an intel notice — in the interface language,
+  /// a pack line from a translation, or a line of a pack written in another
+  /// language (`MissionPack.language`). Never read from the line's JSON.
   final String? language;
 
-  /// The English a translated pack line was made from, so a phone with no
-  /// voice for [language] can still speak the line. Null otherwise.
+  /// The text a translated pack line was made from, so a phone with no voice
+  /// for [language] can still speak the line. Null otherwise.
   final String? original;
+
+  /// The language [original] is in, null for English: the pack's own.
+  final String? originalLanguage;
+
+  /// Whether a pack wrote the line, as opposed to the app. A pack's speakers
+  /// each keep a voice of their own in any language; a line the app wrote
+  /// takes the language's first.
+  final bool fromPack;
 
   /// Sound effect filename (without extension) played before/after the line.
   final String? sfxBefore;
@@ -38,12 +48,15 @@ class StoryLine {
 
   final int pauseAfterMs;
 
-  factory StoryLine.fromJson(Map<String, dynamic> json) => StoryLine(
+  /// A line of a pack written in [language], null for English.
+  factory StoryLine.fromJson(Map<String, dynamic> json, {String? language}) => StoryLine(
     speaker: json['speaker'] as String? ?? 'SYSTEM',
     text: json['text'] as String? ?? '',
     sfxBefore: json['sfxBefore'] as String?,
     sfxAfter: json['sfxAfter'] as String?,
     pauseAfterMs: (json['pauseAfterMs'] as num?)?.toInt() ?? 260,
+    language: language,
+    fromPack: true,
   );
 
   Map<String, dynamic> toJson() => {
@@ -79,12 +92,12 @@ class ChaseSpec {
   final List<StoryLine> escapedLines;
   final List<StoryLine> caughtLines;
 
-  factory ChaseSpec.fromJson(Map<String, dynamic> json) => ChaseSpec(
+  factory ChaseSpec.fromJson(Map<String, dynamic> json, {String? language}) => ChaseSpec(
     duration: Duration(seconds: (json['seconds'] as num?)?.toInt() ?? 60),
     paceFactor: (json['paceFactor'] as num?)?.toDouble() ?? 1.12,
     pursuer: json['pursuer'] as String? ?? 'unknown',
-    escapedLines: _lines(json['escaped']),
-    caughtLines: _lines(json['caught']),
+    escapedLines: _lines(json['escaped'], language),
+    caughtLines: _lines(json['caught'], language),
   );
 
   Map<String, dynamic> toJson() => {
@@ -96,8 +109,9 @@ class ChaseSpec {
   };
 }
 
-List<StoryLine> _lines(Object? raw) =>
-    (raw as List?)?.map((e) => StoryLine.fromJson(Map<String, dynamic>.from(e as Map))).toList() ?? const [];
+List<StoryLine> _lines(Object? raw, String? language) =>
+    (raw as List?)?.map((e) => StoryLine.fromJson(Map<String, dynamic>.from(e as Map), language: language)).toList() ??
+    const [];
 
 /// When a beat fires. A beat triggers as soon as *any* configured threshold is
 /// crossed, so an author can pin an intro to t=0, space the middle of a mission
@@ -152,11 +166,13 @@ class StoryBeat {
   /// Short banner flashed on the HUD while the beat plays.
   final String? headline;
 
-  factory StoryBeat.fromJson(Map<String, dynamic> json) => StoryBeat(
+  factory StoryBeat.fromJson(Map<String, dynamic> json, {String? language}) => StoryBeat(
     id: json['id'] as String,
     trigger: BeatTrigger.fromJson(Map<String, dynamic>.from(json['at'] as Map)),
-    lines: _lines(json['lines']),
-    chase: json['chase'] == null ? null : ChaseSpec.fromJson(Map<String, dynamic>.from(json['chase'] as Map)),
+    lines: _lines(json['lines'], language),
+    chase: json['chase'] == null
+        ? null
+        : ChaseSpec.fromJson(Map<String, dynamic>.from(json['chase'] as Map), language: language),
     unlocksCodex: json['unlocksCodex'] as String?,
     headline: json['headline'] as String?,
   );
@@ -372,7 +388,9 @@ class Mission {
     for (final b in beats) ...b.lines,
   ].where((l) => l.original != null).firstOrNull?.language;
 
-  factory Mission.fromJson(Map<String, dynamic> json, {required String packId}) => Mission(
+  /// A mission of the pack [packId], its lines written in [language] (null
+  /// for English).
+  factory Mission.fromJson(Map<String, dynamic> json, {required String packId, String? language}) => Mission(
     id: json['id'] as String,
     packId: packId,
     order: (json['order'] as num).toInt(),
@@ -385,7 +403,7 @@ class Mission {
     epilogue: json['epilogue'] as String?,
     suggestedGoal: RunGoal.fromJson(Map<String, dynamic>.from(json['suggestedGoal'] as Map)),
     beats: (json['beats'] as List? ?? [])
-        .map((e) => StoryBeat.fromJson(Map<String, dynamic>.from(e as Map)))
+        .map((e) => StoryBeat.fromJson(Map<String, dynamic>.from(e as Map), language: language))
         .toList(),
     codex: (json['codex'] as List? ?? [])
         .map((e) => CodexEntry.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -409,12 +427,18 @@ class MissionPack {
     this.translations = const {},
     this.themeId,
     this.ownTheme,
+    this.language = 'en',
   });
 
   final String id;
   final String title;
   final String tagline;
   final List<Mission> missions;
+
+  /// The language the pack is written in, as a code such as `es`: English
+  /// unless the file says otherwise. Its story lines are spoken by a voice of
+  /// it, and `translations` are into the other languages.
+  final String language;
 
   /// Who wrote it, if the file says. A name, so never translated.
   final String? author;
@@ -435,6 +459,7 @@ class MissionPack {
     translations: {...translations, language: strings},
     themeId: themeId,
     ownTheme: ownTheme,
+    language: this.language,
   );
 
   /// The colours a pack asks to be drawn in while it is selected: a theme it
@@ -472,8 +497,15 @@ class MissionPack {
 
   factory MissionPack.fromJson(Map<String, dynamic> json) {
     final id = json['id'] as String;
+    final language = readLanguage(json['language']) ?? 'en';
     final missions = (json['missions'] as List? ?? [])
-        .map((e) => Mission.fromJson(Map<String, dynamic>.from(e as Map), packId: id))
+        .map(
+          (e) => Mission.fromJson(
+            Map<String, dynamic>.from(e as Map),
+            packId: id,
+            language: language == 'en' ? null : language,
+          ),
+        )
         .toList()
       ..sort((a, b) => a.order.compareTo(b.order));
     final (themeId, ownTheme) = _theme(json['theme']);
@@ -490,17 +522,29 @@ class MissionPack {
       missions: missions,
       signals: _pool(json['signals']),
       season: json['season'] as String?,
-      translations: _translations(json['translations']),
+      translations: _translations(json['translations'], language),
+      language: language,
     );
   }
 
+  /// A pack's `language` as a lower-case code (`es` from `es`, `ES` or
+  /// `es-AR`), or null when it is missing or not a language code. Read
+  /// leniently here — a bad one leaves the pack English — and refused, with
+  /// a reason, by the importer.
+  static String? readLanguage(Object? raw) {
+    if (raw is! String) return null;
+    final code = raw.trim().split(RegExp('[-_]')).first.toLowerCase();
+    return RegExp(r'^[a-z]{2,3}$').hasMatch(code) ? code : null;
+  }
+
   /// A pack's own `translations` block — language code → key → text — read
-  /// leniently: anything that is not a string is left out. The importer is
+  /// leniently: anything that is not a string is left out, and so is a block
+  /// into the language the pack is written in ([own]). The importer is
   /// where a malformed block is refused, with a reason.
-  static Map<String, Map<String, String>> _translations(Object? raw) => {
+  static Map<String, Map<String, String>> _translations(Object? raw, String own) => {
     if (raw is Map)
       for (final MapEntry(:key, :value) in raw.entries)
-        if (key is String && key != 'en' && value is Map)
+        if (key is String && key != own && value is Map)
           key: {
             for (final e in value.entries)
               if (e.key is String && e.value is String) e.key as String: e.value as String,

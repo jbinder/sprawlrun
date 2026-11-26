@@ -57,6 +57,23 @@ void main() {
       expect((spoken.speaker, spoken.text, spoken.language), ('KESTREL', 'Channel is clean.', null));
     });
 
+    test('falls back to the language its pack is written in, not to English', () {
+      const fromSpanish = StoryLine(
+        speaker: 'KESTREL',
+        text: 'Clean channel.',
+        language: 'en',
+        original: 'Canal limpio.',
+        originalLanguage: 'es',
+        fromPack: true,
+      );
+      final spoken = AudioNarrator.spokenForm(
+        const StoryLine(speaker: 'KESTREL', text: 'Canal propre.', language: 'fr', original: 'Canal limpio.', originalLanguage: 'es', fromPack: true),
+        hasVoiceFor: (l) => l != 'fr',
+      );
+      expect((spoken.text, spoken.language, spoken.fromPack), ('Canal limpio.', 'es', true));
+      expect(AudioNarrator.spokenForm(fromSpanish, hasVoiceFor: (_) => true), same(fromSpanish));
+    });
+
     test('but a line the app wrote has no English to fall back to', () {
       const readout = StoryLine(speaker: 'SYSTEM', text: 'Kilómetro dos.', language: 'es');
       expect(AudioNarrator.spokenForm(readout, hasVoiceFor: (_) => false), same(readout));

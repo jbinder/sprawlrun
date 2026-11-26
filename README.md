@@ -265,6 +265,8 @@ next October if you do not finish. One switch in Settings turns it all off.
 - The story too: all three campaigns are in Spanish, and a community pack can carry
   its own translations. A mission switches language only when all of it is
   translated, so a scene never changes language partway through
+- A community pack can be written in any language: it names it, and its lines are
+  spoken by a voice of that language rather than read by an English one
 - Translated lines are spoken by an offline voice of that language when the phone
   has one; otherwise in the English original, and the briefing says why
 - Place and character names stay as they are, so every runner calls them the same

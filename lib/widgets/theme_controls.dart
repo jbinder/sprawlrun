@@ -7,15 +7,17 @@ import '../theme/cyber_theme.dart';
 import '../l10n/l10n.dart';
 import '../screens/themes_screen.dart';
 import 'library_list.dart';
+import 'panels.dart';
 
-/// The Colours row of Settings: a swatch per theme. Making, importing, sharing
-/// and removing them is on the RIG screen, since themes are data and picking
-/// one is a setting.
+/// The Colours row of Settings: the theme being worn, and a dialog of a swatch
+/// per theme to pick another. Making, importing, sharing and removing them is
+/// on the RIG screen, since themes are data and picking one is a setting.
 ///
 /// Each swatch is drawn in its theme's own palette — a name alone says little
-/// about a colour — and picking one recolours the app at once, so the screen
-/// itself is the preview. Four to a row, wrapping, so contributed themes can
-/// keep arriving without a redesign.
+/// about a colour — and picking one closes the dialog and recolours the app at
+/// once, so the screen itself is the preview. The swatches live in a dialog,
+/// four to a row, so contributed themes can keep arriving without crowding
+/// Settings.
 class ThemeControls extends StatelessWidget {
   const ThemeControls({super.key, required this.label});
 
@@ -36,28 +38,31 @@ class ThemeControls extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: CyType.body(size: 15, weight: FontWeight.w600)),
-        const SizedBox(height: 10),
-        LayoutBuilder(
-          builder: (context, box) {
-            final width = (box.maxWidth - _gap * (_perRow - 1)) / _perRow;
-            return Wrap(
-              spacing: _gap,
-              runSpacing: 12,
-              children: [
-                for (final theme in state.themes)
-                  SizedBox(
-                    width: width,
-                    child: _Swatch(
-                      name: theme.nameIn(language),
-                      palette: theme.palette,
-                      selected: theme.id == current.id,
-                      onTap: () => state.updateProfile(state.profile.copyWith(theme: theme.id)),
+        Semantics(
+          button: true,
+          child: InkWell(
+            onTap: () => _pick(context, state),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(child: Text(label, style: CyType.body(size: 15, weight: FontWeight.w600))),
+                  PalettePreview(palette: current.palette, width: 44, height: 28),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      current.nameIn(language).toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CyType.mono(size: 12, color: Cy.cyan),
                     ),
                   ),
-              ],
-            );
-          },
+                  const SizedBox(width: 4),
+                  Icon(Icons.unfold_more, size: 16, color: Cy.inkDim),
+                ],
+              ),
+            ),
+          ),
         ),
         if (season != null) ...[
           const SizedBox(height: 10),
@@ -74,6 +79,58 @@ class ThemeControls extends StatelessWidget {
         RigLink(l.settingLookRig, open: (_) => const ThemesScreen()),
       ],
     );
+  }
+
+  /// Every theme as a swatch. The answer is applied once the dialog has gone,
+  /// as the other pickers in Settings do, so the recolour lands on Settings.
+  Future<void> _pick(BuildContext context, AppState state) async {
+    final language = state.locale.languageCode;
+    final picked = await showDialog<String>(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: NeonPanel(
+          accent: Cy.cyan,
+          lit: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label.toUpperCase(), style: CyType.display(size: 14, color: Cy.cyan)),
+              const SizedBox(height: 14),
+              Flexible(
+                child: SingleChildScrollView(
+                  child: LayoutBuilder(
+                    builder: (context, box) {
+                      final width = (box.maxWidth - _gap * (_perRow - 1)) / _perRow;
+                      return Wrap(
+                        spacing: _gap,
+                        runSpacing: 12,
+                        children: [
+                          for (final theme in state.themes)
+                            SizedBox(
+                              width: width,
+                              child: _Swatch(
+                                name: theme.nameIn(language),
+                                palette: theme.palette,
+                                selected: theme.id == state.theme.id,
+                                onTap: () => Navigator.of(context).pop(theme.id),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (picked != null && picked != state.theme.id) {
+      await state.updateProfile(state.profile.copyWith(theme: picked));
+    }
   }
 }
 
@@ -113,19 +170,20 @@ class _Swatch extends StatelessWidget {
 
 /// A theme drawn in its own colours, which says more than its name.
 class PalettePreview extends StatelessWidget {
-  const PalettePreview({super.key, required this.palette, this.selected = false, this.width});
+  const PalettePreview({super.key, required this.palette, this.selected = false, this.width, this.height = 40});
 
   final CyPalette palette;
   final bool selected;
   final double? width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     Widget bar(Color c) => Expanded(child: Container(height: 4, color: c));
     return Container(
-      height: 40,
+      height: height,
       width: width,
-      padding: const EdgeInsets.all(7),
+      padding: EdgeInsets.all(height < 40 ? 5 : 7),
       decoration: BoxDecoration(
         color: palette.v0id,
         border: Border.all(color: selected ? Cy.cyan : Cy.rule, width: selected ? 2 : 1),

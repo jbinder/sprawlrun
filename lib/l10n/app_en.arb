@@ -1739,7 +1739,7 @@
   },
   "settingLook": "Colours",
   "@settingLook": {
-    "description": "Setting: which colour scheme the whole app is drawn in. A row of swatches follows."
+    "description": "Setting: which colour scheme the whole app is drawn in. The row shows the current one; tapping it opens a swatch for every theme."
   },
   "settingLookPack": "{pack} wears its own colours while it is selected. Yours come back with another pack.",
   "@settingLookPack": {

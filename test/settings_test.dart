@@ -348,19 +348,28 @@ void main() {
   group('colours', () {
     tearDown(() => debugNow = null);
 
-    testWidgets('a swatch per theme in Settings, and tapping one picks it', (tester) async {
+    testWidgets('Settings shows the theme worn, and its dialog a swatch per theme to pick from', (tester) async {
       debugNow = DateTime(2026, 7, 27, 21);
       final state = await pumpSettings(tester);
       expect(state.profile.theme, 'neon', reason: 'the year-round look by default');
-      for (final name in ['NEON', 'SYNTHWAVE', 'GLACIER', 'VOLT']) {
-        expect(find.text(name), findsOneWidget);
-      }
+      expect(find.text('NEON'), findsOneWidget);
+      expect(find.text('GLACIER'), findsNothing, reason: 'the swatches are in the dialog, not on the screen');
       expect(find.text('IMPORT THEME'), findsNothing, reason: 'importing is on RIG');
       expect(find.text('Make, import and share themes under RIG.'), findsOneWidget);
 
+      await tester.tap(find.text('Colours'));
+      await tester.pump(const Duration(milliseconds: 300));
+      for (final theme in state.themes) {
+        expect(find.text(theme.name), findsWidgets, reason: theme.name);
+      }
       await tester.tap(find.text('GLACIER'));
-      await tester.pump(const Duration(milliseconds: 100));
+      // The choice is saved, which is real file I/O resumed in the fake zone.
+      for (var i = 0; i < 200 && find.text('GLACIER').evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 10)));
+        await tester.pump(const Duration(milliseconds: 100));
+      }
       expect(state.profile.theme, 'glacier');
+      expect(find.text('GLACIER'), findsOneWidget, reason: 'the dialog has gone and the row says so');
       expect(state.palette.cyan, state.theme.palette.cyan);
       expect(find.textContaining('wears its own colours'), findsNothing, reason: 'no season in July');
     });

@@ -431,6 +431,14 @@ void _screens(L strings, Map<String, String> Function(MissionPack) story) {
     expect(find.text(l10n.musicFolderChoose), findsOneWidget);
   });
 
+  testWidgets('settings, picking colours', (tester) async {
+    final state = await seed(tester, logicalSize: const Size(360, 6000));
+    await pumpShowcase(tester, const SettingsScreen(), state, delegates: delegates);
+    await tester.tap(find.text(l10n.settingLook));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(Dialog), findsOneWidget);
+  });
+
   testWidgets('story', (tester) async {
     final state = await seed(tester, logicalSize: const Size(360, 3000));
     await pumpShowcase(tester, const PacksScreen(), state, delegates: delegates);

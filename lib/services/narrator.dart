@@ -414,7 +414,7 @@ class AudioNarrator implements Narrator {
       // A story line is spread across the language's voices by speaker, the
       // way English ones are; a line the app wrote takes the first.
       final assigned = foreign
-          ? (line.original != null ? _voiceIn(language, speaker: key) : _voiceIn(language))
+          ? (line.fromPack ? _voiceIn(language, speaker: key) : _voiceIn(language))
           : own ?? _fallbackVoice;
       // Always set one way or the other: the engine keeps the last voice it
       // was given, which is somebody else's.
@@ -455,19 +455,22 @@ class AudioNarrator implements Narrator {
 
   /// What is actually said for [line]: the line itself, or — for a
   /// translated story line with no voice of its language on the phone — the
-  /// English it was made from, in the speaker's own voice, rather than the
-  /// translation read by whatever the engine falls back to. The screen still
-  /// shows the translation, and the briefing said why.
+  /// line it was made from, in the pack's own language and the speaker's own
+  /// voice, rather than the translation read by whatever the engine falls
+  /// back to. The screen still shows the translation, and the briefing said
+  /// why.
   @visibleForTesting
   static StoryLine spokenForm(StoryLine line, {required bool Function(String language) hasVoiceFor}) {
     final language = _languageOf(line);
-    if (line.original case final english? when language != null && !hasVoiceFor(language)) {
+    if (line.original case final source? when language != null && !hasVoiceFor(language)) {
       return StoryLine(
         speaker: line.speaker,
-        text: english,
+        text: source,
         sfxBefore: line.sfxBefore,
         sfxAfter: line.sfxAfter,
         pauseAfterMs: line.pauseAfterMs,
+        language: line.originalLanguage,
+        fromPack: line.fromPack,
       );
     }
     return line;

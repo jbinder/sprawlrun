@@ -3174,6 +3174,10 @@
       }
     }
   },
+  "packErrorLanguage": "The pack's \"language\" must be a language code such as \"es\".",
+  "@packErrorLanguage": {
+    "description": "Importing a mission pack whose language field is not a language code. Keep \"language\" and \"es\" as they are: a field name and a language code in the file."
+  },
   "packErrorTranslations": "The \"translations\" block must map language codes such as \"es\" to strings.",
   "@packErrorTranslations": {
     "description": "Keep \"translations\" and \"es\" as they are: a field name and a language code in the file."

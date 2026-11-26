@@ -44,10 +44,11 @@ Map<String, PackString> packStrings(MissionPack pack) {
 /// The pack's own text — tagline, codex categories, its signals — is
 /// translated string by string, since nothing there is read in sequence.
 ///
-/// Translated story lines carry the [language] and their English original;
-/// signals keep their English for the archive's reference.
+/// Translated story lines carry the [language] and the line they were made
+/// from, in the pack's own language; signals keep their source text for the
+/// archive's reference.
 MissionPack localizePack(MissionPack pack, String language, Map<String, String> translations) {
-  if (translations.isEmpty) return pack;
+  if (translations.isEmpty || language == pack.language) return pack;
   final strings = packStrings(pack);
   final incomplete = {
     for (final MapEntry(:key, :value) in strings.entries)
@@ -101,6 +102,8 @@ MissionPack _walk(MissionPack pack, _Offer offer, {String? language}) {
                 pauseAfterMs: line.pauseAfterMs,
                 language: language,
                 original: line.text,
+                originalLanguage: line.language,
+                fromPack: true,
               )
             : line;
       }(),
@@ -143,6 +146,7 @@ MissionPack _walk(MissionPack pack, _Offer offer, {String? language}) {
     season: pack.season,
     themeId: pack.themeId,
     ownTheme: pack.ownTheme,
+    language: pack.language,
     signals: pool('signals', pack.signals, ''),
     missions: [
       for (final m in pack.missions)

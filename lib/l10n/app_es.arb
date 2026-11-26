@@ -657,6 +657,7 @@
     "packErrorEmpty": "El paquete no contiene misiones.",
     "packErrorDuplicateId": "Dos misiones comparten el id \"{id}\".",
     "packErrorTheme": "No se puede usar el \"theme\" del paquete. {reason}",
+    "packErrorLanguage": "El \"language\" del paquete debe ser un código de idioma como \"es\".",
     "packErrorTranslations": "El bloque \"translations\" debe asociar códigos de idioma como \"es\" a textos.",
     "packErrorTranslationKey": "La traducción \"{language}\" tiene un texto que el paquete no tiene: \"{key}\".",
     "backupErrorNotABackup": "Eso no es una copia de seguridad de SPRAWL//RUN.",

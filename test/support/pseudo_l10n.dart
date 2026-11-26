@@ -1983,6 +1983,9 @@ class PseudoL extends L {
   String packErrorTheme(String reason) => pseudo(_en.packErrorTheme(reason));
 
   @override
+  String get packErrorLanguage => pseudo(_en.packErrorLanguage);
+
+  @override
   String get packErrorTranslations => pseudo(_en.packErrorTranslations);
 
   @override

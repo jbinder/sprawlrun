@@ -196,8 +196,10 @@ class MissionRepository {
         throw PackImportException(l10n.packErrorDuplicateId(m.id));
       }
     }
-    _checkTranslations((jsonDecode(source) as Map)['translations'], pack);
-    _checkTheme((jsonDecode(source) as Map)['theme']);
+    final raw = jsonDecode(source) as Map;
+    _checkLanguage(raw['language']);
+    _checkTranslations(raw['translations'], pack);
+    _checkTheme(raw['theme']);
 
     await externalDir.create(recursive: true);
     final target = File('${externalDir.path}/$fileName');
@@ -210,6 +212,12 @@ class MissionRepository {
     return pack;
   }
 
+  /// Refuses a `language` that is not a language code: read leniently, it
+  /// would leave the pack English, its lines read by an English voice.
+  static void _checkLanguage(Object? raw) {
+    if (raw != null && MissionPack.readLanguage(raw) == null) throw PackImportException(l10n.packErrorLanguage);
+  }
+
   /// Refuses a `translations` block that is not language code → key → text,
   /// or that names a string the pack does not have — a mistyped key would
   /// otherwise leave its mission silently in English, since a mission is only
@@ -219,7 +227,7 @@ class MissionRepository {
     if (raw is! Map) throw PackImportException(l10n.packErrorTranslations);
     final keys = packStrings(pack);
     for (final MapEntry(key: language, value: strings) in raw.entries) {
-      if (language is! String || !RegExp(r'^[a-z]{2,3}$').hasMatch(language) || language == 'en' || strings is! Map) {
+      if (language is! String || !RegExp(r'^[a-z]{2,3}$').hasMatch(language) || language == pack.language || strings is! Map) {
         throw PackImportException(l10n.packErrorTranslations);
       }
       for (final MapEntry(:key, :value) in strings.entries) {

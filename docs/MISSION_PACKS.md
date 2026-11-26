@@ -33,11 +33,21 @@ but later fails to load is skipped, with the error listed in Settings.
   "title": "SPRAWL PRIME",
   "tagline": "Ten runs through the BAMA corridor.",
   "author": "Your name",             // optional; shown with the pack, never translated
+  "language": "es",                  // optional; the language it is written in, "en" if left out
   "season": "samhain",               // optional; see below
   "theme": "glacier",                // optional; see below
   "missions": [ /* Mission */ ]
 }
 ```
+
+`language` is the language the pack is written in, as a two-letter code:
+`"es"`, `"fr"`. Its lines are spoken by an offline voice of that language
+when the phone has one, each speaker keeping their own pitch and pace, and by
+the speech engine's default voice when it has none. Leave it out for a pack in
+English. Without it a pack written in another language is read by an English
+voice, which mangles every word. It does not change the app's interface
+language, so the intel notice and split readouts stay in whatever language
+the runner picked.
 
 `season` makes a pack a seasonal event. It is offered only while that season
 is in force — `samhain` runs from 10 October to 2 November — and only if the
@@ -292,8 +302,12 @@ two-letter code, then each string by its key.
 }
 ```
 
+A pack can be translated from any `language` it is written in, and into
+English too; a block in the pack's own language is refused. The examples
+here assume an English pack.
+
 The runner sees the translation when the app's language matches. Anything
-not translated stays in English, with one exception: **a mission is
+not translated stays in the pack's language, with one exception: **a mission is
 translated whole or not at all.** Until every string of a mission has its
 translation, all of that mission plays in English, so a scene never switches
 language partway through. The pack's own text — tagline, codex categories,
@@ -332,8 +346,8 @@ English: lines 260 characters, signals 180, debrief openers 90.
 
 **Voices.** A translated line is spoken by an offline voice of that language
 when the phone has one installed, and each speaker keeps their pitch and
-pace. If the phone has none, the line is spoken in its English original while
-the screen shows the translation, and the briefing tells the runner why.
+pace. If the phone has none, the line is spoken as the pack has it, in its
+`language`, while the screen shows the translation, and the briefing tells the runner why.
 
 The packs that ship with the app keep their translations in separate files,
 `assets/missions/l10n/<pack>_<language>.arb`, which translators edit (see

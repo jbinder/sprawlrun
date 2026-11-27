@@ -1,72 +1,55 @@
-Tu app de correr no debería ser una hoja de cálculo. Debería estar persiguiéndote.
+Tu app para correr no debería parecer una hoja de cálculo. Debería perseguirte.
 
-SPRAWL//RUN es un registro de carreras convertido en juego, envuelto en dos campañas cyberpunk de diez misiones. En Sprawl Prime eres un mensajero en una megaciudad empapada de lluvia: un encargo en el Ninsei strip acaba en cargar con algo que no deja de transmitir, y termina cuarenta pisos arriba en una arcología corporativa, con una inteligencia que lleva diecinueve años contando un latido que no estaba allí. En Null Tide los distritos del sur están bajo el agua, algo en una casa de bombas lleva nueve segundos cada noche pidiendo perdón, y un corredor de salvamento necesita que alguien cruce el Drowned Mile con un papel antes de que vuelva el mar.
+**SPRAWL//RUN** es un rastreador de running con dos campañas cyberpunk de diez misiones. En **Sprawl Prime**, eres mensajero en una megaciudad lluviosa: un encargo en Ninsei Strip te enfrenta a algo que no deja de transmitir y a una inteligencia que lleva diecinueve años contando un latido inexistente. En **Null Tide**, los distritos del sur están inundados. Algo en una estación de bombeo se disculpa cada noche y un intermediario necesita que lleves un documento por Drowned Mile antes de que vuelva el mar.
 
-Todo está en español, la historia incluida: diálogos, informes, códice y mensajes de los personajes. Los nombres de lugares y personajes se quedan en su idioma original, para que todos los runners llamen igual a los mismos sitios. Si tu teléfono tiene una voz en español instalada, los personajes hablan en español; si no, oyes el original en inglés mientras lees la traducción.
+Escucha tu música. Cada pocos minutos, una interferencia la baja para que hable tu contacto. Once personajes tienen voces distintas.
 
-Escucha lo que sueles escuchar. Cada pocos minutos la app toma el audio: un chasquido de radio, tu música baja y tu contacto habla. Después te devuelve la música. Once personajes entre los paquetes de historia, cada uno con su propia voz sintetizada, para que sepas quién habla con el teléfono en el bolsillo.
+**ALGUIEN TE PERSIGUE**
 
-ALGUIEN TE PERSIGUE
+Un dron detecta tu ritmo. Para escapar, supera tu ritmo de los últimos tres minutos. La persecución se adapta a ti, ya corras a 4:00 o 7:00 min/km. Puedes desactivarla.
 
-Un dron registra tu forma de correr. Unos cobradores tiran abajo la puerta de una clínica. Un rastreo corporativo avanza por el circuito de refrigeración hacia ti. Para escapar tienes que superar tu propio ritmo de los últimos tres minutos —nunca un número arbitrario—, así que una persecución es un esfuerzo real tanto si corres a 4:00/km como a 7:00/km, e imposible en ninguno de los dos casos. Desactívalas si prefieres simplemente correr.
+**MÚSICA QUE SIGUE TU RITMO**
 
-MÚSICA QUE CORRE CONTIGO
+Seis temas de diez minutos, generados en vivo por el teléfono. La música se suaviza cuando bajas el ritmo y gana intensidad al acelerar, durante persecuciones o al llegar a la meta. Elige, mezcla, deja que la app decida o reproduce tus archivos. También puedes usar tu reproductor habitual.
 
-Seis canciones de diez minutos, de un paseo melancólico bajo la lluvia a un muro de acordes distorsionados. No hay grabaciones: tu teléfono las toca en directo, a partir de pequeños archivos de notas. Como se tocan y no se reproducen, siguen la carrera: si aflojas, la canción se aligera y baja el ritmo; si aprietas, te persiguen o llegas a tu meta, sube. Elige una, mézclalas, deja que la app elija según la carrera o pon tus propios archivos de una carpeta. O sigue con tu reproductor de siempre: nada de esto se activa hasta que lo elijas.
+**TÚ ELIGES LA META**
 
-TÚ FIJAS EL OBJETIVO
+Define un tiempo o distancia antes de cada misión. La historia se adapta; completar la meta cierra la operación. Si no, puedes volver a intentarlo. Todo cuenta.
 
-Antes de cada misión eliges un tiempo o una distancia. Doce minutos o veintiún kilómetros: la historia se adapta. Alcanza el objetivo y la operación es un éxito; si te quedas corto, sigue abierta para otro intento. Pasarte no es problema, todo cuenta.
+**LA CIUDAD SIGUE SIN TI**
 
-LA CIUDAD SIGUE SIN TI
+Elige cuándo recibir mensajes del contacto sobre la próxima operación. Activa señales ambientales con rumores, lecturas de mareas y avisos. Sin sonido ni mensajes nocturnos.
 
-Tu contacto puede escribirte entre carreras, los días y a la hora que elijas, con la voz de la campaña que estás jugando y sobre la operación que te espera. Activa también el ruido de señal y el mundo habla aunque no escuches: un intermediario con un rumor, una lectura de mareas, un aviso de una autoridad que preferiría que te quedaras en casa. En silencio, nunca de noche, tan a menudo o tan poco como quieras.
+**CADA OCTUBRE, LOS MUERTOS VUELVEN A CONECTARSE**
 
-CADA OCTUBRE, LOS MUERTOS VUELVEN A CONECTARSE
+Del 10 de octubre al 2 de noviembre, la ciudad cambia de aspecto con fantasmas, cementerio, campanas y susurros. **Samhain Protocol** es una operación de cuatro carreras sobre un mensajero muerto cuya última entrega sigue pendiente. Puedes desactivarla en Configuración.
 
-Del 10 de octubre al Día de Difuntos la ciudad se disfraza: el neón se vuelve calabaza y violeta, un cementerio se alza en el horizonte bajo una luna baja, los fantasmas cruzan la pantalla y los efectos de sonido se llenan de campanas y susurros. Solo durante la temporada se abre una operación de cuatro carreras, Samhain Protocol, sobre un mensajero muerto hace tres años cuya última entrega sigue pendiente. Si no la terminas, te espera al octubre siguiente. Un solo interruptor en Ajustes lo desactiva todo.
+**FUNCIONES**
 
-TODO LO QUE HACE
+- 20 misiones, ocho temas de color y editor integrado.
+- Avisos de distancia, parciales y tiempo total.
+- Música dinámica y archivos propios.
+- Controles de carrera desde la notificación y opción de reanudar.
+- Recordatorios, señales ambientales y registro de actividad.
+- Resumen semanal, 73 logros y rachas por minutos, kilómetros o misiones.
+- Estadísticas, historial y calendario; calorías estimadas con ecuaciones de ACSM.
+- Modo caminata con misiones y logros propios.
+- Conteo opcional de pasos y cadencia; estimación de distancia si falla el GPS o en caminadora.
+- 48 entradas de códice desbloqueadas durante la historia.
+- Misiones propias en JSON; exportación e importación de datos.
+- Registro GPS, reproducción de rutas y exportación GPX para OsmAnd.
+- Copias de seguridad opcionales y formularios para enviar sugerencias.
+- Inglés y español. Los nombres de lugares y personajes conservan su idioma original.
+- Sin permiso de almacenamiento: se usa el menú para compartir y el selector de documentos.
 
-- Veinte misiones en dos campañas, adaptadas al objetivo que elijas
-- Eventos de temporada: aspecto, sonido y una operación de cuatro misiones de Halloween del 10 de octubre al 2 de noviembre, desactivables
-- Ocho temas de color para elegir (neón, synthwave, glaciar y voltio, y de la comunidad vanguard, toxic, mint y oxide), o crea el tuyo con el editor de temas y su selector de color, o importa uno
-- Persecuciones ajustadas a tu propio ritmo de los últimos tres minutos, o desactivadas
-- Cada kilómetro o milla se anuncia con su parcial y tu tiempo total; en una misión, entre escenas
-- Once voces sintetizadas que bajan tu música y te la devuelven
-- Seis canciones de diez minutos que tu teléfono toca en directo, sin archivos de audio, y que siguen tu ritmo, tus persecuciones y tu meta. Elige una, mézclalas o deja que la app elija según la carrera
-- O pon tu propia música de una carpeta que elijas, con una lista de la comunidad con música gratis para correr
-- Pausar, reanudar o parar desde la notificación, con un aviso si una carrera se queda en pausa; la carrera sigue aunque cierres la app, y si el teléfono la mata puedes reanudarla donde se detuvo
-- Pide una vez, antes de correr, quedar fuera de la optimización de batería, porque algunos teléfonos matan las apps en marcha de todos modos. Nunca es obligatorio
-- Recordatorios de tu contacto según tu horario, y ruido de señal ambiental opcional
-- The wire: cada mensaje, carrera, operación superada, logro e intel en un solo flujo, que se abre directamente al tocar una notificación; un punto en su icono avisa de que llegó una señal desde la última vez que miraste
-- Un informe el domingo por la tarde que repasa tu semana frente a tu propio objetivo, con la misma voz; desactivable
-- 73 logros en ocho categorías, y una racha semanal que defines tú en minutos, kilómetros o misiones; una semana sin terminar nunca la rompe
-- Distancia, tiempo, calorías y misiones superadas por semana y por mes, con barras diarias y tu registro completo de carreras
-- La vista larga: semanas y meses anteriores, distancia por mes desde tu primera carrera, cada día que corriste en un calendario de puntos
-- Calorías calculadas con las ecuaciones metabólicas del ACSM y tu peso real, no con un multiplicador inventado
-- Caminar en lugar de correr: las mismas misiones a paso de caminata, persecuciones que piden caminar rápido, y logros propios
-- Conteo de pasos opcional: pasos y cadencia de cada carrera, tiempo en movimiento cuando falla el GPS, y distancia a partir de los pasos donde no hay GPS, como en una cinta de correr, con una zancada aprendida de tus propias carreras. Desactivado salvo que lo actives, que es el único momento en que se pide el permiso de actividad física de Android
-- Cuarenta y ocho entradas del códice, cada una se desbloquea solo cuando un personaje la ha mencionado: no se puede leer por adelantado
-- Tus propios paquetes de misiones: un archivo JSON cada uno, importado desde Ajustes, con el formato documentado en el repositorio. Un paquete puede traer sus propios colores, y puedes desactivarlos
-- Cada carrera guarda su ruta GPS, la repite al ritmo al que corriste y la exporta como pista GPX para OsmAnd
-- Un toque exporta todo como JSON plano: perfil, progreso, logros, códice y cada carrera con su ruta. La importación restaura un teléfono nuevo por completo, o fusiona
-- Copia automática opcional después de cada carrera, en la carpeta que elijas; si quieres, una que una app de sincronización como Syncthing copie a otro sitio
-- Un aviso para exportar cuando tu registro tiene carreras que no existen en ningún otro sitio
-- Informa de un fallo, sugiere una idea o sugiere música para correr desde Ajustes: el formulario se abre en tu navegador
-- En inglés y en español, historia incluida, según el idioma del teléfono o elegido en Ajustes
-- Sin permiso de almacenamiento en ningún sentido: la hoja de compartir para sacar, el selector de documentos para traer
+**REALMENTE SIN CONEXIÓN**
 
-SIN CONEXIÓN DE VERDAD
+La app no solicita permiso de INTERNET: no se conecta a la red. Sin cuentas, analíticas ni anuncios. No requiere Google Play Services y funciona en ROM sin Google.
 
-No hay permiso de INTERNET en el manifiesto, así que la app no puede acceder a la red en absoluto. Sin cuentas, sin analíticas, sin anuncios.
+Android podría copiar los datos a Google si activaste las copias de seguridad del sistema. Puedes desactivarlas en Configuración.
 
-Una advertencia honesta: el servicio de copias de seguridad de Android puede copiar los datos de la app a tu cuenta de Google, como con la mayoría de las apps, si tienes activada la copia del dispositivo. Eso es el sistema operativo, no esta app; desactívalo en los ajustes de copia de seguridad de Android si prefieres que no lo haga.
+**VOCES**
 
-Tampoco usa Google Play Services: la biblioteca de ubicación propietaria se excluye de la compilación y se usa directamente el LocationManager de AOSP, así que funciona igual en una ROM sin Google.
+Los diálogos requieren un motor de texto a voz. Sin uno, la app muestra el texto y conserva los efectos de sonido. RHVoice o eSpeak NG habilitan las voces. Los recordatorios y señales ambientales nunca se leen en voz alta.
 
-SOBRE LAS VOCES
-
-Los diálogos hablados necesitan un motor de texto a voz instalado. Muchas ROM sin Google no traen ninguno; si la tuya no lo tiene, la app muestra el texto en pantalla al ritmo de la voz y conserva todos los efectos de sonido. Instalar RHVoice o eSpeak NG recupera las voces. Los recordatorios y el ruido de señal no se ven afectados: nunca se leen en voz alta.
-
-Software libre con licencia MIT. Toda la música, los efectos de sonido y los gráficos se generan a partir de código del repositorio en lugar de distribuirse como binarios opacos.
+Software libre con licencia MIT. La música, los efectos y el arte se generan con código del repositorio.

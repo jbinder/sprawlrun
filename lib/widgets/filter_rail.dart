@@ -54,24 +54,45 @@ class _FilterRailState extends State<FilterRail> {
     }
   }
 
+  Widget _edge({required bool left, required bool shown}) {
+    final solid = Cy.v0id.withValues(alpha: shown ? 1 : 0);
+    return Positioned(
+      top: 0,
+      bottom: 0,
+      left: left ? 0 : null,
+      right: left ? null : 0,
+      width: _fade,
+      child: IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: left ? Alignment.centerLeft : Alignment.centerRight,
+              end: left ? Alignment.centerRight : Alignment.centerLeft,
+              colors: [solid, solid.withValues(alpha: 0)],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // The edges are painted over the chips, not masked out of them: under a
+    // ShaderMask, Impeller drew text cut off at the edge from a glyph atlas it
+    // was never added to (see `edge_fade.dart`). So they fade into the void
+    // colour, which is what both rails sit on.
     return Stack(
       alignment: Alignment.center,
       children: [
-        ShaderMask(
-          shaderCallback: (bounds) => LinearGradient(
-            colors: const [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
-            stops: [0, _moreLeft ? _fade / bounds.width : 0, _moreRight ? 1 - _fade / bounds.width : 1, 1],
-          ).createShader(bounds),
-          blendMode: BlendMode.dstIn,
-          child: SingleChildScrollView(
-            controller: _controller,
-            scrollDirection: Axis.horizontal,
-            padding: widget.padding,
-            child: Row(children: widget.children),
-          ),
+        SingleChildScrollView(
+          controller: _controller,
+          scrollDirection: Axis.horizontal,
+          padding: widget.padding,
+          child: Row(children: widget.children),
         ),
+        _edge(left: true, shown: _moreLeft),
+        _edge(left: false, shown: _moreRight),
         if (_moreLeft) const _RailArrow(Icons.chevron_left, Alignment.centerLeft),
         if (_moreRight) const _RailArrow(Icons.chevron_right, Alignment.centerRight),
       ],

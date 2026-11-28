@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -84,6 +85,12 @@ abstract class Narrator {
   /// then hands focus back. Completes when the last line has finished.
   Future<void> speakBeat(List<StoryLine> lines);
 
+  /// Whether characters share one voice unless the runner says otherwise:
+  /// true on a phone Android marks as low on memory. Settings shows
+  /// [Profile.voicePerCharacter] from it while the runner has not chosen.
+  /// Only meaningful once [init] has run.
+  bool get oneVoiceByDefault;
+
   /// Whether a line in [language] would be spoken in a voice of it. Without
   /// one, a translated story line is spoken in its English original — what
   /// the briefing warns about. Only meaningful once [init] has run.
@@ -124,10 +131,47 @@ abstract class Narrator {
 /// Production implementation: flutter_tts for speech, just_audio for effects,
 /// audio_session for focus.
 class AudioNarrator implements Narrator {
-  AudioNarrator({MusicResumeGuard? resumeGuard, MusicPlayer? music, @visibleForTesting AudioPlayer? bedPlayer})
-    : _resume = resumeGuard ?? MusicResumeGuard.platform(),
-      _music = music ?? const SilentMusicPlayer(),
-      _bedPlayer = bedPlayer ?? AudioPlayer(handleAudioSessionActivation: false);
+  AudioNarrator({
+    MusicResumeGuard? resumeGuard,
+    MusicPlayer? music,
+    @visibleForTesting AudioPlayer? bedPlayer,
+    @visibleForTesting Future<bool> Function()? lowMemory,
+  }) : _resume = resumeGuard ?? MusicResumeGuard.platform(),
+       _music = music ?? const SilentMusicPlayer(),
+       _bedPlayer = bedPlayer ?? AudioPlayer(handleAudioSessionActivation: false),
+       _lowMemory = lowMemory ?? _isLowRamDevice;
+
+  /// Asks Android whether this is a phone short of memory (Android Go and the
+  /// like). False anywhere else, or if the question cannot be put.
+  static Future<bool> _isLowRamDevice() async {
+    if (defaultTargetPlatform != TargetPlatform.android) return false;
+    try {
+      return await const MethodChannel('io.github.jbinder.sprawlrun/audio').invokeMethod<bool>('isLowRamDevice') ??
+          false;
+    } on Object {
+      return false;
+    }
+  }
+
+  final Future<bool> Function() _lowMemory;
+
+  @override
+  bool oneVoiceByDefault = false;
+
+  /// One voice for every character, told apart by pitch and rate alone. On a
+  /// phone short of memory the engine loads a voice afresh whenever another
+  /// character speaks, heard as a pause before each line: a Galaxy A03 Core on
+  /// Android Go with 2 GB, reading a Spanish pack (#14).
+  bool get _oneVoice => !(_profile.voicePerCharacter ?? !oneVoiceByDefault);
+
+  /// The engine's own default voice, which it keeps loaded; the one voice of
+  /// [_oneVoice] where it speaks the language wanted.
+  Map<String, String>? _defaultVoice;
+
+  /// The name of the voice last given to the engine, so a line by the same
+  /// voice does not set it again; null when unknown. A language change or a
+  /// cleared voice resets the engine's voice, and this with it.
+  String? _engineVoice;
 
   final FlutterTts _tts = FlutterTts();
 
@@ -234,6 +278,7 @@ class AudioNarrator implements Narrator {
         ..setCancelHandler(_endUtterance);
       await _tts.setLanguage('en-US');
       await _tts.setVolume(1.0);
+      oneVoiceByDefault = await _lowMemory();
       await _assignVoices();
 
       await _bedPlayer.setLoopMode(LoopMode.all);
@@ -282,24 +327,59 @@ class AudioNarrator implements Narrator {
       if (raw is! List) return;
       final all = raw.whereType<Map<Object?, Object?>>().map((v) => v.map((k, v) => MapEntry('$k', '$v'))).toList();
       _allVoices = all;
-      final voices = usableVoices(all);
-      // One line in logcat, so a report of slow or missing speech can be read
-      // against what the device actually offered.
-      debugPrint(
-        'TTS voices: ${all.length} listed, ${voices.length} usable: '
-        '${all.where((v) => (v['locale'] ?? '').toLowerCase().startsWith('en')).map((v) => '${v['name']}${v['network_required'] == '1' ? ' (network)' : ''}${(v['features'] ?? '').contains('notInstalled') ? ' (not installed)' : ''}').join(', ')}',
-      );
-      if (voices.length < 2) return;
-
-      const order = _speakerOrder;
-      for (var i = 0; i < order.length; i++) {
-        _voiceAssignments[order[i]] = voices[i % voices.length];
-      }
-      _fallbackVoice = voices[order.length % voices.length];
+      _defaultVoice = await _readDefaultVoice();
+      _handOutVoices();
     } on Object catch (e) {
       debugPrint('Voice enumeration unavailable: $e');
     }
   }
+
+  /// Gives each speaker their voice from what [_assignVoices] found, one each
+  /// or [_oneVoice] for all, forgetting what was handed out before.
+  void _handOutVoices() {
+    _voiceAssignments.clear();
+    _fallbackVoice = null;
+    _languageVoices.clear();
+    _speakerVoices.clear();
+    final all = _allVoices;
+    final voices = usableVoices(all);
+    // One line in logcat, so a report of slow or missing speech can be read
+    // against what the device actually offered.
+    debugPrint(
+      'TTS voices: ${all.length} listed, ${voices.length} usable: '
+      '${all.where((v) => (v['locale'] ?? '').toLowerCase().startsWith('en')).map((v) => '${v['name']}${v['network_required'] == '1' ? ' (network)' : ''}${(v['features'] ?? '').contains('notInstalled') ? ' (not installed)' : ''}').join(', ')}'
+      '${_oneVoice ? '; one voice for all: ${_defaultVoice?['name'] ?? 'none'} by default' : ''}',
+    );
+    if (_oneVoice) {
+      _fallbackVoice = oneVoice(voices, _defaultVoice);
+      return;
+    }
+    if (voices.length < 2) return;
+
+    const order = _speakerOrder;
+    for (var i = 0; i < order.length; i++) {
+      _voiceAssignments[order[i]] = voices[i % voices.length];
+    }
+    _fallbackVoice = voices[order.length % voices.length];
+  }
+
+  Future<Map<String, String>?> _readDefaultVoice() async {
+    try {
+      final raw = await _tts.getDefaultVoice;
+      if (raw is! Map) return null;
+      return raw.map((k, v) => MapEntry('$k', '$v'));
+    } on Object catch (e) {
+      debugPrint('Default voice unavailable: $e');
+      return null;
+    }
+  }
+
+  /// The voice every character shares on a phone short of memory: the
+  /// engine's default where it is one of [usable] — it is already loaded, and
+  /// the runner may have chosen it in Android's settings — or else the first.
+  @visibleForTesting
+  static Map<String, String>? oneVoice(List<Map<String, String>> usable, Map<String, String>? defaultVoice) =>
+      usable.where((v) => v['name'] == defaultVoice?['name']).firstOrNull ?? usable.firstOrNull;
 
   /// Voices in [language] (English unless said) that can speak with no
   /// connection and are on the device.
@@ -327,8 +407,10 @@ class AudioNarrator implements Narrator {
   @override
   Future<void> applyProfile(Profile profile) async {
     final interruptChanged = profile.audioInterrupt != _profile.audioInterrupt;
+    final wasOneVoice = _oneVoice;
     _profile = profile;
     if (interruptChanged) await _configureSession();
+    if (_oneVoice != wasOneVoice) _handOutVoices();
     await _music.setVolume(profile.musicVolume);
     if (_musicHoldsFocus && !profile.runMusicOn) await _stopMusic();
     await _bedPlayer.setVolume(_bedVolume);
@@ -414,14 +496,15 @@ class AudioNarrator implements Narrator {
       // A story line is spread across the language's voices by speaker, the
       // way English ones are; a line the app wrote takes the first.
       final assigned = foreign
-          ? (line.fromPack ? _voiceIn(language, speaker: key) : _voiceIn(language))
+          ? (line.fromPack && !_oneVoice ? _voiceIn(language, speaker: key) : _voiceIn(language))
           : own ?? _fallbackVoice;
       // Always set one way or the other: the engine keeps the last voice it
       // was given, which is somebody else's.
-      if (assigned != null) {
+      if (assigned == null) {
+        await _clearVoice();
+      } else if (assigned['name'] != _engineVoice) {
         await _tts.setVoice(assigned);
-      } else {
-        await _tts.clearVoice();
+        _engineVoice = assigned['name'];
       }
       await _tts.setPitch(voice.pitch.clamp(0.5, 2.0));
       final rate = (_profile.speechRate * voice.rateScale).clamp(0.1, 1.0);
@@ -444,7 +527,7 @@ class AudioNarrator implements Narrator {
       } else {
         _fallbackVoice = null;
       }
-      await _tts.clearVoice();
+      await _clearVoice();
       if (cut()) return;
       await _say(line, rate);
     } on Object catch (e) {
@@ -482,7 +565,10 @@ class AudioNarrator implements Narrator {
   /// [speaker], each speaker keeps one of the language's voices, so two
   /// characters differ by more than pitch where the phone has several.
   Map<String, String>? _voiceIn(String language, {String? speaker}) {
-    final first = _languageVoices.putIfAbsent(language, () => usableVoices(_allVoices, language: language).firstOrNull);
+    final first = _languageVoices.putIfAbsent(language, () {
+      final usable = usableVoices(_allVoices, language: language);
+      return _oneVoice ? oneVoice(usable, _defaultVoice) : usable.firstOrNull;
+    });
     // Null after a voice failed: the engine's default from then on.
     if (first == null || speaker == null) return first;
     return _speakerVoices.putIfAbsent('$language/$speaker', () {
@@ -499,7 +585,13 @@ class AudioNarrator implements Narrator {
   Future<void> _setEngineLanguage(String language) async {
     if (language == _engineLanguage) return;
     _engineLanguage = language;
+    _engineVoice = null;
     await _tts.setLanguage(language);
+  }
+
+  Future<void> _clearVoice() async {
+    _engineVoice = null;
+    await _tts.clearVoice();
   }
 
   /// Speaks [line] and waits for it, never unbounded: a line the engine

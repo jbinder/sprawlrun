@@ -25,6 +25,27 @@ void main() {
       ]).map((v) => v['name']);
       expect(usable, ['en-us-x-sfg-local', 'en-au-x-aub-local']);
     });
+
+    group('on a phone short of memory, one for all of them', () {
+      final usable = [voice('es-us-x-sfb-local', locale: 'es-US'), voice('es-us-x-esd-local', locale: 'es-US')];
+
+      test("is the engine's default, which it keeps loaded", () {
+        final one = AudioNarrator.oneVoice(usable, {'name': 'es-us-x-esd-local', 'locale': 'es-US'});
+        expect(one?['name'], 'es-us-x-esd-local');
+      });
+
+      test('or the first usable one when the default speaks another language or is not offline', () {
+        expect(
+          AudioNarrator.oneVoice(usable, {'name': 'en-us-x-sfg-local', 'locale': 'en-US'})?['name'],
+          'es-us-x-sfb-local',
+        );
+        expect(AudioNarrator.oneVoice(usable, null)?['name'], 'es-us-x-sfb-local');
+      });
+
+      test('or none, leaving the engine to pick', () {
+        expect(AudioNarrator.oneVoice(const [], {'name': 'es-us-x-esd-local'}), isNull);
+      });
+    });
   });
 
   group('how long a line may take', () {
@@ -67,7 +88,14 @@ void main() {
         fromPack: true,
       );
       final spoken = AudioNarrator.spokenForm(
-        const StoryLine(speaker: 'KESTREL', text: 'Canal propre.', language: 'fr', original: 'Canal limpio.', originalLanguage: 'es', fromPack: true),
+        const StoryLine(
+          speaker: 'KESTREL',
+          text: 'Canal propre.',
+          language: 'fr',
+          original: 'Canal limpio.',
+          originalLanguage: 'es',
+          fromPack: true,
+        ),
         hasVoiceFor: (l) => l != 'fr',
       );
       expect((spoken.text, spoken.language, spoken.fromPack), ('Canal limpio.', 'es', true));
@@ -123,6 +151,20 @@ void main() {
         await subject.stopAll();
         await Future.wait([first, second]).timeout(const Duration(seconds: 5));
         expect(heard, isNot(contains('Later.')));
+      });
+    });
+
+    testWidgets('a phone short of memory still hears every line', (tester) async {
+      await tester.runAsync(() async {
+        final subject = AudioNarrator(
+          resumeGuard: MusicResumeGuard(isMusicActive: () async => false, sendPlay: () async {}),
+          lowMemory: () async => true,
+        );
+        await subject.init(const Profile(sfxVolume: 0));
+        final heard = <String?>[];
+        subject.events.listen((e) => heard.add(e.line?.text));
+        await subject.speakBeat(beat.sublist(0, 2)).timeout(const Duration(seconds: 5));
+        expect(heard, ['One.', 'Two.', null]);
       });
     });
 

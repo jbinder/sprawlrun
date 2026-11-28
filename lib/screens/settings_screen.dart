@@ -194,6 +194,15 @@ class SettingsScreen extends StatelessWidget {
                             value: profile.voiceEnabled,
                             onChanged: (v) => update(profile.copyWith(voiceEnabled: v)),
                           ),
+                          if (profile.voiceEnabled) ...[
+                            const _Rule(),
+                            SwitchRow(
+                              label: l.settingVoicePerCharacter,
+                              subtitle: l.settingVoicePerCharacterHint,
+                              value: profile.voicePerCharacter ?? !state.narrator.oneVoiceByDefault,
+                              onChanged: (v) => update(profile.copyWith(voicePerCharacter: v)),
+                            ),
+                          ],
                           const _Rule(),
                           SegmentRow<AudioInterrupt>(
                             label: l.settingYourMusic,

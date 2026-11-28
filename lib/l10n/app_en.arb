@@ -1903,6 +1903,14 @@
     "description": "Setting: speak the story aloud with text-to-speech."
   },
   "settingStoryVoiceHint": "Speak transmissions aloud using the device voice",
+  "settingVoicePerCharacter": "A voice for each character",
+  "@settingVoicePerCharacter": {
+    "description": "Setting switch: each story character speaks in a different text-to-speech voice of the phone."
+  },
+  "settingVoicePerCharacterHint": "Turn off for better performance: every character then speaks in one voice, told apart by pitch, and lines start sooner.",
+  "@settingVoicePerCharacterHint": {
+    "description": "Explains the 'A voice for each character' switch. With it off, all characters share one voice and differ only in pitch, so the phone starts each line sooner. Starts with 'better performance' so a runner looking for performance settings finds it. Keep it positive: do not mention slow phones."
+  },
   "settingYourMusic": "Your music",
   "@settingYourMusic": {
     "description": "What happens to the runner's own music when a story character speaks."

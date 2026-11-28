@@ -1,5 +1,6 @@
 import '../l10n/l10n.dart';
 import 'run_record.dart' show Activity;
+
 enum UnitSystem { metric, imperial }
 
 enum StreakMetric { minutes, kilometres, missions }
@@ -213,6 +214,7 @@ class Profile {
     this.audioInterrupt = AudioInterrupt.pause,
     this.resumeMusic = true,
     this.voiceEnabled = true,
+    this.voicePerCharacter,
     this.speechRate = 0.52,
     this.sfxVolume = 0.9,
     this.music = noMusic,
@@ -295,6 +297,13 @@ class Profile {
   final bool resumeMusic;
 
   final bool voiceEnabled;
+
+  /// Whether each character speaks in a voice of their own, where the phone
+  /// has several; otherwise all share one, told apart by pitch and rate. Null
+  /// until the runner chooses, which means on, except on a phone Android
+  /// marks as low on memory, where loading a voice per character is heard as
+  /// a pause before each line (#14).
+  final bool? voicePerCharacter;
 
   /// flutter_tts rate, 0..1. 0.5 is roughly natural on Android.
   final double speechRate;
@@ -444,6 +453,7 @@ class Profile {
     AudioInterrupt? audioInterrupt,
     bool? resumeMusic,
     bool? voiceEnabled,
+    bool? voicePerCharacter,
     double? speechRate,
     double? sfxVolume,
     String? music,
@@ -484,6 +494,7 @@ class Profile {
     audioInterrupt: audioInterrupt ?? this.audioInterrupt,
     resumeMusic: resumeMusic ?? this.resumeMusic,
     voiceEnabled: voiceEnabled ?? this.voiceEnabled,
+    voicePerCharacter: voicePerCharacter ?? this.voicePerCharacter,
     speechRate: speechRate ?? this.speechRate,
     sfxVolume: sfxVolume ?? this.sfxVolume,
     music: music ?? this.music,
@@ -526,6 +537,7 @@ class Profile {
     'audioInterrupt': audioInterrupt.name,
     'resumeMusic': resumeMusic,
     'voiceEnabled': voiceEnabled,
+    if (voicePerCharacter != null) 'voicePerCharacter': voicePerCharacter,
     'speechRate': speechRate,
     'sfxVolume': sfxVolume,
     // Still written so an older build rolled back to keeps the runner's choice.
@@ -585,6 +597,7 @@ class Profile {
     ),
     resumeMusic: json['resumeMusic'] as bool? ?? true,
     voiceEnabled: json['voiceEnabled'] as bool? ?? true,
+    voicePerCharacter: json['voicePerCharacter'] as bool?,
     speechRate: (json['speechRate'] as num?)?.toDouble() ?? 0.52,
     sfxVolume: (json['sfxVolume'] as num?)?.toDouble() ?? 0.9,
     music: _musicFrom(json),

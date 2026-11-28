@@ -1149,6 +1149,12 @@ class PseudoL extends L {
   String get settingStoryVoiceHint => pseudo(_en.settingStoryVoiceHint);
 
   @override
+  String get settingVoicePerCharacter => pseudo(_en.settingVoicePerCharacter);
+
+  @override
+  String get settingVoicePerCharacterHint => pseudo(_en.settingVoicePerCharacterHint);
+
+  @override
   String get settingYourMusic => pseudo(_en.settingYourMusic);
 
   @override

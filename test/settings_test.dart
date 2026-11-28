@@ -16,6 +16,7 @@ import 'package:sprawl_run/screens/settings_screen.dart';
 import 'package:sprawl_run/state/app_state.dart';
 import 'package:sprawl_run/theme/cyber_theme.dart';
 import 'package:sprawl_run/util/clock.dart';
+import 'package:sprawl_run/widgets/setting_rows.dart';
 
 import 'support/fakes.dart';
 
@@ -23,7 +24,7 @@ import 'support/fakes.dart';
 ///
 /// The tall viewport is the usual trick: the settings list is lazy, and these
 /// tests care about rows near the bottom of it.
-Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
+Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile, FakeNarrator? narrator}) async {
   final root = tempRoot('settings');
   addTearDown(() => root.deleteSync(recursive: true));
 
@@ -49,7 +50,7 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
     profiles: profiles,
     runs: RunRepository(Directory('${root.path}/runs')),
     missions: MissionRepository(externalDir: Directory('${root.path}/packs')),
-    narrator: FakeNarrator(),
+    narrator: narrator ?? FakeNarrator(),
   );
 
   await tester.runAsync(() async {
@@ -68,6 +69,41 @@ Future<AppState> pumpSettings(WidgetTester tester, {Profile? profile}) async {
 }
 
 void main() {
+  group('a voice for each character', () {
+    SwitchRow row(WidgetTester tester) => tester.widget<SwitchRow>(
+      find.ancestor(of: find.text('A voice for each character'), matching: find.byType(SwitchRow)),
+    );
+
+    testWidgets('is on until the runner chooses', (tester) async {
+      await pumpSettings(tester);
+      expect(row(tester).value, isTrue);
+    });
+
+    testWidgets('is off until the runner chooses where one voice is the default', (tester) async {
+      await pumpSettings(tester, narrator: FakeNarrator()..oneVoiceByDefault = true);
+      expect(row(tester).value, isFalse);
+    });
+
+    testWidgets("the runner's choice wins over the default", (tester) async {
+      await pumpSettings(
+        tester,
+        profile: const Profile(voicePerCharacter: true),
+        narrator: FakeNarrator()..oneVoiceByDefault = true,
+      );
+      expect(row(tester).value, isTrue);
+    });
+
+    testWidgets('is not offered with the story voice off', (tester) async {
+      await pumpSettings(tester, profile: const Profile(voiceEnabled: false));
+      expect(find.text('A voice for each character'), findsNothing);
+    });
+
+    test('is kept as chosen, and left unchosen when it was', () {
+      expect(Profile.fromJson(const Profile(voicePerCharacter: false).toJson()).voicePerCharacter, isFalse);
+      expect(Profile.fromJson(const Profile().toJson()).voicePerCharacter, isNull);
+    });
+  });
+
   testWidgets('changing the weekly target records the change, so past weeks keep theirs', (tester) async {
     final state = await pumpSettings(tester, profile: const Profile(streakGoal: StreakGoal(target: 30)));
     final plus = find.descendant(

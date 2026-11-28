@@ -88,6 +88,9 @@ class FakeNarrator implements Narrator {
   bool ambientBed = false;
   bool stopped = false;
 
+  @override
+  bool oneVoiceByDefault = false;
+
   List<String> get spokenText => [
     for (final beat in beats)
       for (final line in beat) line.text,

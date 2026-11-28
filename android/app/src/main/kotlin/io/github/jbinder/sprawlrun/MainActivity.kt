@@ -1,5 +1,6 @@
 package io.github.jbinder.sprawlrun
 
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ActivityNotFoundException
@@ -194,6 +195,13 @@ class MainActivity : FlutterActivity() {
                     // True when anything is playing on the music stream, ours
                     // included — the caller only asks while we are silent.
                     "isMusicActive" -> result.success(audio.isMusicActive)
+
+                    // Android Go and other phones short of memory, where the
+                    // speech engine loading a voice per character is heard as
+                    // a pause before every line.
+                    "isLowRamDevice" -> result.success(
+                        (app.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).isLowRamDevice
+                    )
 
                     // Routed to whichever player last held the media session.
                     // KEYCODE_MEDIA_PLAY rather than PLAY_PAUSE: it is
